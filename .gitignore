@@ -1,0 +1,4 @@
+#ignore build dir
+build
+#ignore libcurl source code
+third_part/curl-7.55.1
