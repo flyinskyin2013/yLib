@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string.h>
 #include "ycommon.h"
+#include "ylog.h"
 
 namespace yLib{
 

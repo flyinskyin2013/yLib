@@ -13,7 +13,7 @@ MESSAGE("================================================================")
 
 #----------------------------------------------------------------------------------------
 
-set(CMAKE_BUILD_TYPE release CACHE STRING "Type of build" FORCE)
+#set(CMAKE_BUILD_TYPE release CACHE STRING "Type of build" FORCE)
 MESSAGE(STATUS "BUILD_TYPE is : ${CMAKE_BUILD_TYPE}")
 if(CMAKE_BUILD_TYPE MATCHES "(Release|RELEASE|release)")
 
@@ -23,6 +23,8 @@ else()
 
 #debug code
 add_compile_options(-g)
+set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -g")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 
 endif()
 
@@ -34,6 +36,7 @@ endif()
 option(BUILD_STATIC_YLIB "Build static ylib " ON)
 option(BUILD_SHARED_YLIB "Build shared ylib " ON)
 option(BUILD_MODULE_YCURL "Build module-ycurl " ON)
+option(BUILD_MODULE_YLOG "Build module-ylog " ON)
 ################################################################
 
 

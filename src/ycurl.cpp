@@ -6,7 +6,7 @@ static size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdat
     //RecStr = std::string(ptr,size*nmemb);
     memcpy(userdata,ptr,size*nmemb);
     std::string __msg =  "ycurl get data :"+std::string((char*)userdata);
-    yLogI( __msg.c_str() );
+    yLib::yLog::I( __msg.c_str() );
 
     return size*nmemb;
 }
@@ -15,7 +15,7 @@ yLib::yCurl::yCurl(){
 
     if ( CURLE_OK != (m_ycurl_ret = curl_global_init(CURL_GLOBAL_ALL)) ){
 
-        yLogE("curl_global_init call failed ");
+        yLib::yLog::E("curl_global_init call failed ");
         m_bGlobalInit = true;
     } 
     else{
@@ -54,7 +54,7 @@ int yLib::yCurl::yCurl_Get(std::string & interface, std::string user_params){
 
     if ( !( m_ptr_ycurl = curl_easy_init() ) ){
 
-        yLogE("curl_easy_init call failed");
+        yLib::yLog::E("curl_easy_init call failed");
         return -1;
     }
     struct curl_slist *headers = NULL;
@@ -62,7 +62,7 @@ int yLib::yCurl::yCurl_Get(std::string & interface, std::string user_params){
     std::string request_url = m_param.protocol_type + "://" + m_param.ip_addr + ":" + \
                         std::to_string(m_param.port) + "/" + interface + "?" + user_params;
     std::string __msg = "request url is :"+ request_url;
-    yLogD(__msg.c_str());
+    yLib::yLog::D(__msg.c_str());
     curl_easy_setopt(m_ptr_ycurl, CURLOPT_URL, request_url.c_str());
 
     curl_easy_setopt(m_ptr_ycurl, CURLOPT_WRITEFUNCTION, write_callback);  
@@ -72,7 +72,7 @@ int yLib::yCurl::yCurl_Get(std::string & interface, std::string user_params){
 
         curl_easy_cleanup(m_ptr_ycurl);
         __msg = "curl_easy_perform call failed, info="+std::string(curl_easy_strerror(m_ycurl_ret));
-        yLogE(__msg.c_str());
+        yLib::yLog::E(__msg.c_str());
         return -1;
     }
     //curl_slist_free_all();
@@ -84,7 +84,7 @@ int yLib::yCurl::yCurl_Post_Json(std::string & interface, std::string json_datas
 
     if ( !( m_ptr_ycurl = curl_easy_init() ) ){
 
-        yLogE("curl_easy_init call failed");
+        yLib::yLog::E("curl_easy_init call failed");
         return -1;
     }
 
@@ -100,7 +100,7 @@ int yLib::yCurl::yCurl_Post_Json(std::string & interface, std::string json_datas
     std::string request_url = m_param.protocol_type + "://" + m_param.ip_addr + ":" + \
                         std::to_string(m_param.port) + "/" + interface;
     std::string __msg = "request url is :"+ request_url;
-    yLogD(__msg.c_str());
+    yLib::yLog::D(__msg.c_str());
     curl_easy_setopt(m_ptr_ycurl, CURLOPT_URL, request_url.c_str());
      //curl_easy_setopt(curl,  CURLOPT_CUSTOMREQUEST, "POST");//自定义请求方式
     curl_easy_setopt(m_ptr_ycurl, CURLOPT_POST, 1);//设置为非0表示本次操作为POS
@@ -116,7 +116,7 @@ int yLib::yCurl::yCurl_Post_Json(std::string & interface, std::string json_datas
         curl_easy_cleanup(m_ptr_ycurl);
         curl_slist_free_all(headers);
         __msg = "curl_easy_perform call failed, info="+std::string(curl_easy_strerror(m_ycurl_ret));
-        yLogE(__msg.c_str());
+        yLib::yLog::E(__msg.c_str());
         return -1;
     }
 
