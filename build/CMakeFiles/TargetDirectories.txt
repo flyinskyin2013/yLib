@@ -1,9 +1,0 @@
-/home/sky/yLib/build/CMakeFiles/rebuild_cache.dir
-/home/sky/yLib/build/CMakeFiles/edit_cache.dir
-/home/sky/yLib/build/src/CMakeFiles/edit_cache.dir
-/home/sky/yLib/build/src/CMakeFiles/yLib_s.dir
-/home/sky/yLib/build/src/CMakeFiles/rebuild_cache.dir
-/home/sky/yLib/build/src/CMakeFiles/yLib.dir
-/home/sky/yLib/build/examples/CMakeFiles/rebuild_cache.dir
-/home/sky/yLib/build/examples/CMakeFiles/test_ycurl.dir
-/home/sky/yLib/build/examples/CMakeFiles/edit_cache.dir

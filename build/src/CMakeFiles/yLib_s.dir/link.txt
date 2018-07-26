@@ -1,2 +1,0 @@
-/usr/bin/ar qc libyLib_s.a  CMakeFiles/yLib_s.dir/ycommon.cpp.o CMakeFiles/yLib_s.dir/ycurl.cpp.o
-/usr/bin/ranlib libyLib_s.a

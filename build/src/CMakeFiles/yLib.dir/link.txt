@@ -1,1 +1,0 @@
-/usr/bin/c++ -fPIC -O3 -DNDEBUG  -shared -Wl,-soname,libyLib.so -o libyLib.so CMakeFiles/yLib.dir/ycommon.cpp.o CMakeFiles/yLib.dir/ycurl.cpp.o  -L/home/sky/yLib/src/../lib/linux_x86  -L/home/sky/yLib/src/../lib/linux_amd64 -Wl,-rpath,/home/sky/yLib/src/../lib/linux_x86:/home/sky/yLib/src/../lib/linux_amd64 -lcurl 
