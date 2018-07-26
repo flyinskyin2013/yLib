@@ -7,4 +7,8 @@ Version Notes:
 v0.01
 **********
 It preliminary relized ycurl-module and establish a framework of compiltion and test.
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+----------
+Dependences:
+**********
+libcurl-7.55.1
+**********
