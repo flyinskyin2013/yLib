@@ -1,0 +1,1 @@
+/usr/bin/c++  -O3 -DNDEBUG  -rdynamic CMakeFiles/test_ycurl.dir/test_ycurl.cpp.o  -o test_ycurl  -L/home/sky/yLib/build/examples/../src  -L/home/sky/yLib/examples/../lib/linux_amd64 -Wl,-rpath,/home/sky/yLib/build/examples/../src:/home/sky/yLib/examples/../lib/linux_amd64 -Wl,-Bstatic -lyLib_s -Wl,-Bdynamic -lcurl 
