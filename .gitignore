@@ -1,4 +1,4 @@
 #ignore build dir
-build
+build/
 #ignore libcurl source code
-third_part/curl-7.55.1
+third_part/curl-7.55.1/
