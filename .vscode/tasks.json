@@ -6,7 +6,7 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "mkdir -p build && cd build && cmake .. && make -j2",
+            "command": "mkdir -p build && cd build && cmake -DCMAKE_BUILD_TYPE=debug .. && make -j2",
             "group": {
                 "kind": "build",
                 "isDefault": true

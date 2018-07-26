@@ -10,6 +10,14 @@ set(SRC
 
 endif()
 
+
+if(BUILD_MODULE_YLOG)
+
+set(SRC
+    ${SRC} ${CMAKE_CURRENT_SOURCE_DIR}/ylog.cpp)
+
+endif()
+
 #----------------------------------------------------------------------------------------
 
 if(WIN32)
