@@ -24,6 +24,7 @@ namespace yLib{
         protected:
         private:
         static char * m_ptr_msg_buf;
+        static bool m_b_is_class_access;
     };
 }
 

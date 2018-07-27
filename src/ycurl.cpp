@@ -4,11 +4,21 @@ static size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdat
         
     //RecStr.from_bytes(ptr, ptr+size*nmemb-1);
     //RecStr = std::string(ptr,size*nmemb);
-    memcpy(userdata,ptr,size*nmemb);
-    std::string __msg =  "ycurl get data :"+std::string((char*)userdata);
-    yLib::yLog::I( __msg.c_str() );
+    long int data_size = 0;
+    if ( YCURL_RECBUF_MAX_LEN >= size*nmemb ){
+        
+        memcpy(userdata,ptr,size*nmemb);
+        data_size = size * nmemb;
+    }
+    else{
 
-    return size*nmemb;
+        memcpy(userdata,ptr,YCURL_RECBUF_MAX_LEN);
+        data_size = YCURL_RECBUF_MAX_LEN;
+    }
+    std::string __msg =  "ycurl get data len = %d, data is  :"+std::string((char*)userdata);
+    yLib::yLog::I( __msg.c_str() , data_size);
+
+    return size * nmemb;
 }
 
 yLib::yCurl::yCurl(){
