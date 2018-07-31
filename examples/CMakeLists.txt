@@ -66,3 +66,34 @@ target_link_libraries(test_yshell libyLib.so )
 endif()
 
 endif()
+
+
+##########################################################################
+
+if(BUILD_MODULE_YXML)
+
+set(SRC
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_yxml.cpp)
+
+link_directories(${CMAKE_CURRENT_BINARY_DIR}/../src/)
+#message(${CMAKE_CURRENT_BINARY_DIR})
+
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux_amd64/)
+
+add_executable(test_yxml ${SRC})  
+
+
+
+if(BUILD_STATIC_YLIB)
+target_link_libraries(test_yxml libyLib_s.a libxml2.so)
+else()
+target_link_libraries(test_yxml libyLib.so libxml2.so)
+endif()
+
+endif()
+
+add_custom_command(TARGET test_yxml
+  PRE_BUILD 
+  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/test.xml ${CMAKE_CURRENT_BINARY_DIR}/
+  COMMENT "Now, we will copy test.xml for test-test_yxml"
+ )
