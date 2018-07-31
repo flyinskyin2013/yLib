@@ -26,6 +26,13 @@ set(SRC
 
 endif()
 
+if(BUILD_MODULE_YLOG)
+
+set(SRC
+    ${SRC} ${CMAKE_CURRENT_SOURCE_DIR}/yxml.cpp)
+
+endif()
+
 #----------------------------------------------------------------------------------------
 
 if(WIN32)
