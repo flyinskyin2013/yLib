@@ -13,13 +13,16 @@ It preliminary relized ycurl-module and establish a framework of compiltion and 
 
 Module Lists:
 ==========
-ycurl-module
-ylog-module
+ycurl-module<br> 
+ylog-module<br> 
+yshell-module<br> 
+yxml-module<br> 
 
 
 Dependences:
 ==========
 libcurl-7.55.1
+libxml2-2.7.1
 
 
 
