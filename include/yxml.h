@@ -25,7 +25,8 @@ namespace yLib{
         yXML();
         ~yXML();
         int yXml_Read(std::string & xml_path);
-        int yXml_Set_Val(std::string &node_name, std::string &node_prop_name, std::string &node_prop_val, std::string & child_node_name, std::string child_node_val);
+        int yXml_Set_Val(std::string &node_name, std::string &node_prop_name, std::string &node_prop_val, std::string & child_node_name, std::string &child_node_val) const;
+        int yXml_Get_Val(std::string &node_name, std::string &node_prop_name, std::string &node_prop_val, std::string & child_node_name, std::string &child_node_val) const;
         int yXml_Write(std::string & xml_path);
         protected:
         private:
