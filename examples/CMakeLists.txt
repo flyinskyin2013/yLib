@@ -30,6 +30,19 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 elseif(ANDROID)
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/android)
 endif()
+
+#set path to run test-examples
+link_directories(${CMAKE_INSTALL_PREFIX}/lib)
+
+#set(CMAKE_SKIP_BUILD_RPATH FALSE)                 # 编译时加上RPATH  
+#set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)         # 编译时RPATH不使用安装的RPATH  
+#set(CMAKE_INSTALL_RPATH "")                       # 安装RPATH为空  
+#set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)      # 安装的执行文件不加上RPATH
+#set(CMAKE_SKIP_INSTALL_RPATH TRUE)
+#set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+
+#set(CMAKE_SKIP_RPATH TRUE)
+#set(CMAKE_SKIP_INSTALL_RPATH TRUE)
 #----------------------------------------------------------------------------------------
 function(build_module_examples name)
 
@@ -49,10 +62,20 @@ function(build_module_examples name)
     #message("dep lib  ${DEP_LIBS}")
         
     if(BUILD_SHARED_YLIB)
-        target_link_libraries(test_${module_name} libyLib.so ${DEP_LIBS})
+        target_link_libraries(test_${module_name} libylib.so ${DEP_LIBS})
     else()
-        target_link_libraries(test_${module_name} libyLib_s.a ${DEP_LIBS})
+        target_link_libraries(test_${module_name} libylib_s.a ${DEP_LIBS})
     endif()
+
+# RUNTIME-rpath maybe be diffcult.
+#    INSTALL(TARGETS  test_${module_name}
+#        RUNTIME DESTINATION examples
+#    )
+
+    INSTALL(PROGRAMS 
+        ${CMAKE_CURRENT_BINARY_DIR}/test_${module_name}
+        DESTINATION examples
+    )
 
 
 endfunction()
@@ -91,5 +114,12 @@ if(BUILD_MODULE_YXML)
         COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/test.xml ${CMAKE_CURRENT_BINARY_DIR}/
         COMMENT "Now, we will copy test.xml for example test_yxml"
         )
+    
+    INSTALL(FILES
+
+        ${CMAKE_CURRENT_SOURCE_DIR}/test.xml
+        DESTINATION 
+        examples
+    )
 endif()
 

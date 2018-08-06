@@ -13,6 +13,8 @@ MESSAGE("================================================================")
 
 #----------------------------------------------------------------------------------------
 
+set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/install")
+
 #set(CMAKE_BUILD_TYPE release CACHE STRING "Type of build" FORCE)
 MESSAGE(STATUS "BUILD_TYPE is : ${CMAKE_BUILD_TYPE}")
 if(CMAKE_BUILD_TYPE MATCHES "(Release|RELEASE|release)")
@@ -46,7 +48,7 @@ option(BUILD_MODULE_YXML "Build module-yxml " ON)
 #----------------------------------------------------------------------------------------
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/core)
 #----------------------------------------------------------------------------------------
 
 add_subdirectory(src)
