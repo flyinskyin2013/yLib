@@ -143,3 +143,18 @@ INSTALL(FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/../include/ylib.h 
     DESTINATION include
 )
+
+#INSTALL(SCRIPT
+
+#    ${CMAKE_CURRENT_SOURCE_DIR}/../cmake/FindyLibConfig.cmake.example
+#    CODE
+#    "MESSAGE(\"Installing ylib.cmake file\")"
+#)
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../cmake/yLibConfig.cmake.example yLibConfig.cmake @ONLY)
+
+INSTALL(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/yLibConfig.cmake
+    DESTINATION cmake
+)
+
