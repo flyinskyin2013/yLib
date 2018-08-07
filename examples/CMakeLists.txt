@@ -123,3 +123,17 @@ if(BUILD_MODULE_YXML)
     )
 endif()
 
+
+
+
+INSTALL(PROGRAMS 
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_ylib_cmake_config_file.sh
+    DESTINATION examples
+)
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../examples/CMakeLists.txt.example CMakeLists.txt.example @ONLY)
+
+INSTALL(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/CMakeLists.txt.example
+    DESTINATION examples
+)

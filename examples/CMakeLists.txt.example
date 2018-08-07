@@ -1,0 +1,11 @@
+cmake_minimum_required(VERSION 2.8.10)
+
+SET(PROJECT_NAME test)
+project(${PROJECT_NAME})
+
+set(yLib_DIR "@CMAKE_INSTALL_PREFIX@/cmake")
+
+find_package(yLib REQUIRED)
+
+MESSAGE(STATUS ${yLib_INCLUDE_DIRS})
+MESSAGE(STATUS ${yLib_LIBS})
