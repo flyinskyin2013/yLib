@@ -26,7 +26,7 @@ Dependences:
 ==========
 libcurl-7.55.1<br> 
 libxml2-2.7.1<br> 
-
+liblog4cpp-1.1.3<br> 
 
 
 

@@ -1,0 +1,22 @@
+
+#logger
+log4cpp.rootCategory=DEBUG,yLogger
+ 
+#appender
+log4cpp.appender.yLogger=RollingFileAppender
+
+log4cpp.appender.yLogger.fileName=yLogger.log
+
+log4cpp.appender.yLogger.CreateDirs=true
+log4cpp.appender.yLogger.Append=true
+
+log4cpp.appender.yLogger.MaxFileSize=10MB
+log4cpp.appender.yLogger.MaxBackupIndex=1
+
+
+#layout
+
+log4cpp.appender.yLogger.layout=PatternLayout
+log4cpp.appender.yLogger.layout.ConversionPattern=%d yLog[%5p]>> %m%n
+
+
