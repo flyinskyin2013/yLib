@@ -1,7 +1,7 @@
 #include "ylib.h"
 
-
-
+//LOG_TAIL will add current filename , function-name, line-number
+//such as str:<<  FileName=log.cpp  LineNum=40  FuncName=void a::b(log4cpp::Category&)
 int main (int argc, char * argv[]){
 
     yLib::yLog::I( "class call" );
