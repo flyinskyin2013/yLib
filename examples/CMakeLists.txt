@@ -62,9 +62,9 @@ function(build_module_examples name)
     #message("dep lib  ${DEP_LIBS}")
         
     if(BUILD_SHARED_YLIB)
-        target_link_libraries(test_${module_name} libylib.so ${DEP_LIBS})
+        target_link_libraries(test_${module_name} libylib.so liblog4cpp.so ${DEP_LIBS})
     else()
-        target_link_libraries(test_${module_name} libylib_s.a ${DEP_LIBS})
+        target_link_libraries(test_${module_name} libylib_s.a liblog4cpp.so ${DEP_LIBS})
     endif()
 
 # RUNTIME-rpath maybe be diffcult.
@@ -90,8 +90,16 @@ endif()
 ##########################################################################
 if(BUILD_MODULE_YLOG)
 
-    build_module_examples(YLOG)
+    build_module_examples(YLOG liblog4cpp.so)
 
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/log4cplus.properties.example log4cplus.properties @ONLY)
+
+    INSTALL(FILES
+
+        ${CMAKE_CURRENT_BINARY_DIR}/log4cplus.properties
+        DESTINATION 
+        examples
+    )
 endif()
 
 ##########################################################################

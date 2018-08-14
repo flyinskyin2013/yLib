@@ -99,14 +99,14 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
     if(BUILD_STATIC_YLIB)
 
         target_link_libraries( ylib_s
-                            libcurl.so libxml2.so )
+                            libcurl.so libxml2.so liblog4cpp.so)
 
     endif()
 
     if(BUILD_SHARED_YLIB)
 
         target_link_libraries( ylib
-                            libcurl.so libxml2.so )
+                            libcurl.so libxml2.so liblog4cpp.so)
 
     endif()
 

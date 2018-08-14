@@ -45,7 +45,11 @@
         "thread": "cpp",
         "type_traits": "cpp",
         "typeinfo": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "strstream": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "iomanip": "cpp"
     },
     "C_Cpp.default.configurationProvider": "",
     "cmake.configureOnOpen": true,
