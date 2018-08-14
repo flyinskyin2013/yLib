@@ -1,6 +1,6 @@
 yLib
 ==========
-This lib collect and collate usage of common third-lib in my daily-work.
+This lib collect and collate usage of common skills in my daily-work.
 
 
 
