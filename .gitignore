@@ -6,3 +6,5 @@ third_part/curl-7.55.1/
 third_part/libxml2-2.7.1/
 #ignore log4cpp 1.1.3 source code
 third_part/log4cpp-1.1.3/
+#ignore Y_LINUX_FRAME project dir
+third_part/Y_LINUX_FRAME/
