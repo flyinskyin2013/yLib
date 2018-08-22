@@ -145,3 +145,20 @@ INSTALL(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/CMakeLists.txt.example
     DESTINATION examples
 )
+
+##########################################################################
+#build program frame example
+add_executable(test_ymain
+    ${CMAKE_CURRENT_SOURCE_DIR}/ProgramFrameExamples/ymain.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ProgramFrameExamples/ystart.cpp
+    )
+if(BUILD_SHARED_YLIB)
+    target_link_libraries(test_ymain libylib.so liblog4cpp.so pthread)
+else()
+    target_link_libraries(test_ymain libylib_s.a liblog4cpp.so pthread)
+endif()
+
+INSTALL(PROGRAMS 
+    ${CMAKE_CURRENT_BINARY_DIR}/test_ymain
+    DESTINATION examples/ProgramFrameExamples
+)
