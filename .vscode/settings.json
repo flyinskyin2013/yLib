@@ -49,9 +49,16 @@
         "strstream": "cpp",
         "deque": "cpp",
         "list": "cpp",
-        "iomanip": "cpp"
+        "iomanip": "cpp",
+        "cerrno": "cpp"
     },
     "C_Cpp.default.configurationProvider": "",
     "cmake.configureOnOpen": true,
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    "files.watcherExclude": {
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "**/node_modules/**": true,
+        "**/third_part/**":true
+    }
 }

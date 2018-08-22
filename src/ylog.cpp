@@ -1,17 +1,18 @@
 #include "ylog.h"
 
-char * yLib::yLog::m_ptr_msg_buf = nullptr;
-bool yLib::yLog::m_b_is_class_access = true;
+char  yLib::yLog::m_ptr_msg_buf[] = {'\0'};
+//bool yLib::yLog::m_b_is_class_access = true;
 log4cpp::Category * yLib::yLog::root = nullptr;
 bool yLib::yLog::m_enable_log4cpp = false;
+pthread_mutex_t yLib::yLog::m_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 yLib::yLog::yLog(bool enable_log4cpp , std::string log_path){
 
-    if ( nullptr ==  m_ptr_msg_buf ){
+    // if ( nullptr ==  m_ptr_msg_buf ){
     
-        m_ptr_msg_buf = new char[MSG_BUF_SIZE];
-        m_b_is_class_access = false;
-    }
+    //     m_ptr_msg_buf = new char[MSG_BUF_SIZE];
+    //     m_b_is_class_access = false;
+    // }
 
     if ( enable_log4cpp ){
 
@@ -24,9 +25,9 @@ yLib::yLog::yLog(bool enable_log4cpp , std::string log_path){
 
 yLib::yLog::~yLog(){
 
-    delete [] m_ptr_msg_buf;
-    m_b_is_class_access = true;
-    m_ptr_msg_buf = nullptr;
+    // delete [] m_ptr_msg_buf;
+    // m_b_is_class_access = true;
+    // m_ptr_msg_buf = nullptr;
 
     if ( m_enable_log4cpp ){
         //log4cpp
@@ -36,8 +37,10 @@ yLib::yLog::~yLog(){
 
 void yLib::yLog::I(const char * fmt , ...){
 
-    if ( m_b_is_class_access )
-        m_ptr_msg_buf = new char[MSG_BUF_SIZE];
+    // if ( m_b_is_class_access )
+    //     m_ptr_msg_buf = new char[MSG_BUF_SIZE];
+
+    pthread_mutex_lock(&m_mutex);
 
     memset(m_ptr_msg_buf, 0, MSG_BUF_SIZE);
 
@@ -59,17 +62,21 @@ void yLib::yLog::I(const char * fmt , ...){
     if ( m_enable_log4cpp )
         root->info(m_ptr_msg_buf);
 
-    if ( m_b_is_class_access ){
+    // if ( m_b_is_class_access ){
 
-        delete [] m_ptr_msg_buf;
-        m_ptr_msg_buf = nullptr;
-    }
+    //     delete [] m_ptr_msg_buf;
+    //     m_ptr_msg_buf = nullptr;
+    // }
+
+    pthread_mutex_unlock(&m_mutex);
 }
 
 void yLib::yLog::D(const char * fmt , ...){
 
-    if ( m_b_is_class_access )
-        m_ptr_msg_buf = new char[MSG_BUF_SIZE];
+    // if ( m_b_is_class_access )
+    //     m_ptr_msg_buf = new char[MSG_BUF_SIZE];
+
+    pthread_mutex_lock(&m_mutex);
 
     memset(m_ptr_msg_buf, 0, MSG_BUF_SIZE);
 
@@ -91,17 +98,21 @@ void yLib::yLog::D(const char * fmt , ...){
     if ( m_enable_log4cpp )
         root->debug(m_ptr_msg_buf);
 
-    if ( m_b_is_class_access ){
+    // if ( m_b_is_class_access ){
 
-        delete [] m_ptr_msg_buf;
-        m_ptr_msg_buf = nullptr;
-    }
+    //     delete [] m_ptr_msg_buf;
+    //     m_ptr_msg_buf = nullptr;
+    // }
+
+    pthread_mutex_unlock(&m_mutex);
 }
 
 void yLib::yLog::W(const char * fmt , ...){
 
-    if ( m_b_is_class_access )
-        m_ptr_msg_buf = new char[MSG_BUF_SIZE];
+    // if ( m_b_is_class_access )
+    //     m_ptr_msg_buf = new char[MSG_BUF_SIZE];
+
+    pthread_mutex_lock(&m_mutex);
 
     memset(m_ptr_msg_buf, 0, MSG_BUF_SIZE);
 
@@ -124,17 +135,21 @@ void yLib::yLog::W(const char * fmt , ...){
         root->warn(m_ptr_msg_buf);
 
 
-    if ( m_b_is_class_access ){
+    // if ( m_b_is_class_access ){
 
-        delete [] m_ptr_msg_buf;
-        m_ptr_msg_buf = nullptr;
-    }
+    //     delete [] m_ptr_msg_buf;
+    //     m_ptr_msg_buf = nullptr;
+    // }
+
+    pthread_mutex_unlock(&m_mutex);
 }
 
 void yLib::yLog::E(const char * fmt , ...){
 
-    if ( m_b_is_class_access )
-        m_ptr_msg_buf = new char[MSG_BUF_SIZE];
+    // if ( m_b_is_class_access )
+    //     m_ptr_msg_buf = new char[MSG_BUF_SIZE];
+
+    pthread_mutex_lock(&m_mutex);
 
     memset(m_ptr_msg_buf, 0, MSG_BUF_SIZE);
 
@@ -156,9 +171,15 @@ void yLib::yLog::E(const char * fmt , ...){
         root->warn(m_ptr_msg_buf);
 
 
-    if ( m_b_is_class_access ){
+    // if ( m_b_is_class_access ){
 
-        delete [] m_ptr_msg_buf;
-        m_ptr_msg_buf = nullptr;
-    }
+    //     delete [] m_ptr_msg_buf;
+    //     m_ptr_msg_buf = nullptr;
+    // }
+
+    pthread_mutex_unlock(&m_mutex);
+}
+
+void yLib::yLog::SetLog4cpp(bool enable_log4cpp){
+    m_enable_log4cpp = enable_log4cpp;
 }

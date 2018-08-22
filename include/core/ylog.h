@@ -3,9 +3,20 @@
 
 #include <iostream>
 #include <string>
+
+#ifdef __cplusplus
+extern "C"{
+#endif //__cplusplus
+
 #include <string.h>
 #include <stdarg.h>
 #include <unistd.h>
+#include <pthread.h>
+
+#ifdef __cplusplus
+}
+#endif //__cplusplus
+
 
 #include "ycommon.h"
 
@@ -34,21 +45,22 @@ namespace yLib{
 		std::string("  LineNum=") + std::to_string(__LINE__)+ \
 		std::string("  FuncName=") + std::string(__PRETTY_FUNCTION__)
 
-    #define MSG_BUF_SIZE 2048
+    #define MSG_BUF_SIZE 4096 //4k ,linux-func-stack max size is 8MB
     class yLog{
 
         public:
             yLog(bool enable_log4cpp = false, std::string log_path = "log4cplus.properties");
             ~yLog();
+            static void SetLog4cpp(bool enable_log4cpp = false);
             static void D(const char * fmt , ...);
             static void W(const char * fmt , ...);
             static void I(const char * fmt , ...);
             static void E(const char * fmt , ...);
         protected:
         private:
-        static char * m_ptr_msg_buf;
-        static bool m_b_is_class_access;
-        
+        static char m_ptr_msg_buf[MSG_BUF_SIZE];
+        //static bool m_b_is_class_access;
+        static pthread_mutex_t m_mutex;
         static log4cpp::Category * root;
         static bool m_enable_log4cpp;
     };
