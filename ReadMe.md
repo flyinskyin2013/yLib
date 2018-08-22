@@ -5,7 +5,7 @@ This lib collect and collate usage of common skills in my daily-work.
 Version:
 ==========
 Current lastest version: V0.03<br> 
-More details,please see [Version Notes](VersionNotes)
+More details,please see [Version Notes](VersionNotes.md)
 
 Module Lists:
 ==========
@@ -21,4 +21,4 @@ libxml2-2.7.1<br>
 liblog4cpp-1.1.3<br> 
 
 
-[Install and Usages](InstallAndUsages)<br> 
+[Install and Usages](InstallAndUsages.md)<br> 
