@@ -2,6 +2,11 @@ yLib
 ==========
 This lib collect and collate usage of common skills in my daily-work.
 
+Version:
+==========
+Current lastest version: V0.03<br> 
+More details,please see [Version Notes](VersionNotes)
+
 Module Lists:
 ==========
 ycurl-module<br> 
@@ -15,5 +20,5 @@ libcurl-7.55.1<br>
 libxml2-2.7.1<br> 
 liblog4cpp-1.1.3<br> 
 
-[Version Notes](VersionNotes)<br> 
-[InstallAndUsages](InstallAndUsages)<br> 
+
+[Install and Usages](InstallAndUsages)<br> 
