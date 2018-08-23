@@ -28,5 +28,6 @@ int main (int argc, char * argv[]){
     yLib::yLog::W(("class call A %d, %f test ylog" + LOG_TAIL).c_str(), 1234, 66.5555);
     yLib::yLog::E(("class call A %d, %f test ylog" + LOG_TAIL).c_str(), 1234, 66.5555);
 
+    
     return 0;
 }
