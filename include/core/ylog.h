@@ -46,6 +46,8 @@ namespace yLib{
 		std::string("  FuncName=") + std::string(__PRETTY_FUNCTION__)
 
     #define MSG_BUF_SIZE 4096 //4k ,linux-func-stack max size is 8MB
+
+    //yLog support thread-safety,defaultly.
     class yLog{
 
         public:
