@@ -8,3 +8,5 @@ third_part/libxml2-2.7.1/
 third_part/log4cpp-1.1.3/
 #ignore Y_LINUX_FRAME project dir
 third_part/Y_LINUX_FRAME/
+#ignore libconfig source code 
+third_part/libconfig-1.7.2/

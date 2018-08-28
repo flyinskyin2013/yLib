@@ -42,6 +42,7 @@ option(BUILD_MODULE_YCURL "Build module-ycurl " ON)
 option(BUILD_MODULE_YLOG "Build module-ylog " ON)
 option(BUILD_MODULE_YSHELL "Build module-yshell " ON)
 option(BUILD_MODULE_YXML "Build module-yxml " ON)
+option(BUILD_MODULE_YCONFIG "Build module-yconfig " ON)
 ################################################################
 
 
