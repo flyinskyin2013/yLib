@@ -42,6 +42,12 @@ if(BUILD_MODULE_YXML)
 
 endif()
 
+if(BUILD_MODULE_YCONFIG)
+
+    ylib_build_module(YCONFIG)
+
+endif()
+
 #----------------------------------------------------------------------------------------
 
 if(WIN32)

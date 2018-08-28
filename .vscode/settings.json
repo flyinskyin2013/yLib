@@ -50,7 +50,9 @@
         "deque": "cpp",
         "list": "cpp",
         "iomanip": "cpp",
-        "cerrno": "cpp"
+        "cerrno": "cpp",
+        "*.h++": "cpp",
+        "*.c++": "cpp"
     },
     "C_Cpp.default.configurationProvider": "",
     "cmake.configureOnOpen": true,

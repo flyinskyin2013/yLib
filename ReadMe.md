@@ -13,6 +13,7 @@ ycurl-module<br>
 ylog-module<br> 
 yshell-module<br> 
 yxml-module<br>
+yconfig-module<br>
 MakefileExamples<br> 
 ProgramFrameExamples<br> 
 ShellScriptExamples<br> 
