@@ -73,7 +73,7 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
     elseif(${BUILD_YLIB_ARCH} MATCHES "armeabi-v7a")
         link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/armeabi-v7a)
     elseif(${BUILD_YLIB_ARCH} MATCHES "arm64-v8a")
-        link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/arme64-v8a)
+        link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/arm64-v8a)
     endif()
 
 elseif(ANDROID)
