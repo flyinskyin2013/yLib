@@ -7,9 +7,6 @@
 
 namespace yLib{
 
-    //typedef libconfig::Setting yConfigSetting;
-    class yConfigSetting;//declare
-
     class yConfig{
         public:
             yConfig(){}
@@ -17,21 +14,24 @@ namespace yLib{
             int yConfigReadFile(const std::string & file_path);
             int yConfigWriteFile(const std::string & file_path);
            // yConfigSetting & operator [](const char * setting_name);
-            int yConfigGetRootSetting(void);
-
-            yConfigSetting * m_root_setting = nullptr;
+            //int yConfigGetRootSetting(void);
+            int yConfigGetIntValue(const char * node_path);
+            bool yConfigGetBoolValue(const char * node_path);
+            float yConfigGetFloatValue(const char * node_path);
+            std::string yConfigGetStringValue(const char * node_path);
+            
+            // operator bool ();
+            // operator int ();
+            // operator std::string ();
+            // operator float ();
+            
         private:
-        libconfig::Config m_config;
-        
-        
-    };
+            libconfig::Config m_config;
 
-    class yConfigSetting{
-        public:
-        yConfigSetting(const libconfig::Setting * root_setting);
-        ~yConfigSetting(){}
+
 
     };
+
 
 }
 
