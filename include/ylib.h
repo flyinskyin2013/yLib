@@ -6,7 +6,7 @@
 #include <core/ylog.h>
 #include <core/yshell.h>
 #include <core/yxml.h>
-#include <core/lib>
+#include <core/yconfig.h>
 
 
 #endif //_YLIB_H_

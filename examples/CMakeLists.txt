@@ -62,9 +62,9 @@ function(build_module_examples name)
     #message("dep lib  ${DEP_LIBS}")
         
     if(BUILD_SHARED_YLIB)
-        target_link_libraries(test_${module_name} libylib.so liblog4cpp.so ${DEP_LIBS})
+        target_link_libraries(test_${module_name} libylib.so -lssl -lcrypto -lz -pthread  ${DEP_LIBS})
     else()
-        target_link_libraries(test_${module_name} libylib_s.a liblog4cpp.so ${DEP_LIBS})
+        target_link_libraries(test_${module_name} libylib_s.so -lssl -lcrypto  -lz -pthread ${DEP_LIBS})
     endif()
 
 # RUNTIME-rpath maybe be diffcult.
@@ -83,14 +83,14 @@ endfunction()
 
 if(BUILD_MODULE_YCURL)
 
-    build_module_examples(YCURL libcurl.so)
+    build_module_examples(YCURL)
 
 endif()
 
 ##########################################################################
 if(BUILD_MODULE_YLOG)
 
-    build_module_examples(YLOG liblog4cpp.so)
+    build_module_examples(YLOG)
 
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/log4cplus.properties.example log4cplus.properties @ONLY)
 
@@ -115,7 +115,7 @@ endif()
 
 if(BUILD_MODULE_YXML)
 
-    build_module_examples(YXML libxml2.so)
+    build_module_examples(YXML)
 
     add_custom_command(TARGET test_yxml
         PRE_BUILD 
@@ -147,15 +147,30 @@ INSTALL(FILES
 )
 
 ##########################################################################
+if(BUILD_MODULE_YCONFIG)
+
+    build_module_examples(YCONFIG)
+
+endif()
+
+
+INSTALL(FILES
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/test.conf
+    DESTINATION 
+    examples
+)
+
+##########################################################################
 #build program frame example
 add_executable(test_ymain
     ${CMAKE_CURRENT_SOURCE_DIR}/ProgramFrameExamples/ymain.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ProgramFrameExamples/ystart.cpp
     )
 if(BUILD_SHARED_YLIB)
-    target_link_libraries(test_ymain libylib.so liblog4cpp.so pthread)
+    target_link_libraries(test_ymain libylib_s.so -lssl -lcrypto -llog4cpp -lz -pthread -lstdc++)
 else()
-    target_link_libraries(test_ymain libylib_s.a liblog4cpp.so pthread)
+    target_link_libraries(test_ymain libylib_s.so -lssl -lcrypto -llog4cpp  -lz -pthread -lstdc++)
 endif()
 
 INSTALL(PROGRAMS 

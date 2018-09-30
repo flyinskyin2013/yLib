@@ -1,4 +1,4 @@
-prefix=/home/sky/yLib/third_part/libconfig-1.7.2/install
+prefix=/home/sky/yLib/third_part/libconfig-1.7.2/_install
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include

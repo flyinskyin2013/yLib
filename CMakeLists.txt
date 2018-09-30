@@ -32,6 +32,10 @@ endif()
 
 #set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -std=c99")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+
+
+
 #----------------------------------------------------------------------------------------
 #arch should be x86 X86 x86_64 X86_64 armeabi armeabi-v7a arm64-v8a
 set(BUILD_YLIB_ARCH x86_64 CACHE STRING "Arch of ylib" FORCE)

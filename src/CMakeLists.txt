@@ -1,3 +1,7 @@
+#link other whole-archive to libylib.so or libylib.a
+#set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--whole-archive")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--whole-archive")
+
 #----------------------------------------------------------------------------------------
 set(SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/ycommon.cpp)
@@ -105,14 +109,14 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
     if(BUILD_STATIC_YLIB)
 
         target_link_libraries( ylib_s
-                            libcurl.so libxml2.so liblog4cpp.so)
+                            libcurl.a libxml2.a liblog4cpp.a libconfig++.a)
 
     endif()
 
     if(BUILD_SHARED_YLIB)
 
         target_link_libraries( ylib
-                            libcurl.so libxml2.so liblog4cpp.so)
+                            libcurl.a libxml2.a liblog4cpp.a libconfig++.a)
 
     endif()
 
