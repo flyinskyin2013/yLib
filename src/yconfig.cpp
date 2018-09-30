@@ -49,18 +49,23 @@ int yLib::yConfig::yConfigWriteFile(const std::string & file_path){
     }
     return 0;
 }
-yLib::yConfigSetting & yLib::yConfig::yConfigGetRootSetting(void){
+int yLib::yConfig::yConfigGetIntValue(const char * node_path){
 
-   // m_root_setting = yConfigSetting(m_config.getRoot());
-    
+    libconfig::Setting & root = m_config.getRoot();
+    return (int) root.lookup(node_path);
 }
-// yLib::yConfigSetting & yLib::yConfig::operator [](const char * setting_name){
+bool yLib::yConfig::yConfigGetBoolValue(const char * node_path){
 
-//     libconfig::Setting & root = m_config.getRoot();
-//     return  root[setting_name];
-// }
+    libconfig::Setting & root = m_config.getRoot();
+    return (bool) root.lookup(node_path);
+}
+float yLib::yConfig::yConfigGetFloatValue(const char * node_path){
 
-
-yLib::yConfigSetting::yConfigSetting(const libconfig::Setting * root_setting){
-
+    libconfig::Setting & root = m_config.getRoot();
+    return (float) root.lookup(node_path);
+}
+std::string yLib::yConfig::yConfigGetStringValue(const char * node_path){
+        
+    libconfig::Setting & root = m_config.getRoot();
+    return (const char *) root.lookup(node_path);
 }
