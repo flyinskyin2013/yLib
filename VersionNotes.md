@@ -2,7 +2,7 @@ Version Notes:
 ==========
 v0.04
 ----------
-Add yconfig module ,optimize yconfig module and simplify yconfig apis.
+Add yconfig module ,optimize yconfig module and simplify yconfig apis.Meanwhile,I optimize dependence-lib about ylib.
 
 v0.03
 ----------
