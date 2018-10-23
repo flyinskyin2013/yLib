@@ -2,9 +2,13 @@
 #define _YCONFIG_H_
 
 #include <string>
-#include <libconfig/libconfig.h++>
-#include "ylog.h"
+#include "ylog.hpp"
 
+
+namespace libconfig{
+
+    class Config;
+};
 namespace yLib{
 
     class yConfigValue;
@@ -20,8 +24,8 @@ namespace yLib{
 
     class yConfig{
         public:
-            yConfig(){}
-            ~yConfig(){}
+            yConfig();
+            ~yConfig();
             int yConfigReadFile(const std::string & file_path);
             int yConfigWriteFile(const std::string & file_path);
            // yConfigSetting & operator [](const char * setting_name);
@@ -61,7 +65,7 @@ namespace yLib{
             // operator float ();
             
         private:
-            libconfig::Config m_config;
+            libconfig::Config &m_config;
 
 
 

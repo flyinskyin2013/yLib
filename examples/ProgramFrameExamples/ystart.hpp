@@ -17,7 +17,7 @@ extern "C"{
 
 #include <string>
 #include <vector>
-#include "ylib.h"
+#include "ylib.hpp"
 
 class yStartParam{
     public:

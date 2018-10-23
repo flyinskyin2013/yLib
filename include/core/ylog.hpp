@@ -18,21 +18,12 @@ extern "C"{
 #endif //__cplusplus
 
 
-#include "ycommon.h"
+#include "ycommon.hpp"
 
-//log4cpp
-#include "log4cpp/Category.hh"
-#include "log4cpp/Appender.hh"
-#include "log4cpp/FileAppender.hh"
-#include "log4cpp/OstreamAppender.hh"
-#include "log4cpp/Layout.hh"
-#include "log4cpp/BasicLayout.hh"
-#include "log4cpp/Priority.hh"
+namespace log4cpp{
 
-///property
-#include <log4cpp/Category.hh>
-#include <log4cpp/PropertyConfigurator.hh>
-//log4cpp
+    class Category;
+};
 
 
 namespace yLib{

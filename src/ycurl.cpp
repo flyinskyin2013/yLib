@@ -1,4 +1,14 @@
-#include "ycurl.h"
+#include "ycurl.hpp"
+
+#ifdef __cplusplus
+extern "C"{
+#endif //__cplusplus
+
+#include <curl/curl.h>
+
+#ifdef __cplusplus
+}
+#endif //__cplusplus
 
 static size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata){
         
@@ -81,7 +91,7 @@ int yLib::yCurl::yCurl_Get(std::string & interface, std::string user_params){
     if ( CURLE_OK !=  (m_ycurl_ret = curl_easy_perform(m_ptr_ycurl)) ){
 
         curl_easy_cleanup(m_ptr_ycurl);
-        __msg = "curl_easy_perform call failed, info="+std::string(curl_easy_strerror(m_ycurl_ret));
+        __msg = "curl_easy_perform call failed, info="+std::string(curl_easy_strerror((CURLcode)m_ycurl_ret));
         yLib::yLog::E(__msg.c_str());
         return -1;
     }
@@ -125,7 +135,7 @@ int yLib::yCurl::yCurl_Post_Json(std::string & interface, std::string json_datas
 
         curl_easy_cleanup(m_ptr_ycurl);
         curl_slist_free_all(headers);
-        __msg = "curl_easy_perform call failed, info="+std::string(curl_easy_strerror(m_ycurl_ret));
+        __msg = "curl_easy_perform call failed, info="+std::string(curl_easy_strerror((CURLcode)m_ycurl_ret));
         yLib::yLog::E(__msg.c_str());
         return -1;
     }

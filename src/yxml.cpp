@@ -1,4 +1,16 @@
-#include "yxml.h"
+#include "yxml.hpp"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif //__cplusplus
+
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+
+#ifdef __cplusplus
+}
+#endif //__cplusplus
 
 yLib::yXML::yXML(){
 

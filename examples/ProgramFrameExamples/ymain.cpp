@@ -20,7 +20,7 @@ extern "C"{
 }
 #endif //__cplusplus
 
-#include "ylib.h"
+#include "ylib.hpp"
 #include "ystart.hpp"
 
 

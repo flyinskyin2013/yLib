@@ -6,19 +6,20 @@ extern "C"
 {
 #endif //__cplusplus
 
-#include <libxml/parser.h>
-#include <libxml/tree.h>
+typedef struct _xmlDoc xmlDoc;
+typedef xmlDoc * xmlDocPtr;
 
 #ifdef __cplusplus
 }
 #endif //__cplusplus
 
 #include <string>
-#include "ylog.h"
+#include "ylog.hpp"
 
 namespace yLib{
 
 
+    
     class yXML{
 
         public:
