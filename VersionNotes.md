@@ -1,5 +1,9 @@
 Version Notes:
 ==========
+v0.05
+----------
+optimize ylib and simplize header-files dependence of ylib
+
 v0.04
 ----------
 Add yconfig module ,optimize yconfig module and simplify yconfig apis.Meanwhile,I optimize dependence-lib about ylib.
