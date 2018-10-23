@@ -4,7 +4,7 @@ This lib collect and collate usage of common skills in my daily-work.
 
 Version:
 ==========
-Current lastest version: V0.04<br> 
+Current lastest version: V0.05<br> 
 More details,please see [Version Notes](VersionNotes.md)
 
 ContentLists:
