@@ -1,11 +1,11 @@
 #ifndef _YCURL_H_
 #define _YCURL_H_
 
-#include <curl/curl.h>
+
 #include <iostream>
 #include <string.h>
-#include "ycommon.h"
-#include "ylog.h"
+#include "ycommon.hpp"
+#include "ylog.hpp"
 
 namespace yLib{
 
@@ -37,8 +37,8 @@ class yCurl{
     private:
 
     yCurlParam m_param;
-    CURL *m_ptr_ycurl=NULL;
-    CURLcode m_ycurl_ret;
+    void *m_ptr_ycurl=NULL;
+    int m_ycurl_ret;
     char * m_ptr_recbuf=NULL;
 };
 

@@ -20,7 +20,7 @@ extern "C"{
 
 
 
-#include "ylog.h"
+#include "ylog.hpp"
 
 namespace yLib{
 

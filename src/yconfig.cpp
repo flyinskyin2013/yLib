@@ -1,8 +1,14 @@
-#include "yconfig.h"
-
+#include "yconfig.hpp"
+#include <libconfig/libconfig.h++>
 
 using namespace yLib;
+yLib::yConfig::yConfig():m_config(* new libconfig::Config()){
 
+}
+yLib::yConfig::~yConfig(){
+
+    delete & m_config;
+}
 int yLib::yConfig::yConfigReadFile(const std::string & file_path){
 
     try{

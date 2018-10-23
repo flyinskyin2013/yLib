@@ -1,4 +1,20 @@
-#include "ylog.h"
+#include "ylog.hpp"
+
+//log4cpp
+#include "log4cpp/Category.hh"
+#include "log4cpp/Appender.hh"
+#include "log4cpp/FileAppender.hh"
+#include "log4cpp/OstreamAppender.hh"
+#include "log4cpp/Layout.hh"
+#include "log4cpp/BasicLayout.hh"
+#include "log4cpp/Priority.hh"
+
+///property
+#include <log4cpp/Category.hh>
+#include <log4cpp/PropertyConfigurator.hh>
+//log4cpp
+
+
 
 char  yLib::yLog::m_ptr_msg_buf[] = {'\0'};
 //bool yLib::yLog::m_b_is_class_access = true;

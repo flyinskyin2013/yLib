@@ -150,7 +150,7 @@ INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/core DESTINATION includ
 )
 
 INSTALL(FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/ylib.h 
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/ylib.hpp
     DESTINATION include
 )
 
