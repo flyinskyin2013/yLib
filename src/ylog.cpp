@@ -24,7 +24,7 @@ bool yLib::yLog::m_enable_feature_ps = false;
 pthread_mutex_t yLib::yLog::m_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t yLib::yLog::m_process_mutex;
 
-yLib::yLog::yLog(bool enable_log4cpp , std::string log_path){
+yLib::yLog::yLog(){
 
     // if ( nullptr ==  m_ptr_msg_buf ){
     
@@ -32,13 +32,7 @@ yLib::yLog::yLog(bool enable_log4cpp , std::string log_path){
     //     m_b_is_class_access = false;
     // }
 
-    if ( enable_log4cpp ){
 
-        m_enable_log4cpp = enable_log4cpp;
-        //log4cpp
-        log4cpp::PropertyConfigurator::configure(log_path);
-        root = & log4cpp::Category::getRoot();
-    }
 }
 
 yLib::yLog::~yLog(){
@@ -51,8 +45,30 @@ yLib::yLog::~yLog(){
         //log4cpp
         log4cpp::Category::shutdown();
         m_enable_log4cpp = false;
+	root = nullptr;
     }
 }
+
+
+void yLib::yLog::SetLog4cpp(bool enable_log4cpp, std::string log_path ){
+	
+	if ( enable_log4cpp && (nullptr == root) ){//true, open feature of log4cpp
+
+        m_enable_log4cpp = enable_log4cpp;
+        //log4cpp
+        log4cpp::PropertyConfigurator::configure(log_path);
+        root = & log4cpp::Category::getRoot();
+    }
+
+	if ( !enable_log4cpp && (nullptr != root) ){
+
+		
+		log4cpp::Category::shutdown();
+        m_enable_log4cpp = false;
+		root = nullptr;
+	}
+}
+
 
 void yLib::yLog::I(const char * fmt , ...){
 
@@ -261,7 +277,7 @@ void yLib::yLog::E(const char * fmt , ...){
 //     m_enable_log4cpp = enable_log4cpp;
 // }
 
-void yLib::yLog::EnableFeatureProcessSafety(bool enable_feature){
+void yLib::yLog::SetProcessSafetyFeature(bool enable_feature){
 
     pthread_mutexattr_t mtx_attr;
 

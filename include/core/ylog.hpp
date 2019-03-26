@@ -42,11 +42,13 @@ namespace yLib{
     class yLog{
 
         public:
-            yLog(bool enable_log4cpp = false, std::string log_path = "log4cplus.properties");
+            yLog();
             ~yLog();
-            //static void SetLog4cpp(bool enable_log4cpp = false);
+            //
             //If you want to enable this feature,system must define _POSIX_SHARED_MEMORY_OBJECTS(getconf -a)
-            static void EnableFeatureProcessSafety(bool enable_feature);
+			static void SetLog4cpp(bool enable_log4cpp = false, std::string log_path = "log4cplus.properties");	
+            static void SetProcessSafetyFeature(bool enable_feature);
+            
             static void D(const char * fmt , ...);
             static void W(const char * fmt , ...);
             static void I(const char * fmt , ...);
