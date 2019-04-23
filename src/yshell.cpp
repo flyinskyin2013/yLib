@@ -26,7 +26,7 @@ int yLib::yShell::RunShellCommand(std::vector<std::string> & cmd){
     std::vector<std::string>::iterator it = cmd.begin();
     for ( ; it != cmd.end(); it++ ){
 
-        memcpy(loc_cmd[it-cmd.begin()], it->c_str(), it->length());
+        memcpy(loc_cmd[it-cmd.begin()], it->c_str(), it->length() + 1);////fix a bug about elment that the end char of c-string don't  contain  char('\0') of exec-args-list.
         argv[it-cmd.begin()] = loc_cmd[it-cmd.begin()];
     }
     // execv  need (char *)'s array , the last elment must be null
