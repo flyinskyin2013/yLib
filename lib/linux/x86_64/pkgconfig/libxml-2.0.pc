@@ -1,4 +1,4 @@
-prefix=/home/sky/yLib/third_part/libxml2-2.7.1/_install/
+prefix=/home/sripis/YJ_WORKDIR/yLib/third_part/build_out
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include

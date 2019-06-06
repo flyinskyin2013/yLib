@@ -38,4 +38,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/home/sky/yLib/third_part/log4cpp-1.1.3/log4cpp/_install/lib'
+libdir='/home/sripis/YJ_WORKDIR/yLib/third_part/build_out/lib'
