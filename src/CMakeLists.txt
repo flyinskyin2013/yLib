@@ -2,6 +2,19 @@
 #set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--whole-archive")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--whole-archive")
 
+if(CMAKE_BUILD_TYPE MATCHES "(Release|RELEASE|release)")
+
+#release mode 
+
+else()
+
+#debug mode
+add_compile_options(-g)
+set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -g")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+
+endif()
+
 #----------------------------------------------------------------------------------------
 set(SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/ycommon.cpp)

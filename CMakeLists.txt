@@ -16,6 +16,7 @@ MESSAGE("================================================================")
 set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/install")
 
 #set(CMAKE_BUILD_TYPE release CACHE STRING "Type of build" FORCE)
+set(CMAKE_BUILD_TYPE debug CACHE STRING "Type of build" FORCE)
 MESSAGE(STATUS "BUILD_TYPE is : ${CMAKE_BUILD_TYPE}")
 if(CMAKE_BUILD_TYPE MATCHES "(Release|RELEASE|release)")
 
