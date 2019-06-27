@@ -33,6 +33,8 @@ endif()
 
 #set path to run test-examples
 link_directories(${CMAKE_INSTALL_PREFIX}/lib)
+set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -g")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 
 #set(CMAKE_SKIP_BUILD_RPATH FALSE)                 # 编译时加上RPATH  
 #set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)         # 编译时RPATH不使用安装的RPATH  

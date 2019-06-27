@@ -38,7 +38,7 @@ namespace yLib{
             float yConfigGetFloatValue(const char * node_path);
             std::string yConfigGetStringValue(const char * node_path);
             */
-            yConfigValue  yConfigGetValue(const char * node_path);
+            yConfigValue  yConfigGetValue(const char * node_path)throw(char *, const char *);
             yConfigValue  yConfigGetValue(const std::string & node_path);
            
             
@@ -78,6 +78,8 @@ namespace yLib{
 
         yConfigValue(){}
         ~yConfigValue(){}
+		
+		yConfigValueType GetyConfigValueType(void);
 
         operator int() const;
         operator bool() const;
