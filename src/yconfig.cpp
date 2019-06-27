@@ -35,6 +35,8 @@ int yLib::yConfig::yConfigReadFile(const std::string & file_path){
     return 0;
 }
 
+
+
 int yLib::yConfig::yConfigWriteFile(const std::string & file_path){
 
     try{
@@ -59,34 +61,54 @@ int yLib::yConfig::yConfigWriteFile(const std::string & file_path){
     return 0;
 }
 
-yLib::yConfigValue yLib::yConfig::yConfigGetValue(const char * node_path){
+yLib::yConfigValue yLib::yConfig::yConfigGetValue(const char * node_path) throw(char *, const char *) {
 
     libconfig::Setting & root = m_config.getRoot();
-    libconfig::Setting & setting_value = root.lookup(node_path);
-
+    libconfig::Setting * setting_value = nullptr;
     yConfigValue tmpValue;
-    switch(setting_value.getType()){
+    try
+    {
+        setting_value = &root.lookup(node_path);
+    }
+    catch(...)//SettingNotFoundException 
+    {
 
-        case libconfig::Setting::Type::TypeInt:
-        tmpValue.value_int = (int)setting_value;
+        yLib::yLog::E("node(%s) is not found", node_path);
+        return std::move(tmpValue);
+    }
+    
+
+    switch(setting_value->getType()){
+
+        case libconfig::Setting::Type::TypeInt:{
+        tmpValue.value_int = (int)*setting_value;
+		tmpValue._current_data_type_ = yLib::yConfigValueType::INT_TYPE;
         break;
-
-        case libconfig::Setting::Type::TypeBoolean:
-        tmpValue.value_bool = (bool)setting_value;
+		}
+        case libconfig::Setting::Type::TypeBoolean:{
+        tmpValue.value_bool = (bool)*setting_value;
+		tmpValue._current_data_type_ = yLib::yConfigValueType::BOOL_TYPE;
         break;
-
-        case libconfig::Setting::Type::TypeFloat:
-        tmpValue.value_float = (float)setting_value;
+		}
+        case libconfig::Setting::Type::TypeFloat:{
+        tmpValue.value_float = (float)*setting_value;
+		tmpValue._current_data_type_ = yLib::yConfigValueType::FLOAT_TYPE;
         break;
+		}
+        case libconfig::Setting::Type::TypeString:{
 
-        case libconfig::Setting::Type::TypeString:
-        tmpValue.value_string = (const char *)setting_value;
+        tmpValue.value_string =(const char * )*setting_value;
+		tmpValue._current_data_type_ = yLib::yConfigValueType::STRING_TYPE;
         break;
-
-        default :
-            yLib::yLog::E("yConfigValueType Error");
+		}
+        default :{
+        
+            yLib::yLog::E("yConfigValueType: Invalid setting_value type error");
+            throw "yConfigValueType Error";
+        }
             
     }
+
     return std::move(tmpValue);
 }
 yLib::yConfigValue yLib::yConfig::yConfigGetValue(const std::string & node_path){
@@ -268,6 +290,10 @@ yLib::yConfigValue::operator std::string() const{
 //     return (char *)this->value_string.c_str();
 // }
 
+yLib::yConfigValueType yLib::yConfigValue::GetyConfigValueType(void){
+	
+	return _current_data_type_;
+}
 
 yLib::yConfigValue & yLib::yConfigValue::operator=(int value){
 
