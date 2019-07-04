@@ -1,12 +1,22 @@
 #!/bin/bash
 
+function clean(){
+
+	echo "clean curl-7.55.1/ libxml2-2.7.1/ log4cpp/ curl-7.55.1/ libconfig-1.7.2/  ... ..."
+	rm -rf rm curl-7.55.1/ libxml2-2.7.1/ log4cpp/ curl-7.55.1/  libconfig-1.7.2/
+
+}
+
 third_part_root_dir=$(cd `dirname $0`; pwd)
 
-#tar -xvf curl-7.55.1.tar.gz
-#tar -xvf libxml2-2.7.1.tar.gz
-tar -xvf libconfig-1.7.2.tar.gz
-#tar -xvf log4cpp-1.1.3.tar.gz
+function init_lib(){
 
+	tar -xvf curl-7.55.1.tar.gz
+	tar -xvf libxml2-2.7.1.tar.gz
+	tar -xvf libconfig-1.7.2.tar.gz
+	tar -xvf log4cpp-1.1.3.tar.gz
+
+}
 
 if [ ! -d "build_out" ]
 then
@@ -34,8 +44,13 @@ function build_libcurl(){
 #cmake  -DCMAKE_INSTALL_PREFIX=${third_part_root_dir}/curl-7.55.1/install -DBUILD_CURL_EXE=OFF \
 # -DCURL_STATICLIB=ON -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_C_FLAGS=-fPIC -DUSE_LIBRTMP=OFF  ..
 # cmakelists.txt may have some issue
-
+	
 	./configure --prefix=${third_part_root_dir}/build_out --without-librtmp CFLAGS=-fPIC CPPFLAGS=-fPIC
+	if [ $? -ne 0 ]
+	then
+
+		exit 1
+	fi
 
 	make -j8
 
@@ -62,8 +77,17 @@ function build_libxml(){
 		mkdir _install
 	fi
 
+	echo "update scripts of config.guess and config.sub for tx2-board " 
+	cp ../config.guess .
+	cp ../config.sub .
 
+ 
 	./configure --prefix=${third_part_root_dir}/build_out  CFLAGS=-fPIC CPPFLAGS=-fPIC
+	if [ $? -ne 0 ]
+	then
+		
+		exit 1
+	fi
 
 	make -j8
 
@@ -94,8 +118,14 @@ function build_libconfig(){
 	patch -p1 < ../libconfig_cmake.patch
 
 	
-	cd build 
-	cmake -DCMAKE_INSTALL_PREFIX=/home/sripis/YJ_WORKDIR/yLib/third_part/build_out -DCMAKE_C_FLAGS=-fPIC -DCMAKE_CXX_FLAGS=-fPIC  -DCMAKE_C_FLAGS=-std=c99  -DCMAKE_CXX_FLAGS=-std=c++11 -DBUILD_SHARED_LIBS=OFF ..
+	cd build
+	
+	cmake -DCMAKE_INSTALL_PREFIX=${third_part_root_dir}/build_out -DCMAKE_C_FLAGS=-fPIC -DCMAKE_CXX_FLAGS=-fPIC  -DCMAKE_C_FLAGS=-std=c99  -DCMAKE_CXX_FLAGS=-std=c++11 -DBUILD_SHARED_LIBS=OFF ..
+	if [ $? -ne 0 ]
+	then 
+	
+		exit 1
+	fi 
 
 	#./configure --prefix=${third_part_root_dir}/build_out  CFLAGS=-fPIC CPPFLAGS=-fPIC
 
@@ -126,7 +156,18 @@ function build_liblog4cpp(){
 		mkdir _install
 	fi
 
+	
+	echo "update scripts of config.guess and config.sub for tx2-board " 
+	cp ../config.guess ./config/
+	cp ../config.sub ./config/
+
+
 	./configure --prefix=${third_part_root_dir}/build_out  CFLAGS=-fPIC CPPFLAGS=-fPIC
+	if [ $? -ne -0 ]
+	then 
+	
+		exit 1
+	fi
 
 
 	make -j8
@@ -136,12 +177,67 @@ function build_liblog4cpp(){
 	echo -e "\033[1;32;40m building liblog4cpp end ...  \033[0m"
 }
 
+function make_lib(){
 
-cd ${third_part_root_dir}
-#build_libcurl
-cd ${third_part_root_dir}
-#build_libxml
-cd ${third_part_root_dir}
-build_libconfig
-cd ${third_part_root_dir}
-#build_liblog4cpp
+
+	cd ${third_part_root_dir}
+	build_libcurl
+	if [ $? -ne 0 ]
+	then
+		echo "build libcurl failed."
+		exit 1
+	fi
+
+
+	cd ${third_part_root_dir}
+	build_libxml
+	if [ $? -ne 0 ]
+	then
+        	echo "build libcurl failed."
+		exit 1
+	fi
+
+
+	cd ${third_part_root_dir}
+	build_libconfig
+	if [ $? -ne 0 ]
+	then
+		echo "build libcurl failed."
+		exit 1
+	fi
+
+
+
+	cd ${third_part_root_dir}
+	build_liblog4cpp
+	if [ $? -ne 0 ]
+	then
+		echo "build libcurl failed."
+		exit 1
+	fi
+
+}
+
+#clean func
+if [ $1 = "clean" ]
+then
+	clean
+	exit 0
+fi
+
+#init lib
+
+if [ $1 = "init" ]
+then
+	init_lib
+	exit 0
+fi
+
+#make lib
+if [ $1 = "make" ]
+then
+	make_lib	
+	exit 0
+fi
+
+
