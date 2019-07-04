@@ -170,9 +170,9 @@ add_executable(test_ymain
     ${CMAKE_CURRENT_SOURCE_DIR}/ProgramFrameExamples/ystart.cpp
     )
 if(BUILD_SHARED_YLIB)
-    target_link_libraries(test_ymain libylib_s.so -lssl -lcrypto -llog4cpp -lz -pthread -lstdc++)
+    target_link_libraries(test_ymain libylib.so -lssl -lcrypto  -lz -pthread -lstdc++)
 else()
-    target_link_libraries(test_ymain libylib_s.so -lssl -lcrypto -llog4cpp  -lz -pthread -lstdc++)
+    target_link_libraries(test_ymain libylib_s.so -lssl -lcrypto   -lz -pthread -lstdc++)
 endif()
 
 INSTALL(PROGRAMS 
