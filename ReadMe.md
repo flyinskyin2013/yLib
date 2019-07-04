@@ -2,6 +2,8 @@ yLib
 ==========
 This lib collect and collate usage of common skills in my daily-work.
 
+[![Build Status](https://travis-ci.org/flyinskyin2013/yLib.svg?branch=master)](https://travis-ci.org/flyinskyin2013/yLib)
+
 Version:
 ==========
 Current lastest version: V0.05<br> 
