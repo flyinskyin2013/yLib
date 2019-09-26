@@ -45,7 +45,7 @@ function build_libcurl(){
 # -DCURL_STATICLIB=ON -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_C_FLAGS=-fPIC -DUSE_LIBRTMP=OFF  ..
 # cmakelists.txt may have some issue
 	
-	./configure --prefix=${third_part_root_dir}/build_out --without-librtmp CFLAGS=-fPIC CPPFLAGS=-fPIC
+	./configure --prefix=${third_part_root_dir}/build_out --without-librtmp --disable-rtsp --disable-ldap --disable-ldaps   CFLAGS=-fPIC CPPFLAGS=-fPIC
 	if [ $? -ne 0 ]
 	then
 

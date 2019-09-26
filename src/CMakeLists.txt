@@ -17,7 +17,10 @@ endif()
 
 #----------------------------------------------------------------------------------------
 set(SRC
-    ${CMAKE_CURRENT_SOURCE_DIR}/ycommon.cpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/ycommon.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/yobject.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/yexception.cpp
+    )
 
 #----------------------------------------------------------------------------------------
 #define macro to add module source code

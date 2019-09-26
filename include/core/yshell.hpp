@@ -1,3 +1,11 @@
+/*
+ * @Author: Sky
+ * @Date: 2018-10-23 11:13:37
+ * @LastEditors: Sky
+ * @LastEditTime: 2019-09-20 19:03:10
+ * @Description: 
+ */
+
 #ifndef _YSHELL_H_
 #define _YSHELL_H_
 
@@ -19,7 +27,7 @@ extern "C"{
 #include <string>
 
 
-
+#include "ycommon.hpp"
 #include "ylog.hpp"
 
 namespace yLib{
@@ -27,7 +35,7 @@ namespace yLib{
 #define SHELL_CMDANDPARAM_MAX_NUM 9
 #define Y_SHELL_LOC_CMD_LEN SHELL_CMDANDPARAM_MAX_NUM + 1
 #define Y_SHELL_ARGV_LEN Y_SHELL_LOC_CMD_LEN
-    class yShell{
+    class yShell MACRO_PUBLIC_INHERIT_YOBJECT{
 
         public:
         yShell();

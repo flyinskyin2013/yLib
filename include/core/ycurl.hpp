@@ -1,3 +1,11 @@
+/*
+ * @Author: Sky
+ * @Date: 2018-10-23 11:13:10
+ * @LastEditors: Sky
+ * @LastEditTime: 2019-09-20 19:02:52
+ * @Description: 
+ */
+
 #ifndef _YCURL_H_
 #define _YCURL_H_
 
@@ -6,6 +14,7 @@
 #include <string.h>
 #include "ycommon.hpp"
 #include "ylog.hpp"
+
 
 namespace yLib{
 
@@ -20,7 +29,7 @@ typedef struct _ycurl_param_{
 
 #define YCURL_RECBUF_MAX_LEN 4*1024
 
-class yCurl{
+class yCurl MACRO_PUBLIC_INHERIT_YOBJECT{
 
     public:
 

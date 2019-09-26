@@ -64,9 +64,9 @@ function(build_module_examples name)
     #message("dep lib  ${DEP_LIBS}")
         
     if(BUILD_SHARED_YLIB)
-        target_link_libraries(test_${module_name} libylib.so -lssl -lcrypto -lz -pthread  ${DEP_LIBS})
+        target_link_libraries(test_${module_name} libylib.so  -lssl -lcrypto -lz -pthread  ${DEP_LIBS})
     else()
-        target_link_libraries(test_${module_name} libylib_s.so -lssl -lcrypto  -lz -pthread ${DEP_LIBS})
+        target_link_libraries(test_${module_name} libylib_s.so  -lssl -lcrypto  -lz -pthread ${DEP_LIBS})
     endif()
 
 # RUNTIME-rpath maybe be diffcult.
@@ -164,6 +164,14 @@ INSTALL(FILES
 )
 
 ##########################################################################
+set(BUILD_MODULE_YTEMP ON)
+if(BUILD_MODULE_YTEMP)
+
+    build_module_examples(YTEMP)
+
+endif()
+##########################################################################
+
 #build program frame example
 add_executable(test_ymain
     ${CMAKE_CURRENT_SOURCE_DIR}/ProgramFrameExamples/ymain.cpp
