@@ -1,3 +1,11 @@
+/*
+ * @Author: Sky
+ * @Date: 2018-10-23 11:09:25
+ * @LastEditors: Sky
+ * @LastEditTime: 2019-09-20 19:05:44
+ * @Description: 
+ */
+
 #include "yxml.hpp"
 
 #ifdef __cplusplus
@@ -12,7 +20,7 @@ extern "C"
 }
 #endif //__cplusplus
 
-yLib::yXML::yXML(){
+yLib::yXML::yXML() MACRO_INIT_YOBJECT_PROPERTY(yXML) {
 
 
 }

@@ -52,7 +52,13 @@
         "iomanip": "cpp",
         "cerrno": "cpp",
         "*.h++": "cpp",
-        "*.c++": "cpp"
+        "*.c++": "cpp",
+        "atomic": "cpp",
+        "iterator": "cpp",
+        "map": "cpp",
+        "memory_resource": "cpp",
+        "set": "cpp",
+        "string": "cpp"
     },
     "C_Cpp.default.configurationProvider": "",
     "cmake.configureOnOpen": true,

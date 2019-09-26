@@ -1,3 +1,11 @@
+/*
+ * @Author: Sky
+ * @Date: 2018-10-23 11:09:13
+ * @LastEditors: Sky
+ * @LastEditTime: 2019-09-20 19:04:54
+ * @Description: 
+ */
+
 #include "ycurl.hpp"
 
 #ifdef __cplusplus
@@ -31,7 +39,7 @@ static size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdat
     return size * nmemb;
 }
 
-yLib::yCurl::yCurl(){
+yLib::yCurl::yCurl() MACRO_INIT_YOBJECT_PROPERTY(yCurl){
 
     if ( CURLE_OK != (m_ycurl_ret = curl_global_init(CURL_GLOBAL_ALL)) ){
 

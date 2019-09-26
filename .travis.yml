@@ -9,46 +9,46 @@ addons:
       - cmake
 
 
+matrix:
+  include:
+    - name: "linux-x86_64-gcc"
+      os: linux
+      dist: xenial
+      compiler: gcc
+      env:
+        - BUILD_THIRD_LIB="cd third_part && chmod +x build_third_part.sh && ./build_third_part.sh init >/dev/null 2>&1 && ./build_third_part.sh make -j2 >/dev/null 2>&1 && cp build_out/lib* -r ../lib/linux_x86_64"
+        - BUILD_YLIB="cd .. && mkdir build && cd build && cmake .. && make -j2"
 
-include:
-  - name: "linux-x86_64-gcc"
-    os: linux
-    dist: xenial
-    compiler: gcc
-    env:
-      - BUILD_THIRD_LIB="cd third_part && chmod +x build_third_part.sh && ./build_third_part.sh init && ./build_third_part.sh make -j2 && cp build_out/lib* -r ../lib/linux_x86_64"
-      - BUILD_YLIB="mkdir build && cd build && cmake .. && make -j2"
+    - name: "linux-x86_64-clang"
+      os: linux
+      dist: xenial
+      compiler: clang
+      env:
+        - BUILD_THIRD_LIB="cd third_part && chmod +x build_third_part.sh && ./build_third_part.sh init >/dev/null 2>&1 && ./build_third_part.sh make -j2 >/dev/null 2>&1 && cp build_out/lib* -r ../lib/linux_x86_64"
+        - BUILD_YLIB="cd .. && mkdir build && cd build && cmake .. && make -j2"
 
-  - name: "linux-x86_64-clang"
-    os: linux
-    dist: xenial
-    compiler: clang
-    env:
-      - BUILD_THIRD_LIB="cd third_part && chmod +x build_third_part.sh && ./build_third_part.sh init && ./build_third_part.sh make -j2 && cp build_out/lib* -r ../lib/linux_x86_64"
-      - BUILD_YLIB="mkdir build && cd build && cmake .. && make -j2"
+    - name: "windows-vs2017"
+      os: windows
+      dist: 1803-containers
+      env:
+        - BUILD_THIRD_LIB="cd third_part && chmod +x build_third_part.sh && ./build_third_part.sh init >/dev/null 2>&1 && ./build_third_part.sh make -j2 >/dev/null 2>&1 && cp build_out/lib* -r ../lib/linux_x86_64"
+        - BUILD_YLIB="cd .. && mkdir build && cd build && cmake .. && cmake --build ."
 
-  - name: "windows-vs2017"
-    os: windows
-    dist: 1803-containers
-    env:
-      - BUILD_THIRD_LIB="cd third_part && chmod +x build_third_part.sh && ./build_third_part.sh init && ./build_third_part.sh make -j2 && cp build_out/lib* -r ../lib/linux_x86_64"
-      - BUILD_YLIB="mkdir build && cd build && cmake .. && cmake --build ."
+    - name: "arm-linux-armv7"
+      os: linux
+      dist: xenial
+      env:
+        - BEFORE_BUILD_YLIB="wget https://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/arm-linux-gnueabihf/gcc-linaro-4.9-2016.02-x86_64_arm-linux-gnueabihf.tar.xz && wget https://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/arm-linux-gnueabihf/runtime-linaro-gcc4.9-2016.02-arm-linux-gnueabihf.tar.xz && wget https://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/arm-linux-gnueabihf/sysroot-linaro-eglibc-gcc4.9-2016.02-arm-linux-gnueabihf.tar.xz && tar -xJf gcc-linaro-4.9-2016.02-x86_64_arm-linux-gnueabihf.tar.xz && tar -xJf runtime-linaro-gcc4.9-2016.02-arm-linux-gnueabihf.tar.xz && tar -xJf sysroot-linaro-eglibc-gcc4.9-2016.02-arm-linux-gnueabihf.tar.xz && mv gcc-linaro-4.9-2016.02-x86_64_arm-linux-gnueabihf arm_gcc && mv runtime-linaro-gcc4.9-2016.02-arm-linux-gnueabihf arm_gcc_runtime && mv sysroot-linaro-eglibc-gcc4.9-2016.02-arm-linux-gnueabihf arm_gcc_sysroot"
+        - BUILD_THIRD_LIB="cd third_part && chmod +x build_third_part.sh && ./build_third_part.sh init >/dev/null 2>&1 && ./build_third_part.sh make -j2 >/dev/null 2>&1 && cp build_out/lib* -r ../lib/linux_x86_64"
+        - BUILD_YLIB="cd .. && mkdir build && cd build && cmake -DCMAKE_TOOLCHAIN_FILE=`pwd`/../toolchains/arm-linux-gnu.toolchain.cmake -DCMAKE_SYSROOT=`pwd`/../arm_gcc_sysroot -DCMAKE_C_COMPILER=`pwd`/../arm_gcc/bin/arm-linux-gnu-gcc -DCMAKE_CXX_COMPILER=`pwd`/../arm_gcc/bin/arm-linux-gnu-g++ .. && make -j2"
 
-  - name: "arm-linux-armv7"
-    os: linux
-    dist: xenial
-    env:
-      - BEFORE_BUILD_YLIB="wget https://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/arm-linux-gnueabihf/gcc-linaro-4.9-2016.02-x86_64_arm-linux-gnueabihf.tar.xz && wget https://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/arm-linux-gnueabihf/runtime-linaro-gcc4.9-2016.02-arm-linux-gnueabihf.tar.xz && wget https://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/arm-linux-gnueabihf/sysroot-linaro-eglibc-gcc4.9-2016.02-arm-linux-gnueabihf.tar.xz && tar -xJf gcc-linaro-4.9-2016.02-x86_64_arm-linux-gnueabihf.tar.xz && tar -xJf runtime-linaro-gcc4.9-2016.02-arm-linux-gnueabihf.tar.xz && tar -xJf sysroot-linaro-eglibc-gcc4.9-2016.02-arm-linux-gnueabihf.tar.xz && mv gcc-linaro-4.9-2016.02-x86_64_arm-linux-gnueabihf arm_gcc && mv runtime-linaro-gcc4.9-2016.02-arm-linux-gnueabihf arm_gcc_runtime && mv sysroot-linaro-eglibc-gcc4.9-2016.02-arm-linux-gnueabihf arm_gcc_sysroot"
-      - BUILD_THIRD_LIB="cd third_part && chmod +x build_third_part.sh && ./build_third_part.sh init && ./build_third_part.sh make -j2 && cp build_out/lib* -r ../lib/linux_x86_64"
-      - BUILD_YLIB="mkdir build && cd build && cmake -DCMAKE_TOOLCHAIN_FILE=`pwd`/../toolchains/arm-linux-gnu.toolchain.cmake -DCMAKE_SYSROOT=`pwd`/../arm_gcc_sysroot -DCMAKE_C_COMPILER=`pwd`/../arm_gcc/bin/arm-linux-gnu-gcc -DCMAKE_CXX_COMPILER=`pwd`/../arm_gcc/bin/arm-linux-gnu-g++ .. && make -j2"
-  
-  - name: "arm-linux-aarch64"
-    os: linux
-    dist: xenial
-    env:
-        - BEFORE_BUILD_YLIB="wget https://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/aarch64-linux-gnu/gcc-linaro-4.9-2016.02-x86_64_aarch64-linux-gnu.tar.xz && wget https://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/aarch64-linux-gnu/runtime-linaro-gcc4.9-2016.02-aarch64-linux-gnu.tar.xz && wget https://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/aarch64-linux-gnu/sysroot-linaro-eglibc-gcc4.9-2016.02-aarch64-linux-gnu.tar.xz && tar -xJf gcc-linaro-4.9-2016.02-x86_64_aarch64-linux-gnu.tar.xz && tar -xJf runtime-linaro-gcc4.9-2016.02-aarch64-linux-gnu.tar.xz && tar -xJf sysroot-linaro-eglibc-gcc4.9-2016.02-aarch64-linux-gnu.tar.xz && mv gcc-linaro-4.9-2016.02-x86_64_aarch64-linux-gnu aarch64_gcc && mv runtime-linaro-gcc4.9-2016.02-aarch64-linux-gnu aarch64_gcc_runtime && mv sysroot-linaro-eglibc-gcc4.9-2016.02-aarch64-linux-gnu aarch64_gcc_sysroot"
-        - BUILD_THIRD_LIB="cd third_part && chmod +x build_third_part.sh && ./build_third_part.sh init && ./build_third_part.sh make -j2 && cp build_out/lib* -r ../lib/linux_x86_64"
-        - BUILD_YLIB="mkdir build && cd build && cmake -DCMAKE_TOOLCHAIN_FILE=`pwd`/../toolchains/aarch64-linux-gnu.toolchain.cmake -DCMAKE_SYSROOT=`pwd`/../aarch64_gcc_sysroot -DCMAKE_C_COMPILER=`pwd`/../aarch64_gcc/bin/arm-linux-gnu-gcc -DCMAKE_CXX_COMPILER=`pwd`/../aarch64_gcc/bin/arm-linux-gnu-g++  .. && make -j2"
+    - name: "arm-linux-aarch64"
+      os: linux
+      dist: xenial
+      env:
+          - BEFORE_BUILD_YLIB="wget https://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/aarch64-linux-gnu/gcc-linaro-4.9-2016.02-x86_64_aarch64-linux-gnu.tar.xz && wget https://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/aarch64-linux-gnu/runtime-linaro-gcc4.9-2016.02-aarch64-linux-gnu.tar.xz && wget https://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/aarch64-linux-gnu/sysroot-linaro-eglibc-gcc4.9-2016.02-aarch64-linux-gnu.tar.xz && tar -xJf gcc-linaro-4.9-2016.02-x86_64_aarch64-linux-gnu.tar.xz && tar -xJf runtime-linaro-gcc4.9-2016.02-aarch64-linux-gnu.tar.xz && tar -xJf sysroot-linaro-eglibc-gcc4.9-2016.02-aarch64-linux-gnu.tar.xz && mv gcc-linaro-4.9-2016.02-x86_64_aarch64-linux-gnu aarch64_gcc && mv runtime-linaro-gcc4.9-2016.02-aarch64-linux-gnu aarch64_gcc_runtime && mv sysroot-linaro-eglibc-gcc4.9-2016.02-aarch64-linux-gnu aarch64_gcc_sysroot"
+          - BUILD_THIRD_LIB="cd third_part && chmod +x build_third_part.sh && ./build_third_part.sh init >/dev/null 2>&1 && ./build_third_part.sh make -j2 >/dev/null 2>&1 && cp build_out/lib* -r ../lib/linux_x86_64"
+          - BUILD_YLIB="cd .. && mkdir build && cd build && cmake -DCMAKE_TOOLCHAIN_FILE=`pwd`/../toolchains/aarch64-linux-gnu.toolchain.cmake -DCMAKE_SYSROOT=`pwd`/../aarch64_gcc_sysroot -DCMAKE_C_COMPILER=`pwd`/../aarch64_gcc/bin/arm-linux-gnu-gcc -DCMAKE_CXX_COMPILER=`pwd`/../aarch64_gcc/bin/arm-linux-gnu-g++  .. && make -j2"
 
 before_install:
   - eval "${BUILD_THIRD_LIB}"

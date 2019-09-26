@@ -1,3 +1,11 @@
+/*
+ * @Author: Sky
+ * @Date: 2019-07-04 11:28:53
+ * @LastEditors: Sky
+ * @LastEditTime: 2019-09-26 16:16:26
+ * @Description: 
+ */
+
 #include "ylog.hpp"
 
 //log4cpp
@@ -16,239 +24,283 @@
 
 
 
-char  yLib::yLog::m_ptr_msg_buf[] = {'\0'};
+char  yLib::yLog::_c_ptr_msg_buf[MSG_BUF_SIZE];
 //bool yLib::yLog::m_b_is_class_access = true;
-log4cpp::Category * yLib::yLog::root = nullptr;
-bool yLib::yLog::m_enable_log4cpp = false;
-bool yLib::yLog::m_enable_feature_ps = false;
-pthread_mutex_t yLib::yLog::m_mutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t yLib::yLog::m_process_mutex;
-char yLib::yLog::g_log4cpp_log_level = ENABLE_ALL_LOG_LEVEL;
-char yLib::yLog::g_ylog_log_level = ENABLE_ALL_LOG_LEVEL;
+log4cpp::Category * yLib::yLog::_ptr_log4_category_root = nullptr;
+bool yLib::yLog::_b_enable_log4cpp = false;
+bool yLib::yLog::_b_enable_feature_ps = false;
 
-yLib::yLog::yLog(){
+pthread_mutex_t yLib::yLog::_thread_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t yLib::yLog::_process_mutex;
 
-    // if ( nullptr ==  m_ptr_msg_buf ){
-    
-    //     m_ptr_msg_buf = new char[MSG_BUF_SIZE];
-    //     m_b_is_class_access = false;
-    // }
+char yLib::yLog::_c_log4cpp_log_level = ENABLE_ALL_LOG_LEVEL;
+char yLib::yLog::_c_ylog_log_level = ENABLE_ALL_LOG_LEVEL;
+
+yLib::yLog::yLog() noexcept MACRO_INIT_YOBJECT_PROPERTY(yLog){
 
 
 }
 
-yLib::yLog::~yLog(){
+yLib::yLog::~yLog() noexcept{
 
-    // delete [] m_ptr_msg_buf;
-    // m_b_is_class_access = true;
-    // m_ptr_msg_buf = nullptr;
-
-    if ( m_enable_log4cpp ){
-        //log4cpp
-        log4cpp::Category::shutdown();
-        m_enable_log4cpp = false;
-	root = nullptr;
-    }
+    // we can't  call log4cpp::Category::shutdown() here.
+    // if ( _b_enable_log4cpp ){
+    //     //log4cpp
+    //     log4cpp::Category::shutdown();
+    //     _b_enable_log4cpp = false;
+	//     _ptr_log4_category_root = nullptr;
+    // }
 }
 
 void yLib::yLog::SetLog4cppLogLevel(char log_level){
 
-    g_log4cpp_log_level = log_level;
+    
+    _c_log4cpp_log_level = log_level;
 }
 
 void yLib::yLog::SetyLogLogLevel(char log_level){
 
-    g_ylog_log_level = log_level;
+    _c_ylog_log_level = log_level;
 }
 
 void yLib::yLog::SetLog4cpp(bool enable_log4cpp, std::string log_path ){
 	
-	if ( enable_log4cpp && (nullptr == root) ){//true, open feature of log4cpp
+	if ( enable_log4cpp && (nullptr == _ptr_log4_category_root) ){//true, enable feature of log4cpp
 
-        m_enable_log4cpp = enable_log4cpp;
+        _b_enable_log4cpp = enable_log4cpp;
+        
         //log4cpp
         log4cpp::PropertyConfigurator::configure(log_path);
-        root = & log4cpp::Category::getRoot();
+        _ptr_log4_category_root = & log4cpp::Category::getRoot(); //rootCategory init by log4cpp::PropertyConfigurator::configure()
     }
 
-	if ( !enable_log4cpp && (nullptr != root) ){
+	if ( !enable_log4cpp && (nullptr != _ptr_log4_category_root) ){
 
-		
 		log4cpp::Category::shutdown();
-        m_enable_log4cpp = false;
-		root = nullptr;
+        _b_enable_log4cpp = false;
+		_ptr_log4_category_root = nullptr;
 	}
 }
 
 void yLib::yLog::_ylog_log_impl(char log_type, const char * fmt, va_list arg_list){
 
     //mutex lock
-    if ( m_enable_feature_ps ){
+    if ( _b_enable_feature_ps ){
 
-        pthread_mutex_lock(&m_process_mutex);
+        pthread_mutex_lock(&_process_mutex);
     }
     else{ // thread safety
 
-        pthread_mutex_lock(&m_mutex);
+        pthread_mutex_lock(&_thread_mutex);
     }
 
+    memset(_c_ptr_msg_buf, 0, MSG_BUF_SIZE);//set buffer to '0'
 
-    memset(m_ptr_msg_buf, 0, MSG_BUF_SIZE);
+    int _n_printed_num = 0; 
 
-    int ret = 0; 
+    _n_printed_num = vsnprintf(_c_ptr_msg_buf, MSG_BUF_SIZE, fmt, arg_list);
 
-    ret = vsnprintf(m_ptr_msg_buf, MSG_BUF_SIZE, fmt, arg_list);
+    if ( MSG_BUF_SIZE - 1 == _n_printed_num ){
 
-    if ( MSG_BUF_SIZE -  1 == ret ){
-
-        W("Size of input-string may be greater than MSG_BUF_SIZE:%d, input-string will be truncated by size of MSG_BUF_SIZE", MSG_BUF_SIZE);
+        W("Size of input-string may be greater than MSG_BUF_SIZE:%d, input-string will be truncated by size of MSG_BUF_SIZE", MSG_BUF_SIZE - 1);
     }
 
     switch (log_type)
     {
     case ENABLE_DEBUG_LOG_LEVEL:{
+        
         /* code */
-        std::cout<<"LogDebug:>"<<m_ptr_msg_buf<<std::endl;
-        if (log_type == (log_type & g_log4cpp_log_level)){
+        std::cout<<"LogDebug:>"<<_c_ptr_msg_buf<<std::endl;
+        if (log_type == (log_type & _c_log4cpp_log_level)){
 
-        //log4cpp
-        if ( m_enable_log4cpp )
-            root->debug(m_ptr_msg_buf);
+            //log4cpp
+            if ( _b_enable_log4cpp )
+                _ptr_log4_category_root->debug(_c_ptr_msg_buf);
         }
         break;
     }
     case ENABLE_INFO_LOG_LEVEL:{
+        
         /* code */
-        std::cout<<"LogInfo :>"<<m_ptr_msg_buf<<std::endl;
-        if (log_type == (log_type & g_log4cpp_log_level)){
+        std::cout<<"LogInfo :>"<<_c_ptr_msg_buf<<std::endl;
+        if (log_type == (log_type & _c_log4cpp_log_level)){
 
-        //log4cpp
-        if ( m_enable_log4cpp )
-            root->info(m_ptr_msg_buf);
+            //log4cpp
+            if ( _b_enable_log4cpp )
+                _ptr_log4_category_root->info(_c_ptr_msg_buf);
         }        
         break;
     }
     case ENABLE_WARN_LOG_LEVEL:{
-        /* code */
-        std::cout<<"LogWarn :>"<<m_ptr_msg_buf<<std::endl;
-        if (log_type == (log_type & g_log4cpp_log_level)){
 
-        //log4cpp
-        if ( m_enable_log4cpp )
-            root->warn(m_ptr_msg_buf);
+        /* code */
+        std::cout<<"LogWarn :>"<<_c_ptr_msg_buf<<std::endl;
+        if (log_type == (log_type & _c_log4cpp_log_level)){
+
+            //log4cpp
+            if ( _b_enable_log4cpp )
+                _ptr_log4_category_root->warn(_c_ptr_msg_buf);
         }
         break;
     }
     case ENABLE_ERROR_LOG_LEVEL:{
-        /* code */
-        std::cout<<"LogError:>"<<m_ptr_msg_buf<<std::endl;
-        if (log_type == (log_type & g_log4cpp_log_level)){
 
-        //log4cpp
-        if ( m_enable_log4cpp )
-            root->error(m_ptr_msg_buf);
+        /* code */
+        std::cout<<"LogError:>"<<_c_ptr_msg_buf<<std::endl;
+        if (log_type == (log_type & _c_log4cpp_log_level)){
+
+            //log4cpp
+            if ( _b_enable_log4cpp )
+                _ptr_log4_category_root->error(_c_ptr_msg_buf);
         }
         break;
     }
     default:
+    
+        E("_ylog_log_impl(): input log type error.");
         break;
     }
 
 
 
     //mutex unlock 
-    if ( m_enable_feature_ps ){
+    if ( _b_enable_feature_ps ){
 
-        pthread_mutex_unlock(&m_process_mutex);
+        pthread_mutex_unlock(&_process_mutex);
     }
     else{//thread safety
 
-        pthread_mutex_unlock(&m_mutex);
+        pthread_mutex_unlock(&_thread_mutex);
     }
 }
 
+//log info 
+void yLib::yLog::I(const std::string fmt, ...){
+
+    if ( ENABLE_INFO_LOG_LEVEL != (ENABLE_INFO_LOG_LEVEL & _c_ylog_log_level) ){
+
+        return ;
+    }
+    
+    va_list arg ;
+
+    va_start(arg, fmt);
+
+    _ylog_log_impl(ENABLE_INFO_LOG_LEVEL, fmt.c_str(), arg);
+    
+    va_end(arg);
+}
 
 void yLib::yLog::I(const char * fmt , ...){
 
-    if ( ENABLE_INFO_LOG_LEVEL != (ENABLE_INFO_LOG_LEVEL & g_ylog_log_level) ){
+    if ( ENABLE_INFO_LOG_LEVEL != (ENABLE_INFO_LOG_LEVEL & _c_ylog_log_level) ){
 
         return ;
     }
-
-
     
     va_list arg ;
 
     va_start(arg, fmt);
-
 
     _ylog_log_impl(ENABLE_INFO_LOG_LEVEL, fmt, arg);
-
-
+    
     va_end(arg);
-
-
 }
 
-void yLib::yLog::D(const char * fmt , ...){
+//log debug
+void yLib::yLog::D(const std::string fmt , ...){
 
-    if ( ENABLE_DEBUG_LOG_LEVEL != (ENABLE_DEBUG_LOG_LEVEL & g_ylog_log_level) ){
+    if ( ENABLE_DEBUG_LOG_LEVEL != (ENABLE_DEBUG_LOG_LEVEL & _c_ylog_log_level) ){
 
         return ;
     }
-
     
     va_list arg ;
 
     va_start(arg, fmt);
 
+    _ylog_log_impl(ENABLE_DEBUG_LOG_LEVEL, fmt.c_str(), arg);
+
+    va_end(arg);
+}
+void yLib::yLog::D(const char * fmt , ...){
+
+    if ( ENABLE_DEBUG_LOG_LEVEL != (ENABLE_DEBUG_LOG_LEVEL & _c_ylog_log_level) ){
+
+        return ;
+    }
+    
+    va_list arg ;
+
+    va_start(arg, fmt);
 
     _ylog_log_impl(ENABLE_DEBUG_LOG_LEVEL, fmt, arg);
 
-
     va_end(arg);
-
 }
 
-void yLib::yLog::W(const char * fmt , ...){
+//log warning
+void yLib::yLog::W(const std::string fmt , ...){
 
-
-    if ( ENABLE_WARN_LOG_LEVEL != (ENABLE_WARN_LOG_LEVEL & g_ylog_log_level) ){
+    if ( ENABLE_WARN_LOG_LEVEL != (ENABLE_WARN_LOG_LEVEL & _c_ylog_log_level) ){
 
         return ;
     }
 
-    
+    va_list arg ;
+
+    va_start(arg, fmt);
+
+    _ylog_log_impl(ENABLE_WARN_LOG_LEVEL, fmt.c_str(), arg);
+
+    va_end(arg);
+}
+void yLib::yLog::W(const char * fmt , ...){
+
+    if ( ENABLE_WARN_LOG_LEVEL != (ENABLE_WARN_LOG_LEVEL & _c_ylog_log_level) ){
+
+        return ;
+    }
+
     va_list arg ;
 
     va_start(arg, fmt);
 
     _ylog_log_impl(ENABLE_WARN_LOG_LEVEL, fmt, arg);
 
-
     va_end(arg);
- 
 }
 
-void yLib::yLog::E(const char * fmt , ...){
+//log error
+void yLib::yLog::E(const std::string fmt , ...){
 
-    if ( ENABLE_ERROR_LOG_LEVEL != (ENABLE_ERROR_LOG_LEVEL & g_ylog_log_level) ){
+    if ( ENABLE_ERROR_LOG_LEVEL != (ENABLE_ERROR_LOG_LEVEL & _c_ylog_log_level) ){
 
         return ;
     }
 
-    
     va_list arg ;
 
     va_start(arg, fmt);
 
+    _ylog_log_impl(ENABLE_ERROR_LOG_LEVEL, fmt.c_str(), arg);
+
+    va_end(arg);
+}
+void yLib::yLog::E(const char * fmt , ...){
+
+    if ( ENABLE_ERROR_LOG_LEVEL != (ENABLE_ERROR_LOG_LEVEL & _c_ylog_log_level) ){
+
+        return ;
+    }
+
+    va_list arg ;
+
+    va_start(arg, fmt);
 
     _ylog_log_impl(ENABLE_ERROR_LOG_LEVEL, fmt, arg);
 
-
     va_end(arg);
-
-    
 }
 
 // void yLib::yLog::SetLog4cpp(bool enable_log4cpp){
@@ -274,14 +326,15 @@ void yLib::yLog::SetProcessSafetyFeature(bool enable_feature){
 
     if ( enable_feature ){
 
-        pthread_mutex_init(&m_process_mutex, & mtx_attr);
-        m_enable_feature_ps = true;
+        pthread_mutex_init(&_process_mutex, & mtx_attr);
+        _b_enable_feature_ps = true;
     } 
     else{
-        if ( m_enable_feature_ps ){
+        
+        if ( _b_enable_feature_ps ){
 
-            m_enable_feature_ps = false;
-            pthread_mutex_destroy(&m_process_mutex);
+            _b_enable_feature_ps = false;
+            pthread_mutex_destroy(&_process_mutex);
         }
         else
             yLib::yLog::W("Feature of process-safety do not enable.");

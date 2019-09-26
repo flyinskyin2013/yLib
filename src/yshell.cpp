@@ -1,6 +1,14 @@
+/*
+ * @Author: Sky
+ * @Date: 2019-04-23 17:18:50
+ * @LastEditors: Sky
+ * @LastEditTime: 2019-09-20 19:05:29
+ * @Description: 
+ */
+
 #include "yshell.hpp"
 
-yLib::yShell::yShell(){
+yLib::yShell::yShell() MACRO_INIT_YOBJECT_PROPERTY(yShell){
 
 
 }
