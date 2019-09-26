@@ -1,3 +1,10 @@
+/*
+ * @Author: Sky
+ * @Date: 2019-09-20 16:50:06
+ * @LastEditors: Sky
+ * @LastEditTime: 2019-09-20 16:50:06
+ * @Description: 
+ */
 #ifndef _YXML_H_
 #define _YXML_H_
 
@@ -14,13 +21,15 @@ typedef xmlDoc * xmlDocPtr;
 #endif //__cplusplus
 
 #include <string>
-#include "ylog.hpp"
 
+
+#include "ylog.hpp"
+#include "ycommon.hpp"
 namespace yLib{
 
 
     
-    class yXML{
+    class yXML MACRO_PUBLIC_INHERIT_YOBJECT{
 
         public:
         yXML();

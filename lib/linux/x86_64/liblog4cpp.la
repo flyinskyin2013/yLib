@@ -38,4 +38,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/home/sripis/YJ_WORKDIR/yLib/third_part/build_out/lib'
+libdir='/home/sky/yLib/third_part/build_out/lib'

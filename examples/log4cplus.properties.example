@@ -8,10 +8,10 @@ log4cpp.appender.yLogger=RollingFileAppender
 log4cpp.appender.yLogger.fileName=yLogger.log
 
 log4cpp.appender.yLogger.CreateDirs=true
-log4cpp.appender.yLogger.Append=true
+log4cpp.appender.yLogger.append=true
 
-log4cpp.appender.yLogger.MaxFileSize=10MB
-log4cpp.appender.yLogger.MaxBackupIndex=1
+log4cpp.appender.yLogger.maxFileSize=1024*1024*20
+log4cpp.appender.yLogger.maxBackupIndex=5
 
 
 #layout

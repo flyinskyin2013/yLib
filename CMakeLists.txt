@@ -39,11 +39,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 #----------------------------------------------------------------------------------------
 #arch should be x86 X86 x86_64 X86_64 armeabi armeabi-v7a arm64-v8a
-set(BUILD_YLIB_ARCH arm64-v8a CACHE STRING "Arch of ylib" FORCE)
+set(BUILD_YLIB_ARCH x86_64 CACHE STRING "Arch of ylib" FORCE)
 ################################################################
 option(BUILD_STATIC_YLIB "Build static ylib " ON)
 option(BUILD_SHARED_YLIB "Build shared ylib " ON)
-option(BUILD_MODULE_YCURL "Build module-ycurl " ON)
+option(BUILD_MODULE_YCURL "Build module-ycurl " OFF)
 option(BUILD_MODULE_YLOG "Build module-ylog " ON)
 option(BUILD_MODULE_YSHELL "Build module-yshell " ON)
 option(BUILD_MODULE_YXML "Build module-yxml " ON)
