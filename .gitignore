@@ -4,6 +4,7 @@ build/
 third_part/curl-7.55.1/
 #ignore libxml2 source code
 third_part/libxml2-2.7.1/
+third_part/libxml2-2.9.9/
 #ignore log4cpp 1.1.3 source code
 third_part/log4cpp/
 third_part/log4cpp-1.1.3/
@@ -11,5 +12,9 @@ third_part/log4cpp-1.1.3/
 third_part/Y_LINUX_FRAME/
 #ignore libconfig source code 
 third_part/libconfig-1.7.2/
+
+#ignore libjsoncpp source code
+third_part/jsoncpp-1.8.4/
+
 #ignore build_out directory
 third_part/build_out

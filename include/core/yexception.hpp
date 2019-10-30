@@ -2,11 +2,11 @@
  * @Author: Sky
  * @Date: 2019-09-20 17:06:18
  * @LastEditors: Sky
- * @LastEditTime: 2019-09-20 20:32:23
+ * @LastEditTime: 2019-10-28 17:15:46
  * @Description: 
  */
-#ifndef _YLIB_CORE_YEXCEPTION_
-#define _YLIB_CORE_YEXCEPTION_
+#ifndef _YLIB_CORE_YEXCEPTION_HPP_
+#define _YLIB_CORE_YEXCEPTION_HPP_
 
 #include <string>
 
