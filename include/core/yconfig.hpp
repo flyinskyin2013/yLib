@@ -2,12 +2,12 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:52
  * @LastEditors: Sky
- * @LastEditTime: 2019-09-25 16:33:25
+ * @LastEditTime: 2019-10-28 17:20:06
  * @Description: 
  */
 
-#ifndef _YLIB_CORE_YCONFIG_H_
-#define _YLIB_CORE_YCONFIG_H_
+#ifndef _YLIB_CORE_YCONFIG_HPP_
+#define _YLIB_CORE_YCONFIG_HPP_
 
 #include <string>
 

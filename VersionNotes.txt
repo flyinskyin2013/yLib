@@ -1,0 +1,35 @@
+<!--
+ * @Author: Sky
+ * @Date: 2019-10-21 14:43:26
+ * @LastEditors: Sky
+ * @LastEditTime: 2019-10-21 15:03:07
+ * @Description: 
+ -->
+Version Notes:
+==========
+v0.06
+----------
+    1 As libxml2 is too old, libxml2(2.7.1) is upgraded to libxml2(2.9.9).
+    2 Release yJson-module to deal with json-file.
+    3 Some small interesting changes that don't influence user.
+    4 Import ci system officially.
+
+v0.05
+----------
+    1 Optimize ylib and simplize header-files dependence of ylib
+
+v0.04
+----------
+    1 Add yconfig module ,optimize yconfig module and simplify yconfig apis. Meanwhile,I optimize dependence-lib about ylib.
+
+v0.03
+----------
+    1 Add some new examples ,optimize ylog and support thread-safety by ylog.
+
+v0.02
+----------
+    1 I reconstructed the framework of compiltion and test, and relized ylog-module yshell-module yxml-module  
+
+v0.01
+----------
+    1 It preliminary relized ycurl-module and establish a framework of compiltion and test.
