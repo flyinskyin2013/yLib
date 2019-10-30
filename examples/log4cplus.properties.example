@@ -1,8 +1,11 @@
-
+#NOTSET < DEBUG < INFO < NOTICE < WARN < ERROR < CRIT < ALERT < FATAL = EMERG 
+#yLog::D<yLog::I<yLog::W<yLog::E
 #logger
 log4cpp.rootCategory=DEBUG,yLogger
- 
-#appender
+log4cpp.category.test_ylog0=DEBUG,Test_yLog0
+log4cpp.category.test_ylog1=DEBUG,Test_yLog1
+
+#appender yLogger
 log4cpp.appender.yLogger=RollingFileAppender
 
 log4cpp.appender.yLogger.fileName=yLogger.log
@@ -10,13 +13,50 @@ log4cpp.appender.yLogger.fileName=yLogger.log
 log4cpp.appender.yLogger.CreateDirs=true
 log4cpp.appender.yLogger.append=true
 
-log4cpp.appender.yLogger.maxFileSize=1024*1024*20
+#log4cpp.appender.yLogger.maxFileSize=1024*1024*20
+log4cpp.appender.yLogger.maxFileSize=2097120
 log4cpp.appender.yLogger.maxBackupIndex=5
 
 
-#layout
+#appender Test_yLog0
+log4cpp.appender.Test_yLog0=RollingFileAppender
+
+log4cpp.appender.Test_yLog0.fileName=Test_yLog0.log
+
+log4cpp.appender.Test_yLog0.CreateDirs=true
+log4cpp.appender.Test_yLog0.append=true
+
+#log4cpp.appender.Test_yLog0.maxFileSize=1024*1024*20
+log4cpp.appender.Test_yLog0.maxFileSize=2097120
+log4cpp.appender.Test_yLog0.maxBackupIndex=5
+
+
+#appender Test_yLog1
+log4cpp.appender.Test_yLog1=RollingFileAppender
+
+log4cpp.appender.Test_yLog1.fileName=Test_yLog1.log
+
+log4cpp.appender.Test_yLog1.CreateDirs=true
+log4cpp.appender.Test_yLog1.append=true
+
+#log4cpp.appender.Test_yLog1.maxFileSize=1024*1024*20
+log4cpp.appender.Test_yLog1.maxFileSize=2097120
+log4cpp.appender.Test_yLog1.maxBackupIndex=5
+
+
+#layout yLogger
 
 log4cpp.appender.yLogger.layout=PatternLayout
 log4cpp.appender.yLogger.layout.ConversionPattern=%d yLog[%5p]>> %m%n
+
+#layout Test_yLog0
+ 
+log4cpp.appender.Test_yLog0.layout=PatternLayout
+log4cpp.appender.Test_yLog0.layout.ConversionPattern=%d yLog[%5p]>> %m%n
+
+#layout Test_yLog1
+
+log4cpp.appender.Test_yLog1.layout=PatternLayout
+log4cpp.appender.Test_yLog1.layout.ConversionPattern=%d yLog[%5p]>> %m%n
 
 

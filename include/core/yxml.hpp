@@ -5,8 +5,8 @@
  * @LastEditTime: 2019-09-20 16:50:06
  * @Description: 
  */
-#ifndef _YXML_H_
-#define _YXML_H_
+#ifndef _YLIB_CORE_YXML_HPP_
+#define _YLIB_CORE_YXML_HPP_
 
 #ifdef __cplusplus
 extern "C"

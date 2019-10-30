@@ -2,12 +2,12 @@
  * @Author: Sky
  * @Date: 2018-10-23 11:07:58
  * @LastEditors: Sky
- * @LastEditTime: 2019-09-23 15:56:51
+ * @LastEditTime: 2019-10-28 17:13:11
  * @Description: 
  */
 
-#ifndef _YLIB_CORE_YCOMMON_H_
-#define _YLIB_CORE_YCOMMON_H_
+#ifndef _YLIB_CORE_YCOMMON_HPP_
+#define _YLIB_CORE_YCOMMON_HPP_
 
 #include <string>
 
@@ -21,8 +21,10 @@ namespace yLib{
 //define some useful macroes ---------------------------- start
 //for yObject
 #define MACRO_PUBLIC_INHERIT_YOBJECT :public yLib::yObject
+
+//call the yObject
 #define MACRO_INIT_YOBJECT_PROPERTY(object_name) \
-    :yLib::yObject::yObject(std::string(#object_name))
+    :yObject(std::string(#object_name))
 
 
 
@@ -70,10 +72,10 @@ namespace yLib{
         ~yCommon()noexcept{}
         yCommon(yCommon & common) = delete;
         yCommon & operator=(yCommon & common) = delete;
+        yCommon(yCommon && common) = delete;
+        yCommon & operator=(yCommon && common) =delete;
 
-        std::string  yCommon_Get_yLib_Version() const noexcept;
-
-        
+        std::string  GetyLibVersion() const noexcept;
     };
 
     
