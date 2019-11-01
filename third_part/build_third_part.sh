@@ -2,7 +2,7 @@
 # @Author: Sky
  # @Date: 2019-10-28 17:35:17
  # @LastEditors: Sky
- # @LastEditTime: 2019-10-29 11:05:42
+ # @LastEditTime: 2019-10-30 14:50:08
  # @Description: 
  ###
 #!/bin/bash
@@ -272,7 +272,7 @@ function make_lib(){
 		exit 1
 	fi
 
-
+## for libxml, you should install libtool autoconf pkgconfig
 	cd ${third_part_root_dir}
 	build_libxml_2_9_9
 	if [ $? -ne 0 ]
