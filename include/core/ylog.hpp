@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:52
  * @LastEditors: Sky
- * @LastEditTime: 2019-10-30 11:22:49
+ * @LastEditTime: 2019-11-01 11:44:14
  * @Description: 
  */
 
@@ -48,6 +48,8 @@ namespace yLib{
 
     #define MSG_BUF_SIZE 4096 //4k ,linux-func-stack max size is 8MB
     //debug < info < warn < error
+
+    //deprecated the follow macro
     #define ENABLE_DEBUG_LOG_LEVEL 0x01
     #define ENABLE_INFO_LOG_LEVEL 0x02
     #define ENABLE_WARN_LOG_LEVEL 0x04
@@ -55,6 +57,41 @@ namespace yLib{
     #define ENABLE_ALL_LOG_LEVEL (ENABLE_DEBUG_LOG_LEVEL | ENABLE_INFO_LOG_LEVEL | ENABLE_WARN_LOG_LEVEL | ENABLE_ERROR_LOG_LEVEL)
     #define DISABLE_ALL_LOG_LEVEL 0x00
     
+    typedef enum __em_ylog_level__:uint16_t{
+
+        _DISABLE_ALL_LOG_LEVEL_ = 0x0000,
+
+        _ENABLE_DEBUG_LOG_LEVEL_ = 0x0001,
+        _DISABLE_DEBUG_LOG_LEVEL_ = (uint16_t)~_ENABLE_DEBUG_LOG_LEVEL_,
+
+        _ENABLE_INFO_LOG_LEVEL_ = 0x0002,
+        _DISABLE_INFO_LOG_LEVEL_ = (uint16_t)~_ENABLE_INFO_LOG_LEVEL_,
+
+        _ENABLE_WARN_LOG_LEVEL_ = 0x0004,
+        _DISABLE_WARN_LOG_LEVEL_ = (uint16_t)~_ENABLE_WARN_LOG_LEVEL_,
+
+        _ENABLE_ERROR_LOG_LEVEL_ = 0x0008,
+        _DISABLE_ERROR_LOG_LEVEL_ = (uint16_t)~_ENABLE_ERROR_LOG_LEVEL_,
+
+        _ENABLE_ALL_LOG_LEVEL_ = 0xFFFF,
+    } yLogLevel;
+
+    /*
+        idx------>
+    */
+
+    typedef struct __st_sub_category_property__
+    {
+        /* data */
+        log4cpp::Category * _ptr_sub_category = nullptr;
+        uint16_t _c_sub_log4cpp_log_level = yLogLevel::_ENABLE_ALL_LOG_LEVEL_;
+        uint16_t _c_sub_ylog_log_level = yLogLevel::_ENABLE_ALL_LOG_LEVEL_;
+
+    } SubCategoryProperty;
+    
+    
+    typedef std::unordered_map<std::string, SubCategoryProperty> TypeSubCategoryMap;
+
     //yLog support thread-safety,defaultly.
     class yLog MACRO_PUBLIC_INHERIT_YOBJECT{
 
@@ -72,8 +109,11 @@ namespace yLib{
             //If you want to enable this feature,system must define _POSIX_SHARED_MEMORY_OBJECTS(getconf -a)
             static void SetProcessSafetyFeature(bool enable_feature);
 
-            static void SetLog4cppLogLevel(char log_level);
-            static void SetyLogLogLevel(char log_level);
+            static void SetLog4cppLogLevel(uint16_t log_level);
+            static void SetLog4cppLogLevel(std::string &category_name, uint16_t log_level);
+            
+            static void SetyLogLogLevel(uint16_t log_level);
+            static void SetyLogLogLevel(std::string &category_name, uint16_t log_level);
 
             static void D(const std::string fmt , ...);
             static void W(const std::string fmt , ...);
@@ -99,21 +139,21 @@ namespace yLib{
         ~yLog() noexcept;
         private:
 
-        static void _ylog_log_impl(char log_type, const char * fmt, va_list arg_list);
-        static void _ylog_log_impl(char log_type, const char * fmt, va_list arg_list, std::string & category_name);
+        static void _ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg_list);
+        static void _ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg_list, std::string & category_name);
         static char _c_ptr_msg_buf[MSG_BUF_SIZE];
 
         static pthread_mutex_t _thread_mutex;
         static pthread_mutex_t _process_mutex;
 
         static log4cpp::Category * _ptr_log4_category_root;
-        static std::unordered_map<std::string, log4cpp::Category *> _log4cpp_sub_category_map;
+        static TypeSubCategoryMap _log4cpp_sub_category_map;
 
         static bool _b_enable_log4cpp;
         static bool _b_enable_feature_ps;
         
-        static char _c_log4cpp_log_level;
-        static char _c_ylog_log_level;
+        static uint16_t _c_log4cpp_log_level;
+        static uint16_t _c_ylog_log_level;
     };
 }
 

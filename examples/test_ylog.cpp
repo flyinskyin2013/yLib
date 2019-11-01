@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-09-20 10:11:02
  * @LastEditors: Sky
- * @LastEditTime: 2019-10-30 14:17:55
+ * @LastEditTime: 2019-11-01 11:49:18
  * @Description: 
  */
 
@@ -17,24 +17,24 @@ int main (int argc, char * argv[]){
     yLib::yLog::W(("class call A %d, %f test ylog" + LOG_TAIL).c_str(), 1234, 66.5555);
     yLib::yLog::E(("class call A %d, %f test ylog" + LOG_TAIL).c_str(), 1234, 66.5555);
 
-    yLib::yLog::I(("object call"+ LOG_TAIL).c_str());
-    yLib::yLog::D(("object call A %d, %f test ylog"+ LOG_TAIL).c_str(), 123, 54.5555);
-    yLib::yLog::W(("object call A %d, %f test ylog"+ LOG_TAIL).c_str(), 123, 54.5555);
-
-
-    yLib::yLog::I("class call");
-    yLib::yLog::D(("class call A %d, %f test ylog" + LOG_TAIL).c_str(), 1234, 66.5555);
-    yLib::yLog::W(("class call A %d, %f test ylog" + LOG_TAIL).c_str(), 1234, 66.5555);
-    yLib::yLog::E(("class call A %d, %f test ylog" + LOG_TAIL).c_str(), 1234, 66.5555);
-
     yLib::yLog::SetLog4cpp(true);//open log4cpp
     
     std::string log_idx0 = "test_ylog0";
     std::string log_idx1 = "test_ylog1";
+    
     yLib::yLog::SetLog4cppSubCategory(log_idx0);
     yLib::yLog::SetLog4cppSubCategory(log_idx1);
+
+    yLib::yLog::SetyLogLogLevel(yLib::yLogLevel::_DISABLE_WARN_LOG_LEVEL_);
+    yLib::yLog::SetyLogLogLevel(log_idx0,yLib::yLogLevel::_DISABLE_INFO_LOG_LEVEL_);
+    yLib::yLog::SetyLogLogLevel(log_idx1,yLib::yLogLevel::_DISABLE_DEBUG_LOG_LEVEL_);
+
+    yLib::yLog::SetLog4cppLogLevel(yLib::yLogLevel::_DISABLE_ERROR_LOG_LEVEL_);
+    yLib::yLog::SetLog4cppLogLevel(log_idx0, yLib::yLogLevel::_DISABLE_INFO_LOG_LEVEL_);
+    yLib::yLog::SetLog4cppLogLevel(log_idx1,yLib::yLogLevel::_DISABLE_DEBUG_LOG_LEVEL_);
+
 	int i = 0;
-    while(i < 1000){
+    while(i < 10){
 
         i++;
         
