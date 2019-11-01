@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2018-10-23 11:07:58
  * @LastEditors: Sky
- * @LastEditTime: 2019-10-28 17:13:11
+ * @LastEditTime: 2019-11-01 10:59:26
  * @Description: 
  */
 
@@ -26,7 +26,7 @@ namespace yLib{
 #define MACRO_INIT_YOBJECT_PROPERTY(object_name) \
     :yObject(std::string(#object_name))
 
-
+#define __MACRO_YLIB_DEPRECATED__ __attribute__((deprecated))
 
 
 //define some useful macroes ----------------------------   end
