@@ -68,6 +68,12 @@ if(BUILD_MODULE_YCONFIG)
 
 endif()
 
+if(BUILD_MODULE_YJSON)
+
+    ylib_build_module(YJSON)
+
+endif()
+
 #----------------------------------------------------------------------------------------
 
 if(WIN32)
@@ -125,14 +131,14 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
     if(BUILD_STATIC_YLIB)
 
         target_link_libraries( ylib_s
-                            libcurl.a libxml2.a liblog4cpp.a liblibconfig++.a)
+                            libcurl.a libxml2.a liblog4cpp.a liblibconfig++.a libjsoncpp.a)
 
     endif()
 
     if(BUILD_SHARED_YLIB)
 
         target_link_libraries( ylib
-                            libcurl.a libxml2.a liblog4cpp.a liblibconfig++.a)
+                            libcurl.a libxml2.a liblog4cpp.a liblibconfig++.a libjsoncpp.a)
 
     endif()
 
