@@ -164,6 +164,21 @@ INSTALL(FILES
 )
 
 ##########################################################################
+if(BUILD_MODULE_YJSON)
+
+    build_module_examples(YJSON)
+
+endif()
+
+
+INSTALL(FILES
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/test.json
+    DESTINATION 
+    examples
+)
+
+##########################################################################
 set(BUILD_MODULE_YTEMP ON)
 if(BUILD_MODULE_YTEMP)
 
