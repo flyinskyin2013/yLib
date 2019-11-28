@@ -1,5 +1,11 @@
 #ignore build dir
 build/
+#ignore build* dir
+build*/
+
+#ignore lib dir
+lib/*
+
 #ignore libcurl source code
 third_part/curl-7.55.1/
 #ignore libxml2 source code
