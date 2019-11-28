@@ -27,14 +27,17 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
         link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/arme64-v8a)
     endif()
 
+    #set path to run test-examples
+    link_directories(${CMAKE_INSTALL_PREFIX}/lib)
+    set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -g")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+
+
 elseif(ANDROID)
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/android)
 endif()
 
-#set path to run test-examples
-link_directories(${CMAKE_INSTALL_PREFIX}/lib)
-set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -g")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+
 
 #set(CMAKE_SKIP_BUILD_RPATH FALSE)                 # 编译时加上RPATH  
 #set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)         # 编译时RPATH不使用安装的RPATH  
@@ -62,22 +65,47 @@ function(build_module_examples name)
     endforeach()
 
     #message("dep lib  ${DEP_LIBS}")
+    if(WIN32)
+
+        if(BUILD_SHARED_YLIB)
+            target_link_libraries(test_${module_name} ylib ws2_32  ${DEP_LIBS})
+        else()
+            target_link_libraries(test_${module_name} ylib_s   ${DEP_LIBS})
+        endif()
+
+        # RUNTIME-rpath maybe be diffcult.
+        #    INSTALL(TARGETS  test_${module_name}
+        #        RUNTIME DESTINATION examples
+        #    )
+
+        INSTALL(PROGRAMS 
+            ${CMAKE_CURRENT_BINARY_DIR}/test_${module_name}.exe
+            DESTINATION examples
+        )
+
+    elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
+
+        if(BUILD_SHARED_YLIB)
+            target_link_libraries(test_${module_name} libylib.so  -lssl -lcrypto -lz -pthread  ${DEP_LIBS})
+        else()
+            target_link_libraries(test_${module_name} libylib_s.so  -lssl -lcrypto  -lz -pthread ${DEP_LIBS})
+        endif()
+        # RUNTIME-rpath maybe be diffcult.
+        #    INSTALL(TARGETS  test_${module_name}
+        #        RUNTIME DESTINATION examples
+        #    )
+
+        INSTALL(PROGRAMS 
+            ${CMAKE_CURRENT_BINARY_DIR}/test_${module_name}
+            DESTINATION examples
+        )
+
+    elseif(ANDROID)
         
-    if(BUILD_SHARED_YLIB)
-        target_link_libraries(test_${module_name} libylib.so  -lssl -lcrypto -lz -pthread  ${DEP_LIBS})
-    else()
-        target_link_libraries(test_${module_name} libylib_s.so  -lssl -lcrypto  -lz -pthread ${DEP_LIBS})
-    endif()
+    endif()       
 
-# RUNTIME-rpath maybe be diffcult.
-#    INSTALL(TARGETS  test_${module_name}
-#        RUNTIME DESTINATION examples
-#    )
 
-    INSTALL(PROGRAMS 
-        ${CMAKE_CURRENT_BINARY_DIR}/test_${module_name}
-        DESTINATION examples
-    )
+
 
 
 endfunction()
@@ -186,19 +214,39 @@ if(BUILD_MODULE_YTEMP)
 
 endif()
 ##########################################################################
+set(BUILD_MODULE_YMAIN OFF)
+if(BUILD_MODULE_YMAIN)
 
-#build program frame example
-add_executable(test_ymain
-    ${CMAKE_CURRENT_SOURCE_DIR}/ProgramFrameExamples/ymain.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/ProgramFrameExamples/ystart.cpp
+    #build program frame example
+    add_executable(test_ymain
+        ${CMAKE_CURRENT_SOURCE_DIR}/ProgramFrameExamples/ymain.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/ProgramFrameExamples/ystart.cpp
+        )
+    if(WIN32)
+
+        if(BUILD_SHARED_YLIB)
+            target_link_libraries(test_ymain libylib.dll -lssl -lcrypto  -lz -pthread -lstdc++)
+        else()
+            target_link_libraries(test_ymain libylib_s.lib -lssl -lcrypto   -lz -pthread -lstdc++)
+        endif()
+
+    elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
+
+        if(BUILD_SHARED_YLIB)
+            target_link_libraries(test_ymain libylib.so -lssl -lcrypto  -lz -pthread -lstdc++)
+        else()
+            target_link_libraries(test_ymain libylib_s.so -lssl -lcrypto   -lz -pthread -lstdc++)
+        endif()
+
+    elseif(ANDROID)
+        
+    endif()
+
+
+    INSTALL(PROGRAMS 
+        ${CMAKE_CURRENT_BINARY_DIR}/test_ymain
+        DESTINATION examples/ProgramFrameExamples
     )
-if(BUILD_SHARED_YLIB)
-    target_link_libraries(test_ymain libylib.so -lssl -lcrypto  -lz -pthread -lstdc++)
-else()
-    target_link_libraries(test_ymain libylib_s.so -lssl -lcrypto   -lz -pthread -lstdc++)
-endif()
 
-INSTALL(PROGRAMS 
-    ${CMAKE_CURRENT_BINARY_DIR}/test_ymain
-    DESTINATION examples/ProgramFrameExamples
-)
+
+endif()

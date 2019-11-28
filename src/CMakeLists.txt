@@ -2,18 +2,32 @@
 #set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--whole-archive")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--whole-archive")
 
-if(CMAKE_BUILD_TYPE MATCHES "(Release|RELEASE|release)")
 
-#release mode 
+if(WIN32)
 
-else()
 
-#debug mode
-add_compile_options(-g)
-set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -g")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 
+elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
+
+    if(CMAKE_BUILD_TYPE MATCHES "(Release|RELEASE|release)")
+
+        #release mode 
+
+    else()
+
+        #debug mode
+        add_compile_options(-g)
+        set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -g")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+
+    endif()
+
+elseif(ANDROID)
+    
 endif()
+
+
+
 
 #----------------------------------------------------------------------------------------
 set(SRC
@@ -110,22 +124,40 @@ endif()
 
 #----------------------------------------------------------------------------------------
 
-if(BUILD_STATIC_YLIB)
 
-    add_library(ylib_s STATIC ${SRC})
-
-endif()
-
-if(BUILD_SHARED_YLIB)
-
-    add_library(ylib SHARED ${SRC})
-
-endif()
 
 if(WIN32)
+    #if(BUILD_STATIC_YLIB)
+
+    #    add_library(ylib_s STATIC ${SRC})
+
+    #endif()
+
+    #if(BUILD_SHARED_YLIB)
+
+    #    add_library(ylib SHARED ${SRC})
+
+    #endif()
+    add_library(ylib SHARED ${SRC})
+    target_link_libraries( ylib
+                                log4cppD.lib ws2_32)
+
+
 
 
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
+
+    if(BUILD_STATIC_YLIB)
+
+        add_library(ylib_s STATIC ${SRC})
+
+    endif()
+
+    if(BUILD_SHARED_YLIB)
+
+        add_library(ylib SHARED ${SRC})
+
+    endif()
 
 
     if(BUILD_STATIC_YLIB)
@@ -156,14 +188,35 @@ endif()
 #set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 
 
+if(WIN32)
+    #for lib files
+    INSTALL(TARGETS  ylib 
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+    )
+    INSTALL(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/ylib.dll
+    DESTINATION examples
+    )
+    INSTALL(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/ylib.dll
+    DESTINATION lib
+    )
+elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
+
+    #for lib files
+    INSTALL(TARGETS  ylib ylib_s
+        #RUNTIME DESTINATION
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+    )
+
+elseif(ANDROID)
 
 
-#for lib files
-INSTALL(TARGETS  ylib ylib_s
-    #RUNTIME DESTINATION
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-)
+endif()
+
+
 #for header files
 INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/core DESTINATION include
 

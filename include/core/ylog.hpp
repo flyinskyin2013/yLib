@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:52
  * @LastEditors: Sky
- * @LastEditTime: 2019-11-01 11:44:14
+ * @LastEditTime: 2019-11-28 18:57:19
  * @Description: 
  */
 
@@ -14,9 +14,15 @@
 #include <unordered_map>
 #include <utility>
 
+#ifdef _WIN32 || _WIN64
+
+#include <windows.h>
+
+#elif __linux__ || __linux
+
 #ifdef __cplusplus
-extern "C"{
-#endif //__cplusplus
+extern "C" {
+#endif//__cplusplus
 
 #include <string.h>
 #include <stdarg.h>
@@ -25,7 +31,12 @@ extern "C"{
 
 #ifdef __cplusplus
 }
-#endif //__cplusplus
+#endif//__cplusplus
+
+
+#elif __unix__ || __unix
+
+#endif //__unix__ || __unix
 
 
 #include "ycommon.hpp"
@@ -38,13 +49,25 @@ namespace log4cpp{
 
 namespace yLib{
 
+#ifdef _WIN32 || _WIN64
+
+    #define LOG_TAIL std::string("<<  FileName=") + std::string(__FILE__)+ \
+        std::string("  LineNum=") + std::to_string(__LINE__)+ \
+        std::string("  FuncName=") + std::string(__FUNCDNAME__)    
+
+#elif __linux__ || __linux
     // Those contain the signature of the function as well as its bare name
     //__FUNCDNAME__  vs
     //__PRETTY_FUNCTION__ gcc
 
     #define LOG_TAIL std::string("<<  FileName=") + std::string(__FILE__)+ \
-		std::string("  LineNum=") + std::to_string(__LINE__)+ \
-		std::string("  FuncName=") + std::string(__PRETTY_FUNCTION__)
+        std::string("  LineNum=") + std::to_string(__LINE__)+ \
+        std::string("  FuncName=") + std::string(__PRETTY_FUNCTION__)       
+
+#elif __unix__ || __unix
+
+    #endif //__unix__ || __unix
+
 
     #define MSG_BUF_SIZE 4096 //4k ,linux-func-stack max size is 8MB
     //debug < info < warn < error
@@ -93,7 +116,7 @@ namespace yLib{
     typedef std::unordered_map<std::string, SubCategoryProperty> TypeSubCategoryMap;
 
     //yLog support thread-safety,defaultly.
-    class yLog MACRO_PUBLIC_INHERIT_YOBJECT{
+    class __yLib_EXPORT__ yLog MACRO_PUBLIC_INHERIT_YOBJECT{
 
         public:
             
@@ -143,9 +166,6 @@ namespace yLib{
         static void _ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg_list, std::string & category_name);
         static char _c_ptr_msg_buf[MSG_BUF_SIZE];
 
-        static pthread_mutex_t _thread_mutex;
-        static pthread_mutex_t _process_mutex;
-
         static log4cpp::Category * _ptr_log4_category_root;
         static TypeSubCategoryMap _log4cpp_sub_category_map;
 
@@ -154,6 +174,23 @@ namespace yLib{
         
         static uint16_t _c_log4cpp_log_level;
         static uint16_t _c_ylog_log_level;
+
+
+
+#ifdef _WIN32 || _WIN64
+
+        static HANDLE _thread_mutex_handle;
+        static bool _thread_mutex_is_init;
+        static void _init_thread_mutex(void);
+
+#elif __linux__ || __linux
+
+        static pthread_mutex_t _thread_mutex;
+        static pthread_mutex_t _process_mutex;
+
+#elif __unix__ || __unix
+
+#endif //__unix__ || __unix
     };
 }
 

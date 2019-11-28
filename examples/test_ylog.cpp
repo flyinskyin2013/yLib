@@ -2,15 +2,19 @@
  * @Author: Sky
  * @Date: 2019-09-20 10:11:02
  * @LastEditors: Sky
- * @LastEditTime: 2019-11-01 11:49:18
+ * @LastEditTime: 2019-11-28 19:09:22
  * @Description: 
  */
 
 #include "ylib.hpp"
 
+#include <iostream>
+
 //LOG_TAIL will add current filename , function-name, line-number
 //such as str:<<  FileName=log.cpp  LineNum=40  FuncName=void a::b(log4cpp::Category&)
 int main (int argc, char * argv[]){
+
+    std::cout<<" =======================test yLib::yLog==========================="<<std::endl;
 
     yLib::yLog::I( "class call" );
     yLib::yLog::D( ("class call A %d, %f test ylog" + LOG_TAIL).c_str(), 1234, 66.5555);
