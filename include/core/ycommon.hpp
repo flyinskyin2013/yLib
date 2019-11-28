@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2018-10-23 11:07:58
  * @LastEditors: Sky
- * @LastEditTime: 2019-11-01 10:59:26
+ * @LastEditTime: 2019-11-28 18:56:47
  * @Description: 
  */
 
@@ -16,6 +16,16 @@
 
 
 namespace yLib{
+    
+#ifdef _WIN32 || _WIN64
+    #define __yLib_EXPORT__ __declspec(dllexport)
+    #define __yLib_IMPORT__ __declspec(dllimport)
+#elif __linux__ || __linux
+    #define __yLib_EXPORT__
+    #define __yLib_IMPORT__
+#elif __unix__ || __unix
+
+#endif //__unix__ || __unix
 
 
 //define some useful macroes ---------------------------- start
@@ -62,7 +72,7 @@ namespace yLib{
     #define YLIB_VERSION_MINOR0 0
     #define YLIB_VERSION_MINOR1 0
 
-    class yCommon MACRO_PUBLIC_INHERIT_YOBJECT
+    class __yLib_EXPORT__ yCommon MACRO_PUBLIC_INHERIT_YOBJECT
     {
     private:
         /* data */

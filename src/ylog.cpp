@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:53
  * @LastEditors: Sky
- * @LastEditTime: 2019-11-01 11:41:00
+ * @LastEditTime: 2019-11-28 19:24:06
  * @Description: 
  */
 
@@ -22,6 +22,19 @@
 #include <log4cpp/PropertyConfigurator.hh>
 //log4cpp
 
+#ifdef _WIN32 || _WIN64
+
+HANDLE yLib::yLog::_thread_mutex_handle = NULL;
+bool yLib::yLog::_thread_mutex_is_init = false;
+
+#elif __linux__ || __linux
+
+pthread_mutex_t yLib::yLog::_thread_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t yLib::yLog::_process_mutex;
+
+#elif __unix__ || __unix
+
+#endif //__unix__ || __unix
 
 
 char  yLib::yLog::_c_ptr_msg_buf[MSG_BUF_SIZE];
@@ -32,8 +45,7 @@ yLib::TypeSubCategoryMap yLib::yLog::_log4cpp_sub_category_map;
 bool yLib::yLog::_b_enable_log4cpp = false;
 bool yLib::yLog::_b_enable_feature_ps = false;
 
-pthread_mutex_t yLib::yLog::_thread_mutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t yLib::yLog::_process_mutex;
+
 
 uint16_t yLib::yLog::_c_log4cpp_log_level = yLib::yLogLevel::_ENABLE_ALL_LOG_LEVEL_;
 uint16_t yLib::yLog::_c_ylog_log_level = yLib::yLogLevel::_ENABLE_ALL_LOG_LEVEL_;
@@ -53,6 +65,39 @@ yLib::yLog::~yLog() noexcept{
 	//     _ptr_log4_category_root = nullptr;
     // }
 }
+
+
+#ifdef _WIN32 || _WIN64
+
+void yLib::yLog::_init_thread_mutex(void){
+
+    SECURITY_ATTRIBUTES attr_;
+    attr_.bInheritHandle = false;
+    _thread_mutex_handle = CreateMutex(\
+        &attr_, \
+        false,
+        "yLib::yLog::_thread_mutex_handle"
+    );
+
+    if ( NULL == _thread_mutex_handle ){//then we can not call yLib::yLog::E yLib::yLog::I yLib::yLog::W yLib::yLog::D , they are not ready 
+
+        std::cout<<"_init_thread_mutex(): create mutex failed, error is "<<std::endl;
+        HLOCAL LocalAddress = NULL;
+		FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
+			NULL, GetLastError(), 0, (PTSTR)&LocalAddress, 0, NULL);
+        std::cout<<(char *)LocalAddress<<std::endl;
+    }
+
+}
+
+#elif __linux__ || __linux
+
+
+#elif __unix__ || __unix
+
+#endif //__unix__ || __unix
+
+
 
 void yLib::yLog::SetLog4cppLogLevel(uint16_t log_level){
 
@@ -148,6 +193,25 @@ void yLib::yLog::SetLog4cppSubCategory(std::string category_name){
 
 void yLib::yLog::_ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg_list){
 
+#ifdef _WIN32 || _WIN64
+
+    if ( !_thread_mutex_is_init ){
+
+        _init_thread_mutex();
+        _thread_mutex_is_init = true;
+    }
+
+    //mutex lock
+    if ( _b_enable_feature_ps ){
+
+        //pthread_mutex_lock(&_process_mutex);
+    }
+    else{ // thread safety
+
+        WaitForSingleObject(_thread_mutex_handle, INFINITE);//If dwMilliseconds is INFINITE, the function will return only when the object is signaled.
+    }
+
+#elif __linux__ || __linux
     //mutex lock
     if ( _b_enable_feature_ps ){
 
@@ -157,6 +221,12 @@ void yLib::yLog::_ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg
 
         pthread_mutex_lock(&_thread_mutex);
     }
+
+#elif __unix__ || __unix
+
+#endif //__unix__ || __unix
+
+
 
     memset(_c_ptr_msg_buf, 0, MSG_BUF_SIZE);//set buffer to '0'
 
@@ -240,6 +310,11 @@ void yLib::yLog::_ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg
         E("_ylog_log_impl(): input log type error.");
         break;
     }
+#ifdef _WIN32 || _WIN64
+
+    ReleaseMutex(_thread_mutex_handle);
+
+#elif __linux__ || __linux
 
     //mutex unlock 
     if ( _b_enable_feature_ps ){
@@ -250,6 +325,11 @@ void yLib::yLog::_ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg
 
         pthread_mutex_unlock(&_thread_mutex);
     }
+
+#elif __unix__ || __unix
+
+#endif //__unix__ || __unix
+
 }
 
 //log info 
@@ -346,6 +426,25 @@ void yLib::yLog::E(const char * fmt , ...){
 
 void yLib::yLog::_ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg_list, std::string & category_name){
 
+#ifdef _WIN32 || _WIN64
+
+    if ( !_thread_mutex_is_init ){
+
+        _init_thread_mutex();
+        _thread_mutex_is_init = true;
+    }
+
+    //mutex lock
+    if ( _b_enable_feature_ps ){
+
+        //pthread_mutex_lock(&_process_mutex);
+    }
+    else{ // thread safety
+
+        WaitForSingleObject(_thread_mutex_handle, INFINITE);//If dwMilliseconds is INFINITE, the function will return only when the object is signaled.
+    }
+
+#elif __linux__ || __linux
     //mutex lock
     if ( _b_enable_feature_ps ){
 
@@ -355,6 +454,10 @@ void yLib::yLog::_ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg
 
         pthread_mutex_lock(&_thread_mutex);
     }
+
+#elif __unix__ || __unix
+
+#endif //__unix__ || __unix
 
     memset(_c_ptr_msg_buf, 0, MSG_BUF_SIZE);//set buffer to '0'
 
@@ -483,6 +586,12 @@ void yLib::yLog::_ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg
 
 
 
+#ifdef _WIN32 || _WIN64
+
+    ReleaseMutex(_thread_mutex_handle);
+
+#elif __linux__ || __linux
+
     //mutex unlock 
     if ( _b_enable_feature_ps ){
 
@@ -492,6 +601,10 @@ void yLib::yLog::_ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg
 
         pthread_mutex_unlock(&_thread_mutex);
     }
+
+#elif __unix__ || __unix
+
+#endif //__unix__ || __unix
 }
 
 //log info 
@@ -594,6 +707,12 @@ void yLib::yLog::E(std::string &category_name, const char * fmt , ...){
 
 void yLib::yLog::SetProcessSafetyFeature(bool enable_feature){
 
+#ifdef _WIN32 || _WIN64
+
+    //You can use a mutex object to protect a shared resource from simultaneous access by multiple threads or processes. 
+
+#elif __linux__ || __linux
+
     pthread_mutexattr_t mtx_attr;
 
     pthread_mutexattr_init(&mtx_attr);
@@ -625,4 +744,10 @@ void yLib::yLog::SetProcessSafetyFeature(bool enable_feature){
     }
 
     pthread_mutexattr_destroy(&mtx_attr);
+
+#elif __unix__ || __unix
+
+#endif //__unix__ || __unix
+
+
 }

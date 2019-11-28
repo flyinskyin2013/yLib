@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-09-20 17:06:18
  * @LastEditors: Sky
- * @LastEditTime: 2019-10-28 17:15:46
+ * @LastEditTime: 2019-11-28 18:57:11
  * @Description: 
  */
 #ifndef _YLIB_CORE_YEXCEPTION_HPP_
@@ -35,7 +35,7 @@ namespace yLib{
 
 
     
-    class yException MACRO_PUBLIC_INHERIT_YOBJECT
+    class __yLib_EXPORT__ yException MACRO_PUBLIC_INHERIT_YOBJECT
     {
     private:
         /* data */
