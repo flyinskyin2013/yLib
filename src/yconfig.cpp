@@ -2,12 +2,12 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:53
  * @LastEditors: Sky
- * @LastEditTime: 2019-09-25 16:33:49
+ * @LastEditTime: 2019-12-02 18:18:48
  * @Description: 
  */
 
 #include "yconfig.hpp"
-#include <libconfig/libconfig.h++>
+#include <libconfig.h++>
 
 using namespace yLib;
 yLib::yConfig::yConfig() 
