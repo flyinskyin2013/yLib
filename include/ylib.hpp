@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-11-20 15:29:40
  * @LastEditors: Sky
- * @LastEditTime: 2019-11-28 18:00:50
+ * @LastEditTime: 2019-11-29 11:36:59
  * @Description: 
  */
 #ifndef _YLIB_H_
@@ -11,8 +11,8 @@
 
 #ifdef _WIN32 || _WIN64
 
-#include <core/ycommon.hpp>
 #include <core/ylog.hpp>
+#include <core/ysharedmemory.hpp>
 
 #elif __linux__ || __linux
     

@@ -56,6 +56,7 @@ option(BUILD_MODULE_YSHELL "Build module-yshell " OFF)
 option(BUILD_MODULE_YXML "Build module-yxml " OFF)
 option(BUILD_MODULE_YCONFIG "Build module-yconfig " OFF)
 option(BUILD_MODULE_YJSON "Build module-yjson " OFF)
+option(BUILD_MODULE_YSHAREDMEMORY "Build module-ysharedmemory " ON)
 ################################################################
 
 
