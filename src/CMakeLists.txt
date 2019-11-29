@@ -107,11 +107,11 @@ if(WIN32)
     endif()
 
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
-
-    if(${BUILD_YLIB_ARCH} MATCHES "(x86_64|X86_64)")
+    #message(${BUILD_YLIB_ARCH})
+    if("${BUILD_YLIB_ARCH}" MATCHES "^(x86_64|X86_64)$")
         #linux 64bits ylib
         link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/x86_64)
-    elseif(${BUILD_YLIB_ARCH} MATCHES "(x86|X86)")
+    elseif(${BUILD_YLIB_ARCH} MATCHES "^(x86|X86)$")
         #linux 32bits ylib
         link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/x86)
     elseif(${BUILD_YLIB_ARCH} MATCHES "armeabi")

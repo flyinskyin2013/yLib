@@ -3,11 +3,11 @@
  * @Author: Sky
  * @Date: 2019-11-29 11:50:37
  * @LastEditors: Sky
- * @LastEditTime: 2019-11-29 15:15:03
+ * @LastEditTime: 2019-12-02 19:23:34
  * @FilePath: \yLib\examples\test_ysharedmemory_r.cpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
-#include "ySharedMemory.hpp"
+#include "ysharedmemory.hpp"
 
 #define SHARED_MEM_SIZE 1024 * 1024 * 1024
 
@@ -23,7 +23,16 @@ int main(int argc, char * argv[]) {
 
 	while (shm_addr[0] != (char)0xFF) {
 
+#ifdef _WIN32 || _WIN64
 		Sleep(1000);
+#elif __linux__ || __linux
+
+		sleep(1);
+#elif __unix__ || __unix
+
+
+#endif //_WIN32
+		
 		//std::cout << "waitting msg " << std::endl;
 		if (shm_addr[SHARED_MEM_SIZE - 1] == (char)0xFF) {
 

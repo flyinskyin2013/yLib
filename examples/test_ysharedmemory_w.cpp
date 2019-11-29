@@ -1,4 +1,11 @@
-﻿#include "ySharedMemory.hpp"
+﻿/*
+ * @Author: Sky
+ * @Date: 2019-12-02 19:24:00
+ * @LastEditors: Sky
+ * @LastEditTime: 2019-12-02 19:24:00
+ * @Description: 
+ */
+#include "ysharedmemory.hpp"
 
 #define SHARED_MEM_SIZE 1024 * 1024 * 1024
 
@@ -25,7 +32,15 @@ int main(int argc, char * argv[]) {
 	while (shm_addr[SHARED_MEM_SIZE - 1] == (char)0xFF) {
 	
 		std::cout << "wait reader ... ..." << std::endl;
+#ifdef _WIN32 || _WIN64
 		Sleep(1000);
+#elif __linux__ || __linux
+
+		sleep(1);
+#elif __unix__ || __unix
+
+
+#endif //_WIN32
 	}
 
 	std::cout << "ySharedMemory write 2" << std::endl;
@@ -37,7 +52,15 @@ int main(int argc, char * argv[]) {
 
 	while (shm_addr[SHARED_MEM_SIZE - 1] == (char)0xFF) {
 
+#ifdef _WIN32 || _WIN64
 		Sleep(1000);
+#elif __linux__ || __linux
+
+		sleep(1);
+#elif __unix__ || __unix
+
+
+#endif //_WIN32
 	}
 	std::cout << "ySharedMemory write 3" << std::endl;
 	memset(shm_addr, 0, 1024 * 1024 * 1024);
@@ -48,7 +71,15 @@ int main(int argc, char * argv[]) {
 
 	while (shm_addr[SHARED_MEM_SIZE - 1] == (char)0xFF) {
 
+#ifdef _WIN32 || _WIN64
 		Sleep(1000);
+#elif __linux__ || __linux
+
+		sleep(1);
+#elif __unix__ || __unix
+
+
+#endif //_WIN32
 	}
 
 	shm_addr[0] = 0xFF;

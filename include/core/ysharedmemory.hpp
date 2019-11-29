@@ -3,7 +3,7 @@
  * @Author: Sky
  * @Date: 2019-11-29 11:35:54
  * @LastEditors: Sky
- * @LastEditTime: 2019-11-29 11:39:54
+ * @LastEditTime: 2019-12-02 19:22:36
  * @FilePath: \yLib\include\core\ysharedmemory.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -20,6 +20,8 @@
 #include <iostream>
 
 #elif __linux__ || __linux
+
+
 
 #ifdef __cplusplus
 extern "C" {
