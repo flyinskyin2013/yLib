@@ -205,6 +205,31 @@ INSTALL(FILES
     DESTINATION 
     examples
 )
+##########################################################################
+
+if(BUILD_MODULE_YSHAREDMEMORY)
+
+    add_executable(test_ysharedmemory_r test_ysharedmemory_r.cpp) 
+    add_executable(test_ysharedmemory_w test_ysharedmemory_w.cpp) 
+    if(BUILD_SHARED_YLIB)
+        target_link_libraries(test_ysharedmemory_r ylib)
+        target_link_libraries(test_ysharedmemory_w ylib)
+    else()
+        target_link_libraries(test_${module_name} ylib_s   ${DEP_LIBS})
+    endif()
+
+    # RUNTIME-rpath maybe be diffcult.
+    #    INSTALL(TARGETS  test_${module_name}
+    #        RUNTIME DESTINATION examples
+    #    )
+
+    INSTALL(PROGRAMS 
+        ${CMAKE_CURRENT_BINARY_DIR}/test_ysharedmemory_r.exe
+        ${CMAKE_CURRENT_BINARY_DIR}/test_ysharedmemory_w.exe
+        DESTINATION examples
+    )
+
+endif()
 
 ##########################################################################
 set(BUILD_MODULE_YTEMP ON)
@@ -213,6 +238,9 @@ if(BUILD_MODULE_YTEMP)
     build_module_examples(YTEMP)
 
 endif()
+
+
+
 ##########################################################################
 set(BUILD_MODULE_YMAIN OFF)
 if(BUILD_MODULE_YMAIN)

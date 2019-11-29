@@ -7,6 +7,11 @@
  -->
 Version Notes:
 ==========
+v0.07
+----------
+    1 On Windows plateform, we transplant and support yLog-module, ySharedMemory
+    5 Release ySharedMemory-module to transmit data between processes.
+
 v0.06
 ----------
     1 As libxml2 is too old, libxml2(2.7.1) is upgraded to libxml2(2.9.9).

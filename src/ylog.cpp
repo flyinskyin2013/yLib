@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:53
  * @LastEditors: Sky
- * @LastEditTime: 2019-11-28 19:24:06
+ * @LastEditTime: 2019-11-29 15:13:13
  * @Description: 
  */
 
@@ -74,18 +74,17 @@ void yLib::yLog::_init_thread_mutex(void){
     SECURITY_ATTRIBUTES attr_;
     attr_.bInheritHandle = false;
     _thread_mutex_handle = CreateMutex(\
-        &attr_, \
-        false,
-        "yLib::yLog::_thread_mutex_handle"
+        NULL, \
+        false, \
+        "yLib::yLog::_thread_mutex_handle" \
     );
 
     if ( NULL == _thread_mutex_handle ){//then we can not call yLib::yLog::E yLib::yLog::I yLib::yLog::W yLib::yLog::D , they are not ready 
 
-        std::cout<<"_init_thread_mutex(): create mutex failed, error is "<<std::endl;
         HLOCAL LocalAddress = NULL;
 		FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
 			NULL, GetLastError(), 0, (PTSTR)&LocalAddress, 0, NULL);
-        std::cout<<(char *)LocalAddress<<std::endl;
+        std::cout<< " yLib::yLog::_init_thread_mutex():create mutex failed, error info is " <<(char *)LocalAddress<<std::endl;
     }
 
 }
@@ -205,10 +204,33 @@ void yLib::yLog::_ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg
     if ( _b_enable_feature_ps ){
 
         //pthread_mutex_lock(&_process_mutex);
+        DWORD wait_mutex_ret = WaitForSingleObject(_thread_mutex_handle, INFINITE);
+        if ( WAIT_OBJECT_0 != wait_mutex_ret ){//If dwMilliseconds is INFINITE, the function will return only when the object is signaled.
+
+            if ( WAIT_FAILED == wait_mutex_ret ){
+                
+                HLOCAL LocalAddress = NULL;
+		        FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
+			        NULL, GetLastError(), 0, (PTSTR)&LocalAddress, 0, NULL);
+                std::cout<<"yLib::yLog::_ylog_log_impl(): wait mutex failed, error info is "<<(char *)LocalAddress <<std::endl;
+                return ;
+            }
+        }
     }
     else{ // thread safety
 
-        WaitForSingleObject(_thread_mutex_handle, INFINITE);//If dwMilliseconds is INFINITE, the function will return only when the object is signaled.
+        DWORD wait_mutex_ret = WaitForSingleObject(_thread_mutex_handle, INFINITE);
+        if ( WAIT_OBJECT_0 != wait_mutex_ret ){//If dwMilliseconds is INFINITE, the function will return only when the object is signaled.
+
+            if ( WAIT_FAILED == wait_mutex_ret ){
+                
+                HLOCAL LocalAddress = NULL;
+		        FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
+			        NULL, GetLastError(), 0, (PTSTR)&LocalAddress, 0, NULL);
+                std::cout<<"yLib::yLog::_ylog_log_impl(): wait mutex failed, error info is "<<(char *)LocalAddress <<std::endl;
+                return ;
+            }
+        }
     }
 
 #elif __linux__ || __linux
@@ -437,11 +459,33 @@ void yLib::yLog::_ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg
     //mutex lock
     if ( _b_enable_feature_ps ){
 
-        //pthread_mutex_lock(&_process_mutex);
+        DWORD wait_mutex_ret = WaitForSingleObject(_thread_mutex_handle, INFINITE);
+        if ( WAIT_OBJECT_0 != wait_mutex_ret ){//If dwMilliseconds is INFINITE, the function will return only when the object is signaled.
+
+            if ( WAIT_FAILED == wait_mutex_ret ){
+                
+                HLOCAL LocalAddress = NULL;
+		        FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
+			        NULL, GetLastError(), 0, (PTSTR)&LocalAddress, 0, NULL);
+                std::cout<<"yLib::yLog::_ylog_log_impl(): wait mutex failed, error info is "<<(char *)LocalAddress <<std::endl;
+                return ;
+            }
+        }
     }
     else{ // thread safety
 
-        WaitForSingleObject(_thread_mutex_handle, INFINITE);//If dwMilliseconds is INFINITE, the function will return only when the object is signaled.
+        DWORD wait_mutex_ret = WaitForSingleObject(_thread_mutex_handle, INFINITE);
+        if ( WAIT_OBJECT_0 != wait_mutex_ret ){//If dwMilliseconds is INFINITE, the function will return only when the object is signaled.
+
+            if ( WAIT_FAILED == wait_mutex_ret ){
+                
+                HLOCAL LocalAddress = NULL;
+		        FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
+			        NULL, GetLastError(), 0, (PTSTR)&LocalAddress, 0, NULL);
+                std::cout<<"yLib::yLog::_ylog_log_impl(): wait mutex failed, error info is "<<(char *)LocalAddress <<std::endl;
+                return ;
+            }
+        }
     }
 
 #elif __linux__ || __linux

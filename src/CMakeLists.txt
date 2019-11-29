@@ -88,6 +88,12 @@ if(BUILD_MODULE_YJSON)
 
 endif()
 
+if(BUILD_MODULE_YSHAREDMEMORY)
+
+    ylib_build_module(YSHAREDMEMORY)
+
+endif()
+
 #----------------------------------------------------------------------------------------
 
 if(WIN32)
