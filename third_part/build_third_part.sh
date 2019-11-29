@@ -2,7 +2,7 @@
 # @Author: Sky
  # @Date: 2019-10-28 17:35:17
  # @LastEditors: Sky
- # @LastEditTime: 2019-11-20 15:19:56
+ # @LastEditTime: 2019-12-02 16:53:18
  # @Description: 
  ###
 #!/bin/bash
@@ -245,7 +245,7 @@ function build_libjsoncpp(){
 	fi
 
 	cd build
-	cmake -DCMAKE_INSTALL_PREFIX=/home/sky/yLib/third_part/build_out -DCMAKE_C_FLAGS="-fPIC -std=c99" -DCMAKE_CXX_FLAGS="-fPIC -std=c++11"  -DBUILD_SHARED_LIBS=OFF ..
+	cmake -DCMAKE_INSTALL_PREFIX=${third_part_root_dir}/build_out -DCMAKE_C_FLAGS="-fPIC -std=c99" -DCMAKE_CXX_FLAGS="-fPIC -std=c++11"  -DBUILD_SHARED_LIBS=OFF ..
 	if [ $? -ne -0 ]
 	then 
 	

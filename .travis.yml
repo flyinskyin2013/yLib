@@ -16,23 +16,26 @@ matrix:
       dist: xenial
       compiler: gcc
       env:
-        - BUILD_THIRD_LIB="cd third_part && chmod +x build_third_part.sh && ./build_third_part.sh init >/dev/null 2>&1 && ./build_third_part.sh make -j2 >/dev/null 2>&1 && cp build_out/lib* -r ../lib/linux_x86_64"
-        - BUILD_YLIB="cd .. && mkdir build && cd build && cmake .. && make -j2"
+        - INIT_DIRS="mkdir -p lib/windows/x86 && mkdir -p lib/windows/x86_64 && mkdir -p lib/linux/x86 && mkdir -p lib/linux/x86_64 && mkdir -p lib/linux/armeabi && mkdir -p lib/linux/arm64-v8a && mkdir -p include/third_part"
+        - BUILD_THIRD_LIB="cd third_part && chmod +x build_third_part.sh && ./build_third_part.sh init >/dev/null 2>&1 && ./build_third_part.sh make -j2 >/dev/null 2>&1 && cp build_out/lib/* -r ../lib/linux/x86_64 && cp build_out/include/* -r ../include/third_part"
+        - BUILD_YLIB="cd .. && mkdir build && cd build && cmake -DBUILD_ALL_MODULE=ON -DBUILD_YLIB_ARCH=x86_64  .. && make && make install"
 
     - name: "linux-x86_64-clang"
       os: linux
       dist: xenial
       compiler: clang
       env:
-        - BUILD_THIRD_LIB="cd third_part && chmod +x build_third_part.sh && ./build_third_part.sh init >/dev/null 2>&1 && ./build_third_part.sh make -j2 >/dev/null 2>&1 && cp build_out/lib* -r ../lib/linux_x86_64"
-        - BUILD_YLIB="cd .. && mkdir build && cd build && cmake .. && make -j2"
+        - INIT_DIRS="mkdir -p lib/windows/x86 && mkdir -p lib/windows/x86_64 && mkdir -p lib/linux/x86 && mkdir -p lib/linux/x86_64 && mkdir -p lib/linux/armeabi && mkdir -p lib/linux/arm64-v8a && mkdir -p include/third_part"
+        - BUILD_THIRD_LIB="cd third_part && chmod +x build_third_part.sh && ./build_third_part.sh init >/dev/null 2>&1 && ./build_third_part.sh make -j2 >/dev/null 2>&1 && cp build_out/lib/* -r ../lib/linux/x86_64 && cp build_out/include/* -r ../include/third_part"
+        - BUILD_YLIB="cd .. && mkdir build && cd build && cmake -DBUILD_ALL_MODULE=ON -DBUILD_YLIB_ARCH=x86_64  .. && make && make install"
 
     - name: "windows-vs2017"
       os: windows
       dist: 1803-containers
       env:
-        - BUILD_THIRD_LIB="cd third_part && chmod +x build_third_part.sh && ./build_third_part.sh init >/dev/null 2>&1 && ./build_third_part.sh make -j2 >/dev/null 2>&1 && cp build_out/lib* -r ../lib/linux_x86_64"
-        - BUILD_YLIB="cd .. && mkdir build && cd build && cmake .. && cmake --build ."
+        - INIT_DIRS="mkdir -p lib/windows/x86 && mkdir -p lib/windows/x86_64 && mkdir -p lib/linux/x86 && mkdir -p lib/linux/x86_64 && mkdir -p lib/linux/armeabi && mkdir -p lib/linux/arm64-v8a && mkdir -p include/third_part"
+        - BUILD_THIRD_LIB="cd third_part && ./build_third_part.bat init   && ./build_third_part.bat make -j2  && cp build_out/lib/* -r ../lib/linux/x86_64 && cp build_out/include/* -r ../include/third_part"
+        - BUILD_YLIB="cd .. && mkdir build && cd build && cmake -DBUILD_ALL_MODULE=ON -DBUILD_YLIB_ARCH=x86_64  .. && make && make install"
 
     - name: "arm-linux-armv7"
       os: linux
@@ -51,6 +54,7 @@ matrix:
           - BUILD_YLIB="cd .. && mkdir build && cd build && cmake -DCMAKE_TOOLCHAIN_FILE=`pwd`/../toolchains/aarch64-linux-gnu.toolchain.cmake -DCMAKE_SYSROOT=`pwd`/../aarch64_gcc_sysroot -DCMAKE_C_COMPILER=`pwd`/../aarch64_gcc/bin/arm-linux-gnu-gcc -DCMAKE_CXX_COMPILER=`pwd`/../aarch64_gcc/bin/arm-linux-gnu-g++  .. && make -j2"
 
 before_install:
+  - eval "${INIT_DIRS}"
   - eval "${BUILD_THIRD_LIB}"
   - eval "${BEFORE_BUILD_YLIB}"
 
