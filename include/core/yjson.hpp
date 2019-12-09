@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-10-28 14:16:37
  * @LastEditors: Sky
- * @LastEditTime: 2019-11-26 19:00:20
+ * @LastEditTime: 2019-12-09 13:45:06
  * @Description: 
  */
 
@@ -24,7 +24,7 @@ namespace Json{
 namespace yLib{
     class yJsonValue;
 
-    class yJson MACRO_PUBLIC_INHERIT_YOBJECT
+    class __yLib_EXPORT__ yJson  MACRO_PUBLIC_INHERIT_YOBJECT
     {
     private:
         /* data */
@@ -54,7 +54,7 @@ namespace yLib{
     };
 
 
-    class yJsonValue MACRO_PUBLIC_INHERIT_YOBJECT
+    class __yLib_EXPORT__ yJsonValue  MACRO_PUBLIC_INHERIT_YOBJECT
     {
     public:
         friend class yJson;
@@ -97,7 +97,7 @@ namespace yLib{
         
         ~yJsonValue();
 
-        //copy and move constructor
+        //copy and move constructor, not deep copy,_json_root_value==value_._json_root_value
         yJsonValue(const yJsonValue & value_) noexcept;
         yJsonValue(yJsonValue && value_) noexcept;
 
