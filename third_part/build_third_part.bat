@@ -43,12 +43,14 @@ else (
 
     @mkdir build_out
     @tar -xzf log4cpp-1.1.3.tar.gz
+    @tar -xzf jsoncpp_1.8.4.tar.gz
 
 @goto:eof
 
 :make
 
 call:build_log4cpp
+call:build_jsoncpp
 
 @goto:eof
 
@@ -56,6 +58,21 @@ call:build_log4cpp
 
     @echo remove log4cpp ... ...
     @rm -rf log4cpp
+
+    @echo remove jsoncpp-1.8.4 ... ...
+    @rm -rf jsoncpp-1.8.4
+@goto:eof
+
+
+:build_jsoncpp
+
+    @echo building jsoncpp-1.8.4 ... ...
+    @cd %THIRD_PART_ROOT_PATH%/jsoncpp-1.8.4
+    @mkdir build_vs2015
+    @cd build_vs2015
+    cmake -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=%THIRD_PART_ROOT_PATH%/build_out ..
+    nmake 
+    nmake install
 
 @goto:eof
 

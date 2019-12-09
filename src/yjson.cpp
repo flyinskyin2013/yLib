@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-10-28 14:15:15
  * @LastEditors: Sky
- * @LastEditTime: 2019-11-26 19:13:13
+ * @LastEditTime: 2019-12-09 13:41:24
  * @Description: 
  */
 
@@ -45,16 +45,16 @@ int yLib::yJson::yJsonReadFile(std::string file){
 
     _json_reader_builder->setDefaults(&_json_reader_builder->settings_);
     
-    //get a new json value
-    if (nullptr == _json_root_value){
+    // //get a new json value
+    // if (nullptr == _json_root_value){
 
-        _json_root_value = new Json::Value(Json::ValueType::nullValue);
-    }
-    else
-    {
-        delete _json_root_value;//remove exsited json value
-        _json_root_value = new Json::Value(Json::ValueType::nullValue);
-    }
+    //     _json_root_value = new Json::Value(Json::ValueType::nullValue);
+    // }
+    // else
+    // {
+    //     delete _json_root_value;//remove exsited json value
+    //     _json_root_value = new Json::Value(Json::ValueType::nullValue);
+    // }
     
 
     
@@ -98,16 +98,16 @@ int yLib::yJson::yJsonReadMemory(const int8_t * mem_addr, uint64_t mem_size){
     
     _json_reader_builder->setDefaults(&_json_reader_builder->settings_);
 
-    //get a new json value
-    if (nullptr == _json_root_value){
+    // //get a new json value
+    // if (nullptr == _json_root_value){
 
-        _json_root_value = new Json::Value(Json::ValueType::nullValue);
-    }
-    else
-    {
-        delete _json_root_value;//remove exsited json value
-        _json_root_value = new Json::Value(Json::ValueType::nullValue);
-    }
+    //     _json_root_value = new Json::Value(Json::ValueType::nullValue);
+    // }
+    // else
+    // {
+    //     delete _json_root_value;//remove exsited json value
+    //     _json_root_value = new Json::Value(Json::ValueType::nullValue);
+    // }
 
 
     std::string parse_error = "";
@@ -165,7 +165,7 @@ int yLib::yJson::yJsonWriteMemory(int8_t * mem_addr, uint64_t mem_max_size){
 yLib::yJsonValue yLib::yJson::yJsonGetValue(void){
 
     yJsonValue value_;
-    *value_._json_root_value = *_json_root_value;
+    *value_._json_root_value = *_json_root_value; // get a new root-jsonvalue
     
     switch (_json_root_value->type())
     {
@@ -202,6 +202,7 @@ yLib::yJsonValue yLib::yJson::yJsonGetValue(void){
         break;
     default:
         yLib::yLog::E("not support yet.");
+        value_._value_type = yLib::yJsonValue::yJsonValueType::NULL_TYPE;
         break;
     }
 
@@ -211,6 +212,7 @@ yLib::yJsonValue yLib::yJson::yJsonGetValue(void){
 int yLib::yJson::yJsonWriteValue(yJsonValue & value){
 
     *_json_root_value = *value._json_root_value;
+    return 0;
 }
 
 
@@ -272,10 +274,26 @@ yLib::yJsonValue::yJsonValue(yJsonValueType value_type_) noexcept MACRO_INIT_YOB
         break;    
     default:
         _json_root_value = new Json::Value();
+        yLib::yLog::E("not support yet.");
         break;
     }
     
     
+}
+
+yLib::yJsonValue::yJsonValue(const yLib::yJsonValue & value_) noexcept MACRO_INIT_YOBJECT_PROPERTY(yJsonValue){
+
+    _value_type = value_._value_type;
+
+    //_json_root_value = new Json::Value();//new a null json object
+    _json_root_value = value_._json_root_value;
+}
+yLib::yJsonValue::yJsonValue(yLib::yJsonValue && value_) noexcept MACRO_INIT_YOBJECT_PROPERTY(yJsonValue){
+
+    _value_type = value_._value_type;
+    
+    //_json_root_value = new Json::Value();//new a null json object
+    _json_root_value = value_._json_root_value;
 }
 
 yLib::yJsonValue::~yJsonValue(){
@@ -363,12 +381,14 @@ yLib::yJsonValue  yLib::yJsonValue::operator [](std::string key_str){
 
     return operator[](key_str.c_str());
 }
+
 yLib::yJsonValue  yLib::yJsonValue::operator [](const char * key_str){
 
     yLib::yJsonValue value_;
 
-    value_._json_root_value_bak = value_._json_root_value;
+    //value_._json_root_value_bak = value_._json_root_value;
     delete value_._json_root_value;
+    value_._json_root_value = nullptr;
     //now, we can not delete value_._json_root_value in destruct, it is managed by Json::Value
     value_._json_root_value = &_json_root_value->operator[](key_str);
 
@@ -417,16 +437,7 @@ yLib::yJsonValue  yLib::yJsonValue::operator [](uint64_t elment_idx){
     return value_;
 }
 
-yLib::yJsonValue::yJsonValue(const yLib::yJsonValue & value_) noexcept{
 
-    _value_type = value_._value_type;
-    *_json_root_value = *value_._json_root_value;
-}
-yLib::yJsonValue::yJsonValue(yLib::yJsonValue && value_) noexcept{
-
-    _value_type = value_._value_type;
-    *_json_root_value = *value_._json_root_value;
-}
 
 yLib::yJsonValue & yLib::yJsonValue::operator =(const yLib::yJsonValue & value_) noexcept{
 

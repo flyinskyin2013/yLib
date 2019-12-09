@@ -146,7 +146,7 @@ if(WIN32)
     #endif()
     add_library(ylib SHARED ${SRC})
     target_link_libraries( ylib
-                                log4cppD.lib ws2_32)
+                                log4cppD.lib jsoncppD.lib  ws2_32)
 
 
 

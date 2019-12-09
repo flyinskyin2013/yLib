@@ -22,7 +22,7 @@ For Win32
     >>cp -r build_out/lib/ ../lib/${SYS_NAME}/${BUILD_ARCH}/
 2. For yLib.
     >>mkdir -p build 
-    >>cd build && cmake -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=%cd%/install ..
+    >>cd build && cmake -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=%cd%/install -DBUILD_YLIB_ARCH=x86 ..
     >>nmake && nmake install
 
 For Linux:
