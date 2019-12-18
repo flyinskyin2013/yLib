@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-10-28 14:16:37
  * @LastEditors: Sky
- * @LastEditTime: 2019-12-09 13:45:06
+ * @LastEditTime: 2019-12-09 18:36:39
  * @Description: 
  */
 
@@ -11,6 +11,10 @@
 
 #include "ycommon.hpp"
 #include "ylog.hpp"
+
+
+#include <memory>
+#include <cstring>
 
 namespace Json{
 
