@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:52
  * @LastEditors: Sky
- * @LastEditTime: 2019-11-28 18:57:19
+ * @LastEditTime: 2019-12-10 10:17:04
  * @Description: 
  */
 
@@ -13,6 +13,11 @@
 #include <string>
 #include <unordered_map>
 #include <utility>
+
+#ifdef _WIN32
+    #pragma warning(disable:4067) //warning C4067: 预处理器指令后有意外标记 - 应输入换行符
+    #pragma warning(disable:4251) //warning C4251: xxxxx需要有dll接口由xxxx的客户端使用
+#endif //_WIN32
 
 #ifdef _WIN32 || _WIN64
 
@@ -48,6 +53,11 @@ namespace log4cpp{
 
 
 namespace yLib{
+
+#ifdef _WIN32
+    #pragma warning(disable:4067) //warning C4067: 预处理器指令后有意外标记 - 应输入换行符
+    #pragma warning(disable:4251) //warning C4251: xxxxx需要有dll接口由xxxx的客户端使用
+#endif //_WIN32
 
 #ifdef _WIN32 || _WIN64
 

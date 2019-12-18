@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2018-10-23 11:07:58
  * @LastEditors: Sky
- * @LastEditTime: 2019-11-28 18:56:47
+ * @LastEditTime: 2019-12-10 10:15:52
  * @Description: 
  */
 
@@ -17,9 +17,16 @@
 
 namespace yLib{
     
+#ifdef _WIN32
+
+    #pragma warning(disable:4067) //warning C4067: 预处理器指令后有意外标记 - 应输入换行符
+    #pragma warning(disable:4251) //warning C4251: xxxxx需要有dll接口由xxxx的客户端使用
+#endif //_WIN32
+
 #ifdef _WIN32 || _WIN64
     #define __yLib_EXPORT__ __declspec(dllexport)
     #define __yLib_IMPORT__ __declspec(dllimport)
+
 #elif __linux__ || __linux
     #define __yLib_EXPORT__
     #define __yLib_IMPORT__
