@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-11-20 15:22:17
  * @LastEditors: Sky
- * @LastEditTime: 2019-11-26 19:02:06
+ * @LastEditTime: 2019-12-10 09:16:37
  * @Description: 
  */
 #include "ylib.hpp"
@@ -56,7 +56,7 @@ void TEST_READ(void){
    
 }
 
-void TEST_WRITE(void){
+yLib::yJsonValue TEST_WRITE(void){
 
     yLib::yLog::I("==============================TEST_WRITE============================");
 
@@ -76,7 +76,7 @@ void TEST_WRITE(void){
     object_value["double"] = double_value;
     object_value["bool"] = bool_value;
     object_value["string"] = string_value;
-    object_value["int"] = int_value;
+    object_value["int"] = yLib::yJsonValue((int64_t)99);
     object_value["array"] = array_value;
 
 
@@ -87,7 +87,7 @@ void TEST_WRITE(void){
     array_value[(uint64_t)4] = int_value;
     array_value[(uint64_t)5] = object_value;
 
-
+    root_value["root_value"] = yLib::yJsonValue(std::string("test root value"));
     root_value["null"] = null_value;
     root_value["double"] = double_value;
     root_value["bool"] = bool_value;
@@ -95,6 +95,7 @@ void TEST_WRITE(void){
     root_value["int"] = int_value;
     root_value["object"] = object_value;
     root_value["array"] = array_value;
+
 
     json.yJsonWriteValue(root_value);
     json.yJsonWriteFile("tmp.json");
@@ -105,6 +106,9 @@ void TEST_WRITE(void){
     yLib::yLog::I("json_str to mem buf =%s", _buf_tmp);
 
     delete [] _buf_tmp;
+
+
+    return std::move(root_value);
 }
 int main(int argc, char * argv[]){
 
@@ -112,6 +116,19 @@ int main(int argc, char * argv[]){
     yLib::yLog::I("==========================================================");
     yLib::yLog::I("==========================================================");
     yLib::yLog::I("==========================================================");
-    TEST_WRITE();
+    
+
+
+    yLib::yJsonValue val = TEST_WRITE();
+
+    char* _buf_tmp = new char[2048];
+    yLib::yJson json;
+
+    json.yJsonWriteValue(val);
+    json.yJsonWriteMemory((int8_t *)_buf_tmp, 2048);
+    yLib::yLog::I("json_str in main to mem buf =%s", _buf_tmp);
+    yLib::yLog::I("json_str in main to root_value =%s", std::string(val["root_value"]).c_str());
+    
+    delete [] _buf_tmp;
     return 0;
 }

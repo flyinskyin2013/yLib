@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-10-28 14:15:15
  * @LastEditors: Sky
- * @LastEditTime: 2019-12-09 13:41:24
+ * @LastEditTime: 2019-12-10 09:41:38
  * @Description: 
  */
 
@@ -285,27 +285,45 @@ yLib::yJsonValue::yJsonValue(const yLib::yJsonValue & value_) noexcept MACRO_INI
 
     _value_type = value_._value_type;
 
-    //_json_root_value = new Json::Value();//new a null json object
-    _json_root_value = value_._json_root_value;
+    if ( value_._json_root_value ==  value_._json_root_value_bak){//only call by yLib::yJsonValue::operator[]
+
+        _json_root_value = value_._json_root_value_bak;
+    }
+    else{
+
+        _json_root_value = new Json::Value();//new a null json object
+        *_json_root_value = *value_._json_root_value;
+    }
 }
 yLib::yJsonValue::yJsonValue(yLib::yJsonValue && value_) noexcept MACRO_INIT_YOBJECT_PROPERTY(yJsonValue){
 
     _value_type = value_._value_type;
     
-    //_json_root_value = new Json::Value();//new a null json object
-    _json_root_value = value_._json_root_value;
+    if ( value_._json_root_value == value_._json_root_value_bak){//only call by yLib::yJsonValue::operator[]
+
+        _json_root_value = value_._json_root_value_bak;
+    }
+    else{
+
+        _json_root_value = new Json::Value();//new a null json object
+        *_json_root_value = *value_._json_root_value;
+    }
 }
 
 yLib::yJsonValue::~yJsonValue(){
 
-    //_json_root_value = nullptr;
-    //
-    if (nullptr != _json_root_value && (_json_root_value == _json_root_value_bak)){
+    _json_root_value = nullptr;
+    
+    if ( _json_root_value == _json_root_value_bak ){
+
+    }
+    else{
 
         delete _json_root_value;
+        _json_root_value = nullptr;
+        _json_root_value_bak = nullptr;
     }
-    _json_root_value = nullptr;
-    _json_root_value_bak = nullptr;
+
 }
 
 yLib::yJsonValue::operator int64_t(){
@@ -389,8 +407,20 @@ yLib::yJsonValue  yLib::yJsonValue::operator [](const char * key_str){
     //value_._json_root_value_bak = value_._json_root_value;
     delete value_._json_root_value;
     value_._json_root_value = nullptr;
-    //now, we can not delete value_._json_root_value in destruct, it is managed by Json::Value
-    value_._json_root_value = &_json_root_value->operator[](key_str);
+
+    
+    try
+    {
+        //now, we can not delete value_._json_root_value in destruct, it is managed by Json::Value
+        value_._json_root_value = &_json_root_value->operator[](key_str);
+    }
+    catch(const Json::LogicError & e)
+    {
+        yLib::yLog::E("yLib::yJsonValue::operator [](const char * key_str) error: %s", e.what());
+        return yLib::yJsonValue();//null value
+    }
+    
+    value_._json_root_value_bak = value_._json_root_value;
 
     //check special value type
     if ( value_._json_root_value->isObject() ){
@@ -413,11 +443,19 @@ yLib::yJsonValue  yLib::yJsonValue::operator [](const char * key_str){
 yLib::yJsonValue  yLib::yJsonValue::operator [](uint64_t elment_idx){
 
     yLib::yJsonValue value_;
-    value_._json_root_value_bak = value_._json_root_value;
-    delete value_._json_root_value;
-    //now, we can not delete value_._json_root_value in destruct, it is managed by Json::Value
-    value_._json_root_value =  &_json_root_value->operator[]((Json::ArrayIndex)elment_idx);
 
+    try
+    {
+        //now, we can not delete value_._json_root_value in destruct, it is managed by Json::Value
+        value_._json_root_value =  &_json_root_value->operator[]((Json::ArrayIndex)elment_idx);
+    }
+    catch(const Json::LogicError & e)
+    {
+        yLib::yLog::E("yLib::yJsonValue::operator [](uint64_t elment_idx) error: %s", e.what());
+        return yLib::yJsonValue();//null value
+    }
+
+    value_._json_root_value_bak = value_._json_root_value;
     //check special value type
     if ( value_._json_root_value->isObject() ){
 
