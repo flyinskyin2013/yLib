@@ -1,7 +1,7 @@
 ﻿#include "ysharedmemory.hpp"
 
 
-uint32_t yLib::ySharedMemory::InitSharedMemory(uint32_t mem_key, uint64_t mem_size, std::string mem_name) {
+uint32_t yLib::ySharedMemory::InitSharedMemory(uint32_t mem_key, uint64_t mem_size, std::_STD_STRING_ mem_name) {
 
 #ifdef _WIN32 || _WIN64
 	hMapFile = CreateFileMapping( \
