@@ -25,14 +25,14 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
     MESSAGE(STATUS "BUILD_TYPE is : ${CMAKE_BUILD_TYPE}")
     if(CMAKE_BUILD_TYPE MATCHES "(Release|RELEASE|release)")
 
-    #release mode 
+        #release mode 
 
     else()
 
-    #debug mode
-    add_compile_options(-g)
-    set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -g")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+        #debug mode
+        add_compile_options(-g)
+        set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -g")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 
     endif()
 
@@ -103,8 +103,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/third_part)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/third_part/libxml2)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/core)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/tests/Catch2/inc)
 #----------------------------------------------------------------------------------------
 
 add_subdirectory(src)
 
 add_subdirectory(examples)
+
+add_subdirectory(tests)

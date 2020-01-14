@@ -1,8 +1,8 @@
 /*
  * @Author: Sky
  * @Date: 2019-07-04 11:28:53
- * @LastEditors: Sky
- * @LastEditTime: 2019-11-29 15:13:13
+ * @LastEditors  : Sky
+ * @LastEditTime : 2020-01-14 16:03:24
  * @Description: 
  */
 
@@ -180,7 +180,7 @@ void yLib::yLog::SetLog4cppSubCategory(std::string category_name){
         }
         else{
 
-            W("Warning!!!!, category_name(%s) was inited by other operation.");
+            W("Warning!!!!, category_name(%s) was inited by other operation.", category_name.c_str());
         }
         
     }
@@ -254,11 +254,13 @@ void yLib::yLog::_ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg
 
     int _n_printed_num = 0; 
 
-    _n_printed_num = vsnprintf(_c_ptr_msg_buf, MSG_BUF_SIZE, fmt, arg_list);
+    _n_printed_num = vsnprintf(_c_ptr_msg_buf, MSG_BUF_SIZE - 1, fmt, arg_list);
 
-    if ( MSG_BUF_SIZE - 1 == _n_printed_num ){
+    //std::cout<<"_n_printed_num " << _n_printed_num<<std::endl;
+    if ( MSG_BUF_SIZE <= _n_printed_num ){
 
-        W("Size of input-string may be greater than MSG_BUF_SIZE:%d, input-string will be truncated by size of MSG_BUF_SIZE", MSG_BUF_SIZE - 1);
+        //W("Size of input-string may be greater than MSG_BUF_SIZE:%d, input-string will be truncated by size of MSG_BUF_SIZE", MSG_BUF_SIZE - 1); //bug 
+        std::cout<<"Size: "<< _n_printed_num <<" of input-string may be greater than MSG_BUF_SIZE: " << MSG_BUF_SIZE - 1 <<", input-string will be truncated by size of MSG_BUF_SIZE"<<std::endl;
     }
 
     switch (log_type)
@@ -509,9 +511,10 @@ void yLib::yLog::_ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg
 
     _n_printed_num = vsnprintf(_c_ptr_msg_buf, MSG_BUF_SIZE, fmt, arg_list);
 
-    if ( MSG_BUF_SIZE - 1 == _n_printed_num ){
+    if ( MSG_BUF_SIZE <= _n_printed_num ){
 
-        W("Size of input-string may be greater than MSG_BUF_SIZE:%d, input-string will be truncated by size of MSG_BUF_SIZE", MSG_BUF_SIZE - 1);
+        //W("Size of input-string may be greater than MSG_BUF_SIZE:%d, input-string will be truncated by size of MSG_BUF_SIZE", MSG_BUF_SIZE - 1); //bug
+        std::cout<<"Size: "<< _n_printed_num <<" of input-string may be greater than MSG_BUF_SIZE: " << MSG_BUF_SIZE - 1 <<", input-string will be truncated by size of MSG_BUF_SIZE"<<std::endl;
     }
 
     TypeSubCategoryMap::iterator tmp_sub_category_iter = _log4cpp_sub_category_map.find(category_name);//get sub-category by id
