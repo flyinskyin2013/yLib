@@ -1,8 +1,8 @@
 /*
  * @Author: Sky
  * @Date: 2018-10-23 11:07:58
- * @LastEditors: Sky
- * @LastEditTime: 2019-12-10 10:15:52
+ * @LastEditors  : Sky
+ * @LastEditTime : 2020-01-07 11:55:17
  * @Description: 
  */
 
@@ -75,9 +75,9 @@ namespace yLib{
 //         std::cout<<std::string("LogInfo:>")+std::string(msg_buf)<<std::endl; \
 //     }while(0)
     
-    #define YLIB_VERSION_MAJOR 1
-    #define YLIB_VERSION_MINOR0 0
-    #define YLIB_VERSION_MINOR1 0
+    #define YLIB_VERSION_MAJOR 0
+    #define YLIB_VERSION_MINOR 0
+    #define YLIB_VERSION_PATCH 7
 
     class __yLib_EXPORT__ yCommon MACRO_PUBLIC_INHERIT_YOBJECT
     {

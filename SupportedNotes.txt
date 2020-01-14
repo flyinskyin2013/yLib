@@ -1,0 +1,16 @@
+On linux plateform, we have supported the following modules:<br>
++ ycurl-module<br> 
++ ylog-module<br> 
++ yshell-module<br> 
++ yxml-module<br>
++ yconfig-module<br>
++ yjson-module<br>
++ ysharedmemory-module<br>
+
++ MakefileExamples<br> 
++ ProgramFrameExamples<br> 
++ ShellScriptExamples<br> 
+
+On win32 plateform, we have supported the following modules:<br>
++ ylog-module<br> 
++ ysharedmemory-module<br>

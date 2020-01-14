@@ -2,8 +2,8 @@
  * @Description: 
  * @Author: Sky
  * @Date: 2019-11-29 11:35:54
- * @LastEditors: Sky
- * @LastEditTime: 2019-12-10 10:17:35
+ * @LastEditors  : Sky
+ * @LastEditTime : 2020-01-07 11:22:34
  * @FilePath: \yLib\include\core\ysharedmemory.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -21,6 +21,12 @@
 #include <stdint.h>
 #include <string>
 #include <iostream>
+
+#ifndef UNICODE
+#define _STD_STRING_ string
+#else
+#define _STD_STRING_ wstring
+#endif //UNICODE
 
 #elif __linux__ || __linux
 
@@ -61,7 +67,7 @@ namespace yLib {
 		~ySharedMemory() {}
 
 
-		uint32_t InitSharedMemory(uint32_t mem_key, uint64_t mem_size, std::string mem_name = "DefaultySharedMemory");
+		uint32_t InitSharedMemory(uint32_t mem_key, uint64_t mem_size, std::_STD_STRING_ mem_name = "DefaultySharedMemory");
 		uint32_t AttacheSharedMemory(void ** shm_addr);
 		uint32_t DetacheSharedMemory(void * shm_addr);
 		uint32_t DestroySharedMemory(void);

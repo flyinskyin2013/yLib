@@ -7,7 +7,8 @@
                 "${workspaceFolder}/include",
                 "${workspaceFolder}/include/curl",
                 "${workspaceFolder}/include/libxml",
-                "${workspaceFolder}/include/core"
+                "${workspaceFolder}/include/core",
+                "${workspaceFolder}/tests/inc"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

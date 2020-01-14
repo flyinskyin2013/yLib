@@ -1,8 +1,8 @@
 /*
  * @Author: Sky
  * @Date: 2019-07-04 11:28:52
- * @LastEditors: Sky
- * @LastEditTime: 2019-12-10 10:17:04
+ * @LastEditors  : Sky
+ * @LastEditTime : 2020-01-14 16:19:04
  * @Description: 
  */
 
@@ -82,14 +82,18 @@ namespace yLib{
     #define MSG_BUF_SIZE 4096 //4k ,linux-func-stack max size is 8MB
     //debug < info < warn < error
 
-    //deprecated the follow macro
+    //deprecated the follow macro  ---------  start --------------
+    //For new codes,you should do not use the fllow macro.
     #define ENABLE_DEBUG_LOG_LEVEL 0x01
     #define ENABLE_INFO_LOG_LEVEL 0x02
     #define ENABLE_WARN_LOG_LEVEL 0x04
     #define ENABLE_ERROR_LOG_LEVEL 0x08
     #define ENABLE_ALL_LOG_LEVEL (ENABLE_DEBUG_LOG_LEVEL | ENABLE_INFO_LOG_LEVEL | ENABLE_WARN_LOG_LEVEL | ENABLE_ERROR_LOG_LEVEL)
     #define DISABLE_ALL_LOG_LEVEL 0x00
-    
+    //deprecated the  macro  ---------         end --------------
+
+
+
     typedef enum __em_ylog_level__:uint16_t{
 
         _DISABLE_ALL_LOG_LEVEL_ = 0x0000,

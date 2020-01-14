@@ -6,6 +6,7 @@
  * @Description: 
  -->
 Install:
+cmake, libtool and autoconf are needed.
 ==========
 For Win32
 -------------------------------------
@@ -18,8 +19,8 @@ For Win32
     >>./build_third_part.bat clean
     >>./build_third_part.bat init
     >>./build_third_part.bat make
-    >>cp -r build_out/include/ ../include 
-    >>cp -r build_out/lib/ ../lib/${SYS_NAME}/${BUILD_ARCH}/
+    >>cp -r build_out/include/ ../include/third_part/
+    >>cp -r build_out/lib/* ../lib/${SYS_NAME}/${BUILD_ARCH}/
 2. For yLib.
     >>mkdir -p build 
     >>cd build && cmake -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=%cd%/install -DBUILD_YLIB_ARCH=x86 ..
@@ -33,8 +34,8 @@ run the following commmands.
     >>./build_third_part.sh clean
     >>./build_third_part.sh init
     >>./build_third_part.sh make
-    >>cp -r build_out/include/ ../include 
-    >>cp -r build_out/lib/ ../lib/${SYS_NAME}/${BUILD_ARCH}/
+    >>cp -r build_out/include/ ../include/third_part/
+    >>cp -r build_out/lib/* ../lib/${SYS_NAME}/${BUILD_ARCH}/
 
 2. For yLib.
     >>mkdir -p build 

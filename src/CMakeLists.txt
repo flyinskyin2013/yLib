@@ -208,6 +208,10 @@ if(WIN32)
     ${CMAKE_CURRENT_BINARY_DIR}/ylib.dll
     DESTINATION lib
     )
+    INSTALL(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/ylib.dll
+    DESTINATION tests
+    )
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
     #for lib files

@@ -1,8 +1,8 @@
 /*
  * @Author: Sky
  * @Date: 2018-10-23 11:09:07
- * @LastEditors: Sky
- * @LastEditTime: 2019-10-28 16:33:13
+ * @LastEditors  : Sky
+ * @LastEditTime : 2020-01-07 11:55:51
  * @Description: 
  */
 
@@ -11,5 +11,5 @@
 std::string  yLib::yCommon::GetyLibVersion() const noexcept{
 
 
-    return std::string("V") + std::to_string(YLIB_VERSION_MAJOR) + "." + std::to_string(YLIB_VERSION_MINOR0) + "." + std::to_string(YLIB_VERSION_MINOR1);;
+    return std::string("V") + std::to_string(YLIB_VERSION_MAJOR) + "." + std::to_string(YLIB_VERSION_MINOR) + "." + std::to_string(YLIB_VERSION_PATCH);;
 }
