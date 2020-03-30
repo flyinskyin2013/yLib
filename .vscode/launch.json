@@ -8,7 +8,7 @@
             "name": "(Windows) 启动",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build_vs2015/install/tests/test_unit_ylog.exe",
+            "program": "${workspaceFolder}/build_vs2015/install/tests/test_unit_yconfig.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build_vs2015/install/examples/",

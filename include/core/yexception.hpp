@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-09-20 17:06:18
  * @LastEditors: Sky
- * @LastEditTime: 2019-11-28 18:57:11
+ * @LastEditTime: 2020-03-26 11:27:14
  * @Description: 
  */
 #ifndef _YLIB_CORE_YEXCEPTION_HPP_
@@ -26,16 +26,11 @@ namespace yLib{
     enum yExceptionIdx{
 
         IDX_RESERVE_EXCEPTION = 0,
-        IDX_YEXCEPTION ,
+        IDX_YBASIC_EXCEPTION ,
         
     };
-
-    #define REGISTER_EXCEPTION(exception_id, exception_msg) \
-        {exception_id, std::string(#exception_msg)}
-
-
     
-    class __yLib_EXPORT__ yException MACRO_PUBLIC_INHERIT_YOBJECT
+    class __YLIB_EXPORT__ yException MACRO_PUBLIC_INHERIT_YOBJECT
     {
     private:
         /* data */
@@ -46,8 +41,6 @@ namespace yLib{
         virtual ~yException() noexcept; 
         virtual const char * what() noexcept;
     };
-
-
 
 }
 
