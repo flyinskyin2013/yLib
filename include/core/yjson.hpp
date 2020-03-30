@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-10-28 14:16:37
  * @LastEditors: Sky
- * @LastEditTime: 2019-12-09 18:36:39
+ * @LastEditTime: 2020-03-30 11:31:25
  * @Description: 
  */
 
@@ -10,6 +10,7 @@
 #define _YLIB_CORE_YJSON_HPP_
 
 #include "ycommon.hpp"
+#include "ybasicvalue.hpp"
 #include "ylog.hpp"
 
 
@@ -28,7 +29,7 @@ namespace Json{
 namespace yLib{
     class yJsonValue;
 
-    class __yLib_EXPORT__ yJson  MACRO_PUBLIC_INHERIT_YOBJECT
+    class __YLIB_EXPORT__ yJson  MACRO_PUBLIC_INHERIT_YOBJECT
     {
     private:
         /* data */
@@ -42,9 +43,12 @@ namespace yLib{
         int yJsonWriteFile(std::string file);
         int yJsonWriteMemory(int8_t * mem_addr, uint64_t mem_max_size);
 
-        //operator 
-        yJsonValue yJsonGetValue(void);
-        int yJsonWriteValue(yJsonValue & value);
+        //deprecate apis
+        __YLIB_DEPRECATED_ATTRIBUTE__ yJsonValue yJsonGetValue(void);
+        __YLIB_DEPRECATED_ATTRIBUTE__ int yJsonWriteValue(yJsonValue & value);
+
+        yJsonValue  yJsonGetParsedJsonObject(void);
+        int yJsonSetJsonObject(yJsonValue & obj_val_);
     private:
         Json::CharReader * _json_reader = nullptr;
         Json::CharReaderBuilder * _json_reader_builder = nullptr;
@@ -58,7 +62,7 @@ namespace yLib{
     };
 
 
-    class __yLib_EXPORT__ yJsonValue  MACRO_PUBLIC_INHERIT_YOBJECT
+    class __YLIB_EXPORT__ yJsonValue  :public yBasicValue
     {
     public:
         friend class yJson;
@@ -68,8 +72,9 @@ namespace yLib{
             NONE_TYPE = 0,
             INT64_TYPE = 1,
             BOOL_TYPE = 2,
-            DOUBLE_TYPE = 3,
-            STRING_TYPE = 4,
+            FLOAT_TYPE = 3,
+            DOUBLE_TYPE = 4,
+            STRING_TYPE = 5,
             
             //some other type
             ARRAY_TYPE = 100, // []
@@ -81,11 +86,15 @@ namespace yLib{
         yJsonValueType _value_type = yJsonValueType::NONE_TYPE;
     private:
         /* data */
+        /*
         int64_t _int64_value = 0;
         bool _boolean_value = false;
         double _double_value = 0.0f;
         std::string _stdstring_value = "";
+        */
+       
         Json::Value * _json_root_value = nullptr ;
+        
         //special for operator[](char * str)
         Json::Value * _json_root_value_bak = nullptr;
     public:
@@ -93,11 +102,11 @@ namespace yLib{
 
         //yJsonValue(/*Value args */) noexcept;
         //special yJsonValue
-        yJsonValue(int64_t value_) noexcept;
-        yJsonValue(bool value_) noexcept;
-        yJsonValue(double value_) noexcept;
-        yJsonValue(std::string stdstr_) noexcept;
-        yJsonValue(yJsonValueType value_type_ = NULL_TYPE) noexcept;
+        explicit yJsonValue(int64_t value_) noexcept;
+        explicit yJsonValue(bool value_) noexcept;
+        explicit yJsonValue(double value_) noexcept;
+        explicit yJsonValue(std::string stdstr_) noexcept;
+        explicit yJsonValue(yJsonValueType value_type_ = NULL_TYPE) noexcept;
         
         ~yJsonValue();
 
@@ -107,11 +116,22 @@ namespace yLib{
 
         yJsonValue & operator =(const yJsonValue & value_) noexcept;
         yJsonValue & operator =(yJsonValue && value_) noexcept;
-
+/*
         operator int64_t();
         operator bool();
         operator double();
         operator std::string();
+*/
+
+        yJsonValue & operator=(int64_t value);
+        yJsonValue & operator=(bool value);
+        //Important notes: the float-type is treated as double-type.
+        // yJsonValue & operator=(float value);
+        yJsonValue & operator=(double value);
+        yJsonValue & operator=(std::string & value);
+        yJsonValue & operator=(std::string && value);
+        yJsonValue & operator=(const char * value);
+
 
         yJsonValue operator [](std::string key_str);
         yJsonValue operator [](const char * key_str);
