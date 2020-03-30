@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:52
  * @LastEditors: Sky
- * @LastEditTime: 2019-10-28 17:20:06
+ * @LastEditTime: 2020-03-24 15:06:16
  * @Description: 
  */
 
@@ -13,6 +13,7 @@
 
 #include "ylog.hpp"
 #include "ycommon.hpp"
+#include "ybasicvalue.hpp"
 
 namespace libconfig{
 
@@ -33,7 +34,7 @@ namespace yLib{
         
     } yConfigValueType;
 
-    class yConfig MACRO_PUBLIC_INHERIT_YOBJECT{
+    class __YLIB_EXPORT__ yConfig MACRO_PUBLIC_INHERIT_YOBJECT{
         public:
             yConfig();
             ~yConfig();
@@ -87,24 +88,38 @@ namespace yLib{
     };
 
 
-    class yConfigValue{
+    class __YLIB_EXPORT__ yConfigValue : public yBasicValue{
 
         public:
         yConfigValue() noexcept {}
         ~yConfigValue() noexcept {}
+
+        //other constructor
+        explicit yConfigValue(int64_t value_) noexcept;
+        explicit yConfigValue(uint64_t value_) noexcept;
+        explicit yConfigValue(bool value_) noexcept;
+        explicit yConfigValue(float value_) noexcept;
+        explicit yConfigValue(double value_) noexcept;
+        explicit yConfigValue(std::string & value_) noexcept;
+        explicit yConfigValue(const char * value_) noexcept;
+
+
+
+
         yConfigValue(const yConfigValue & config_value) noexcept;
-        yConfigValue & operator=(const yConfigValue & config_value) = delete;
+        yConfigValue & operator=(const yConfigValue & config_value) noexcept;
         yConfigValue(yConfigValue && config_value) noexcept;
-        yConfigValue & operator=(yConfigValue && config_value) = delete;
+        yConfigValue & operator=(yConfigValue && config_value) noexcept;
 		
 		yConfigValueType GetyConfigValueType(void) const;
 
+/* merge to ybasicvalue
         operator int() const;
         operator bool() const;
         operator float() const;
         operator std::string() const;
         // operator const char * () const;
-
+*/
         yConfigValue & operator=(int value);
         yConfigValue & operator=(bool value);
         yConfigValue & operator=(float value);
@@ -114,10 +129,12 @@ namespace yLib{
         friend class yConfig;
 
         private:
+/* merge to ybasicvalue        
         int _n_value_int;
         bool _b_value_bool;
         float _f_value_float;
         std::string _str_value_string;
+*/
         yConfigValueType _current_data_type_ = yConfigValueType::NONE_TYPE;
     };
 }

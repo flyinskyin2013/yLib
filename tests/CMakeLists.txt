@@ -1,4 +1,6 @@
 #----------------------------------------------------------------------------------------
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
 #add link dir
 link_directories(${CMAKE_CURRENT_BINARY_DIR}/../src/)
 
@@ -54,8 +56,8 @@ function(build_module_examples name)
 
     string(TOLOWER ${name} module_name)
     set(SRC
-        ${CMAKE_CURRENT_SOURCE_DIR}/test_unit_main.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/test_${module_name}/test_${module_name}.cpp)
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_main.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/${module_name}/${module_name}_tests.cpp)
 
     add_executable(test_unit_${module_name} ${SRC})  
 
@@ -119,7 +121,7 @@ if(BUILD_MODULE_YLOG)
 
     build_module_examples(YLOG)
 
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_ylog/log4cplus.properties.example log4cplus.properties @ONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/ylog/log4cplus.properties.example log4cplus.properties @ONLY)
 
     INSTALL(FILES
 
@@ -128,5 +130,54 @@ if(BUILD_MODULE_YLOG)
         tests
     )
 endif()
+
+##########################################################################
+
+##########################################################################
+if(BUILD_MODULE_YCONFIG)
+
+    build_module_examples(YCONFIG)
+
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/yconfig/test.conf.example test.conf @ONLY)
+
+    INSTALL(FILES
+
+        ${CMAKE_CURRENT_BINARY_DIR}/test.conf
+        DESTINATION 
+        tests
+    )
+endif()
+
+##########################################################################
+
+##########################################################################
+if(BUILD_MODULE_YJSON)
+
+    build_module_examples(YJSON)
+
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/yjson/test.json.example test.json @ONLY)
+
+    INSTALL(FILES
+
+        ${CMAKE_CURRENT_BINARY_DIR}/test.json
+        DESTINATION 
+        tests
+    )
+endif()
+
+##########################################################################
+
+
+##########################################################################
+
+build_module_examples(yObject)
+
+build_module_examples(yException)
+
+build_module_examples(yBasicValue)
+
+build_module_examples(yCommon)
+
+build_module_examples(all_in_one)
 
 ##########################################################################

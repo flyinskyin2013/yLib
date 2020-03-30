@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-11-20 15:29:40
  * @LastEditors: Sky
- * @LastEditTime: 2019-12-10 10:15:39
+ * @LastEditTime: 2020-03-26 15:54:20
  * @Description: 
  */
 #ifndef _YLIB_H_
@@ -19,17 +19,22 @@
     #include <core/ylog.hpp>
     #include <core/yjson.hpp>
     #include <core/ysharedmemory.hpp>
-
-
+    #include <core/ybasicvalue.hpp>
+    #include <core/yxml.hpp>
+    #include <core/yconfig.hpp>
+    #include <core/yjson.hpp>
+    #include <core/yexception.hpp>
 #elif __linux__ || __linux
     
-#include <core/ycommon.hpp>
-#include <core/ycurl.hpp>
-#include <core/ylog.hpp>
-#include <core/yshell.hpp>
-#include <core/yxml.hpp>
-#include <core/yconfig.hpp>
-#include <core/yjson.hpp>
+    #include <core/ycommon.hpp>
+    #include <core/ycurl.hpp>
+    #include <core/ylog.hpp>
+    #include <core/yshell.hpp>
+    #include <core/yxml.hpp>
+    #include <core/yconfig.hpp>
+    #include <core/yjson.hpp>
+    #include <core/ybasicvalue.hpp>
+    #include <core/yexception.hpp>
 
 #elif __unix__ || __unix
 

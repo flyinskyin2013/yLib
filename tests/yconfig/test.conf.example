@@ -1,0 +1,8 @@
+test:
+{
+
+    int = 1;
+    float = 2.3;
+    bool = true;
+    string = "HHHHHHHHH";
+};

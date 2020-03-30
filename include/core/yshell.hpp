@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2018-10-23 11:13:37
  * @LastEditors: Sky
- * @LastEditTime: 2019-10-28 17:18:01
+ * @LastEditTime: 2020-03-26 16:56:36
  * @Description: 
  */
 
@@ -25,6 +25,7 @@ extern "C"{
 
 #include <vector>
 #include <string>
+#include <cstdint>
 
 
 #include "ycommon.hpp"
@@ -32,17 +33,18 @@ extern "C"{
 
 namespace yLib{
 
-#define SHELL_CMDANDPARAM_MAX_NUM 9
-#define Y_SHELL_LOC_CMD_LEN SHELL_CMDANDPARAM_MAX_NUM + 1
-#define Y_SHELL_ARGV_LEN Y_SHELL_LOC_CMD_LEN
+
     class yShell MACRO_PUBLIC_INHERIT_YOBJECT{
 
         public:
         yShell();
         ~yShell();
         //Every param's length must be < 100
-        int RunShellCommand(std::vector<std::string> & cmd);
+        __YLIB_DEPRECATED_ATTRIBUTE__ int RunShellCommand(std::vector<std::string> & cmd);
+        
+        int8_t RunShellCommandEx(std::vector<std::string> & cmd_, std::vector<std::string> & cmd_result_);
         private:
+        static const 
         protected:
     };
 

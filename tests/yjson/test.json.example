@@ -1,0 +1,31 @@
+
+{
+    "node_int":64,
+    "node_bool":true,
+    "node_double":46.64,
+    "node_stdstring":"fu*k your life.",
+    "node_null":null,
+    "node_array":[
+        64,
+        true,
+        46.64,
+        "fu*k your life.",
+        {"node_array_obj":"fu*k your life."},
+        null
+    ],
+    "node_object":{
+        "sub_node_int":6464,
+        "sub_node_bool":false,
+        "sub_node_double":46.6446,
+        "sub_node_stdstring":"sub: fu*k your life.",
+        "sub_node_null":null,
+        "sub_node_array":[
+            64,
+            true,
+            46.64,
+            "sub array: fu*k your life.",
+            {"node_array_obj":"sub array: fu*k your life."},
+            null
+        ]
+    }
+}

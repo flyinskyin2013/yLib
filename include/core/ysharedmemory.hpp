@@ -61,7 +61,7 @@ extern "C" {
 
 namespace yLib {
 
-	class __yLib_EXPORT__ ySharedMemory
+	class __YLIB_EXPORT__ ySharedMemory
 	{
 	public:
 		ySharedMemory() {}

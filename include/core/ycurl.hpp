@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2018-10-23 11:13:10
  * @LastEditors: Sky
- * @LastEditTime: 2019-10-28 17:15:26
+ * @LastEditTime: 2020-03-18 16:40:42
  * @Description: 
  */
 
@@ -29,7 +29,8 @@ typedef struct _ycurl_param_{
 
 #define YCURL_RECBUF_MAX_LEN 4*1024
 
-class yCurl MACRO_PUBLIC_INHERIT_YOBJECT{
+
+class __YLIB_DEPRECATED_ATTRIBUTE__ yCurl MACRO_PUBLIC_INHERIT_YOBJECT{
 
     public:
 

@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-10-28 14:15:15
  * @LastEditors: Sky
- * @LastEditTime: 2019-12-10 09:41:38
+ * @LastEditTime: 2020-03-26 11:01:44
  * @Description: 
  */
 
@@ -65,7 +65,7 @@ int yLib::yJson::yJsonReadFile(std::string file){
     if ( in_file.is_open() ){
 
         in_file.seekg(0, in_file.end);
-        int file_len = in_file.tellg();
+        int64_t file_len = in_file.tellg();
         in_file.seekg(0, in_file.beg);
 
         _json_str_buf = new char[file_len];
@@ -164,57 +164,76 @@ int yLib::yJson::yJsonWriteMemory(int8_t * mem_addr, uint64_t mem_max_size){
 
 yLib::yJsonValue yLib::yJson::yJsonGetValue(void){
 
-    yJsonValue value_;
-    *value_._json_root_value = *_json_root_value; // get a new root-jsonvalue
-    
-    switch (_json_root_value->type())
-    {
-    case Json::ValueType::intValue:
-        /* code */
-        value_._value_type = yLib::yJsonValue::yJsonValueType::INT64_TYPE;
-        break;
-
-    case Json::ValueType::uintValue:
-        /* code */
-        value_._value_type = yLib::yJsonValue::yJsonValueType::INT64_TYPE;
-        break;
-    
-    case Json::ValueType::realValue:
-        /* code */
-        value_._value_type = yLib::yJsonValue::yJsonValueType::DOUBLE_TYPE;
-        break;
-
-    case Json::ValueType::stringValue:
-        /* code */
-        value_._value_type = yLib::yJsonValue::yJsonValueType::STRING_TYPE;
-        break;        
-    case Json::ValueType::booleanValue:
-        value_._value_type = yLib::yJsonValue::yJsonValueType::BOOL_TYPE;
-        break;
-    case Json::ValueType::arrayValue:
-        value_._value_type = yLib::yJsonValue::yJsonValueType::ARRAY_TYPE;
-        break;
-    case Json::ValueType::objectValue:
-        value_._value_type = yLib::yJsonValue::yJsonValueType::OBJECT_TYPE;
-        break;
-    case Json::ValueType::nullValue:
-        value_._value_type = yLib::yJsonValue::yJsonValueType::NULL_TYPE;
-        break;
-    default:
-        yLib::yLog::E("not support yet.");
-        value_._value_type = yLib::yJsonValue::yJsonValueType::NULL_TYPE;
-        break;
-    }
-
-    return value_;
+    return yJsonGetParsedJsonObject();
 }
 
 int yLib::yJson::yJsonWriteValue(yJsonValue & value){
 
-    *_json_root_value = *value._json_root_value;
-    return 0;
+    return yJsonSetJsonObject(value);
 }
 
+
+
+yLib::yJsonValue yLib::yJson::yJsonGetParsedJsonObject(void){
+    
+    // switch (_json_root_value->type())
+    // {
+    // case Json::ValueType::intValue:
+    //     /* code */
+    //     return yJsonValue((int64_t)_json_root_value->asInt());
+    //     break;
+
+    // case Json::ValueType::uintValue:
+    //     /* code */
+    //     return yJsonValue((uint64_t)_json_root_value->asUInt());
+    //     break;
+        
+    // case Json::ValueType::realValue:
+    //     /* code */
+    //     return yJsonValue(_json_root_value->asDouble());
+    //     break;
+        
+    // case Json::ValueType::stringValue:
+    //     /* code */
+    //     return yJsonValue(_json_root_value->asString());
+    //     break;        
+    // case Json::ValueType::booleanValue:
+    //     return yJsonValue(_json_root_value->asBool());
+    //     break;
+    // case Json::ValueType::arrayValue:
+
+    //     yJsonValue _tmp_val(yLib::yJsonValue::yJsonValueType::ARRAY_TYPE);
+    //     *_tmp_val._json_root_value = _json_root_value
+    //     break;
+    // case Json::ValueType::objectValue:
+    //     value_._value_type = yLib::yJsonValue::yJsonValueType::OBJECT_TYPE;
+    //     break;
+    // case Json::ValueType::nullValue:
+    //     value_._value_type = yLib::yJsonValue::yJsonValueType::NULL_TYPE;
+    //     break;
+    // default:
+    //     yLib::yLog::E("not support yet.");
+    //     value_._value_type = yLib::yJsonValue::yJsonValueType::NULL_TYPE;
+    //     break;
+    // }
+
+    if ( _json_root_value->type() == Json::ValueType::objectValue ){
+
+        yLib::yJsonValue _tmp_val(yLib::yJsonValue::yJsonValueType::OBJECT_TYPE);
+        *_tmp_val._json_root_value = *_json_root_value;
+        return _tmp_val;
+    }
+    else{
+
+        return yLib::yJsonValue();
+    }
+
+}
+int yLib::yJson::yJsonSetJsonObject(yJsonValue & obj_val_){
+
+    *_json_root_value = *obj_val_._json_root_value;
+    return 0;
+}
 
 
 // yLib::yJsonValue::yJsonValue() noexcept MACRO_INIT_YOBJECT_PROPERTY(yJsonValue){
@@ -223,36 +242,61 @@ int yLib::yJson::yJsonWriteValue(yJsonValue & value){
 // }
 
 
-yLib::yJsonValue::yJsonValue(int64_t value_) noexcept MACRO_INIT_YOBJECT_PROPERTY(yJsonValue){
+
+
+
+
+
+
+
+yLib::yJsonValue::yJsonValue(int64_t value_) noexcept 
+{
+
+    _object_name = "yJsonValue";
 
     _value_type = yJsonValueType::INT64_TYPE;
-    _int64_value = value_;
+    _cur_basic_value_type = yBasicValueType::INT64_YBASICVALUE_TYPE;
+    _value_containter._n_value_int64 = value_;
 
     _json_root_value = new Json::Value(value_);
 }
-yLib::yJsonValue::yJsonValue(bool value_) noexcept MACRO_INIT_YOBJECT_PROPERTY(yJsonValue){
+yLib::yJsonValue::yJsonValue(bool value_) noexcept 
+{
+    _object_name = "yJsonValue";
 
     _value_type = yJsonValueType::BOOL_TYPE;
-    _boolean_value = value_;
+    _cur_basic_value_type = yBasicValueType::BOOL_YBASICVALUE_TYPE;
+    _value_containter._b_value_bool = value_;
 
     _json_root_value = new Json::Value(value_);
 }
-yLib::yJsonValue::yJsonValue(double value_) noexcept MACRO_INIT_YOBJECT_PROPERTY(yJsonValue){
+yLib::yJsonValue::yJsonValue(double value_) noexcept 
+{
+
+    _object_name = "yJsonValue";
 
     _value_type = yJsonValueType::DOUBLE_TYPE;
-    _double_value = value_;
+    _cur_basic_value_type = yBasicValueType::DOUBLE_YBASICVALUE_TYPE;
+    _value_containter._f_value_double = value_;
 
     _json_root_value = new Json::Value(value_);
 }
-yLib::yJsonValue::yJsonValue(std::string stdstr_) noexcept MACRO_INIT_YOBJECT_PROPERTY(yJsonValue){
+yLib::yJsonValue::yJsonValue(std::string stdstr_) noexcept 
+{
+
+    _object_name = "yJsonValue";
 
     _value_type = yJsonValueType::STRING_TYPE;
-    _stdstring_value = stdstr_;
+    _cur_basic_value_type = yBasicValueType::STRING_YBASICVALUE_TYPE;
+    _value_containter._str_value_string = stdstr_;
 
     _json_root_value = new Json::Value(stdstr_);
 }
 
-yLib::yJsonValue::yJsonValue(yJsonValueType value_type_) noexcept MACRO_INIT_YOBJECT_PROPERTY(yJsonValue){
+yLib::yJsonValue::yJsonValue(yJsonValueType value_type_) noexcept 
+{
+
+    _object_name = "yJsonValue";
 
     _value_type = value_type_;
 
@@ -281,9 +325,39 @@ yLib::yJsonValue::yJsonValue(yJsonValueType value_type_) noexcept MACRO_INIT_YOB
     
 }
 
-yLib::yJsonValue::yJsonValue(const yLib::yJsonValue & value_) noexcept MACRO_INIT_YOBJECT_PROPERTY(yJsonValue){
+yLib::yJsonValue::yJsonValue(const yLib::yJsonValue & value_) noexcept 
+{
+
+    _object_name = "yJsonValue";
 
     _value_type = value_._value_type;
+    _cur_basic_value_type = value_._cur_basic_value_type;
+
+    switch (_value_type)
+    {
+    case yJsonValueType::INT64_TYPE:
+        /* code */
+        _value_containter._n_value_int64 = value_._value_containter._n_value_int64;
+        break;
+    case yJsonValueType::DOUBLE_TYPE:
+        _value_containter._f_value_double = value_._value_containter._f_value_double;
+        break;
+    case yJsonValueType::BOOL_TYPE:
+        _value_containter._b_value_bool = value_._value_containter._b_value_bool;
+        break;
+    case yJsonValueType::STRING_TYPE:
+        _value_containter._str_value_string = value_._value_containter._str_value_string;
+        break;
+    case yJsonValueType::OBJECT_TYPE:
+        break;
+    case yJsonValueType::ARRAY_TYPE:
+        break;
+    case yJsonValueType::NULL_TYPE:
+        break;
+    default:
+        break;
+    }
+
 
     if ( value_._json_root_value ==  value_._json_root_value_bak){//only call by yLib::yJsonValue::operator[]
 
@@ -295,9 +369,39 @@ yLib::yJsonValue::yJsonValue(const yLib::yJsonValue & value_) noexcept MACRO_INI
         *_json_root_value = *value_._json_root_value;
     }
 }
-yLib::yJsonValue::yJsonValue(yLib::yJsonValue && value_) noexcept MACRO_INIT_YOBJECT_PROPERTY(yJsonValue){
+yLib::yJsonValue::yJsonValue(yLib::yJsonValue && value_) noexcept 
+{
+
+    _object_name = "yJsonValue";
+
 
     _value_type = value_._value_type;
+    _cur_basic_value_type = value_._cur_basic_value_type;
+
+    switch (_value_type)
+    {
+    case yJsonValueType::INT64_TYPE:
+        /* code */
+        _value_containter._n_value_int64 = value_._value_containter._n_value_int64;
+        break;
+    case yJsonValueType::DOUBLE_TYPE:
+        _value_containter._f_value_double = value_._value_containter._f_value_double;
+        break;
+    case yJsonValueType::BOOL_TYPE:
+        _value_containter._b_value_bool = value_._value_containter._b_value_bool;
+        break;
+    case yJsonValueType::STRING_TYPE:
+        _value_containter._str_value_string = value_._value_containter._str_value_string;
+        break;
+    case yJsonValueType::OBJECT_TYPE:
+        break;
+    case yJsonValueType::ARRAY_TYPE:
+        break;
+    case yJsonValueType::NULL_TYPE:
+        break;
+    default:
+        break;
+    }
     
     if ( value_._json_root_value == value_._json_root_value_bak){//only call by yLib::yJsonValue::operator[]
 
@@ -326,6 +430,7 @@ yLib::yJsonValue::~yJsonValue(){
 
 }
 
+/*
 yLib::yJsonValue::operator int64_t(){
 
     if ( _json_root_value->isInt64() \
@@ -394,6 +499,7 @@ yLib::yJsonValue::operator std::string(){
     
     return _stdstring_value;
 }
+*/
 
 yLib::yJsonValue  yLib::yJsonValue::operator [](std::string key_str){
 
@@ -422,21 +528,85 @@ yLib::yJsonValue  yLib::yJsonValue::operator [](const char * key_str){
     
     value_._json_root_value_bak = value_._json_root_value;
 
+
+
+
+    switch (value_._json_root_value->type())
+    {
+    case Json::ValueType::uintValue:
+    case Json::ValueType::intValue:{
+     
+        value_._value_type = yLib::yJsonValue::INT64_TYPE;
+        value_._cur_basic_value_type = yLib::yBasicValueType::INT64_YBASICVALUE_TYPE;
+        value_._value_containter._n_value_int64 = value_._json_root_value->asInt64();
+        break;
+    }
+
+    case Json::ValueType::booleanValue :{
+     
+        value_._value_type = yLib::yJsonValue::BOOL_TYPE;
+        value_._cur_basic_value_type = yLib::yBasicValueType::BOOL_YBASICVALUE_TYPE;
+        value_._value_containter._b_value_bool = value_._json_root_value->asBool();
+        break;
+    }
+
+    case Json::ValueType::realValue :{
+     
+        value_._value_type = yLib::yJsonValue::DOUBLE_TYPE;
+        value_._cur_basic_value_type = yLib::yBasicValueType::DOUBLE_YBASICVALUE_TYPE;
+        value_._value_containter._f_value_double = value_._json_root_value->asDouble();
+        break;
+    }
+
+    case Json::ValueType::stringValue :{
+     
+        value_._value_type = yLib::yJsonValue::STRING_TYPE;
+        value_._cur_basic_value_type = yLib::yBasicValueType::STRING_YBASICVALUE_TYPE;
+        value_._value_containter._str_value_string = value_._json_root_value->asString();
+        break;
+    }
+
+    case Json::ValueType::arrayValue :{
+     
+        value_._value_type = yLib::yJsonValue::ARRAY_TYPE;
+        break;
+    }
+
+    case Json::ValueType::objectValue :{
+     
+        value_._value_type = yLib::yJsonValue::OBJECT_TYPE;
+
+        break;
+    }
+
+    case Json::ValueType::nullValue :{
+     
+        value_._value_type = yLib::yJsonValue::NULL_TYPE;
+
+        break;
+    }
+    
+    default:
+        break;
+    }
+
+
+
     //check special value type
-    if ( value_._json_root_value->isObject() ){
+    // if ( value_._json_root_value->isObject() ){
 
-        value_._value_type = yLib::yJsonValue::yJsonValueType::OBJECT_TYPE;
-    }
+    //     value_._value_type = yLib::yJsonValue::yJsonValueType::OBJECT_TYPE;
+    // }
 
-    if ( value_._json_root_value->isArray() ){
+    // if ( value_._json_root_value->isArray() ){
 
-        value_._value_type = yLib::yJsonValue::yJsonValueType::ARRAY_TYPE;
-    }
+    //     value_._value_type = yLib::yJsonValue::yJsonValueType::ARRAY_TYPE;
+    // }
 
-    if ( value_._json_root_value->isNull() ){
+    // if ( value_._json_root_value->isNull() ){
 
-        value_._value_type = yLib::yJsonValue::yJsonValueType::NULL_TYPE;
-    }
+    //     value_._value_type = yLib::yJsonValue::yJsonValueType::NULL_TYPE;
+    // }
 
     return value_;
 }
@@ -456,21 +626,93 @@ yLib::yJsonValue  yLib::yJsonValue::operator [](uint64_t elment_idx){
     }
 
     value_._json_root_value_bak = value_._json_root_value;
-    //check special value type
-    if ( value_._json_root_value->isObject() ){
 
-        value_._value_type = yLib::yJsonValue::yJsonValueType::OBJECT_TYPE;
+
+
+    switch (value_._json_root_value->type())
+    {
+    case Json::ValueType::uintValue:
+    case Json::ValueType::intValue:{
+     
+        value_._value_type = yLib::yJsonValue::INT64_TYPE;
+        value_._cur_basic_value_type = yLib::yBasicValueType::INT64_YBASICVALUE_TYPE;
+        value_._value_containter._n_value_int64 = value_._json_root_value->asInt64();
+        break;
     }
 
-    if ( value_._json_root_value->isArray() ){
-
-        value_._value_type = yLib::yJsonValue::yJsonValueType::ARRAY_TYPE;
+    case Json::ValueType::booleanValue :{
+     
+        value_._value_type = yLib::yJsonValue::BOOL_TYPE;
+        value_._cur_basic_value_type = yLib::yBasicValueType::BOOL_YBASICVALUE_TYPE;
+        value_._value_containter._b_value_bool = value_._json_root_value->asBool();
+        break;
     }
 
-    if ( value_._json_root_value->isNull() ){
-
-        value_._value_type = yLib::yJsonValue::yJsonValueType::NULL_TYPE;
+    case Json::ValueType::realValue :{
+     
+        value_._value_type = yLib::yJsonValue::DOUBLE_TYPE;
+        value_._cur_basic_value_type = yLib::yBasicValueType::DOUBLE_YBASICVALUE_TYPE;
+        value_._value_containter._f_value_double = value_._json_root_value->asDouble();
+        break;
     }
+
+    case Json::ValueType::stringValue :{
+     
+        value_._value_type = yLib::yJsonValue::STRING_TYPE;
+        value_._cur_basic_value_type = yLib::yBasicValueType::STRING_YBASICVALUE_TYPE;
+        value_._value_containter._str_value_string = value_._json_root_value->asString();
+        break;
+    }
+
+    case Json::ValueType::arrayValue :{
+     
+        value_._value_type = yLib::yJsonValue::ARRAY_TYPE;
+        break;
+    }
+
+    case Json::ValueType::objectValue :{
+     
+        value_._value_type = yLib::yJsonValue::OBJECT_TYPE;
+
+        break;
+    }
+
+    case Json::ValueType::nullValue :{
+     
+        value_._value_type = yLib::yJsonValue::NULL_TYPE;
+
+        break;
+    }
+    
+    default:
+        break;
+    }
+
+
+
+
+
+
+
+
+
+
+
+    // //check special value type
+    // if ( value_._json_root_value->isObject() ){
+
+    //     value_._value_type = yLib::yJsonValue::yJsonValueType::OBJECT_TYPE;
+    // }
+
+    // if ( value_._json_root_value->isArray() ){
+
+    //     value_._value_type = yLib::yJsonValue::yJsonValueType::ARRAY_TYPE;
+    // }
+
+    // if ( value_._json_root_value->isNull() ){
+
+    //     value_._value_type = yLib::yJsonValue::yJsonValueType::NULL_TYPE;
+    // }
     
     return value_;
 }
@@ -479,11 +721,69 @@ yLib::yJsonValue  yLib::yJsonValue::operator [](uint64_t elment_idx){
 
 yLib::yJsonValue & yLib::yJsonValue::operator =(const yLib::yJsonValue & value_) noexcept{
 
+    _value_type = value_._value_type;
+    _cur_basic_value_type = value_._cur_basic_value_type;
+    
+    switch (_value_type)
+    {
+    case yJsonValueType::INT64_TYPE:
+        /* code */
+        _value_containter._n_value_int64 = value_._value_containter._n_value_int64;
+        break;
+    case yJsonValueType::DOUBLE_TYPE:
+        _value_containter._f_value_double = value_._value_containter._f_value_double;
+        break;
+    case yJsonValueType::BOOL_TYPE:
+        _value_containter._b_value_bool = value_._value_containter._b_value_bool;
+        break;
+    case yJsonValueType::STRING_TYPE:
+        _value_containter._str_value_string = value_._value_containter._str_value_string;
+        break;
+    case yJsonValueType::OBJECT_TYPE:
+        break;
+    case yJsonValueType::ARRAY_TYPE:
+        break;
+    case yJsonValueType::NULL_TYPE:
+        break;
+    default:
+        break;
+    }
+
+
     *(_json_root_value) = *(value_._json_root_value);
     return *this;
 }
 yLib::yJsonValue & yLib::yJsonValue::operator =(yLib::yJsonValue && value_) noexcept{
     
+    _value_type = value_._value_type;
+    _cur_basic_value_type = value_._cur_basic_value_type;
+
+    switch (_value_type)
+    {
+    case yJsonValueType::INT64_TYPE:
+        /* code */
+        _value_containter._n_value_int64 = value_._value_containter._n_value_int64;
+        break;
+    case yJsonValueType::DOUBLE_TYPE:
+        _value_containter._f_value_double = value_._value_containter._f_value_double;
+        break;
+    case yJsonValueType::BOOL_TYPE:
+        _value_containter._b_value_bool = value_._value_containter._b_value_bool;
+        break;
+    case yJsonValueType::STRING_TYPE:
+        _value_containter._str_value_string = value_._value_containter._str_value_string;
+        break;
+    case yJsonValueType::OBJECT_TYPE:
+        break;
+    case yJsonValueType::ARRAY_TYPE:
+        break;
+    case yJsonValueType::NULL_TYPE:
+        break;
+    default:
+        break;
+    }
+
+
     *_json_root_value = *value_._json_root_value;
     return *this;
 }
@@ -512,3 +812,68 @@ yLib::yJsonValue & yLib::yJsonValue::operator =(yLib::yJsonValue && value_) noex
 //         break;
 //     }
 // }
+
+
+yLib::yJsonValue & yLib::yJsonValue::operator=(int64_t value){
+
+    _cur_basic_value_type = yLib::yBasicValueType::INT64_YBASICVALUE_TYPE;
+    _value_type = yLib::yJsonValue::INT64_TYPE;
+
+    _value_containter._n_value_int64 = value;
+    *_json_root_value = value;
+
+    return *this;
+}
+yLib::yJsonValue & yLib::yJsonValue::operator=(bool value){
+
+    _cur_basic_value_type = yLib::yBasicValueType::BOOL_YBASICVALUE_TYPE;
+    _value_type = yLib::yJsonValue::BOOL_TYPE;
+
+    _value_containter._b_value_bool = value;
+    *_json_root_value = value;
+
+    return *this;
+}
+// yLib::yJsonValue & yLib::yJsonValue::operator=(float value){
+
+//     _cur_basic_value_type = yLib::yBasicValueType::DOUBLE_YBASICVALUE_TYPE;
+//     _value_type = yLib::yJsonValue::DOUBLE_TYPE;
+
+//     _value_containter._f_value_double = value;
+//     *_json_root_value = value;
+
+//     return *this;
+// }
+
+yLib::yJsonValue & yLib::yJsonValue::operator=(double value){
+
+    _cur_basic_value_type = yLib::yBasicValueType::DOUBLE_YBASICVALUE_TYPE;
+    _value_type = yLib::yJsonValue::DOUBLE_TYPE;
+
+    _value_containter._f_value_double = (double)value;
+    *_json_root_value = value;
+
+    return *this;
+}
+
+
+yLib::yJsonValue & yLib::yJsonValue::operator=(std::string & value){
+
+    _cur_basic_value_type = yLib::yBasicValueType::STRING_YBASICVALUE_TYPE;
+    _value_type = yLib::yJsonValue::STRING_TYPE;
+
+    _value_containter._str_value_string = value;
+    *_json_root_value = value;
+
+    return *this;
+}
+yLib::yJsonValue & yLib::yJsonValue::operator=(const char * value){
+
+    _cur_basic_value_type = yLib::yBasicValueType::STRING_YBASICVALUE_TYPE;
+    _value_type = yLib::yJsonValue::STRING_TYPE;
+
+    _value_containter._str_value_string = value;
+    *_json_root_value = value;
+    
+    return *this;
+}

@@ -1,8 +1,8 @@
 /*
  * @Author: Sky
  * @Date: 2019-07-04 11:28:52
- * @LastEditors  : Sky
- * @LastEditTime : 2020-01-14 16:19:04
+ * @LastEditors: Sky
+ * @LastEditTime: 2020-03-19 10:14:20
  * @Description: 
  */
 
@@ -130,7 +130,7 @@ namespace yLib{
     typedef std::unordered_map<std::string, SubCategoryProperty> TypeSubCategoryMap;
 
     //yLog support thread-safety,defaultly.
-    class __yLib_EXPORT__ yLog MACRO_PUBLIC_INHERIT_YOBJECT{
+    class __YLIB_EXPORT__ yLog MACRO_PUBLIC_INHERIT_YOBJECT{
 
         public:
             
@@ -151,7 +151,8 @@ namespace yLib{
             
             static void SetyLogLogLevel(uint16_t log_level);
             static void SetyLogLogLevel(std::string &category_name, uint16_t log_level);
-
+            
+            
             static void D(const std::string fmt , ...);
             static void W(const std::string fmt , ...);
             static void I(const std::string fmt , ...);
