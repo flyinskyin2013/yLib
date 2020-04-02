@@ -87,7 +87,9 @@
         "xthread": "cpp",
         "xfunctional": "cpp",
         "xlocbuf": "cpp",
-        "xlocmes": "cpp"
+        "xlocmes": "cpp",
+        "bitset": "cpp",
+        "variant": "cpp"
     },
     "C_Cpp.default.configurationProvider": "",
     "cmake.configureOnOpen": true,

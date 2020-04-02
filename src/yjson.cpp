@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-10-28 14:15:15
  * @LastEditors: Sky
- * @LastEditTime: 2020-03-26 11:01:44
+ * @LastEditTime: 2020-03-30 11:31:52
  * @Description: 
  */
 
@@ -867,6 +867,18 @@ yLib::yJsonValue & yLib::yJsonValue::operator=(std::string & value){
 
     return *this;
 }
+
+yLib::yJsonValue & yLib::yJsonValue::operator=(std::string && value){
+
+    _cur_basic_value_type = yLib::yBasicValueType::STRING_YBASICVALUE_TYPE;
+    _value_type = yLib::yJsonValue::STRING_TYPE;
+
+    _value_containter._str_value_string = value;
+    *_json_root_value = value;
+
+    return *this;
+}
+
 yLib::yJsonValue & yLib::yJsonValue::operator=(const char * value){
 
     _cur_basic_value_type = yLib::yBasicValueType::STRING_YBASICVALUE_TYPE;

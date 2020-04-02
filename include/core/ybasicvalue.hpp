@@ -3,7 +3,7 @@
  * @Author: Sky
  * @Date: 2020-03-19 13:50:15
  * @LastEditors: Sky
- * @LastEditTime: 2020-03-20 17:30:35
+ * @LastEditTime: 2020-03-30 11:33:23
  * @FilePath: \yLib\include\core\ybasicvalue.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -65,6 +65,7 @@ namespace yLib{
         yBasicValue & operator=(float value_);
         yBasicValue & operator=(double value_);
         yBasicValue & operator=(std::string & value_);
+        yBasicValue & operator=(std::string && value_);
         yBasicValue & operator=(const char * value_);
 
         yBasicValueType GetyBasicValueType(void) const;

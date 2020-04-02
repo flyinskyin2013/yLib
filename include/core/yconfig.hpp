@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:52
  * @LastEditors: Sky
- * @LastEditTime: 2020-03-24 15:06:16
+ * @LastEditTime: 2020-03-30 11:29:39
  * @Description: 
  */
 
@@ -124,6 +124,7 @@ namespace yLib{
         yConfigValue & operator=(bool value);
         yConfigValue & operator=(float value);
         yConfigValue & operator=(std::string & value);
+        yConfigValue & operator=(std::string && value);
         yConfigValue & operator=(const char * value);
 
         friend class yConfig;

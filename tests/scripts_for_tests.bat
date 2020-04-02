@@ -1,0 +1,1 @@
+@echo scripts for tests

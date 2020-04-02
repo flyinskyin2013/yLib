@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:53
  * @LastEditors: Sky
- * @LastEditTime: 2020-03-24 16:34:26
+ * @LastEditTime: 2020-03-30 11:30:09
  * @Description: 
  */
 
@@ -578,6 +578,14 @@ yLib::yConfigValue & yLib::yConfigValue::operator=(float value){
     return (*this);
 }
 yLib::yConfigValue & yLib::yConfigValue::operator=(std::string & value){
+
+    this->_current_data_type_ = yConfigValueType::STRING_TYPE;
+    this->_value_containter._str_value_string = value;
+    this->_cur_basic_value_type = yLib::yBasicValueType::STRING_YBASICVALUE_TYPE;
+    return (*this);
+}
+
+yLib::yConfigValue & yLib::yConfigValue::operator=(std::string && value){
 
     this->_current_data_type_ = yConfigValueType::STRING_TYPE;
     this->_value_containter._str_value_string = value;
