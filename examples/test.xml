@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!--摄像头信息，序列号必须唯一，设备信息可以扩展-->
+	<regist_device id="hhh">
+		<serial_num>6220171000045127</serial_num>
+		<camera_ip>192.168.60.127</camera_ip>
+		<type>0</type>
+	</regist_device>
+	<regist_device>
+		<abc_xml>
+			<testval>you are xxx</testval>
+		</abc_xml>
+		<abc_xml id = "aaa">
+			<testval>you are xxx</testval>
+		</abc_xml>
+
+		<serial_num>622017100004564</serial_num>
+		<camera_ip>192.168.31.64</camera_ip>
+		<type>1</type>
+	</regist_device>
+	<!--默认机车号-->
+	<vehicle_num>N8369</vehicle_num>
+	<!--服务器IP和端口-->
+	<http_server>192.168.31.123:8011</http_server>
+	<!--与CPU模块通讯配置-->
+	<host_port>33510</host_port>
+	<cpu_ip>192.168.60.11</cpu_ip>
+	<cpu_port>33510</cpu_port>
+	<!--其他信息-->
+	<soft_version>0.01</soft_version>
+</root>
