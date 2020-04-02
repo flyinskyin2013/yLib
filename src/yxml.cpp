@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2018-10-23 11:09:25
  * @LastEditors: Sky
- * @LastEditTime: 2019-09-20 19:05:44
+ * @LastEditTime: 2020-04-02 09:22:29
  * @Description: 
  */
 
@@ -139,12 +139,13 @@ static void yXml_Tree_Traversal(xmlNodePtr ptr_node, \
 			//we deal with xml-comment-line
 			//if xml node_name is comment,we do nothing
 		}
+		
 		if (!xmlStrcmp(ptr_node->name, BAD_CAST(node_name.c_str()))){
 			
 			xmlChar *name = xmlGetProp(ptr_node, BAD_CAST(node_prop_name.c_str()));
 			if ( !xmlStrcmp(name, BAD_CAST(node_prop_val.c_str())) ){
 
-				yLib::yLog::E(("find prop "+node_prop_val).c_str());
+				//yLib::yLog::E(("find prop "+node_prop_val).c_str());
 
 				xmlNodePtr pcur_children = ptr_node->xmlChildrenNode;
 
@@ -154,7 +155,7 @@ static void yXml_Tree_Traversal(xmlNodePtr ptr_node, \
 					{
 						char str[1024]{0};
 						sprintf(str, "%s", ((char*)XML_GET_CONTENT(pcur_children->xmlChildrenNode)));
-						yLib::yLog::I(("read node val is " + std::string(str)).c_str());
+						//yLib::yLog::I(("read node val is " + std::string(str)).c_str());
 						xmlNodeSetContent(pcur_children->children, BAD_CAST(child_node_val.c_str()));
 						//child_node_val = (char*)XML_GET_CONTENT(pcur_children->xmlChildrenNode);
 						//xmlNodeGetContent
@@ -172,13 +173,14 @@ static void yXml_Tree_Traversal(xmlNodePtr ptr_node, \
 			yXml_Tree_Traversal(ptr_node->xmlChildrenNode, node_name, \
 					node_prop_name, node_prop_val, \
 					child_node_name, child_node_val);
+					
 		ptr_node = ptr_node->next;
 	}
 
 
 }
 
-int yLib::yXML::yXml_Set_Val(std::string &node_name, std::string &node_prop_name, std::string &node_prop_val, std::string & child_node_name, std::string & child_node_val) const {
+int yLib::yXML::yXml_Set_Val(std::string &node_name, std::string &node_prop_name, std::string &node_prop_val, std::string & child_node_name, std::string & child_node_val)  {
 
 	xmlNodePtr proot = NULL, pcur = NULL;
 	/*****************获取xml文档对象的根节对象********************/
@@ -231,5 +233,81 @@ int yLib::yXML::yXml_Get_Val(std::string &node_name, std::string &node_prop_name
 int yLib::yXML::yXml_Write(std::string & xml_path){
 
     xmlSaveFormatFileEnc(xml_path.c_str(), _xmlfile_pdoc_, "UTF-8", 1);
+    return 0;
+}
+
+
+//yXml class 
+yLib::yXml::yXml() MACRO_INIT_YOBJECT_PROPERTY(yXml){
+
+	
+}
+
+yLib::yXml::~yXml(){
+
+	
+}
+
+int8_t yLib::yXml::ReadFromXmlFile(std::string & xml_file_){
+
+	    /*
+	* this initialize the library and check potential ABI mismatches
+	* between the version it was compiled for and the actual shared
+	* library used.
+	*/
+	LIBXML_TEST_VERSION
+
+	/*****************打开xml文档********************/
+
+	xmlKeepBlanksDefault(0) ;//libxml2 global variable . 保证格式正确
+	xmlIndentTreeOutput = 1 ;// indent .with \n 
+
+	xmlfile_pdoc_ptr = xmlReadFile(xml_file_.c_str(), "UTF-8", XML_PARSE_RECOVER);//libxml只能解析UTF-8格式数据
+
+	if (xmlfile_pdoc_ptr == NULL)
+	{
+
+		yLib::yLog::E("ReadFromXmlFile():can't read xml file!");
+		return -1;
+	}
+
+	/*****************释放资源********************/
+	//xmlSaveFile("avr_parameter.xml", pdoc);
+	//xmlSaveFileEnc();
+	// xmlSaveFormatFileEnc(_xmlfile_path.c_str(), pdoc, "UTF-8", 1);
+    return 0;
+}
+
+int8_t yLib::yXml::SetXmlValue(std::string &node_name_, std::string &node_prop_name_, std::string &node_prop_val_, std::string & child_node_name_, std::string &child_node_val_){
+
+	xmlNodePtr _proot = NULL, _pcur = NULL;
+	/*****************获取xml文档对象的根节对象********************/
+	_proot = xmlDocGetRootElement(xmlfile_pdoc_ptr);
+
+	if (_proot == NULL)
+	{
+		yLib::yLog::E("error: file is empty!\n");
+		return -1;
+	}
+
+	_pcur = _proot->xmlChildrenNode;
+    yXml_Tree_Traversal(pcur, node_name, \
+        node_prop_name, node_prop_val, \
+        child_node_name, child_node_val);
+
+    return 0;
+}
+int8_t yLib::yXml::GetXmlValue(std::string &node_name_, std::string &node_prop_name_, std::string &node_prop_val_, std::string & child_node_name_, std::string &child_node_val_) const{
+
+	return 0;
+}
+int8_t yLib::yXml::WriteToXmlFile(std::string & xml_file_){
+
+    if ( 0 > xmlSaveFormatFileEnc(xml_file_.c_str(), xmlfile_pdoc_ptr, "UTF-8", 1) ){
+		
+		yLib::yLog::E("WriteToXmlFile():can't write xml file!");
+		return -1;
+	}
+
     return 0;
 }

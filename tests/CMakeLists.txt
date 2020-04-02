@@ -114,7 +114,22 @@ function(build_module_examples name)
 
 endfunction()
 #----------------------------------------------------------------------------------------
+##########################################################################
+if(BUILD_MODULE_YSHELL)
 
+    build_module_examples(YSHELL)
+
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/yshell/shell_test.txt.example shell_test.txt @ONLY)
+
+    INSTALL(FILES
+
+        ${CMAKE_CURRENT_BINARY_DIR}/shell_test.txt
+        DESTINATION 
+        tests
+    )
+endif()
+
+##########################################################################
 
 ##########################################################################
 if(BUILD_MODULE_YLOG)

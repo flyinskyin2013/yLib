@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-10-28 14:16:37
  * @LastEditors: Sky
- * @LastEditTime: 2020-03-26 11:01:36
+ * @LastEditTime: 2020-03-30 11:31:25
  * @Description: 
  */
 
@@ -129,6 +129,7 @@ namespace yLib{
         // yJsonValue & operator=(float value);
         yJsonValue & operator=(double value);
         yJsonValue & operator=(std::string & value);
+        yJsonValue & operator=(std::string && value);
         yJsonValue & operator=(const char * value);
 
 
