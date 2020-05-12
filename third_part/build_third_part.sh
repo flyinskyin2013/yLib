@@ -2,7 +2,7 @@
 # @Author: Sky
  # @Date: 2019-10-28 17:35:17
  # @LastEditors: Sky
- # @LastEditTime: 2019-12-02 16:53:18
+ # @LastEditTime: 2020-05-13 08:53:48
  # @Description: 
  ###
 #!/bin/bash
@@ -91,7 +91,7 @@ function build_libxml(){
 	cp ../config.sub .
 
  
-	./configure --prefix=${third_part_root_dir}/build_out  CFLAGS=-fPIC CPPFLAGS=-fPIC
+	./configure --prefix=${third_part_root_dir}/build_out  CFLAGS=-fPIC CPPFLAGS=-fPIC  --with-lzma=no
 	if [ $? -ne 0 ]
 	then
 		
@@ -130,7 +130,7 @@ function build_libxml_2_9_9(){
  	# ./configure --prefix=xxxx  CFLAGS=-fPIC CPPFLAGS=-fPIC --with-python=no
 	# ./configure --prefix=${third_part_root_dir}/build_out  CFLAGS=-fPIC CPPFLAGS=-fPIC
 	# autogen.sh note:I am going to run ./configure with no arguments - if you wish to pass any to it, please specify them on the ./autogen.sh command line.
-	./autogen.sh --prefix=${third_part_root_dir}/build_out  CFLAGS=-fPIC CPPFLAGS=-fPIC --with-python=no
+	./autogen.sh --prefix=${third_part_root_dir}/build_out  CFLAGS=-fPIC CPPFLAGS=-fPIC --with-python=no  --with-lzma=no
 
 	if [ $? -ne 0 ]
 	then

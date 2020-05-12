@@ -21,8 +21,15 @@ jobs:
         mkdir -p lib/linux/x86_64
         mkdir -p lib/linux/armeabi
         mkdir -p lib/linux/arm64-v8a
-        mkdir -p include/third_part
+        mkdir -p include/third_part/linux
+        mkdir -p include/third_part/linux/libconfig
         mkdir build
+        cd $THIRD_PART_PATH_ROOT
+        wget -O curl-7.55.1.tar.gz https://github.com/curl/curl/releases/download/curl-7_55_1/curl-7.55.1.tar.gz
+        wget -O libxml2-2.9.9.tar.gz https://github.com/GNOME/libxml2/archive/v2.9.9.tar.gz
+        wget -O libconfig-1.7.2.tar.gz https://github.com/hyperrealm/libconfig/archive/v1.7.2.tar.gz
+        wget -O jsoncpp_1.8.4.tar.gz https://github.com/open-source-parsers/jsoncpp/archive/1.8.4.tar.gz
+        wget -O log4cpp-1.1.3.tar.gz https://sourceforge.net/projects/log4cpp/files/log4cpp-1.1.x%20%28new%29/log4cpp-1.1/log4cpp-1.1.3.tar.gz/download
         ls $GITHUB_WORKSPACE/lib/windows
         ls $GITHUB_WORKSPACE/lib/linux
       working-directory: /home/runner/work/yLib/yLib
@@ -36,7 +43,9 @@ jobs:
         chmod +x build_third_part.sh
         ./build_third_part.sh init
         ./build_third_part.sh make
-        cp -r build_out/include/* ${GITHUB_WORKSPACE}/include/third_part
+        cp -r build_out/include/* ${GITHUB_WORKSPACE}/include/third_part/linux
+        cp -r build_out/include/libconfig.* ${GITHUB_WORKSPACE}/include/third_part/linux/libconfig
+        cp -r build_out/include/libxml2/libxml ${GITHUB_WORKSPACE}/include/third_part/linux/libxml
         cp -r build_out/lib/* ${GITHUB_WORKSPACE}/lib/linux/x86_64
         ls ../include/third_part
         ls ../lib/linux/x86_64
