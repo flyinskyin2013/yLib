@@ -23,7 +23,7 @@ int main(int argc, char * argv[]) {
 
 	while (shm_addr[0] != (char)0xFF) {
 
-#ifdef _WIN32 || _WIN64
+#ifdef _WIN32
 		Sleep(1000);
 #elif __linux__ || __linux
 

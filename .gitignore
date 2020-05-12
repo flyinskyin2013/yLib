@@ -27,3 +27,12 @@ third_part/jsoncpp-1.8.4/
 
 #ignore build_out directory
 third_part/build_out
+
+#ignore all dep lib src
+third_part/curl-7.55.1.tar.gz
+third_part/jsoncpp_1.8.4.tar.gz
+third_part/libconfig-1.7.2.tar.gz
+third_part/libxml2-2.7.1.tar.gz
+third_part/libxml2-2.9.9.tar.gz
+third_part/LIBXML2.7.1.tar.gz
+third_part/log4cpp-1.1.3.tar.gz

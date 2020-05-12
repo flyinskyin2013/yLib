@@ -23,7 +23,7 @@ namespace yLib{
     //_GNUC__ >= 4  &&  __GNUC_MINOR__ >= 1
     //_MSC_VER >= 1400 //vs 2005 or higher
 
-    #ifdef _WIN32 || _WIN64
+    #ifdef _WIN32
         #define __YLIB_EXPORT__ __declspec(dllexport)
         #define __YLIB_IMPORT__ __declspec(dllimport)
 

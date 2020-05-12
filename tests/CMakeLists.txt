@@ -182,6 +182,23 @@ endif()
 
 ##########################################################################
 
+##########################################################################
+if(BUILD_MODULE_YXML)
+
+    build_module_examples(yXML)
+
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/yxml/test.xml.example test.xml @ONLY)
+
+    INSTALL(FILES
+
+        ${CMAKE_CURRENT_BINARY_DIR}/test.xml
+        DESTINATION 
+        tests
+    )
+endif()
+
+##########################################################################
+
 
 ##########################################################################
 

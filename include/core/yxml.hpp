@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-09-20 16:50:06
  * @LastEditors: Sky
- * @LastEditTime: 2020-04-02 09:07:59
+ * @LastEditTime: 2020-04-03 15:18:39
  * @Description: 
  */
 #ifndef _YLIB_CORE_YXML_HPP_
@@ -27,6 +27,7 @@ typedef xmlDoc * xmlDocPtr;
 #include "ycommon.hpp"
 namespace yLib{
 
+    //deprecated this class , as it is not completed.
     class __YLIB_DEPRECATED_ATTRIBUTE__ yXML MACRO_PUBLIC_INHERIT_YOBJECT{
 
         public:
@@ -41,6 +42,14 @@ namespace yLib{
         xmlDocPtr _xmlfile_pdoc_;
     };
 
+    typedef struct __yxml_opts_ex__{
+        
+        std::string parent_node_name = "";
+        std::string parent_prop_name = "";
+        std::string parent_prop_val = "";
+
+        int32_t jump_times = -233333;//magic num
+    } yXmlOptsEx;
 
     class yXml MACRO_PUBLIC_INHERIT_YOBJECT{
 
@@ -49,8 +58,16 @@ namespace yLib{
         ~yXml();
 
         int8_t ReadFromXmlFile(std::string & xml_file_);
-        int8_t SetXmlValue(std::string &node_name_, std::string &node_prop_name_, std::string &node_prop_val_, std::string & child_node_name_, std::string &child_node_val_);
-        int8_t GetXmlValue(std::string &node_name_, std::string &node_prop_name_, std::string &node_prop_val_, std::string & child_node_name_, std::string &child_node_val_) const;
+        //When node_prop_name_ is "",we will jump this operation that is check-node_prop_name_.
+        //When node_name_ is "__comment__", the type of new created node is comment.
+        //About opts_ex_ param : Defaultly, we will process the first node that name is parent_node_name_.
+        int8_t AddXmlValue(std::string & parent_node_name_, std::string &node_name_, std::string &node_prop_name_, std::string &node_prop_val_, const std::string &node_val_, const yXmlOptsEx & opts_ex_ = yXmlOptsEx());
+        //When node_prop_name_ is "",we will jump this operation that is check-node_prop_name_.
+        //About opts_ex_ param : Defaultly, we will process the first node that name is node_name_.
+        int8_t UpdateXmlValue(std::string &node_name_, std::string &node_prop_name_, std::string &node_prop_val_, const std::string &node_val_, const yXmlOptsEx & opts_ex_ = yXmlOptsEx());
+        //When node_prop_name_ is "",we will jump this operation that is check-node_prop_name_.
+        //About opts_ex_ param : Defaultly, we will process the first node that name is node_name_.
+        int8_t GetXmlValue(std::string &node_name_, std::string &node_prop_name_, std::string &node_prop_val_,  std::string &node_val_, const yXmlOptsEx & opts_ex_ = yXmlOptsEx()) const;
         int8_t WriteToXmlFile(std::string & xml_file_);
 
         private:

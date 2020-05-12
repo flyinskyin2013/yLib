@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2018-08-20 11:25:48
  * @LastEditors: Sky
- * @LastEditTime: 2018-08-20 11:25:48
+ * @LastEditTime: 2020-04-14 15:10:40
  * @Description: 
  */
 
@@ -193,8 +193,15 @@ int main(int argc, char * argv[]){
     else{ //child
         
         //entrance 
+        //old op
+        // yStartParam param;
+        // ystart(param);
+
+
+        //new op
+        //If user want to use this interface, they must define MainContextCallBack and param firstly by themselves.
         yStartParam param;
-        ystart(param);
+        yMainContext<yStartParam>::RunMainContext((const MainContextCallBack)ystart_test, param);
     }
     
     return 0;

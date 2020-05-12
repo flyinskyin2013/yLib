@@ -3,7 +3,7 @@
 
 uint32_t yLib::ySharedMemory::InitSharedMemory(uint32_t mem_key, uint64_t mem_size, std::_STD_STRING_ mem_name) {
 
-#ifdef _WIN32 || _WIN64
+#ifdef _WIN32
 	hMapFile = CreateFileMapping( \
 			INVALID_HANDLE_VALUE, \
 			NULL, \
@@ -55,7 +55,7 @@ uint32_t yLib::ySharedMemory::InitSharedMemory(uint32_t mem_key, uint64_t mem_si
 }
 
 uint32_t yLib::ySharedMemory::AttacheSharedMemory(void ** shm_addr) {
-#ifdef _WIN32 || _WIN64
+#ifdef _WIN32
 	*shm_addr = MapViewOfFile(\
 			hMapFile, \
 			FILE_MAP_ALL_ACCESS,
@@ -97,7 +97,7 @@ uint32_t yLib::ySharedMemory::AttacheSharedMemory(void ** shm_addr) {
 
 uint32_t yLib::ySharedMemory::DetacheSharedMemory(void * shm_addr) {
 
-#ifdef _WIN32 || _WIN64
+#ifdef _WIN32
 
 	if (!UnmapViewOfFile(shm_addr) && NO_ERROR != GetLastError() ) {
 
@@ -127,7 +127,7 @@ uint32_t yLib::ySharedMemory::DetacheSharedMemory(void * shm_addr) {
 }
 
 uint32_t yLib::ySharedMemory::DestroySharedMemory(void) {
-#ifdef _WIN32 || _WIN64
+#ifdef _WIN32
 
 	if (!CloseHandle(hMapFile) && NO_ERROR != GetLastError()) {
 	

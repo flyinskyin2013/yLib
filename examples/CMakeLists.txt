@@ -265,7 +265,7 @@ endif()
 
 
 ##########################################################################
-set(BUILD_MODULE_YMAIN OFF)
+set(BUILD_MODULE_YMAIN ON)
 if(BUILD_MODULE_YMAIN)
 
     #build program frame example
