@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:52
  * @LastEditors: Sky
- * @LastEditTime: 2020-03-19 10:14:20
+ * @LastEditTime: 2020-04-03 15:32:11
  * @Description: 
  */
 
@@ -19,7 +19,7 @@
     #pragma warning(disable:4251) //warning C4251: xxxxx需要有dll接口由xxxx的客户端使用
 #endif //_WIN32
 
-#ifdef _WIN32 || _WIN64
+#ifdef _WIN32
 
 #include <windows.h>
 
@@ -59,7 +59,7 @@ namespace yLib{
     #pragma warning(disable:4251) //warning C4251: xxxxx需要有dll接口由xxxx的客户端使用
 #endif //_WIN32
 
-#ifdef _WIN32 || _WIN64
+#ifdef _WIN32
 
     #define LOG_TAIL std::string("<<  FileName=") + std::string(__FILE__)+ \
         std::string("  LineNum=") + std::to_string(__LINE__)+ \
@@ -192,7 +192,7 @@ namespace yLib{
 
 
 
-#ifdef _WIN32 || _WIN64
+#ifdef _WIN32
 
         static HANDLE _thread_mutex_handle;
         static bool _thread_mutex_is_init;

@@ -15,7 +15,7 @@
     #pragma warning(disable:4251) //warning C4251: xxxxx需要有dll接口由xxxx的客户端使用
 #endif //_WIN32
 
-#ifdef _WIN32 || _WIN64
+#ifdef _WIN32
 
 #include <windows.h>
 #include <stdint.h>
@@ -76,11 +76,11 @@ namespace yLib {
 		bool shm_is_ready = false;
 		int cur_shm_id = 0;
 
-#ifdef _WIN32 || _WIN64
+#ifdef _WIN32
 
 		HANDLE hMapFile;
 
-#endif //_WIN32 || _WIN64
+#endif //_WIN32
 
 	};
 

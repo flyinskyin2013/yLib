@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2018-08-22 15:39:32
  * @LastEditors: Sky
- * @LastEditTime: 2019-09-20 16:58:05
+ * @LastEditTime: 2020-04-14 15:05:56
  * @Description: 
  */
 
@@ -71,6 +71,40 @@ void ystart(yStartParam & param){
     //exit sub process
     ::exit(0);
 }
+
+void ystart_test(void * param){
+
+    yStartParam & tmp_param = *(yStartParam *)param;
+    /************************************/
+    pthread_attr_t attr;
+
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+    std::string th_name = "TestThread";
+    yCreateThread(th_name, &attr, test_thread, NULL);
+
+
+    sleep(1);
+/************************************/
+
+
+
+    //clean all joinable threads.
+    yCleanThread();
+
+/************************************/
+    // TODO
+    pthread_attr_destroy(&attr);
+/************************************/
+
+
+    //exit sub process
+    ::exit(0);
+
+}
+
+
+
 
 void yCreateThread(std::string & name, pthread_attr_t * attr, ThreadRoutine routine, void * param){
 
@@ -152,3 +186,7 @@ void yCleanThread(void){
 
     }
 }
+
+
+
+

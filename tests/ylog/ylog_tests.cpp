@@ -2,8 +2,8 @@
  * @Description: 
  * @Author: Sky
  * @Date: 2020-01-07 13:45:41
- * @LastEditors  : Sky
- * @LastEditTime : 2020-01-14 16:30:55
+ * @LastEditors: Sky
+ * @LastEditTime: 2020-05-12 10:15:06
  * @FilePath: \yLib\tests\test_yLog\test_ylog.cpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -18,7 +18,7 @@ TEST_CASE( "Test yLog for standard I/O" , "[yLog_IO]" ){
     
     SECTION( "input a string that len is greater than 4095 bytes " ) {
 
-        yLib::yLog::I("test yLib::yLog::I");
+        yLib::yLog::I("test yLib::yLog::I   %%");
         
         std::string test_str ; 
         for (int i = 0; i < 50; i++)
@@ -30,7 +30,7 @@ TEST_CASE( "Test yLog for standard I/O" , "[yLog_IO]" ){
     
     SECTION( "input a string that len is greater than 4095 bytes " ) {
 
-        yLib::yLog::W("test yLib::yLog::W");
+        yLib::yLog::W("test yLib::yLog::W   %%");
         
         std::string test_str ; 
         for (int i = 0; i < 50; i++)
@@ -42,7 +42,7 @@ TEST_CASE( "Test yLog for standard I/O" , "[yLog_IO]" ){
     
     SECTION( "input a string that len is greater than 4095 bytes " ) {
 
-        yLib::yLog::E("test yLib::yLog::E");
+        yLib::yLog::E("test yLib::yLog::E   %%");
 
         std::string test_str ; 
         for (int i = 0; i < 50; i++)
@@ -54,7 +54,7 @@ TEST_CASE( "Test yLog for standard I/O" , "[yLog_IO]" ){
     
     SECTION( "input a string that len is greater than 4095 bytes " ) {
 
-        yLib::yLog::D("test yLib::yLog::D");
+        yLib::yLog::D("test yLib::yLog::D   %%");
 
         std::string test_str ; 
         for (int i = 0; i < 50; i++)

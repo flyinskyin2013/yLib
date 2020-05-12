@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2018-10-23 11:14:19
  * @LastEditors: Sky
- * @LastEditTime: 2019-09-20 16:58:14
+ * @LastEditTime: 2020-04-14 15:11:24
  * @Description: 
  */
 
@@ -25,9 +25,12 @@ extern "C"{
 
 #include <string>
 #include <vector>
+#include <cstdint>
+#include <functional>
+
 #include "ylib.hpp"
 
-class yStartParam{
+class __YLIB_DEPRECATED_ATTRIBUTE__ yStartParam{
     public:
 
 };
@@ -94,6 +97,34 @@ class yThread{
     }
 };
 
+__YLIB_DEPRECATED_ATTRIBUTE__ void ystart(yStartParam & param);
 
-void ystart(yStartParam & param);
+
+
+
+//new entrance
+
+
+typedef void (*MainContextCallBack)(void * param);
+
+template<class T>
+class yMainContext{
+    private:
+    yMainContext(){}
+    public:
+    ~yMainContext(){}
+
+    public:
+    //Don't use std::function(it needs c++11)
+    static int8_t RunMainContext(const MainContextCallBack main_context, T & main_context_param);
+};
+template<class T>
+int8_t yMainContext<T>::RunMainContext(const MainContextCallBack main_context , T & main_context_param){
+
+    main_context(static_cast<void*>(&main_context_param));
+    return 0;
+}
+
+//new test example
+void ystart_test(void * param);
 #endif //_YSTART_HPP_

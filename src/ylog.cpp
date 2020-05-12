@@ -1,8 +1,8 @@
 /*
  * @Author: Sky
  * @Date: 2019-07-04 11:28:53
- * @LastEditors  : Sky
- * @LastEditTime : 2020-01-14 16:03:24
+ * @LastEditors: Sky
+ * @LastEditTime: 2020-05-12 10:07:21
  * @Description: 
  */
 
@@ -22,7 +22,7 @@
 #include <log4cpp/PropertyConfigurator.hh>
 //log4cpp
 
-#ifdef _WIN32 || _WIN64
+#ifdef _WIN32
 
 HANDLE yLib::yLog::_thread_mutex_handle = NULL;
 bool yLib::yLog::_thread_mutex_is_init = false;
@@ -67,7 +67,7 @@ yLib::yLog::~yLog() noexcept{
 }
 
 
-#ifdef _WIN32 || _WIN64
+#ifdef _WIN32
 
 void yLib::yLog::_init_thread_mutex(void){
 
@@ -192,7 +192,7 @@ void yLib::yLog::SetLog4cppSubCategory(std::string category_name){
 
 void yLib::yLog::_ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg_list){
 
-#ifdef _WIN32 || _WIN64
+#ifdef _WIN32
 
     if ( !_thread_mutex_is_init ){
 
@@ -276,8 +276,12 @@ void yLib::yLog::_ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg
         if (log_type == (log_type & _c_log4cpp_log_level)){
 
             //log4cpp
-            if ( _b_enable_log4cpp )
-                _ptr_log4_category_root->debug(_c_ptr_msg_buf);
+            if ( _b_enable_log4cpp ){
+            
+                //We have been invoked snprintf ,we can't call that secondly in log4cpp to avoid some errors, such as '%'.
+                std::string _std_msg_str = _c_ptr_msg_buf;
+                _ptr_log4_category_root->debug(_std_msg_str);
+            }
         }
         break;
     }
@@ -292,8 +296,12 @@ void yLib::yLog::_ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg
         if (log_type == (log_type & _c_log4cpp_log_level)){
 
             //log4cpp
-            if ( _b_enable_log4cpp )
-                _ptr_log4_category_root->info(_c_ptr_msg_buf);
+            if ( _b_enable_log4cpp ){
+            
+                //We have been invoked snprintf ,we can't call that secondly in log4cpp to avoid some errors, such as '%'.
+                std::string _std_msg_str = _c_ptr_msg_buf;
+                _ptr_log4_category_root->info(_std_msg_str);
+            }
         }        
         break;
     }
@@ -308,8 +316,12 @@ void yLib::yLog::_ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg
         if (log_type == (log_type & _c_log4cpp_log_level)){
 
             //log4cpp
-            if ( _b_enable_log4cpp )
-                _ptr_log4_category_root->warn(_c_ptr_msg_buf);
+            if ( _b_enable_log4cpp ){
+
+                //We have been invoked snprintf ,we can't call that secondly in log4cpp to avoid some errors, such as '%'.
+                std::string _std_msg_str = _c_ptr_msg_buf;
+                _ptr_log4_category_root->warn(_std_msg_str);    
+            }
         }
         break;
     }
@@ -324,8 +336,12 @@ void yLib::yLog::_ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg
         if (log_type == (log_type & _c_log4cpp_log_level)){
 
             //log4cpp
-            if ( _b_enable_log4cpp )
-                _ptr_log4_category_root->error(_c_ptr_msg_buf);
+            if ( _b_enable_log4cpp ){
+            
+                //We have been invoked snprintf ,we can't call that secondly in log4cpp to avoid some errors, such as '%'.
+                std::string _std_msg_str = _c_ptr_msg_buf;
+                _ptr_log4_category_root->error(_std_msg_str);
+            }
         }
         break;
     }
@@ -334,7 +350,7 @@ void yLib::yLog::_ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg
         E("_ylog_log_impl(): input log type error.");
         break;
     }
-#ifdef _WIN32 || _WIN64
+#ifdef _WIN32
 
     ReleaseMutex(_thread_mutex_handle);
 
@@ -450,7 +466,7 @@ void yLib::yLog::E(const char * fmt , ...){
 
 void yLib::yLog::_ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg_list, std::string & category_name){
 
-#ifdef _WIN32 || _WIN64
+#ifdef _WIN32
 
     if ( !_thread_mutex_is_init ){
 
@@ -540,8 +556,10 @@ void yLib::yLog::_ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg
                     E("Category(%s) is not found, Please set it.", category_name.c_str());
                 }
                 else{
-
-                    tmp_sub_category_iter->second._ptr_sub_category->debug(_c_ptr_msg_buf);
+                    
+                    //We have been invoked snprintf ,we can't call that secondly in log4cpp to avoid some errors, such as '%'.
+                    std::string _std_msg_str = _c_ptr_msg_buf;
+                    tmp_sub_category_iter->second._ptr_sub_category->debug(_std_msg_str);
                 }
             }
         }
@@ -566,8 +584,10 @@ void yLib::yLog::_ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg
                     E("Category(%s) is not found, Please set it.", category_name.c_str());
                 }
                 else{
-
-                    tmp_sub_category_iter->second._ptr_sub_category->info(_c_ptr_msg_buf);
+                    
+                    //We have been invoked snprintf ,we can't call that secondly in log4cpp to avoid some errors, such as '%'.
+                    std::string _std_msg_str = _c_ptr_msg_buf;
+                    tmp_sub_category_iter->second._ptr_sub_category->info(_std_msg_str);
                 }
             }
                 
@@ -593,8 +613,10 @@ void yLib::yLog::_ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg
                     E("Category(%s) is not found, Please set it.", category_name.c_str());
                 }
                 else{
-                
-                    tmp_sub_category_iter->second._ptr_sub_category->warn(_c_ptr_msg_buf);
+                    
+                    //We have been invoked snprintf ,we can't call that secondly in log4cpp to avoid some errors, such as '%'.
+                    std::string _std_msg_str = _c_ptr_msg_buf;
+                    tmp_sub_category_iter->second._ptr_sub_category->warn(_std_msg_str);
                 }
             }
         }
@@ -619,7 +641,9 @@ void yLib::yLog::_ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg
                 }
                 else{
 
-                    tmp_sub_category_iter->second._ptr_sub_category->error(_c_ptr_msg_buf);
+                    //We have been invoked snprintf ,we can't call that secondly in log4cpp to avoid some errors, such as '%'.
+                    std::string _std_msg_str = _c_ptr_msg_buf;
+                    tmp_sub_category_iter->second._ptr_sub_category->error(_std_msg_str);
                 }
             }
         }
@@ -633,7 +657,7 @@ void yLib::yLog::_ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg
 
 
 
-#ifdef _WIN32 || _WIN64
+#ifdef _WIN32
 
     ReleaseMutex(_thread_mutex_handle);
 
@@ -754,7 +778,7 @@ void yLib::yLog::E(std::string &category_name, const char * fmt , ...){
 
 void yLib::yLog::SetProcessSafetyFeature(bool enable_feature){
 
-#ifdef _WIN32 || _WIN64
+#ifdef _WIN32
 
     //You can use a mutex object to protect a shared resource from simultaneous access by multiple threads or processes. 
 

@@ -14,7 +14,7 @@
     #pragma warning(disable:4251) //warning C4251: xxxxx需要有dll接口由xxxx的客户端使用
 #endif //_WIN32
 
-#ifdef _WIN32 || _WIN64
+#ifdef _WIN32
 
     #include <core/ylog.hpp>
     #include <core/yjson.hpp>
