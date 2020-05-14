@@ -116,6 +116,11 @@ if(BUILD_MODULE_YCURL)
     build_module_examples(YCURL)
 
 endif()
+if(BUILD_MODULE_YHTTP)
+
+    build_module_examples(YHTTP)
+
+endif()
 
 ##########################################################################
 if(BUILD_MODULE_YLOG)
