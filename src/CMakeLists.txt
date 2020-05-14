@@ -57,6 +57,12 @@ if(BUILD_MODULE_YCURL)
 endif()
 
 
+if(BUILD_MODULE_YHTTP)
+
+    ylib_build_module(YHTTP)
+
+endif()
+
 if(BUILD_MODULE_YLOG)
 
     ylib_build_module(YLOG)

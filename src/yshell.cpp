@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-04-23 17:18:50
  * @LastEditors: Sky
- * @LastEditTime: 2020-03-31 16:54:26
+ * @LastEditTime: 2020-05-13 16:37:34
  * @Description: 
  */
 
@@ -16,8 +16,8 @@ yLib::yShell::yShell() MACRO_INIT_YOBJECT_PROPERTY(yShell){
     parse_cmd_env_array = new char * [cmd_env_vec_size + 1];
     result_read_buffer = new char [_result_line_buf_size + 1];
 
-    memset(parse_cmd_array, NULL, cmd_vec_size + 1);
-    memset(parse_cmd_env_array, NULL, cmd_env_vec_size + 1);
+    memset(parse_cmd_array, 0, cmd_vec_size + 1);
+    memset(parse_cmd_env_array, 0, cmd_env_vec_size + 1);
     memset(result_read_buffer, 0, _result_line_buf_size + 1);
 }
 

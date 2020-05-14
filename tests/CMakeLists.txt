@@ -210,6 +210,8 @@ build_module_examples(yBasicValue)
 
 build_module_examples(yCommon)
 
+build_module_examples(yHttp)
+
 build_module_examples(all_in_one)
 
 ##########################################################################

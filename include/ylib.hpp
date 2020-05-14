@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-11-20 15:29:40
  * @LastEditors: Sky
- * @LastEditTime: 2020-03-26 15:54:20
+ * @LastEditTime: 2020-05-13 10:46:51
  * @Description: 
  */
 #ifndef _YLIB_H_
@@ -24,6 +24,8 @@
     #include <core/yconfig.hpp>
     #include <core/yjson.hpp>
     #include <core/yexception.hpp>
+    #include <core/yhttp.hpp>
+    
 #elif __linux__ || __linux
     
     #include <core/ycommon.hpp>
@@ -35,6 +37,7 @@
     #include <core/yjson.hpp>
     #include <core/ybasicvalue.hpp>
     #include <core/yexception.hpp>
+    #include <core/yhttp.hpp>
 
 #elif __unix__ || __unix
 
