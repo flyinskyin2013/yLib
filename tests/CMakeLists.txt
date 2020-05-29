@@ -52,6 +52,72 @@ endif()
 #set(CMAKE_SKIP_RPATH TRUE)
 #set(CMAKE_SKIP_INSTALL_RPATH TRUE)
 #----------------------------------------------------------------------------------------
+function(build_basic_algorithm name)
+
+    string(TOLOWER ${name} module_name)
+    set(SRC
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_main.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/basic_algorithm/${module_name}_tests.cpp)
+
+    add_executable(test_algorithm_${module_name} ${SRC})  
+
+    foreach(param ${ARGN})
+        #message("dep lib  ${param}")
+        set(DEP_LIBS
+        ${DEP_LIBS}
+        ${param})
+    endforeach()
+
+    #message("dep lib  ${DEP_LIBS}")
+    if(WIN32)
+
+        if(BUILD_SHARED_YLIB)
+            target_link_libraries(test_algorithm_${module_name} ylib ws2_32  ${DEP_LIBS})
+        else()
+            target_link_libraries(test_algorithm_${module_name} ylib_s   ${DEP_LIBS})
+        endif()
+
+        # RUNTIME-rpath maybe be diffcult.
+        #    INSTALL(TARGETS  test_${module_name}
+        #        RUNTIME DESTINATION examples
+        #    )
+
+        INSTALL(PROGRAMS 
+            ${CMAKE_CURRENT_BINARY_DIR}/test_algorithm_${module_name}.exe
+            DESTINATION tests/basic_algorithm/
+        )
+
+    elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
+
+        if(BUILD_SHARED_YLIB)
+            target_link_libraries(test_algorithm_${module_name} libylib.so  -lssl -lcrypto -lz -pthread  ${DEP_LIBS})
+        else()
+            target_link_libraries(test_algorithm_${module_name} libylib_s.so  -lssl -lcrypto  -lz -pthread ${DEP_LIBS})
+        endif()
+        # RUNTIME-rpath maybe be diffcult.
+        #    INSTALL(TARGETS  test_${module_name}
+        #        RUNTIME DESTINATION examples
+        #    )
+
+        INSTALL(PROGRAMS 
+            ${CMAKE_CURRENT_BINARY_DIR}/test_algorithm_${module_name}
+            DESTINATION tests/basic_algorithm/
+        )
+
+    elseif(ANDROID)
+        
+    endif()       
+
+
+
+
+
+endfunction()
+
+
+
+
+
 function(build_module_examples name)
 
     string(TOLOWER ${name} module_name)
@@ -214,4 +280,8 @@ build_module_examples(yHttp)
 
 build_module_examples(all_in_one)
 
+##########################################################################
+
+##########################################################################
+build_basic_algorithm(ySequenceList)
 ##########################################################################
