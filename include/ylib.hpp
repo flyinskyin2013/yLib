@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-11-20 15:29:40
  * @LastEditors: Sky
- * @LastEditTime: 2020-05-13 10:46:51
+ * @LastEditTime: 2020-05-28 14:51:35
  * @Description: 
  */
 #ifndef _YLIB_H_
@@ -16,6 +16,7 @@
 
 #ifdef _WIN32
 
+    //core
     #include <core/ylog.hpp>
     #include <core/yjson.hpp>
     #include <core/ysharedmemory.hpp>
@@ -25,9 +26,15 @@
     #include <core/yjson.hpp>
     #include <core/yexception.hpp>
     #include <core/yhttp.hpp>
-    
+
+    //basic_algorithm
+    #include <basic_algorithm/ysequence_list.hpp>
+
+    //in test
+    #include <core/yallocator.hpp>
 #elif __linux__ || __linux
     
+    //core
     #include <core/ycommon.hpp>
     #include <core/ycurl.hpp>
     #include <core/ylog.hpp>
@@ -38,6 +45,13 @@
     #include <core/ybasicvalue.hpp>
     #include <core/yexception.hpp>
     #include <core/yhttp.hpp>
+    
+
+    //basic_algorithm
+    #include <basic_algorithm/ysequence_list.hpp>
+
+    //in test
+    #include <core/yallocator.hpp>
 
 #elif __unix__ || __unix
 
