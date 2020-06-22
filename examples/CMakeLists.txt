@@ -24,7 +24,7 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
     elseif(${BUILD_YLIB_ARCH} MATCHES "armeabi-v7a")
         link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/armeabi-v7a)
     elseif(${BUILD_YLIB_ARCH} MATCHES "arm64-v8a")
-        link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/arme64-v8a)
+        link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/arm64-v8a)
     endif()
 
     #set path to run test-examples
@@ -69,8 +69,10 @@ function(build_module_examples name)
 
         if(BUILD_SHARED_YLIB)
             target_link_libraries(test_${module_name} ylib ws2_32  ${DEP_LIBS})
+            add_dependencies(test_${module_name} ylib)
         else()
             target_link_libraries(test_${module_name} ylib_s   ${DEP_LIBS})
+            add_dependencies(test_${module_name} ylib_s)
         endif()
 
         # RUNTIME-rpath maybe be diffcult.
@@ -87,8 +89,10 @@ function(build_module_examples name)
 
         if(BUILD_SHARED_YLIB)
             target_link_libraries(test_${module_name} libylib.so  -lssl -lcrypto -lz -pthread  ${DEP_LIBS})
+            add_dependencies(test_${module_name} ylib)
         else()
             target_link_libraries(test_${module_name} libylib_s.so  -lssl -lcrypto  -lz -pthread ${DEP_LIBS})
+            add_dependencies(test_${module_name} ylib_s)
         endif()
         # RUNTIME-rpath maybe be diffcult.
         #    INSTALL(TARGETS  test_${module_name}
@@ -228,8 +232,12 @@ if(BUILD_MODULE_YSHAREDMEMORY)
         if(BUILD_SHARED_YLIB)
             target_link_libraries(test_ysharedmemory_r ylib )
             target_link_libraries(test_ysharedmemory_w ylib )
+
+            add_dependencies(test_ysharedmemory_r ylib)
+            add_dependencies(test_ysharedmemory_w ylib)
         else()
             target_link_libraries(test_${module_name} ylib_s   ${DEP_LIBS})
+            add_dependencies(test_${module_name} ylib_s)
         endif()
         INSTALL(PROGRAMS 
             ${CMAKE_CURRENT_BINARY_DIR}/test_ysharedmemory_r.exe
@@ -242,8 +250,11 @@ if(BUILD_MODULE_YSHAREDMEMORY)
         if(BUILD_SHARED_YLIB)
             target_link_libraries(test_ysharedmemory_r ylib -pthread z lzma)
             target_link_libraries(test_ysharedmemory_w ylib -pthread z lzma)
+            add_dependencies(test_ysharedmemory_r ylib)
+            add_dependencies(test_ysharedmemory_w ylib)
         else()
             target_link_libraries(test_${module_name} ylib_s   ${DEP_LIBS})
+            add_dependencies(test_${module_name} ylib_s)
         endif()
 
         INSTALL(PROGRAMS 
@@ -282,16 +293,20 @@ if(BUILD_MODULE_YMAIN)
 
         if(BUILD_SHARED_YLIB)
             target_link_libraries(test_ymain libylib.dll -lssl -lcrypto  -lz -pthread -lstdc++)
+            add_dependencies(test_ymain ylib)
         else()
             target_link_libraries(test_ymain libylib_s.lib -lssl -lcrypto   -lz -pthread -lstdc++)
+            add_dependencies(test_ymain ylib_s)
         endif()
 
     elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
         if(BUILD_SHARED_YLIB)
             target_link_libraries(test_ymain libylib.so -lssl -lcrypto  -lz -pthread -lstdc++)
+            add_dependencies(test_ymain ylib)
         else()
             target_link_libraries(test_ymain libylib_s.so -lssl -lcrypto   -lz -pthread -lstdc++)
+            add_dependencies(test_ymain ylib_s)
         endif()
 
     elseif(ANDROID)
