@@ -73,8 +73,10 @@ function(build_basic_algorithm name)
 
         if(BUILD_SHARED_YLIB)
             target_link_libraries(test_algorithm_${module_name} ylib ws2_32  ${DEP_LIBS})
+            add_dependencies(test_algorithm_${module_name} ylib)
         else()
             target_link_libraries(test_algorithm_${module_name} ylib_s   ${DEP_LIBS})
+            add_dependencies(test_algorithm_${module_name} ylib_s)
         endif()
 
         # RUNTIME-rpath maybe be diffcult.
@@ -91,8 +93,10 @@ function(build_basic_algorithm name)
 
         if(BUILD_SHARED_YLIB)
             target_link_libraries(test_algorithm_${module_name} libylib.so  -lssl -lcrypto -lz -pthread  ${DEP_LIBS})
+            add_dependencies(test_algorithm_${module_name} ylib)
         else()
             target_link_libraries(test_algorithm_${module_name} libylib_s.so  -lssl -lcrypto  -lz -pthread ${DEP_LIBS})
+            add_dependencies(test_algorithm_${module_name} ylib_s)
         endif()
         # RUNTIME-rpath maybe be diffcult.
         #    INSTALL(TARGETS  test_${module_name}
@@ -139,8 +143,10 @@ function(build_module_examples name)
 
         if(BUILD_SHARED_YLIB)
             target_link_libraries(test_unit_${module_name} ylib ws2_32  ${DEP_LIBS})
+            add_dependencies(test_unit_${module_name} ylib)
         else()
             target_link_libraries(test_unit_${module_name} ylib_s   ${DEP_LIBS})
+            add_dependencies(test_unit_${module_name} ylib_s)
         endif()
 
         # RUNTIME-rpath maybe be diffcult.
@@ -157,8 +163,10 @@ function(build_module_examples name)
 
         if(BUILD_SHARED_YLIB)
             target_link_libraries(test_unit_${module_name} libylib.so  -lssl -lcrypto -lz -pthread  ${DEP_LIBS})
+            add_dependencies(test_unit_${module_name} ylib)
         else()
             target_link_libraries(test_unit_${module_name} libylib_s.so  -lssl -lcrypto  -lz -pthread ${DEP_LIBS})
+            add_dependencies(test_unit_${module_name} ylib_s)
         endif()
         # RUNTIME-rpath maybe be diffcult.
         #    INSTALL(TARGETS  test_${module_name}
