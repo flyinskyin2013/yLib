@@ -15,12 +15,9 @@ For Win32
     >>%comspec% /k "D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
 
 2. For third_part.
-    >>cd yLib/third_part
-    >>./build_third_part.bat clean
-    >>./build_third_part.bat init
-    >>./build_third_part.bat make
-    >>cp -r build_out/include/ ../include/third_part/
-    >>cp -r build_out/lib/* ../lib/${SYS_NAME}/${BUILD_ARCH}/
+    >>cd yLib
+    >>./build_deps.bat All
+    
 2. For yLib.
     >>mkdir -p build 
     >>cd build && cmake -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=%cd%/install -DBUILD_YLIB_ARCH=x86 ..
@@ -30,16 +27,14 @@ For Linux:
 -------------------------------------
 run the following commmands.
 1. For third_part.
-    >>cd yLib/third_part
-    >>./build_third_part.sh clean
-    >>./build_third_part.sh init
-    >>./build_third_part.sh make
-    >>cp -r build_out/include/ ../include/third_part/
-    >>cp -r build_out/lib/* ../lib/${SYS_NAME}/${BUILD_ARCH}/
+    >>cd yLib
+    >>chmod +x build_deps.sh
+    >>./build_deps.sh All
+
 
 2. For yLib.
     >>mkdir -p build 
-    >>cd build && cmake ..
+    >>cd build && cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=arm64-v8a ..
     >>make -j4 && make install
 
 Defaultly,In directory(yLib/build/install), it may have those directories including cmake, examples, include, lib and so on. You can use them by following way:
