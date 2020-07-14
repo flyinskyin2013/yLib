@@ -291,5 +291,6 @@ build_module_examples(all_in_one)
 ##########################################################################
 
 ##########################################################################
-build_basic_algorithm(ySequenceList)
+build_basic_algorithm(yLinearList)
+build_basic_algorithm(yLinkedList)
 ##########################################################################

@@ -5,10 +5,9 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/include",
-                "${workspaceFolder}/include/curl",
-                "${workspaceFolder}/include/libxml",
-                "${workspaceFolder}/include/core",
-                "${workspaceFolder}/tests/inc"
+                "${workspaceFolder}/include/third_part/linux/curl",
+                "${workspaceFolder}/include/third_part/linux/libxml",
+                "${workspaceFolder}/tests/catch2"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

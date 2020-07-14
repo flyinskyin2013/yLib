@@ -65,7 +65,7 @@ option(BUILD_ALL_MODULE "build all module flags" ON)
 option(BUILD_YLIB_ARCH "build arch" x86)
 ################################################################
 #arch should be x86 X86 x86_64 X86_64 armeabi armeabi-v7a arm64-v8a
-set(BUILD_YLIB_ARCH x86_64 CACHE STRING "Arch of ylib" FORCE)
+#set(BUILD_YLIB_ARCH x86_64 CACHE STRING "Arch of ylib" FORCE)
 
 # On windows platefrom, now, Only support yLog and ySharedMemory
 if(WIN32)
