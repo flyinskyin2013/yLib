@@ -19,7 +19,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/install/examples/test_yhttp",
+            "program": "${workspaceFolder}/build/install/tests/basic_algorithm/test_algorithm_ylinkedlist",
             "args": ["-s"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build/install/examples/",

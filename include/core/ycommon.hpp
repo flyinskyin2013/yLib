@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2018-10-23 11:07:58
  * @LastEditors: Sky
- * @LastEditTime: 2020-03-19 10:51:08
+ * @LastEditTime: 2020-07-01 15:48:41
  * @Description: 
  */
 
@@ -31,7 +31,8 @@ namespace yLib{
         yCommon(yCommon && common) = delete;
         yCommon & operator=(yCommon && common) =delete;
 
-        std::string  GetyLibVersion() const noexcept;
+        std::string GetyLibVersion() const noexcept;
+        std::string GetyLibBuildInfo() const noexcept;
     };
 
  }

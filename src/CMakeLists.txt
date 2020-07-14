@@ -29,6 +29,14 @@ endif()
 
 
 
+
+#-----------------------------------generate ylib_build_info.hpp-------------------------
+#string(TIMESTAMP ％Y- ％M-％D％H：％M)
+set(DECELARE_YLIB_BUILD_ARCH "#define YLIB_BUILD_ARCH_DEFINE ${BUILD_YLIB_ARCH}")
+message(status ${DECELARE_YLIB_BUILD_ARCH})
+configure_file(ylib_extra_infos.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/ylib_extra_infos.cpp @ONLY)
+include_directories(${CMAKE_CURRENT_BINARY_DIR} )
+
 #----------------------------------------------------------------------------------------
 set(SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/ycommon.cpp
@@ -241,6 +249,12 @@ endif()
 
 #for header files
 INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/core DESTINATION include
+
+    #PATTERN "curl" EXCLUDE
+    #PATTERN "libxml" EXCLUDE
+)
+
+INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/basic_algorithm DESTINATION include
 
     #PATTERN "curl" EXCLUDE
     #PATTERN "libxml" EXCLUDE
