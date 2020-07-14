@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-05-22 09:54:19
  * @LastEditors: Sky
- * @LastEditTime: 2020-05-29 09:45:54
+ * @LastEditTime: 2020-07-14 17:41:40
  * @Description: 
  */
 
@@ -11,17 +11,18 @@
 
 #include <memory>
 
-#include "yobject.hpp"
-#include "yallocator.hpp"
+#include "core/yobject.hpp"
+#include "core/yallocator.hpp"
+
 namespace yLib{
 
     /**
-     * @description: A implement of sequence list,class T must have operator== , operator=, operator> or operator<
+     * @description: A implement of linear list,class T must have operator== , operator=, operator> or operator<
      * @param {type} 
      * @return: 
      */
     template<class T, class Alloc=std::allocator<T>>
-    class ySequenceList MACRO_PUBLIC_INHERIT_YOBJECT
+    class yLinearList MACRO_PUBLIC_INHERIT_YOBJECT
     {
     private:
         /* data */
@@ -58,8 +59,22 @@ namespace yLib{
                 
                 _tmp_sq_capacity = sq_find_2index_greater_than_size(size_ * sizeof(T));
                 _tmp_sq_data_head = _alloc.allocate(_tmp_sq_capacity);
+                
+                //call construct func
+                for (int i_ = 0; i_ < _tmp_sq_capacity; i_++ ){
+
+                    T _tmp_data;
+                    _alloc.construct( ((T *)_tmp_sq_data_head) + i_,  _tmp_data);
+                }
+
                 memcpy(_tmp_sq_data_head, sq_data_head, sq_size * sizeof(T));
 
+
+                //call destory func
+                for (int i_ = 0; i_ < _tmp_sq_capacity; i_++ ){
+
+                    _alloc.destroy( ((T *)_tmp_sq_data_head) + i_);
+                }
                 //free old mem-space
                 _alloc.deallocate((T *)sq_data_head, sq_capacity);
 
@@ -71,21 +86,19 @@ namespace yLib{
             return 0;
         }
     public:
-        ySequenceList() = delete;
-        explicit ySequenceList(size_t element_num_){
+        yLinearList() = delete;
+        explicit yLinearList(size_t element_num_) MACRO_INIT_YOBJECT_PROPERTY(yLinearList) {
 
-            Alloc _alloc;
-            sq_capacity = sq_find_2index_greater_than_size(element_num_ * sizeof(T));
-            sq_data_head = _alloc.allocate(sq_capacity);
+            check_capacity_and_alloc_mem_by_size(element_num_);
         }
-        ~ySequenceList(){
+        ~yLinearList(){
 
             Alloc _alloc;
             _alloc.deallocate((T *)sq_data_head, sq_capacity);
         }
         
         /**
-         * @description: insert value to sequencelist, class T must have operator=
+         * @description: insert value to linearlist, class T must have operator=
          * @param :  
          * @return: 
          * @analyse:    
@@ -103,7 +116,7 @@ namespace yLib{
             check_capacity_and_alloc_mem_by_size(sq_size + 1);
 
             if (pos_ >= sq_size){//at tail
-
+                
                 ((T*)sq_data_head)[sq_size] = value_;
                 sq_size ++;
                 return 0;
@@ -128,7 +141,7 @@ namespace yLib{
         }
 
         /**
-         * @description: delete value from sequencelist, class T must have operator== and operator=
+         * @description: delete value from linearlist, class T must have operator== and operator=
          * @param {type} 
          * @return: 
          * @analyse:    
@@ -167,18 +180,18 @@ namespace yLib{
                 return -1;
         }
 
-        enum ySequenceListOrderType:uint8_t{
+        enum yLinearListOrderType:uint8_t{
             TYPE_DSC_ORDER = 0,
             TYPE_ASC_ORDER = 1
         };
 
         //fix a c++'s error at line(178-184)
-        const ySequenceList<T, Alloc> & operator=(const ySequenceList<T, Alloc> & sq_) const{
+        const yLinearList<T, Alloc> & operator=(const yLinearList<T, Alloc> & sq_) const{
 
             return sq_;
         }
         /**
-         * @description: only support ordered sequencelist(same order-type)(ascending order or descending order)
+         * @description: only support ordered Linearlist(same order-type)(ascending order or descending order)
          *                  
          * @param {type} 
          * @return: 
@@ -191,13 +204,13 @@ namespace yLib{
          *          Best time-Complexity: O(Max(M,N))
          *          Average time-Complexity: O(M + N)        
          */
-        int8_t sq_merge(const ySequenceList<T, Alloc> & sq0_, const ySequenceList<T, Alloc> & sq1_, ySequenceListOrderType order_type_){
+        int8_t sq_merge(const yLinearList<T, Alloc> & sq0_, const yLinearList<T, Alloc> & sq1_, yLinearListOrderType order_type_){
 
             check_capacity_and_alloc_mem_by_size(sq0_.sq_size + sq1_.sq_size);
             uint64_t _cur_idx = 0;
             uint64_t _bak_sq_smaller_pos = 0;
-            const ySequenceList<T, Alloc> & sq_greater = sq0_;
-            const ySequenceList<T, Alloc> & sq_smaller = sq1_;
+            const yLinearList<T, Alloc> & sq_greater = sq0_;
+            const yLinearList<T, Alloc> & sq_smaller = sq1_;
             if ( sq0_.sq_size < sq1_.sq_size){
 
                 sq_greater = sq1_;
