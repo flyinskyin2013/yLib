@@ -2,12 +2,12 @@
  * @Author: Sky
  * @Date: 2018-10-23 11:13:37
  * @LastEditors: Sky
- * @LastEditTime: 2020-03-31 14:43:26
+ * @LastEditTime: 2020-07-14 18:21:10
  * @Description: 
  */
 
-#ifndef _YLIB_CORE_YSHELL_HPP_
-#define _YLIB_CORE_YSHELL_HPP_
+#ifndef __YLIB_UTILITY_YSHELL_HPP__
+#define __YLIB_UTILITY_YSHELL_HPP__
 
 #ifdef __cplusplus
 extern "C"{
@@ -68,4 +68,4 @@ namespace yLib{
 
 }
 
-#endif //_YSHELL_H_
+#endif //__YLIB_UTILITY_YSHELL_HPP__

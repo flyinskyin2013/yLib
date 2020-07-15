@@ -2,17 +2,17 @@
  * @Author: Sky
  * @Date: 2018-10-23 11:13:10
  * @LastEditors: Sky
- * @LastEditTime: 2020-03-18 16:40:42
+ * @LastEditTime: 2020-07-14 18:28:18
  * @Description: 
  */
 
-#ifndef _YLIB_CORE_YCURL_HPP_
-#define _YLIB_CORE_YCURL_HPP_
+#ifndef __YLIB_UTILITY_YCURL_HPP__
+#define __YLIB_UTILITY_YCURL_HPP__
 
 
 #include <iostream>
 #include <string.h>
-#include "ycommon.hpp"
+#include "core/ycommon.hpp"
 #include "ylog.hpp"
 
 
@@ -54,4 +54,4 @@ class __YLIB_DEPRECATED_ATTRIBUTE__ yCurl MACRO_PUBLIC_INHERIT_YOBJECT{
 
 }
 
-#endif //_YCURL_H_
+#endif //__YLIB_UTILITY_YCURL_HPP__

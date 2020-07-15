@@ -2,11 +2,11 @@
  * @Author: Sky
  * @Date: 2019-09-20 16:50:06
  * @LastEditors: Sky
- * @LastEditTime: 2020-04-03 15:18:39
+ * @LastEditTime: 2020-07-14 18:26:00
  * @Description: 
  */
-#ifndef _YLIB_CORE_YXML_HPP_
-#define _YLIB_CORE_YXML_HPP_
+#ifndef __YLIB_UTILIY_YXML_HPP__
+#define __YLIB_UTILIY_YXML_HPP__
 
 #ifdef __cplusplus
 extern "C"
@@ -24,7 +24,7 @@ typedef xmlDoc * xmlDocPtr;
 
 
 #include "ylog.hpp"
-#include "ycommon.hpp"
+#include "core/ycommon.hpp"
 namespace yLib{
 
     //deprecated this class , as it is not completed.
@@ -75,4 +75,4 @@ namespace yLib{
     };
 }
 
-#endif //_YXML_H_
+#endif //__YLIB_UTILIY_YXML_HPP__

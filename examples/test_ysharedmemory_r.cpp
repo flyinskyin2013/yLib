@@ -3,11 +3,11 @@
  * @Author: Sky
  * @Date: 2019-11-29 11:50:37
  * @LastEditors: Sky
- * @LastEditTime: 2019-12-02 19:23:34
+ * @LastEditTime: 2020-07-15 09:18:47
  * @FilePath: \yLib\examples\test_ysharedmemory_r.cpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
-#include "ysharedmemory.hpp"
+#include "ylib.hpp"
 
 #define SHARED_MEM_SIZE 1024 * 1024 * 1024
 

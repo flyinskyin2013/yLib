@@ -3,19 +3,19 @@
  * @Author: Sky
  * @Date: 2020-03-19 13:50:15
  * @LastEditors: Sky
- * @LastEditTime: 2020-03-30 11:33:23
+ * @LastEditTime: 2020-07-14 18:31:56
  * @FilePath: \yLib\include\core\ybasicvalue.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
 
-#ifndef __YLIB_CORE_YVALUE_HPP__
-#define __YLIB_CORE_YVALUE_HPP__
+#ifndef __YLIB_CORE_YBASICVALUE_HPP__
+#define __YLIB_CORE_YBASICVALUE_HPP__
 
 #include <cstdint>
 #include <string>
 
 #include "yobject.hpp"
-#include "ylog.hpp"
+#include "utility/ylog.hpp"
 
 namespace yLib{
 
@@ -89,4 +89,4 @@ namespace yLib{
 
 
 
-#endif //__YLIB_CORE_YVALUE_HPP__
+#endif //__YLIB_CORE_YBASICVALUE_HPP__

@@ -3,14 +3,14 @@
  * @Author: Sky
  * @Date: 2020-03-18 15:42:22
  * @LastEditors: Sky
- * @LastEditTime: 2020-05-14 14:06:16
+ * @LastEditTime: 2020-07-14 18:27:49
  * @FilePath: \yLib\include\core\yhttp.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
-#ifndef __CORE_YHTTP_HPP__
-#define __CORE_YHTTP_HPP__
+#ifndef __YLIB_UTILITY_YHTTP_HPP__
+#define __YLIB_UTILITY_YHTTP_HPP__
 
-#include "yobject.hpp"
+#include "core/yobject.hpp"
 
 
 #include <cstdint>
@@ -103,4 +103,4 @@ namespace yLib{
 
 
 
-#endif //__CORE_YHTTP_HPP__
+#endif //__YLIB_UTILITY_YHTTP_HPP__

@@ -6,7 +6,7 @@
  * @Description: 
  */
 
-#include "yexception.hpp"
+#include "core/yexception.hpp"
 
 #define REGISTER_EXCEPTION(exception_id, exception_msg) \
     {exception_id, std::string(exception_msg)}

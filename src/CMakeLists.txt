@@ -33,15 +33,15 @@ endif()
 #-----------------------------------generate ylib_build_info.hpp-------------------------
 #string(TIMESTAMP ％Y- ％M-％D％H：％M)
 set(DECELARE_YLIB_BUILD_ARCH "#define YLIB_BUILD_ARCH_DEFINE ${BUILD_YLIB_ARCH}")
-message(status ${DECELARE_YLIB_BUILD_ARCH})
+#message(STATUS ${DECELARE_YLIB_BUILD_ARCH})
 configure_file(ylib_extra_infos.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/ylib_extra_infos.cpp @ONLY)
 include_directories(${CMAKE_CURRENT_BINARY_DIR} )
 
 #----------------------------------------------------------------------------------------
 set(SRC
-    ${CMAKE_CURRENT_SOURCE_DIR}/ycommon.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/yobject.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/yexception.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/ycommon.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/yobject.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/yexception.cpp
     )
 
 #----------------------------------------------------------------------------------------
@@ -58,59 +58,71 @@ macro(ylib_build_module name)
 endmacro()
 
 
+macro(ylib_build ylib_mod_name name)
+
+    string(TOLOWER ${name} module_name)
+
+    set(SRC
+        ${SRC} ${CMAKE_CURRENT_SOURCE_DIR}/${ylib_mod_name}/${module_name}.cpp)
+
+    message(STATUS "yLib will include ${ylib_mod_name}-${name} module")
+
+endmacro()
+
+
 if(BUILD_MODULE_YCURL)
 
-    ylib_build_module(YCURL)
+    ylib_build(utility YCURL)
 
 endif()
 
 
 if(BUILD_MODULE_YHTTP)
 
-    ylib_build_module(YHTTP)
+    ylib_build(utility YHTTP)
 
 endif()
 
 if(BUILD_MODULE_YLOG)
 
-    ylib_build_module(YLOG)
+    ylib_build(utility YLOG)
 
 endif()
 
 
 if(BUILD_MODULE_YSHELL)
 
-    ylib_build_module(YSHELL)
+    ylib_build(utility YSHELL)
 
 endif()
 
 if(BUILD_MODULE_YXML)
 
-    ylib_build_module(YXML)
+    ylib_build(utility YXML)
 
 endif()
 
 if(BUILD_MODULE_YCONFIG)
 
-    ylib_build_module(YCONFIG)
+    ylib_build(utility YCONFIG)
 
 endif()
 
 if(BUILD_MODULE_YJSON)
 
-    ylib_build_module(YJSON)
+    ylib_build(utility YJSON)
 
 endif()
 
 if(BUILD_MODULE_YSHAREDMEMORY)
 
-    ylib_build_module(YSHAREDMEMORY)
+    ylib_build(ipc YSHAREDMEMORY)
 
 endif()
 
 if(BUILD_MODULE_YBASICVALUE)
 
-    ylib_build_module(YBASICVALUE)
+    ylib_build(core YBASICVALUE)
 
 endif()
 
@@ -247,12 +259,27 @@ elseif(ANDROID)
 endif()
 
 
-#for header files
+#for core header files
 INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/core DESTINATION include
 
     #PATTERN "curl" EXCLUDE
     #PATTERN "libxml" EXCLUDE
 )
+
+#for ipc header files
+INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/ipc DESTINATION include
+
+    #PATTERN "curl" EXCLUDE
+    #PATTERN "libxml" EXCLUDE
+)
+
+#for utility header files
+INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/utility DESTINATION include
+
+    #PATTERN "curl" EXCLUDE
+    #PATTERN "libxml" EXCLUDE
+)
+
 
 INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/basic_algorithm DESTINATION include
 

@@ -11,18 +11,60 @@ MESSAGE("================================================================")
 #MESSAGE(STATUS "Welcome to build yLib")
 
 
+
+################################################################
+option(BUILD_STATIC_YLIB "Build static ylib " ON)
+option(BUILD_SHARED_YLIB "Build shared ylib " ON)
+
+#yLib built-in module
+option(BUILD_MODULE_YCURL "Build module-ycurl(it insteads by yhttp) " ON)
+option(BUILD_MODULE_YHTTP "Build module-yhttp " ON)
+option(BUILD_MODULE_YLOG "Build module-ylog " ON)
+option(BUILD_MODULE_YSHELL "Build module-yshell " ON)
+option(BUILD_MODULE_YXML "Build module-yxml " ON)
+option(BUILD_MODULE_YCONFIG "Build module-yconfig " ON)
+option(BUILD_MODULE_YJSON "Build module-yjson " ON)
+option(BUILD_MODULE_YSHAREDMEMORY "Build module-ysharedmemory " ON)
+option(BUILD_MODULE_YBASICVALUE "Build module-ybasicvalue " "ON")
+option(BUILD_ALL_MODULE "build all module flags" ON)
+################################################################
+
+
+# BUILD_YLIB_ARCH
+# check necessary CMAKE-ARGS
+if(NOT ${BUILD_YLIB_ARCH}  MATCHES "(x86|X86|x86_64|X86_64|armeabi|armeabi-v7a|arm64-v8a)")
+    message(FATAL_ERROR "User must define ARG: BUILD_YLIB_ARCH. The value of it can be one of 'x86|X86|x86_64|X86_64|armeabi|armeabi-v7a|arm64-v8a'")
+endif()
+
+if(NOT CMAKE_BUILD_TYPE  MATCHES "(Release|RELEASE|release|Debug|DEBUG|debug)")
+    message(FATAL_ERROR "User must define ARG: CMAKE_BUILD_TYPE. The value of it can be one of 'Release|RELEASE|release|Debug|DEBUG|debug'")
+endif()
+
+#define BUILD_PLATFORM
+set(BUILD_PLATFORM "")
 #----------------------------------------------------------------------------------------
 
 if(WIN32)
 
+    set(BUILD_PLATFORM "Windows")
+
+    MESSAGE(STATUS "BUILD_TYPE is : ${CMAKE_BUILD_TYPE}")
+    MESSAGE(STATUS "BUILD_ARCH is : ${BUILD_YLIB_ARCH}")
+    MESSAGE(STATUS "BUILD_PLATFORM is : ${BUILD_PLATFORM}")
 
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
+
+    set(BUILD_PLATFORM "Linux")
+
+    MESSAGE(STATUS "BUILD_TYPE is : ${CMAKE_BUILD_TYPE}")
+    MESSAGE(STATUS "BUILD_ARCH is : ${BUILD_YLIB_ARCH}")
+    MESSAGE(STATUS "BUILD_PLATFORM is : ${BUILD_PLATFORM}")
 
     set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/install")
 
     #set(CMAKE_BUILD_TYPE release CACHE STRING "Type of build" FORCE)
-    set(CMAKE_BUILD_TYPE debug CACHE STRING "Type of build" FORCE)
-    MESSAGE(STATUS "BUILD_TYPE is : ${CMAKE_BUILD_TYPE}")
+    #set(CMAKE_BUILD_TYPE debug CACHE STRING "Type of build" FORCE)
+    
     if(CMAKE_BUILD_TYPE MATCHES "(Release|RELEASE|release)")
 
         #release mode 
@@ -46,24 +88,6 @@ endif()
 
 #----------------------------------------------------------------------------------------
 
-################################################################
-option(BUILD_STATIC_YLIB "Build static ylib " ON)
-option(BUILD_SHARED_YLIB "Build shared ylib " ON)
-
-#yLib built-in module
-option(BUILD_MODULE_YCURL "Build module-ycurl(it insteads by yhttp) " ON)
-option(BUILD_MODULE_YHTTP "Build module-yhttp " ON)
-option(BUILD_MODULE_YLOG "Build module-ylog " ON)
-option(BUILD_MODULE_YSHELL "Build module-yshell " ON)
-option(BUILD_MODULE_YXML "Build module-yxml " ON)
-option(BUILD_MODULE_YCONFIG "Build module-yconfig " ON)
-option(BUILD_MODULE_YJSON "Build module-yjson " ON)
-option(BUILD_MODULE_YSHAREDMEMORY "Build module-ysharedmemory " ON)
-option(BUILD_MODULE_YBASICVALUE "Build module-ybasicvalue " "ON")
-
-option(BUILD_ALL_MODULE "build all module flags" ON)
-option(BUILD_YLIB_ARCH "build arch" x86)
-################################################################
 #arch should be x86 X86 x86_64 X86_64 armeabi armeabi-v7a arm64-v8a
 #set(BUILD_YLIB_ARCH x86_64 CACHE STRING "Arch of ylib" FORCE)
 
@@ -127,6 +151,13 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/tests/Catch2/inc)
 add_subdirectory(src)
 
 add_subdirectory(examples)
+
+
+
+
+
+
+
 
 add_subdirectory(tests)
 
