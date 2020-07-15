@@ -2,12 +2,12 @@
  * @Author: Sky
  * @Date: 2019-09-20 16:59:29
  * @LastEditors: Sky
- * @LastEditTime: 2020-03-19 11:38:48
+ * @LastEditTime: 2020-07-14 18:30:02
  * @Description: 
  */
 
-#ifndef _YLIB_CORE_YOBJECT_HPP_
-#define _YLIB_CORE_YOBJECT_HPP_
+#ifndef __YLIB_CORE_YOBJECT_HPP__
+#define __YLIB_CORE_YOBJECT_HPP__
 
 #include <string>
 
@@ -49,4 +49,4 @@ namespace yLib
 
 
 
-#endif //_YLIB_CORE_YOBJECT_H_
+#endif //__YLIB_CORE_YOBJECT_HPP__

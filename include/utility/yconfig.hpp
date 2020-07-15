@@ -2,18 +2,18 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:52
  * @LastEditors: Sky
- * @LastEditTime: 2020-03-30 11:29:39
+ * @LastEditTime: 2020-07-14 18:28:57
  * @Description: 
  */
 
-#ifndef _YLIB_CORE_YCONFIG_HPP_
-#define _YLIB_CORE_YCONFIG_HPP_
+#ifndef __YLIB_UTILITY_YCONFIG_HPP__
+#define __YLIB_UTILITY_YCONFIG_HPP__
 
 #include <string>
 
 #include "ylog.hpp"
-#include "ycommon.hpp"
-#include "ybasicvalue.hpp"
+#include "core/ycommon.hpp"
+#include "core/ybasicvalue.hpp"
 
 namespace libconfig{
 
@@ -142,4 +142,4 @@ namespace yLib{
 
 
 
-#endif //_YLIB_CORE_YCONFIG_H_
+#endif //__YLIB_UTILITY_YCONFIG_HPP__

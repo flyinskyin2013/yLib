@@ -2,15 +2,15 @@
  * @Author: Sky
  * @Date: 2019-10-28 14:16:37
  * @LastEditors: Sky
- * @LastEditTime: 2020-03-30 11:31:25
+ * @LastEditTime: 2020-07-14 18:27:17
  * @Description: 
  */
 
-#ifndef _YLIB_CORE_YJSON_HPP_
-#define _YLIB_CORE_YJSON_HPP_
+#ifndef __YLIB_UTILITY_YJSON_HPP__
+#define __YLIB_UTILITY_YJSON_HPP__
 
-#include "ycommon.hpp"
-#include "ybasicvalue.hpp"
+#include "core/ycommon.hpp"
+#include "core/ybasicvalue.hpp"
 #include "ylog.hpp"
 
 
@@ -147,4 +147,4 @@ namespace yLib{
 
 
 
-#endif //_YLIB_CORE_YJSON_HPP_
+#endif //__YLIB_UTILITY_YJSON_HPP__

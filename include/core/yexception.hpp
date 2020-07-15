@@ -2,11 +2,11 @@
  * @Author: Sky
  * @Date: 2019-09-20 17:06:18
  * @LastEditors: Sky
- * @LastEditTime: 2020-03-26 11:27:14
+ * @LastEditTime: 2020-07-14 18:30:18
  * @Description: 
  */
-#ifndef _YLIB_CORE_YEXCEPTION_HPP_
-#define _YLIB_CORE_YEXCEPTION_HPP_
+#ifndef __YLIB_CORE_YEXCEPTION_HPP__
+#define __YLIB_CORE_YEXCEPTION_HPP__
 
 #include <string>
 
@@ -44,4 +44,4 @@ namespace yLib{
 
 }
 
-#endif //_YLIB_CORE_YEXCEPTION_
+#endif //__YLIB_CORE_YEXCEPTION_HPP__

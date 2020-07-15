@@ -2,12 +2,12 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:52
  * @LastEditors: Sky
- * @LastEditTime: 2020-04-03 15:32:11
+ * @LastEditTime: 2020-07-14 18:26:13
  * @Description: 
  */
 
-#ifndef _YLIB_CORE_YLOG_HPP_
-#define _YLIB_CORE_YLOG_HPP_
+#ifndef __YLIB_UTILITY_YLOG_HPP__
+#define __YLIB_UTILITY_YLOG_HPP__
 
 #include <iostream>
 #include <string>
@@ -44,7 +44,7 @@ extern "C" {
 #endif //__unix__ || __unix
 
 
-#include "ycommon.hpp"
+#include "core/ycommon.hpp"
 
 namespace log4cpp{
 
@@ -211,4 +211,4 @@ namespace yLib{
 
 
 
-#endif //_YLOG_H_
+#endif //__YLIB_UTILITY_YLOG_HPP__

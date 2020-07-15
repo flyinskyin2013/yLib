@@ -2,26 +2,20 @@
  * @Author: Sky
  * @Date: 2020-07-14 16:43:40
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-14 17:39:40
+ * @LastEditTime: 2020-07-14 18:33:02
  * @Description: 
  */ 
 
-#ifndef __CORE_YCORE_HPP__
-#define __CORE_YCORE_HPP__
+#ifndef __YLIB_CORE_YCORE_HPP__
+#define __YLIB_CORE_YCORE_HPP__
 
 #if defined(_WIN32) || defined(_WIN64)
 
     //core
     #include "ycommon.hpp"
-    #include "ycurl.hpp"
-    #include "ylog.hpp"
-    #include "yshell.hpp"
-    #include "yxml.hpp"
-    #include "yconfig.hpp"
-    #include "yjson.hpp"
     #include "ybasicvalue.hpp"
     #include "yexception.hpp"
-    #include "yhttp.hpp"
+
     
     //in test
     #include "yallocator.hpp"
@@ -30,15 +24,9 @@
     
     //core
     #include "ycommon.hpp"
-    #include "ycurl.hpp"
-    #include "ylog.hpp"
-    #include "yshell.hpp"
-    #include "yxml.hpp"
-    #include "yconfig.hpp"
-    #include "yjson.hpp"
     #include "ybasicvalue.hpp"
     #include "yexception.hpp"
-    #include "yhttp.hpp"
+
     
     //in test
     #include "yallocator.hpp"
@@ -48,4 +36,4 @@
 #endif //__unix__ || __unix
 
 
-#endif //__CORE_YCORE_HPP__
+#endif //__YLIB_CORE_YCORE_HPP__

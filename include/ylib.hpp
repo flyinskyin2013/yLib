@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-11-20 15:29:40
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-14 16:54:41
+ * @LastEditTime: 2020-07-14 18:33:50
  * @Description: 
  */
 #ifndef __YLIB_HPP__
@@ -13,6 +13,12 @@
     //core
     #include "core/ycore.hpp"
 
+    //ipc
+    #include "ipc/yipc.hpp"
+
+    //utility
+    #include "utility/yutility.hpp"
+
     //basic_algorithm
     #include "basic_algorithm/ybasic_algorithm.hpp"
 
@@ -20,6 +26,12 @@
     
     //core
     #include "core/ycore.hpp"
+
+    //ipc
+    #include "ipc/yipc.hpp"
+
+    //utility
+    #include "utility/yutility.hpp"
 
     //basic_algorithm
     #include "basic_algorithm/ybasic_algorithm.hpp"

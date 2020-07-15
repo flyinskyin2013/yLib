@@ -1,4 +1,4 @@
-﻿#include "ysharedmemory.hpp"
+﻿#include "ipc/ysharedmemory.hpp"
 
 
 uint32_t yLib::ySharedMemory::InitSharedMemory(uint32_t mem_key, uint64_t mem_size, std::_STD_STRING_ mem_name) {
