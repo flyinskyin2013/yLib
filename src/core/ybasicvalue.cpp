@@ -3,12 +3,12 @@
  * @Author: Sky
  * @Date: 2020-03-19 13:50:29
  * @LastEditors: Sky
- * @LastEditTime: 2020-03-30 11:33:04
+ * @LastEditTime: 2020-07-14 18:38:37
  * @FilePath: \yLib\src\ybasicvalue.cpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
 
-#include "ybasicvalue.hpp"
+#include "core/ybasicvalue.hpp"
 
 yLib::yBasicValue::yBasicValue() noexcept
 MACRO_INIT_YOBJECT_PROPERTY(yBasicValue) 

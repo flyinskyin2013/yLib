@@ -2,12 +2,12 @@
  * @Author: Sky
  * @Date: 2020-05-22 10:00:54
  * @LastEditors: Sky
- * @LastEditTime: 2020-05-28 15:19:13
+ * @LastEditTime: 2020-07-14 18:31:39
  * @Description: 
  */
 
-#ifndef __CORE_YALLOCATOR_HPP__
-#define __CORE_YALLOCATOR_HPP__
+#ifndef __YLIB_CORE_YALLOCATOR_HPP__
+#define __YLIB_CORE_YALLOCATOR_HPP__
 
 #include "yobject.hpp"
 
@@ -85,4 +85,4 @@ namespace yLib{
 }
 
 
-#endif //__CORE_YALLOCATOR_HPP__
+#endif //__YLIB_CORE_YALLOCATOR_HPP__

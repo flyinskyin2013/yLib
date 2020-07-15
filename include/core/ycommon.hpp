@@ -2,12 +2,12 @@
  * @Author: Sky
  * @Date: 2018-10-23 11:07:58
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-01 15:48:41
+ * @LastEditTime: 2020-07-14 18:30:58
  * @Description: 
  */
 
-#ifndef _YLIB_CORE_YCOMMON_HPP_
-#define _YLIB_CORE_YCOMMON_HPP_
+#ifndef __YLIB_CORE_YCOMMON_HPP__
+#define __YLIB_CORE_YCOMMON_HPP__
 
 #include <string>
 
@@ -37,4 +37,4 @@ namespace yLib{
 
  }
 
-#endif //_YLIB_CORE_YCOMMON_H_
+#endif //__YLIB_CORE_YCOMMON_HPP__

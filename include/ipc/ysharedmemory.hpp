@@ -2,13 +2,13 @@
  * @Description: 
  * @Author: Sky
  * @Date: 2019-11-29 11:35:54
- * @LastEditors  : Sky
- * @LastEditTime : 2020-01-14 16:57:01
+ * @LastEditors: Sky
+ * @LastEditTime: 2020-07-14 18:20:24
  * @FilePath: \yLib\include\core\ysharedmemory.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
-#ifndef _YLIB_CORE_YSHAREDMEMORY_HPP_
-#define _YLIB_CORE_YSHAREDMEMORY_HPP_
+#ifndef __YLIB_IPC_YSHAREDMEMORY_HPP__
+#define __YLIB_IPC_YSHAREDMEMORY_HPP__
 
 #ifdef _WIN32
     #pragma warning(disable:4067) //warning C4067: 预处理器指令后有意外标记 - 应输入换行符
@@ -55,8 +55,8 @@ extern "C" {
 #endif //_WIN32
 
 
-#include "ycommon.hpp"
-#include "ylog.hpp"
+#include "core/ycommon.hpp"
+#include "utility/ylog.hpp"
 
 
 namespace yLib {
@@ -88,4 +88,4 @@ namespace yLib {
 
 
 
-#endif //_YLIB_CORE_YSHAREDMEMORY_HPP_
+#endif //__YLIB_IPC_YSHAREDMEMORY_HPP__
