@@ -9,6 +9,8 @@
 
 ::@%comspec% /k "D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
 
+echo off
+
 @echo Start build third part ... ...
 @set THIRD_PART_ROOT_PATH=%cd%
 @echo THIRD_PART_ROOT_PATH = %THIRD_PART_ROOT_PATH%

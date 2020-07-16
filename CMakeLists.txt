@@ -25,7 +25,12 @@ option(BUILD_MODULE_YXML "Build module-yxml " ON)
 option(BUILD_MODULE_YCONFIG "Build module-yconfig " ON)
 option(BUILD_MODULE_YJSON "Build module-yjson " ON)
 option(BUILD_MODULE_YSHAREDMEMORY "Build module-ysharedmemory " ON)
-option(BUILD_MODULE_YBASICVALUE "Build module-ybasicvalue " "ON")
+option(BUILD_MODULE_YBASICVALUE "Build module-ybasicvalue " ON)
+
+
+option(BUILD_MODULE_YTEMP "Build example module-ytemp" ON)
+option(BUILD_MODULE_YMAIN "Build example module-ymain" ON)
+
 option(BUILD_ALL_MODULE "build all module flags" ON)
 ################################################################
 
@@ -103,7 +108,9 @@ if(WIN32)
     set(BUILD_MODULE_YCONFIG  "ON")
     set(BUILD_MODULE_YJSON  "ON")
     set(BUILD_MODULE_YSHAREDMEMORY "ON")
-
+    set(BUILD_MODULE_YTEMP "ON")
+    
+    set(BUILD_MODULE_YMAIN "OFF")
 
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
@@ -120,6 +127,9 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
         set(BUILD_MODULE_YCONFIG "ON")
         set(BUILD_MODULE_YJSON "ON")
         set(BUILD_MODULE_YSHAREDMEMORY "ON")
+
+        set(BUILD_MODULE_YTEMP "ON")
+        set(BUILD_MODULE_YMAIN "ON")
     endif()
 
 elseif(ANDROID)

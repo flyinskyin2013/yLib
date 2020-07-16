@@ -2,18 +2,30 @@
  * @Author: Sky
  * @Date: 2020-07-14 18:11:07
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-14 18:17:35
+ * @LastEditTime: 2020-07-15 18:52:51
  * @Description: 
  */ 
 #ifndef __YLIB_UTILITY_YUTILITY_HPP__
 #define __YLIB_UTILITY_YUTILITY_HPP__
 
-#include "yconfig.hpp"
-#include "ycurl.hpp"
-#include "yhttp.hpp"
-#include "yjson.hpp"
-#include "ylog.hpp"
-#include "yshell.hpp"
-#include "yxml.hpp"
+    #if defined(_WIN32) || defined(_WIN64)
+
+        #include "yjson.hpp"
+        #include "ylog.hpp"
+        #include "yconfig.hpp"
+
+    #elif defined(__linux__) || defined(__linux)
+        
+        #include "yconfig.hpp"
+        #include "ycurl.hpp"
+        #include "yhttp.hpp"
+        #include "yjson.hpp"
+        #include "ylog.hpp"
+        #include "yshell.hpp"
+        #include "yxml.hpp"
+        
+    #elif defined(__unix__) || defined(__unix)
+
+    #endif //__unix__ || __unix
 
 #endif //__YLIB_UTILITY_YUTILITY_HPP__

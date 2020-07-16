@@ -11,14 +11,28 @@ cmake, libtool and autoconf are needed.
 For Win32
 -------------------------------------
 1. For msvc
-    open cmd.exe
-    >>%comspec% /k "D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
+    Open cmd.exe
+    >>%comspec% /k "D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86 or amd64
 
-2. For third_part.
+    Open git-bash.exe
+
+2. For third_part resources.
+    In git-bash.exe
     >>cd yLib
-    >>./build_deps.bat All
+    >>./build_deps_win.sh Download
+
+3. For third_part build.
+    In cmd.exe
+    >>cd yLib/third_part
+    >>build_third_part.bat init 
+    >>build_third_part.bat make
+
+3. For third_part install.
+    In git-bash.exe
+    >>cd yLib
+    >>./build_deps_win.sh Copy
     
-2. For yLib.
+4. For yLib.
     >>mkdir -p build 
     >>cd build && cmake -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=%cd%/install -DBUILD_YLIB_ARCH=x86 ..
     >>nmake && nmake install

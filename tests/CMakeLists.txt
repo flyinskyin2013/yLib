@@ -275,22 +275,32 @@ endif()
 
 
 ##########################################################################
-
+# core built-in module
 build_module_examples(yObject)
 
 build_module_examples(yException)
 
-build_module_examples(yBasicValue)
-
 build_module_examples(yCommon)
 
-build_module_examples(yHttp)
+
+##########################################################################
+# core module
+if(BUILD_MODULE_YBASICVALUE)
+    build_module_examples(yBasicValue)
+endif()
+
+if(BUILD_MODULE_YHTTP)
+    build_module_examples(yHttp)
+endif()
+
 
 build_module_examples(all_in_one)
 
+
 ##########################################################################
 
 ##########################################################################
+# basic_algorithm module
 build_basic_algorithm(yLinearList)
 build_basic_algorithm(yLinkedList)
 ##########################################################################

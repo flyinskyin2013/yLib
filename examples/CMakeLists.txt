@@ -271,7 +271,7 @@ if(BUILD_MODULE_YSHAREDMEMORY)
 endif()
 
 ##########################################################################
-set(BUILD_MODULE_YTEMP ON)
+# set(BUILD_MODULE_YTEMP ON)
 if(BUILD_MODULE_YTEMP)
 
     build_module_examples(YTEMP)
@@ -281,7 +281,7 @@ endif()
 
 
 ##########################################################################
-set(BUILD_MODULE_YMAIN ON)
+# set(BUILD_MODULE_YMAIN ON)
 if(BUILD_MODULE_YMAIN)
 
     #build program frame example
