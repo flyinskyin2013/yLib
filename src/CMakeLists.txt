@@ -177,8 +177,12 @@ if(WIN32)
 
     #endif()
     add_library(ylib SHARED ${SRC})
-    target_link_libraries( ylib
-                                log4cppD.lib jsoncppD.lib libconfig++D.lib  ws2_32 Shlwapi)
+    if(CMAKE_BUILD_TYPE MATCHES "Debug")
+        target_link_libraries( ylib log4cppD.lib jsoncppD.lib libconfig++D.lib  ws2_32 Shlwapi)
+    elseif (CMAKE_BUILD_TYPE MATCHES "Release")
+        target_link_libraries( ylib log4cpp.lib jsoncpp.lib libconfig++.lib  ws2_32 Shlwapi)
+    endif()
+
 
 
 
