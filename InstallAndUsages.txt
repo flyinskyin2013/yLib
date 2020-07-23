@@ -27,12 +27,12 @@ For Win32
     >>build_third_part.bat init 
     >>build_third_part.bat make
 
-3. For third_part install.
+4. For third_part install.
     In git-bash.exe
     >>cd yLib
     >>./build_deps_win.sh Copy
     
-4. For yLib.
+5. For yLib.
     >>mkdir -p build 
     >>cd build && cmake -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=%cd%/install -DBUILD_YLIB_ARCH=x86 ..
     >>nmake && nmake install
