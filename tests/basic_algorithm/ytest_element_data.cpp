@@ -2,28 +2,61 @@
  * @Author: Sky
  * @Date: 2020-07-03 10:45:04
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-03 17:04:31
+ * @LastEditTime: 2020-07-22 18:14:07
  * @Description: 
  */ 
+
+#include <iostream>
 
 class yTestElementData
 {
 private:
     /* data */
 public:
-    yTestElementData() noexcept{data_val = new int(0);}
-    explicit yTestElementData(int val_) noexcept{data_val = new int(0);*data_val = val_;}
-    ~yTestElementData() noexcept{delete data_val;}
-
-    yTestElementData(const yTestElementData & data_){data_val = new int(0);*data_val = *data_.data_val;}
+    yTestElementData() noexcept :data_val(nullptr) {
+        
+        if (nullptr == data_val) 
+            data_val = new int(0);
+    }
+    explicit yTestElementData(int val_) noexcept :data_val(nullptr){
+        if (nullptr == data_val) 
+            data_val = new int(0);
+        *data_val = val_;
+    }
+    ~yTestElementData() noexcept{
+        if (nullptr != data_val) 
+            delete data_val;data_val=nullptr;
+    }
     
+    yTestElementData & operator=(const yTestElementData & data_) {
+        
+        if (nullptr == data_val) 
+            data_val = new int(0);
+            
+        *data_val = *data_.data_val; 
+        return *this;
+    }
+    yTestElementData(const yTestElementData & data_):data_val(nullptr){
+        
+        if (nullptr == data_val) 
+            data_val = new int(0);
+
+        *data_val = *data_.data_val;
+    }
 
 
-    //bool operator==(yTestElementData & data_) { return (data_.data_val==data_val);}
-    // bool operator>(yTestElementData & data_) {  return (data_.data_val>data_val);}
-    // bool operator<(yTestElementData & data_) {  return (data_.data_val<data_val);}
+    yTestElementData & operator=(yTestElementData && data_){
+        
+        *data_val = *data_.data_val;
+        return *this;
+    }
+    yTestElementData(yTestElementData && data_){
+        
+        *this = std::move(data_);
+    }
 
-    void operator=(int val_){*data_val = val_;}
+
+
 
     operator int(){return *data_val;}
 
