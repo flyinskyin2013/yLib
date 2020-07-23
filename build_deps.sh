@@ -106,7 +106,13 @@ function build_third_part(){
 	while [ 1 -eq 1 ]
 	do
 		self_print NORMAL "Please input build type[debug/release]"
-		read -p "build-type:" build_type
+
+		if read -t 30 -p "build-type(wait for 30s, default is 'release'):" build_type
+		then 
+			echo "Got it."
+		else
+			build_type="release"
+		fi
 		case ${build_type} in
 			"debug")
 				break;
@@ -142,7 +148,12 @@ function copy_prepared_file(){
 	while [ 1 -eq 1 ]
 	do
 		self_print NORMAL "Please input build platform[linux/windows/android]"
-		read -p "platform:" platform_type
+		if read -t 30 -p "platform(wait for 30s, default is 'linux'):" platform_type
+		then 
+			echo "Got it."
+		else
+			platform_type="linux"
+		fi
 		case ${platform_type} in
 			"linux")
 				break;
@@ -158,12 +169,20 @@ function copy_prepared_file(){
 				;;
 		esac
 	done
+	self_print I "platform_typeIs:$platform_type"
+
+
 	arch_type=""
 	while [ 1 -eq 1 ]
 	do
 		self_print NORMAL "Please input build arch[x86/x86_64/armeabi/armeabi-v7a/arm64-v8a]"
 
-		read -p "build arch:" arch_type
+		if read -t 30 -p "build arch(wait for 30s, default is 'x86_64'):" arch_type
+		then 
+			echo "Got it."
+		else
+			arch_type="x86_64"
+		fi
 		case ${arch_type} in
 			"x86")
 				break;
@@ -185,7 +204,7 @@ function copy_prepared_file(){
 				;;
 		esac
 	done
-	
+	self_print I "arch_typeIs:$arch_type"
 	
 	mkdir -p ${ROOT_DIR}/include/third_part/$platform_type/
 	mkdir -p ${ROOT_DIR}/include/third_part/$platform_type/libconfig
