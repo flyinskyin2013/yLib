@@ -34,7 +34,7 @@ jobs:
     - name: build ylib
       working-directory: /home/runner/work/yLib/yLib/build
       run: |
-        cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=arm64-v8a ..
+        cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 ..
         make
         make install
 
