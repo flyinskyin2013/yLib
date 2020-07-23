@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-05-28 14:24:31
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-03 16:29:28
+ * @LastEditTime: 2020-07-22 18:39:55
  * @Description: 
  */
 
@@ -133,24 +133,25 @@ TEST_CASE( "Test yLinearList" , "[yLinearList_Apis]" ){
     SECTION("test sq_insert class-data-type") {
 
         yLib::yLinearList<yTestElementData, yLib::yBasicAllocator<yTestElementData>> sq_list0(1);
+        
         yTestElementData _val;
-        _val = 1;
+        _val = yTestElementData(1);
         sq_list0.sq_insert(0, _val);
-        _val = 2;
+        _val = yTestElementData(2);
         sq_list0.sq_insert(1, _val);
-        _val = 3;
+        _val = yTestElementData(3);
         sq_list0.sq_insert(2, _val);
-        _val = 4;
+        _val = yTestElementData(4);
         sq_list0.sq_insert(3, _val);
-        _val = 5;
+        _val = yTestElementData(5);
         sq_list0.sq_insert(4, _val);
 
         for (int i = 0; i < 5; i++)//compare val
             REQUIRE(i+1 == sq_list0.sq_get_value(i));
 
         REQUIRE(sq_list0.sq_get_size() == 5);
-        
-        REQUIRE(sq_list0.sq_get_capacity() == 32);
+        //5*8 = 40  
+        REQUIRE(sq_list0.sq_get_capacity() == 64);
     }
     
     SECTION("test sq_delete class-data-type") {
@@ -169,36 +170,36 @@ TEST_CASE( "Test yLinearList" , "[yLinearList_Apis]" ){
         }
 
         yTestElementData _val;
-        _val = 0;
+        _val = yTestElementData(0);
         sq_list0.sq_delete(_val);
 
         
-        _val = 123;
+        _val = yTestElementData(123);
         sq_list0.sq_delete(_val);
 
 
-        _val = 345;
+        _val = yTestElementData(345);
         sq_list0.sq_delete(_val);
 
-        _val = 567;
+        _val = yTestElementData(567);
         sq_list0.sq_delete(_val);
 
-        _val = 789;
+        _val = yTestElementData(789);
         sq_list0.sq_delete(_val);
 
-        _val = 999;
+        _val = yTestElementData(999);
         sq_list0.sq_delete(_val);
 
         for (int i = 0; i < 993; i++)//compare val
             REQUIRE(test_set[i] == sq_list0.sq_get_value(i) );
             
 
-        _val = 100000;
+        _val = yTestElementData(100000);
         REQUIRE(-1 == sq_list0.sq_delete(_val) );    
 
         REQUIRE(sq_list0.sq_get_size() == 994);
-        
-        REQUIRE(sq_list0.sq_get_capacity() == 4096);
+        //994*8
+        REQUIRE(sq_list0.sq_get_capacity() == 8192);
     }
 
 
@@ -242,7 +243,8 @@ TEST_CASE( "Test yLinearList" , "[yLinearList_Apis]" ){
             }
         }
         REQUIRE(sq_list3.sq_get_size() == 1700);
-        REQUIRE(sq_list3.sq_get_capacity() == 8192);
+        //1700*8  <  2^14
+        REQUIRE(sq_list3.sq_get_capacity() == 16384);
     }
 
 }

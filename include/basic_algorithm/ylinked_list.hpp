@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-07-01 15:03:19
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-14 17:41:53
+ * @LastEditTime: 2020-07-16 16:45:04
  * @Description: 
  */ 
 
@@ -15,6 +15,9 @@ namespace yLib{
 
     template<class T>
     struct yLinkedListNode{
+
+        yLinkedListNode(){}
+        explicit yLinkedListNode(const T & val_){node_elemnt = val_;}
 
         T node_elemnt;
 
@@ -32,15 +35,15 @@ namespace yLib{
         public:
         yLinkedList() noexcept MACRO_INIT_YOBJECT_PROPERTY(yLinkedList){node_count = 0;}
 
-        void insert_head(T & node_){
+        void insert_head(const T & node_){
 
             Alloc _alloc;
             yLinkedListNode<T> * _new_node = _alloc.allocate(1);
-            yLinkedListNode<T> _init_val;
-            _alloc.construct(_new_node, _init_val);
 
+            
             //set val
-            _new_node->node_elemnt = node_;
+            _alloc.construct(_new_node, yLinkedListNode<T>(node_));
+
 
             if (nullptr == head){
 
@@ -58,16 +61,13 @@ namespace yLib{
             node_count++;
             
         }
-        void insert_tail(T & node_){
+        void insert_tail(const T & node_){
 
             Alloc _alloc;
             yLinkedListNode<T> * _new_node = _alloc.allocate(1);
-            yLinkedListNode<T> _init_val;
-            _alloc.construct(_new_node, _init_val);
-
-
             //set val
-            _new_node->node_elemnt = node_;
+            _alloc.construct(_new_node, yLinkedListNode<T>(node_));
+
 
             if (nullptr == head){
 
