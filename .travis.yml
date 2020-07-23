@@ -16,18 +16,18 @@ matrix:
       dist: xenial
       compiler: gcc
       env:
-        - INIT_DIRS="mkdir -p lib/windows/x86 && mkdir -p lib/windows/x86_64 && mkdir -p lib/linux/x86 && mkdir -p lib/linux/x86_64 && mkdir -p lib/linux/armeabi && mkdir -p lib/linux/arm64-v8a && mkdir -p include/third_part"
-        - BUILD_THIRD_LIB="cd third_part && chmod +x build_third_part.sh && ./build_third_part.sh init >/dev/null 2>&1 && ./build_third_part.sh make -j2 >/dev/null 2>&1 && cp build_out/lib/* -r ../lib/linux/x86_64 && cp build_out/include/* -r ../include/third_part"
-        - BUILD_YLIB="cd .. && mkdir build && cd build && cmake -DBUILD_ALL_MODULE=ON -DBUILD_YLIB_ARCH=x86_64  .. && make && make install"
+        - INIT_DIRS="chmod +x build_deps.sh "
+        - BUILD_THIRD_LIB="./build_deps.sh All"
+        - BUILD_YLIB="mkdir -p build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 .. && make && make install"
 
     - name: "linux-x86_64-clang"
       os: linux
       dist: xenial
       compiler: clang
       env:
-        - INIT_DIRS="mkdir -p lib/windows/x86 && mkdir -p lib/windows/x86_64 && mkdir -p lib/linux/x86 && mkdir -p lib/linux/x86_64 && mkdir -p lib/linux/armeabi && mkdir -p lib/linux/arm64-v8a && mkdir -p include/third_part"
-        - BUILD_THIRD_LIB="cd third_part && chmod +x build_third_part.sh && ./build_third_part.sh init >/dev/null 2>&1 && ./build_third_part.sh make -j2 >/dev/null 2>&1 && cp build_out/lib/* -r ../lib/linux/x86_64 && cp build_out/include/* -r ../include/third_part"
-        - BUILD_YLIB="cd .. && mkdir build && cd build && cmake -DBUILD_ALL_MODULE=ON -DBUILD_YLIB_ARCH=x86_64  .. && make && make install"
+        - INIT_DIRS="chmod +x build_deps.sh "
+        - BUILD_THIRD_LIB="./build_deps.sh All"
+        - BUILD_YLIB="mkdir -p build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 .. && make && make install"
 
     - name: "windows-vs2017"
       os: windows
