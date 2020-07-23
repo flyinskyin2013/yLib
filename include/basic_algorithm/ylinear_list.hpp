@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-05-22 09:54:19
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-14 17:41:40
+ * @LastEditTime: 2020-07-22 18:25:44
  * @Description: 
  */
 
@@ -10,6 +10,7 @@
 #define __BASIC_ALGORITHM_YSEQUENCE_LIST_HPP__
 
 #include <memory>
+#include <cmath>
 
 #include "core/yobject.hpp"
 #include "core/yallocator.hpp"
@@ -26,15 +27,21 @@ namespace yLib{
     {
     private:
         /* data */
+        //unit is element_num.
         size_t sq_size = 0;
-        size_t sq_capacity = 1;
+
+        //unit is byte.
+        size_t sq_capacity = 0;
+
+        //unit is byte.
+        size_t sq_element_size = 0;
 
         void * sq_data_head = nullptr;
 
 
         /**
          * @description: find a num(index of 2) is greater than size_
-         * @param {type} 
+         * @param size_ is num of bytes.
          * @return: 
          */
         size_t sq_find_2index_greater_than_size(size_t size_){
@@ -48,32 +55,35 @@ namespace yLib{
 
             return _num_found;
         }
-
-        int8_t check_capacity_and_alloc_mem_by_size(size_t size_){
+        
+        /**
+         * @description: 
+         * @param {type} element_num_ is num of elment;
+         * @return: 
+         */
+        int8_t check_capacity_and_alloc_mem_by_element_num(size_t element_num_){
 
             Alloc _alloc;
             size_t _tmp_sq_capacity = 0;
             void * _tmp_sq_data_head = nullptr;
-            if (size_ > (sq_capacity/sizeof(T))){//mem is not enough
+            if (element_num_ > (sq_capacity/sizeof(T))){//mem that is not used is not enough
 
                 
-                _tmp_sq_capacity = sq_find_2index_greater_than_size(size_ * sizeof(T));
-                _tmp_sq_data_head = _alloc.allocate(_tmp_sq_capacity);
+                _tmp_sq_capacity = sq_find_2index_greater_than_size( element_num_ * sizeof(T));
+                _tmp_sq_data_head = _alloc.allocate(std::ceil(_tmp_sq_capacity/sizeof(T)));//_tmp_sq_capacity/sizeof(T) + 1 
                 
                 //call construct func
-                for (int i_ = 0; i_ < _tmp_sq_capacity; i_++ ){
+                for (int i_ = 0; i_ < sq_size; i_++ ){
 
-                    T _tmp_data;
-                    _alloc.construct( ((T *)_tmp_sq_data_head) + i_,  _tmp_data);
+                    _alloc.construct( ((T *)_tmp_sq_data_head) + i_,  *(((T*)sq_data_head) + i_));//copy or move construct
                 }
-
-                memcpy(_tmp_sq_data_head, sq_data_head, sq_size * sizeof(T));
 
 
                 //call destory func
-                for (int i_ = 0; i_ < _tmp_sq_capacity; i_++ ){
 
-                    _alloc.destroy( ((T *)_tmp_sq_data_head) + i_);
+                for (int i_ = 0; i_ < sq_size; i_++ ){
+
+                    _alloc.destroy( ((T *)sq_data_head) + i_);
                 }
                 //free old mem-space
                 _alloc.deallocate((T *)sq_data_head, sq_capacity);
@@ -89,7 +99,8 @@ namespace yLib{
         yLinearList() = delete;
         explicit yLinearList(size_t element_num_) MACRO_INIT_YOBJECT_PROPERTY(yLinearList) {
 
-            check_capacity_and_alloc_mem_by_size(element_num_);
+            sq_element_size = sizeof(T);
+            check_capacity_and_alloc_mem_by_element_num(element_num_);
         }
         ~yLinearList(){
 
@@ -113,20 +124,25 @@ namespace yLib{
             if (pos_ < 0 )
                 return -1;
 
-            check_capacity_and_alloc_mem_by_size(sq_size + 1);
+            check_capacity_and_alloc_mem_by_element_num(sq_size + 1);
 
+            Alloc _alloc;
             if (pos_ >= sq_size){//at tail
                 
-                ((T*)sq_data_head)[sq_size] = value_;
+
+                //((T*)sq_data_head)[sq_size] = value_;
+                _alloc.construct( ((T*)sq_data_head) + sq_size, value_);
                 sq_size ++;
                 return 0;
             }
             
-
+            _alloc.construct( ((T*)sq_data_head) + sq_size, value_);//construct a obj at tail.
             for (int64_t _i = sq_size - 1; _i != -1; _i --){
 
-                if (pos_ != _i)
+                if (pos_ != _i){
+                
                     ((T*)sq_data_head)[_i + 1] = ((T*)sq_data_head)[_i ];
+                }
                 else{
                 
                     ((T*)sq_data_head)[_i ] = value_;
@@ -206,7 +222,7 @@ namespace yLib{
          */
         int8_t sq_merge(const yLinearList<T, Alloc> & sq0_, const yLinearList<T, Alloc> & sq1_, yLinearListOrderType order_type_){
 
-            check_capacity_and_alloc_mem_by_size(sq0_.sq_size + sq1_.sq_size);
+            check_capacity_and_alloc_mem_by_element_num(sq0_.sq_size + sq1_.sq_size);
             uint64_t _cur_idx = 0;
             uint64_t _bak_sq_smaller_pos = 0;
             const yLinearList<T, Alloc> & sq_greater = sq0_;

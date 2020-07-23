@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-05-22 10:00:54
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-14 18:31:39
+ * @LastEditTime: 2020-07-17 16:15:24
  * @Description: 
  */
 
@@ -46,26 +46,29 @@ namespace yLib{
     public:
 
 
-        pointer allocate(size_type n, const void * hint=0){
-
-            pointer _alloc_addr = (pointer)::operator new( (size_t)(sizeof(T) * n) );
-            return _alloc_addr;
+        pointer allocate(size_type n, const void * hint=static_cast<const void*>(0)){
+            
+            //malloc
+            return static_cast<pointer>(::operator new( (size_t)(sizeof(T) * n) ));
         }
 
         void deallocate(pointer p, size_type n) {
 
+            //free
             ::operator delete(p);
         }
 
+
         void construct(pointer p, const_reference value) {
 
-            new((void *)p) T(value);
+            new ((void *)p) T(value);
         }
 
         void destroy(pointer p) {
             
             p->~T();
         }
+
 
         size_type max_size() const{
 

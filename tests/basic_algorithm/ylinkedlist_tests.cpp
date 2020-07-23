@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-07-02 15:09:31
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-03 16:13:07
+ * @LastEditTime: 2020-07-17 11:30:25
  * @Description: 
  */ 
 
@@ -108,27 +108,27 @@ TEST_CASE( "Test yLinkedList" , "[yLinkedList_Apis]" ){
 
         //insert
         yTestElementData _val;
-        _val = 1;
+        _val = yTestElementData(1);
         lk_list.insert_head(_val);
-        _val = 2;
+        _val = yTestElementData(2);
         lk_list.insert_head(_val);
-        _val = 3;
+        _val = yTestElementData(3);
         lk_list.insert_head(_val);
-        _val = 0;
+        _val = yTestElementData(0);
         lk_list.insert_head(_val);
-        _val = -1;
+        _val = yTestElementData(-1);
         lk_list.insert_head(_val);
-        _val = 4;
+        _val = yTestElementData(4);
         lk_list.insert_tail(_val);
-        _val = 5;
+        _val = yTestElementData(5);
         lk_list.insert_tail(_val);
-        _val = 6;
+        _val = yTestElementData(6);
         lk_list.insert_tail(_val);
-        _val = 7;
+        _val = yTestElementData(7);
         lk_list.insert_tail(_val);
 
 
-        REQUIRE(yTestElementData(-1) == (yTestElementData &)lk_list.get_element(0));
+        REQUIRE(yTestElementData(-1) == lk_list.get_element(0));
         REQUIRE(yTestElementData(0)  == lk_list.get_element(1));
         REQUIRE(yTestElementData(3)  == lk_list.get_element(2));
         REQUIRE(yTestElementData(2)  == lk_list.get_element(3));
