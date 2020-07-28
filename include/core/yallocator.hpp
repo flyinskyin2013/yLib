@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-05-22 10:00:54
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-17 16:15:24
+ * @LastEditTime: 2020-07-24 09:19:44
  * @Description: 
  */
 
@@ -12,6 +12,7 @@
 #include "yobject.hpp"
 
 #include <new>
+#include <cstddef>
 
 namespace yLib{
 
