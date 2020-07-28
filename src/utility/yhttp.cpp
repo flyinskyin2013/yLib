@@ -3,7 +3,7 @@
  * @Author: Sky
  * @Date: 2020-03-18 15:42:09
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-14 18:39:51
+ * @LastEditTime: 2020-07-28 11:39:56
  * @FilePath: \yLib\src\yhttp.cpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -25,10 +25,10 @@ extern "C"{
 static void __little_endian_uint32_to_buf__(uint8_t * buf_,uint32_t len_){
 
     memset(buf_, 0x00, 4);
-    buf_[0] |= (uint8_t)(len_ & 0x000000FF);
-    buf_[1] |= (uint8_t)(0xFF & ((len_ & 0x0000FF00) >> 8));
-    buf_[2] |= (uint8_t)(0xFF & ((len_ & 0x00FF0000) >> 16));;
-    buf_[3] |= (uint8_t)(0xFF & ((len_ & 0xFF000000) >> 24));;
+    buf_[0] |= (uint8_t)(0xFF & (uint8_t)(len_ & 0x000000FF));
+    buf_[1] |= (uint8_t)(0xFF & (uint8_t)((len_ & 0x0000FF00) >> 8));
+    buf_[2] |= (uint8_t)(0xFF & (uint8_t)((len_ & 0x00FF0000) >> 16));;
+    buf_[3] |= (uint8_t)(0xFF & (uint8_t)((len_ & 0xFF000000) >> 24));;
 }
 
 static void __little_endian_buf_to_uint32__(uint8_t * buf_,uint32_t * len_){
@@ -47,15 +47,16 @@ static void __little_endian_buf_to_uint32__(uint8_t * buf_,uint32_t * len_){
 static size_t write_callback(char *buffer_, size_t size_, size_t nmemb_, void *userdata_){
     
     
-    uint8_t * _data_buf = *((uint8_t **)userdata_);
+    uint8_t * _data_buf = (uint8_t *)userdata_;
     uint32_t _buffer_len = 0;
     uint32_t _buffer_used_len = 0;
 
+    //yLib::yLog::I("buffer_ %x, size_ %d, nmemb_ %d, userdata_ %x", buffer_, size_, nmemb_, _data_buf);
 
     __little_endian_buf_to_uint32__(_data_buf, &_buffer_len);
     __little_endian_buf_to_uint32__(_data_buf + 4, &_buffer_used_len);
 
-    
+    //yLib::yLog::I("_buffer_len %d, _buffer_used_len %d", _buffer_len, _buffer_used_len);
     if ( (_buffer_len - _buffer_used_len) >= size_* nmemb_ ){
         
         memcpy(_data_buf + 8 + _buffer_used_len, buffer_, size_*nmemb_);
@@ -207,10 +208,10 @@ static int8_t __yhttp_set_response_callback_buffer__(CURL * ptr_http_handle, uin
         yLib::yLog::E("set http write function failed.");
         return -1;
     }
-    
+    //yLib::yLog::I("data_buffer_ptr_ %x, buffer_len_ %d", data_buffer_ptr_, buffer_len_);
     __little_endian_uint32_to_buf__(data_buffer_ptr_, buffer_len_);//all len
     __little_endian_uint32_to_buf__(data_buffer_ptr_ + 4, 0);//read len
-    if ( CURLE_OK != curl_easy_setopt(ptr_http_handle, CURLOPT_WRITEDATA, &data_buffer_ptr_) ){
+    if ( CURLE_OK != curl_easy_setopt(ptr_http_handle, CURLOPT_WRITEDATA, (void *)data_buffer_ptr_) ){
 
         yLib::yLog::E("set http write data ptr failed.");
         return -1;
