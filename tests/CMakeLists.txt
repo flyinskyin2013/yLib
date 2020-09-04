@@ -303,4 +303,6 @@ build_module_examples(all_in_one)
 # basic_algorithm module
 build_basic_algorithm(yLinearList)
 build_basic_algorithm(yLinkedList)
+build_basic_algorithm(yStack)
+build_basic_algorithm(yQueue)
 ##########################################################################

@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-05-22 10:00:54
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-24 09:19:44
+ * @LastEditTime: 2020-08-18 19:02:44
  * @Description: 
  */
 
@@ -30,6 +30,8 @@ namespace yLib{
         typedef const T*        const_pointer;
         typedef T&              reference;
         typedef const T&        const_reference;
+        typedef T&&             rreference;
+        typedef const T&&       const_rreference;
         typedef size_t          size_type;
         typedef ptrdiff_t       difference_type;
         
@@ -61,6 +63,11 @@ namespace yLib{
 
 
         void construct(pointer p, const_reference value) {
+
+            new ((void *)p) T(value);
+        }
+
+        void construct(pointer p, const_rreference value) {
 
             new ((void *)p) T(value);
         }
