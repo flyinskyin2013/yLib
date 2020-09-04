@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-07-03 10:45:04
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-22 18:14:07
+ * @LastEditTime: 2020-08-19 15:47:23
  * @Description: 
  */ 
 
@@ -59,7 +59,13 @@ public:
 
 
     operator int(){return *data_val;}
+    void operator=(int val){
 
+        if (nullptr == data_val) 
+            data_val = new int(0);
+
+        *data_val = val;  
+    }
 
     int * data_val = nullptr;
 

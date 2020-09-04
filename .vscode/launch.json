@@ -19,7 +19,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/install/tests/basic_algorithm/test_algorithm_ylinearlist",
+            "program": "${workspaceFolder}/build/install/tests/basic_algorithm/test_algorithm_ystack",
             // "program":"/home/sky/WorkDir/AMQP-CPP/build/install/MqRelationship/build/test_mq",
             "args": ["-s"],
             "stopAtEntry": false,
