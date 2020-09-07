@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2018-08-22 15:39:32
  * @LastEditors: Sky
- * @LastEditTime: 2020-04-14 15:05:56
+ * @LastEditTime: 2020-09-07 15:10:21
  * @Description: 
  */
 
@@ -72,7 +72,7 @@ void ystart(yStartParam & param){
     ::exit(0);
 }
 
-void ystart_test(void * param){
+int ystart_test(void * param){
 
     yStartParam & tmp_param = *(yStartParam *)param;
     /************************************/
@@ -99,8 +99,8 @@ void ystart_test(void * param){
 
 
     //exit sub process
-    ::exit(0);
-
+    ::_exit(0);
+    return 0;
 }
 
 

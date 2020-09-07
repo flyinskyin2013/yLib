@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2018-10-23 11:14:19
  * @LastEditors: Sky
- * @LastEditTime: 2020-04-14 15:11:24
+ * @LastEditTime: 2020-09-07 15:03:57
  * @Description: 
  */
 
@@ -105,7 +105,7 @@ __YLIB_DEPRECATED_ATTRIBUTE__ void ystart(yStartParam & param);
 //new entrance
 
 
-typedef void (*MainContextCallBack)(void * param);
+typedef int (*MainContextCallBack)(void * param);
 
 template<class T>
 class yMainContext{
@@ -116,15 +116,15 @@ class yMainContext{
 
     public:
     //Don't use std::function(it needs c++11)
-    static int8_t RunMainContext(const MainContextCallBack main_context, T & main_context_param);
+    static int RunMainContext(const MainContextCallBack main_context, T & main_context_param);
 };
-template<class T>
-int8_t yMainContext<T>::RunMainContext(const MainContextCallBack main_context , T & main_context_param){
 
-    main_context(static_cast<void*>(&main_context_param));
-    return 0;
+template<class T>
+int yMainContext<T>::RunMainContext(const MainContextCallBack main_context , T & main_context_param){
+
+    return main_context(static_cast<void*>(&main_context_param));;
 }
 
 //new test example
-void ystart_test(void * param);
+int ystart_test(void * param);
 #endif //_YSTART_HPP_
