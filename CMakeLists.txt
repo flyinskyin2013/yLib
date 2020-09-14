@@ -26,6 +26,10 @@ option(BUILD_MODULE_YCONFIG "Build module-yconfig " ON)
 option(BUILD_MODULE_YJSON "Build module-yjson " ON)
 option(BUILD_MODULE_YSHAREDMEMORY "Build module-ysharedmemory " ON)
 option(BUILD_MODULE_YBASICVALUE "Build module-ybasicvalue " ON)
+option(BUILD_MODULE_YTCPSERVER "Build module-ytcpserver " ON)
+option(BUILD_MODULE_YTCPCLIENT "Build module-ytcpclient " ON)
+option(BUILD_MODULE_YUDPSERVER "Build module-yudpserver " ON)
+option(BUILD_MODULE_YUDPCLIENT "Build module-yudpclient " ON)
 
 
 option(BUILD_MODULE_YTEMP "Build example module-ytemp" ON)
@@ -127,6 +131,11 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
         set(BUILD_MODULE_YCONFIG "ON")
         set(BUILD_MODULE_YJSON "ON")
         set(BUILD_MODULE_YSHAREDMEMORY "ON")
+        set(BUILD_MODULE_YTCPSERVER "ON")
+        set(BUILD_MODULE_YTCPSOCKET "ON")
+        set(BUILD_MODULE_YUDPSERVER "ON")
+        set(BUILD_MODULE_YUDPSOCKET "ON")
+
 
         set(BUILD_MODULE_YTEMP "ON")
         set(BUILD_MODULE_YMAIN "ON")
