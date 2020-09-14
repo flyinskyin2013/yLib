@@ -42,6 +42,10 @@ set(SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/core/ycommon.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/core/yobject.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/core/yexception.cpp
+
+    #for network module
+    ${CMAKE_CURRENT_SOURCE_DIR}/network/yabstractsocket.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/network/yabstractsocketserver.cpp
     )
 
 #----------------------------------------------------------------------------------------
@@ -125,6 +129,34 @@ if(BUILD_MODULE_YBASICVALUE)
     ylib_build(core YBASICVALUE)
 
 endif()
+
+if(BUILD_MODULE_YTCPSERVER)
+
+    ylib_build(network YTCPSERVER)
+
+endif()
+
+
+if(BUILD_MODULE_YTCPSOCKET)
+
+    ylib_build(network YTCPSOCKET)
+
+endif()
+
+
+if(BUILD_MODULE_YUDPSERVER)
+
+    ylib_build(network YUDPSERVER)
+
+endif()
+
+
+if(BUILD_MODULE_YUDPSOCKET)
+
+    ylib_build(network YUDPSOCKET)
+
+endif()
+
 
 #----------------------------------------------------------------------------------------
 

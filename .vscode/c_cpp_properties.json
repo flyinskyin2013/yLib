@@ -4,7 +4,10 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/include",
+                "${workspaceFolder}/include/core",
+                "${workspaceFolder}/include/ipc",
+                "${workspaceFolder}/include/network",
+                "${workspaceFolder}/include/utility",
                 "${workspaceFolder}/include/third_part/linux/curl",
                 "${workspaceFolder}/include/third_part/linux/libxml",
                 "${workspaceFolder}/tests/catch2"
