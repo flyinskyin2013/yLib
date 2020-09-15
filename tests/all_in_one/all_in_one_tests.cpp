@@ -15,48 +15,48 @@
 #if defined(_WIN32) || defined(_WIN64)
 
 //include ylog tests
-#include "ylog/ylog_tests.cpp"
+#include "utility/ylog/ylog_tests.cpp"
 
 //include ycommon tests
-#include "ycommon/ycommon_tests.cpp"
+#include "core/ycommon/ycommon_tests.cpp"
 
 //include yobject tests
-#include "yobject/yobject_tests.cpp"
+#include "core/yobject/yobject_tests.cpp"
 
 //include ybasicvalue tests
-#include "ybasicvalue/ybasicvalue_tests.cpp"
+#include "core/ybasicvalue/ybasicvalue_tests.cpp"
 
 //include yconfig tests
-#include "yconfig/yconfig_tests.cpp"
+#include "utility/yconfig/yconfig_tests.cpp"
 
 //include yjson tests
-#include "yjson/yjson_tests.cpp"
+#include "utility/yjson/yjson_tests.cpp"
 
 //include yexception tests
-#include "yexception/yexception_tests.cpp"
+#include "core/yexception/yexception_tests.cpp"
 
 #elif defined(__linux__) || defined(__linux)
     
 //include ylog tests
-#include "ylog/ylog_tests.cpp"
+#include "utility/ylog/ylog_tests.cpp"
 
 //include ycommon tests
-#include "ycommon/ycommon_tests.cpp"
+#include "core/ycommon/ycommon_tests.cpp"
 
 //include yobject tests
-#include "yobject/yobject_tests.cpp"
+#include "core/yobject/yobject_tests.cpp"
 
 //include ybasicvalue tests
-#include "ybasicvalue/ybasicvalue_tests.cpp"
+#include "core/ybasicvalue/ybasicvalue_tests.cpp"
 
 //include yconfig tests
-#include "yconfig/yconfig_tests.cpp"
+#include "utility/yconfig/yconfig_tests.cpp"
 
 //include yjson tests
-#include "yjson/yjson_tests.cpp"
+#include "utility/yjson/yjson_tests.cpp"
 
 //include yexception tests
-#include "yexception/yexception_tests.cpp"
+#include "core/yexception/yexception_tests.cpp"
     
 #elif defined(__unix__) || defined(__unix)
 

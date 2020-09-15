@@ -1,16 +1,20 @@
 #----------------------------------------------------------------------------------------
+#add include dir
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+#----------------------------------------------------------------------------------------
+
+#----------------------------------------------------------------------------------------
 #add link dir
 link_directories(${CMAKE_CURRENT_BINARY_DIR}/../src/)
 
 if(WIN32)
 
     if(${BUILD_YLIB_ARCH} MATCHES "(x86_64|X86_64)")
-        #64bits ylib
+        #windows 64bits ylib
         link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/windows/x86_64)
     else()
-        #32bits ylib
+        #windows 32bits ylib
         link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/windows/x86)
     endif()
 
@@ -23,10 +27,13 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
         #linux 32bits ylib
         link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/x86)
     elseif(${BUILD_YLIB_ARCH} MATCHES "armeabi")
+        #linux armeabi 32bits ylib
         link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/armeabi)
     elseif(${BUILD_YLIB_ARCH} MATCHES "armeabi-v7a")
+        #linux armeabi-v7a 32bits ylib
         link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/armeabi-v7a)
     elseif(${BUILD_YLIB_ARCH} MATCHES "arm64-v8a")
+        #linux arme64-v8a 64bits ylib
         link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/arme64-v8a)
     endif()
 
@@ -35,8 +42,8 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
     set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -g")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 
-
 elseif(ANDROID)
+
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/android)
 endif()
 
@@ -52,6 +59,12 @@ endif()
 #set(CMAKE_SKIP_RPATH TRUE)
 #set(CMAKE_SKIP_INSTALL_RPATH TRUE)
 #----------------------------------------------------------------------------------------
+function(AppendBUILTIN_TEST_LIST val)
+
+set(BUILTIN_TEST_LIST ${BUILTIN_TEST_LIST} ${val} CACHE STRING INTERNAL FORCE)
+endfunction()
+
+
 function(build_basic_algorithm name)
 
     string(TOLOWER ${name} module_name)
@@ -89,6 +102,8 @@ function(build_basic_algorithm name)
             DESTINATION tests/basic_algorithm/
         )
 
+        AppendBUILTIN_TEST_LIST(test_algorithm_${module_name}.exe)
+        #set(BUILTIN_TEST_LIST "${BUILTIN_TEST_LIST}\n test_algorithm_${module_name}.exe" CACHE STRING INSTERNAL FORCE)
     elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
         if(BUILD_SHARED_YLIB)
@@ -107,14 +122,11 @@ function(build_basic_algorithm name)
             ${CMAKE_CURRENT_BINARY_DIR}/test_algorithm_${module_name}
             DESTINATION tests/basic_algorithm/
         )
-
+        #set(BUILTIN_TEST_LIST "${BUILTIN_TEST_LIST}\n test_algorithm_${module_name}" CACHE STRING INSTERNAL FORCE)
+        AppendBUILTIN_TEST_LIST(test_algorithm_${module_name})
     elseif(ANDROID)
         
     endif()       
-
-
-
-
 
 endfunction()
 
@@ -122,9 +134,79 @@ endfunction()
 
 
 
-function(build_module_examples name)
+function(build_module_examples class_name name)
 
+    # parse args
     string(TOLOWER ${name} module_name)
+    string(TOLOWER ${class_name} class_dir_name)
+
+    set(SRC
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_main.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/${class_dir_name}/${module_name}/${module_name}_tests.cpp)
+
+    add_executable(test_unit_${module_name} ${SRC})  
+
+    foreach(param ${ARGN})
+        #message("dep lib  ${param}")
+        set(DEP_LIBS
+        ${DEP_LIBS}
+        ${param})
+    endforeach()
+
+    #message("dep lib  ${DEP_LIBS}")
+    if(WIN32)
+
+        if(BUILD_SHARED_YLIB)
+            target_link_libraries(test_unit_${module_name} ylib ws2_32  ${DEP_LIBS})
+            add_dependencies(test_unit_${module_name} ylib)
+        else()
+            target_link_libraries(test_unit_${module_name} ylib_s   ${DEP_LIBS})
+            add_dependencies(test_unit_${module_name} ylib_s)
+        endif()
+
+        # RUNTIME-rpath maybe be diffcult.
+        #    INSTALL(TARGETS  test_${module_name}
+        #        RUNTIME DESTINATION examples
+        #    )
+
+        INSTALL(PROGRAMS 
+            ${CMAKE_CURRENT_BINARY_DIR}/test_unit_${module_name}.exe
+            DESTINATION tests
+        )
+
+        #set(BUILTIN_TEST_LIST "${BUILTIN_TEST_LIST}\n test_unit_${module_name}.exe" CACHE STRING INSTERNAL FORCE )
+        AppendBUILTIN_TEST_LIST(test_algorithm_${module_name}.exe)
+    elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
+
+        if(BUILD_SHARED_YLIB)
+            target_link_libraries(test_unit_${module_name} libylib.so  -lssl -lcrypto -lz -pthread  ${DEP_LIBS})
+            add_dependencies(test_unit_${module_name} ylib)
+        else()
+            target_link_libraries(test_unit_${module_name} libylib_s.so  -lssl -lcrypto  -lz -pthread ${DEP_LIBS})
+            add_dependencies(test_unit_${module_name} ylib_s)
+        endif()
+        # RUNTIME-rpath maybe be diffcult.
+        #    INSTALL(TARGETS  test_${module_name}
+        #        RUNTIME DESTINATION examples
+        #    )
+
+        INSTALL(PROGRAMS 
+            ${CMAKE_CURRENT_BINARY_DIR}/test_unit_${module_name}
+            DESTINATION tests
+        )
+        #set(BUILTIN_TEST_LIST "${BUILTIN_TEST_LIST}\n test_unit_${module_name}" CACHE STRING INSTERNAL FORCE )
+        AppendBUILTIN_TEST_LIST(test_algorithm_${module_name})
+    elseif(ANDROID)
+        
+    endif()       
+
+endfunction()
+
+function(build_module_examples1 name)
+
+    # parse args
+    string(TOLOWER ${name} module_name)
+
     set(SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/test_main.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/${module_name}/${module_name}_tests.cpp)
@@ -158,7 +240,8 @@ function(build_module_examples name)
             ${CMAKE_CURRENT_BINARY_DIR}/test_unit_${module_name}.exe
             DESTINATION tests
         )
-
+        #set(BUILTIN_TEST_LIST "${BUILTIN_TEST_LIST}\n test_unit_${module_name}.exe"  CACHE STRING INSTERNAL FORCE)
+        AppendBUILTIN_TEST_LIST(test_algorithm_${module_name}.exe)
     elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
         if(BUILD_SHARED_YLIB)
@@ -177,23 +260,21 @@ function(build_module_examples name)
             ${CMAKE_CURRENT_BINARY_DIR}/test_unit_${module_name}
             DESTINATION tests
         )
-
+        #set(BUILTIN_TEST_LIST "${BUILTIN_TEST_LIST}\n test_unit_${module_name}"  CACHE STRING INSTERNAL FORCE)
+        AppendBUILTIN_TEST_LIST(test_algorithm_${module_name})
     elseif(ANDROID)
         
     endif()       
 
-
-
-
-
 endfunction()
+
 #----------------------------------------------------------------------------------------
 ##########################################################################
 if(BUILD_MODULE_YSHELL)
 
-    build_module_examples(YSHELL)
+    build_module_examples(UTILITY YSHELL)
 
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/yshell/shell_test.txt.example shell_test.txt @ONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/utility/yshell/shell_test.txt.example shell_test.txt @ONLY)
 
     INSTALL(FILES
 
@@ -208,9 +289,9 @@ endif()
 ##########################################################################
 if(BUILD_MODULE_YLOG)
 
-    build_module_examples(YLOG)
+    build_module_examples(UTILITY YLOG)
 
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/ylog/log4cplus.properties.example log4cplus.properties @ONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/utility/ylog/log4cplus.properties.example log4cplus.properties @ONLY)
 
     INSTALL(FILES
 
@@ -225,9 +306,9 @@ endif()
 ##########################################################################
 if(BUILD_MODULE_YCONFIG)
 
-    build_module_examples(YCONFIG)
+    build_module_examples(UTILITY YCONFIG)
 
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/yconfig/test.conf.example test.conf @ONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/utility/yconfig/test.conf.example test.conf @ONLY)
 
     INSTALL(FILES
 
@@ -242,9 +323,9 @@ endif()
 ##########################################################################
 if(BUILD_MODULE_YJSON)
 
-    build_module_examples(YJSON)
+    build_module_examples(UTILITY YJSON)
 
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/yjson/test.json.example test.json @ONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/utility/yjson/test.json.example test.json @ONLY)
 
     INSTALL(FILES
 
@@ -259,9 +340,9 @@ endif()
 ##########################################################################
 if(BUILD_MODULE_YXML)
 
-    build_module_examples(yXML)
+    build_module_examples(UTILITY yXML)
 
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/yxml/test.xml.example test.xml @ONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/utility/yxml/test.xml.example test.xml @ONLY)
 
     INSTALL(FILES
 
@@ -271,30 +352,31 @@ if(BUILD_MODULE_YXML)
     )
 endif()
 
+if(BUILD_MODULE_YHTTP)
+    build_module_examples(UTILITY yHttp)
+endif()
 ##########################################################################
 
 
 ##########################################################################
 # core built-in module
-build_module_examples(yObject)
+build_module_examples(CORE yObject)
 
-build_module_examples(yException)
+build_module_examples(CORE yException)
 
-build_module_examples(yCommon)
+build_module_examples(CORE yCommon)
 
 
 ##########################################################################
 # core module
 if(BUILD_MODULE_YBASICVALUE)
-    build_module_examples(yBasicValue)
-endif()
-
-if(BUILD_MODULE_YHTTP)
-    build_module_examples(yHttp)
+    build_module_examples(CORE yBasicValue)
 endif()
 
 
-build_module_examples(all_in_one)
+
+
+build_module_examples1(all_in_one)
 
 
 ##########################################################################

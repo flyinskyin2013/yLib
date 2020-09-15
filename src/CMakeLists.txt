@@ -26,17 +26,10 @@ elseif(ANDROID)
     
 endif()
 
-
-
-
-
-#-----------------------------------generate ylib_build_info.hpp-------------------------
-#string(TIMESTAMP ％Y- ％M-％D％H：％M)
-set(DECELARE_YLIB_BUILD_ARCH "#define YLIB_BUILD_ARCH_DEFINE ${BUILD_YLIB_ARCH}")
-#message(STATUS ${DECELARE_YLIB_BUILD_ARCH})
-configure_file(ylib_extra_infos.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/ylib_extra_infos.cpp @ONLY)
 include_directories(${CMAKE_CURRENT_BINARY_DIR} )
-
+# set(SRC
+#     ${SRC} ${CMAKE_CURRENT_BINARY_DIR}/ylib_extra_infos.cpp)
+# message(${SRC})
 #----------------------------------------------------------------------------------------
 set(SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/core/ycommon.cpp
@@ -46,6 +39,8 @@ set(SRC
     #for network module
     ${CMAKE_CURRENT_SOURCE_DIR}/network/yabstractsocket.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/network/yabstractsocketserver.cpp
+
+    ${CMAKE_CURRENT_BINARY_DIR}/ylib_extra_infos.cpp
     )
 
 #----------------------------------------------------------------------------------------
@@ -62,98 +57,99 @@ macro(ylib_build_module name)
 endmacro()
 
 
-macro(ylib_build ylib_mod_name name)
+macro(ylib_build class_name name)
 
     string(TOLOWER ${name} module_name)
-
+    string(TOLOWER ${class_name} class_dir_name)
     set(SRC
-        ${SRC} ${CMAKE_CURRENT_SOURCE_DIR}/${ylib_mod_name}/${module_name}.cpp)
+        ${SRC} ${CMAKE_CURRENT_SOURCE_DIR}/${class_dir_name}/${module_name}.cpp)
 
-    message(STATUS "yLib will include ${ylib_mod_name}-${name} module")
+    message(STATUS "yLib will include ${class_name}-${name} module")
 
+    set(BUILTIN_MODULE_LIST ${BUILTIN_MODULE_LIST} ${class_name}-${name}  CACHE STRING INTERNAL FORCE)
 endmacro()
 
 
 if(BUILD_MODULE_YCURL)
 
-    ylib_build(utility YCURL)
+    ylib_build(UTILITY YCURL)
 
 endif()
 
 
 if(BUILD_MODULE_YHTTP)
 
-    ylib_build(utility YHTTP)
+    ylib_build(UTILITY YHTTP)
 
 endif()
 
 if(BUILD_MODULE_YLOG)
 
-    ylib_build(utility YLOG)
+    ylib_build(UTILITY YLOG)
 
 endif()
 
 
 if(BUILD_MODULE_YSHELL)
 
-    ylib_build(utility YSHELL)
+    ylib_build(UTILITY YSHELL)
 
 endif()
 
 if(BUILD_MODULE_YXML)
 
-    ylib_build(utility YXML)
+    ylib_build(UTILITY YXML)
 
 endif()
 
 if(BUILD_MODULE_YCONFIG)
 
-    ylib_build(utility YCONFIG)
+    ylib_build(UTILITY YCONFIG)
 
 endif()
 
 if(BUILD_MODULE_YJSON)
 
-    ylib_build(utility YJSON)
+    ylib_build(UTILITY YJSON)
 
 endif()
 
 if(BUILD_MODULE_YSHAREDMEMORY)
 
-    ylib_build(ipc YSHAREDMEMORY)
+    ylib_build(IPC YSHAREDMEMORY)
 
 endif()
 
 if(BUILD_MODULE_YBASICVALUE)
 
-    ylib_build(core YBASICVALUE)
+    ylib_build(CORE YBASICVALUE)
 
 endif()
 
 if(BUILD_MODULE_YTCPSERVER)
 
-    ylib_build(network YTCPSERVER)
+    ylib_build(NETWORK YTCPSERVER)
 
 endif()
 
 
 if(BUILD_MODULE_YTCPSOCKET)
 
-    ylib_build(network YTCPSOCKET)
+    ylib_build(NETWORK YTCPSOCKET)
 
 endif()
 
 
 if(BUILD_MODULE_YUDPSERVER)
 
-    ylib_build(network YUDPSERVER)
+    ylib_build(NETWORK YUDPSERVER)
 
 endif()
 
 
 if(BUILD_MODULE_YUDPSOCKET)
 
-    ylib_build(network YUDPSOCKET)
+    ylib_build(NETWORK YUDPSOCKET)
 
 endif()
 
@@ -342,3 +338,22 @@ INSTALL(FILES
     DESTINATION cmake
 )
 
+
+
+
+#-----------------------------------generate ylib_build_info.hpp-------------------------
+set(DECELARE_YLIB_BUILD_TYPE            "const static std::string G_YLIB_BUILD_TYPE_DEFINE       = \"${CMAKE_BUILD_TYPE}\";")
+set(DECELARE_YLIB_BUILD_ARCH            "const static std::string G_YLIB_BUILD_ARCH_DEFINE       = \"${BUILD_YLIB_ARCH}\";")
+set(DECELARE_YLIB_BUILD_PLATFORM        "const static std::string G_YLIB_BUILD_PLATFORM_DEFINE   = \"${BUILD_PLATFORM}\";")
+
+#set(DECELARE_YLIB_BUILD_VERSION         "const static std::string G_YLIB_BUILD_VERSION_DEFINE    = ${BUILD_VERSION}")
+set(DECELARE_YLIB_BUILD_VERSION_MAJOR   "const static int G_YLIB_BUILD_VERSION_MAJOR_DEFINE      = ${BUILD_VERSION_MAJOR};")
+set(DECELARE_YLIB_BUILD_VERSION_MINOR   "const static int G_YLIB_BUILD_VERSION_MINOR_DEFINE      = ${BUILD_VERSION_MINOR};")
+set(DECELARE_YLIB_BUILD_VERSION_PATCH   "const static int G_YLIB_BUILD_VERSION_PATCH_DEFINE      = ${BUILD_VERSION_PATCH};")
+
+set(DECELARE_YLIB_BUILD_TIMESTAMP       "const static std::string G_YLIB_BUILD_TIMESTAMP_DEFINE  = \"${BUILD_TIMESTAMP}\";")
+set(DECELARE_YLIB_BUILD_GIT_COMMIT_ID   "const static std::string G_YLIB_BUILD_COMMIT_ID_DEFINE  = \"${BUILD_GIT_COMMIT_ID}\";")
+set(DECELARE_YLIB_BUILTIN_MODULE        "const static std::string G_YLIB_BUILTIN_MODULE_DEFINE   = \"${BUILTIN_MODULE_LIST}\";")
+
+
+configure_file(ylib_extra_infos.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/ylib_extra_infos.cpp @ONLY)
