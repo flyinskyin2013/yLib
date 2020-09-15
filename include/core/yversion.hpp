@@ -3,7 +3,7 @@
  * @Author: Sky
  * @Date: 2020-03-19 11:27:55
  * @LastEditors: Sky
- * @LastEditTime: 2020-03-19 11:47:15
+ * @LastEditTime: 2020-09-15 17:42:11
  * @FilePath: \yLib\include\core\yversion.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -15,11 +15,11 @@ namespace yLib{
     #define YLIB_STR(__S) YLIB_STR_CONVERT(__S)
     #define YLIB_STR_CONVERT(__S) #__S
 
-    #define YLIB_VERSION_MAJOR 0
-    #define YLIB_VERSION_MINOR 0
-    #define YLIB_VERSION_PATCH 7
+    // #define YLIB_VERSION_MAJOR 0
+    // #define YLIB_VERSION_MINOR 0
+    // #define YLIB_VERSION_PATCH 7
 
-    #define YLIB_VERSION YLIB_STR(YLIB_VERSION_MAJOR) "." YLIB_STR(YLIB_VERSION_MINOR) "." YLIB_STR(YLIB_VERSION_PATCH)
+    // #define YLIB_VERSION YLIB_STR(YLIB_VERSION_MAJOR) "." YLIB_STR(YLIB_VERSION_MINOR) "." YLIB_STR(YLIB_VERSION_PATCH)
 
 }
 
