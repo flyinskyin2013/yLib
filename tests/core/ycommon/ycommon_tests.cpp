@@ -18,7 +18,8 @@ TEST_CASE( "Test yCommon basic attributes" , "[yCommon_BasicAttributes]" ){
         yLib::yCommon _common;
         std::string _lib_ver = _common.GetyLibVersion();
 
-        REQUIRE_THAT( _lib_ver, Catch::Equals ( std::string("V") + YLIB_VERSION ));
+        REQUIRE_THAT( _lib_ver, Catch::Equals ( std::string("V") + std::to_string(yLib::GetyLibBuildVersionMajor()) + "." + \
+        std::to_string(yLib::GetyLibBuildVersionMinor()) + "." + std::to_string(yLib::GetyLibBuildVersionPatch()) ));
     }
 
     SECTION("test GetyLibBuildInfo() ") {
