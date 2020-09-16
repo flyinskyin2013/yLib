@@ -268,6 +268,76 @@ function(build_module_examples1 name)
 
 endfunction()
 
+
+function(build_module_examples3 class_name_ module_name_ target_name_)
+
+    # parse args
+    string(TOLOWER ${target_name_} target_name)
+    string(TOLOWER ${class_name_} class_name)
+    string(TOLOWER ${module_name_} module_name)
+
+    set(SRC
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_main.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/${class_name}/${module_name}/${target_name}_tests.cpp)
+
+    add_executable(test_unit_${target_name} ${SRC})  
+
+    foreach(param ${ARGN})
+        #message("dep lib  ${param}")
+        set(DEP_LIBS
+        ${DEP_LIBS}
+        ${param})
+    endforeach()
+
+    #message("dep lib  ${DEP_LIBS}")
+    if(WIN32)
+
+        if(BUILD_SHARED_YLIB)
+            target_link_libraries(test_unit_${target_name} ylib ws2_32  ${DEP_LIBS})
+            add_dependencies(test_unit_${target_name} ylib)
+        else()
+            target_link_libraries(test_unit_${target_name} ylib_s   ${DEP_LIBS})
+            add_dependencies(test_unit_${target_name} ylib_s)
+        endif()
+
+        # RUNTIME-rpath maybe be diffcult.
+        #    INSTALL(TARGETS  test_${target_name}
+        #        RUNTIME DESTINATION examples
+        #    )
+
+        INSTALL(PROGRAMS 
+            ${CMAKE_CURRENT_BINARY_DIR}/test_unit_${target_name}.exe
+            DESTINATION tests
+        )
+        #set(BUILTIN_TEST_LIST "${BUILTIN_TEST_LIST}\n test_unit_${target_name}.exe"  CACHE STRING INSTERNAL FORCE)
+        AppendBUILTIN_TEST_LIST(test_algorithm_${target_name}.exe)
+    elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
+
+        if(BUILD_SHARED_YLIB)
+            target_link_libraries(test_unit_${target_name} libylib.so  -lssl -lcrypto -lz -pthread  ${DEP_LIBS})
+            add_dependencies(test_unit_${target_name} ylib)
+        else()
+            target_link_libraries(test_unit_${target_name} libylib_s.so  -lssl -lcrypto  -lz -pthread ${DEP_LIBS})
+            add_dependencies(test_unit_${target_name} ylib_s)
+        endif()
+        # RUNTIME-rpath maybe be diffcult.
+        #    INSTALL(TARGETS  test_${target_name}
+        #        RUNTIME DESTINATION examples
+        #    )
+
+        INSTALL(PROGRAMS 
+            ${CMAKE_CURRENT_BINARY_DIR}/test_unit_${target_name}
+            DESTINATION tests
+        )
+        #set(BUILTIN_TEST_LIST "${BUILTIN_TEST_LIST}\n test_unit_${target_name}"  CACHE STRING INSTERNAL FORCE)
+        AppendBUILTIN_TEST_LIST(test_algorithm_${target_name})
+    elseif(ANDROID)
+        
+    endif()       
+
+endfunction()
+
+
 #----------------------------------------------------------------------------------------
 ##########################################################################
 if(BUILD_MODULE_YSHELL)
@@ -356,6 +426,34 @@ if(BUILD_MODULE_YHTTP)
     build_module_examples(UTILITY yHttp)
 endif()
 ##########################################################################
+
+if(BUILD_MODULE_YTCPSERVER)
+    build_module_examples3(NETWORK TCP yTcpserver)
+endif()
+
+if(BUILD_MODULE_YTCPCLIENT)
+    build_module_examples3(NETWORK TCP yTcpClient)
+endif()
+
+if(BUILD_MODULE_YUDPSERVER)
+    build_module_examples3(NETWORK UDP yUdpServer)
+endif()
+
+if(BUILD_MODULE_YUDPCLIENT)
+    build_module_examples3(NETWORK UDP yUdpClient)
+endif()
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ##########################################################################
