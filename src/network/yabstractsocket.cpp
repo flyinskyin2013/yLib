@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-09-08 10:26:39
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-14 18:15:15
+ * @LastEditTime: 2020-09-16 14:05:48
  * @Description: 
  */
 #include "network/yabstractsocket.h"
@@ -19,6 +19,7 @@ extern "C"{
 }
 #endif //__cplusplus
 
+#include "ylib.hpp"
 
 using namespace yLib;
 
@@ -53,7 +54,7 @@ inline bool yAbstractSocket::socket_is_valid(void){
     return (0 > socket_fd)?false:true;
 }
 
-std::string yAbstractSocket::get_ip_str(uint64_t ip_){
+std::string yAbstractSocket::get_ip_from_binary(uint64_t ip_){
     
     struct in_addr _tmp_in_addr;
 
@@ -62,7 +63,24 @@ std::string yAbstractSocket::get_ip_str(uint64_t ip_){
 }
 
 
-uint64_t yAbstractSocket::get_port(uint64_t port_){
+uint64_t yAbstractSocket::get_port_from_binary(uint64_t port_){
 
     return ::ntohs(port_);
+}
+
+int64_t yAbstractSocket::translate_ip_to_binary(const std::string &ip_){
+
+    struct in_addr _sin_addr;
+    if (0 == ::inet_aton(ip_.c_str(), &_sin_addr)){//invalid ip
+
+        yLib::yLog::I("yAbstractSocket: Invalid ip_. please check.");
+        return -1;
+    }
+
+    return _sin_addr.s_addr;
+}
+
+uint64_t yAbstractSocket::translate_port_to_binary(uint64_t port_){
+
+    return ::htons(port_);
 }

@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-07-01 15:13:29
  * @LastEditors: Sky
- * @LastEditTime: 2020-08-19 15:35:13
+ * @LastEditTime: 2020-09-16 15:12:00
  * @Description: 
  */ 
 #ifndef __BASIC_ALGORITHM_YQUEUE_HPP__
@@ -23,6 +23,7 @@ namespace yLib{
         T * begin_pos = nullptr;
         T * end_pos = nullptr;
         
+        T NullObj;
 
         public:
         /**
@@ -60,14 +61,14 @@ namespace yLib{
 
             if (0 == cur_size){
 
-                _alloc.deallocate(queue_head);//free old mem
+                _alloc.deallocate(queue_head, capacity);//free old mem
                 queue_head = nullptr;
                 begin_pos = end_pos = queue_head;
             }
             else{//there are elements.
 
-                // begin_pos    end_pos
-                //    |            |
+                // begin_pos     end_pos
+                //    |             |
                 //----@@@@@@@@@@@@@@-----
                 if (end_pos > begin_pos){
 
@@ -78,8 +79,8 @@ namespace yLib{
                 }
                 else{//end_pos <= begin_pos
 
-                    // end_pos  begin_pos
-                    //    |     |
+                    //  end_pos begin_pos
+                    //     |    |
                     //@@@@@-----@@@@@@@@@@@@@@@@@@@@
                     //begin_pos to tail
                     for (int _i = 0; begin_pos + _i != queue_head + capacity - 1; _i ++){
@@ -93,7 +94,7 @@ namespace yLib{
                     }
                 }
                 
-                _alloc.deallocate(queue_head);//free old mem
+                _alloc.deallocate(queue_head, capacity);//free old mem
 
                 queue_head = nullptr;
 
@@ -122,6 +123,7 @@ namespace yLib{
                 end_pos = queue_head;
             else
                 end_pos ++;
+                
             cur_size ++;
         }
 
@@ -151,6 +153,9 @@ namespace yLib{
          * @return {type} 
          */
         T& front(void) const{
+            
+            if (0 == cur_size)
+                return const_cast<T&>(NullObj);
 
             return *(begin_pos);
         }
@@ -162,7 +167,10 @@ namespace yLib{
          */
         T& tail(void) const{
 
-            return *(end_pos);
+            if (0 == cur_size)
+                return const_cast<T&>(NullObj);
+
+            return *(end_pos - 1);
         }
 
         /**
@@ -217,14 +225,14 @@ namespace yLib{
 
             if (0 == cur_size){
 
-                _alloc.deallocate(queue_head);//free old mem
+                _alloc.deallocate(queue_head, capacity);//free old mem
                 queue_head = _tmp_head;
                 begin_pos = end_pos = queue_head;
             }
             else{//there are elements.
 
-                // begin_pos    end_pos
-                //    |            |
+                // begin_pos     end_pos
+                //    |             |
                 //----@@@@@@@@@@@@@@-----
                 if (end_pos > begin_pos){
 
@@ -236,8 +244,8 @@ namespace yLib{
                 }
                 else{//end_pos <= begin_pos
 
-                    // end_pos  begin_pos
-                    //    |     |
+                    //  end_pos begin_pos
+                    //     |    |
                     //@@@@@-----@@@@@@@@@@@@@@@@@@@@
                     //begin_pos to tail
                     for (int _i = 0; begin_pos + _i != queue_head + capacity - 1; _i ++){
@@ -255,7 +263,7 @@ namespace yLib{
 
 
 
-                _alloc.deallocate(queue_head);//free old mem
+                _alloc.deallocate(queue_head, capacity);//free old mem
 
                 queue_head = _tmp_head;
 
@@ -264,7 +272,7 @@ namespace yLib{
                 end_pos = queue_head + cur_size;
             }
             
-
+            capacity = new_cap_;
         }
     };
 }

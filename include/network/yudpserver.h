@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-09-08 14:52:59
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-14 18:24:50
+ * @LastEditTime: 2020-09-16 13:57:10
  * @Description: 
  */
 #ifndef __YLIB_NETWORK_YUDP_SERVER_H__
@@ -45,18 +45,18 @@ namespace yLib{
         /**
          * @description: 
          * @param {type} 
-         * client_ip_: The sendto client ip(binary value).
+         * 
          * @return {type} 
          */ 
-        int64_t sendto(const void * buffer_, uint64_t size_to_send_, uint64_t client_ip_ = 0, uint64_t client_port_ = 0, int flags_ = 0);
+        int64_t sendto(const void * buffer_, uint64_t size_to_send_, const std::string &client_ip_, uint64_t client_port_ = 0, int flags_ = 0);
 
         /**
          * @description: 
          * @param {type} 
-         * client_ip_: The current receive client ip(binary value).
+         * 
          * @return {type} 
          */
-        int64_t recvfrom(void * buffer_, uint64_t size_to_read_, uint64_t &client_ip_, uint64_t &client_port_, int flags_ = 0);
+        int64_t recvfrom(void * buffer_, uint64_t size_to_read_, std::string &client_ip_, uint64_t &client_port_, int flags_ = 0);
     };
 
 }

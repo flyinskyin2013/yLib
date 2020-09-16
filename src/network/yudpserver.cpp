@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-09-08 14:53:08
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-14 18:19:53
+ * @LastEditTime: 2020-09-16 14:07:27
  * @Description: 
  */
 
@@ -120,10 +120,10 @@ int8_t yUdpServer::bind(const std::string & ip_, int32_t port_){
 /**
  * @description: 
  * @param {type} 
- * clinet_ip_: The sendto client ip(binary value).
+ * 
  * @return {type} 
  */ 
-int64_t yUdpServer::sendto(const void * buffer_, uint64_t size_to_send_, uint64_t client_ip_, uint64_t client_port_, int flags_){
+int64_t yUdpServer::sendto(const void * buffer_, uint64_t size_to_send_, const std::string &client_ip_, uint64_t client_port_, int flags_){
 
     if (!socket_is_ready()){
 
@@ -132,13 +132,15 @@ int64_t yUdpServer::sendto(const void * buffer_, uint64_t size_to_send_, uint64_
     }
 
     ssize_t _complete_send_len = 0;
+    uint64_t _binary_ip = translate_ip_to_binary(client_ip_);
+    uint64_t _binary_port = translate_port_to_binary(client_port_);
 
     std::vector<struct sockaddr_in>::iterator _tmp_iter = client_socket_addr_vec.begin();
     for (; _tmp_iter != client_socket_addr_vec.end(); _tmp_iter++){
 
-        if ( client_ip_ == _tmp_iter->sin_addr.s_addr){
+        if ( _binary_ip == _tmp_iter->sin_addr.s_addr){
 
-            if (client_port_ == _tmp_iter->sin_port){
+            if (_binary_port == _tmp_iter->sin_port){
 
                 break;
             }
@@ -177,10 +179,10 @@ int64_t yUdpServer::sendto(const void * buffer_, uint64_t size_to_send_, uint64_
 /**
  * @description: 
  * @param {type} 
- * client_ip_: The current receive client ip(binary value).
+ * 
  * @return {type} 
  */
-int64_t yUdpServer::recvfrom(void * buffer_, uint64_t size_to_read_, uint64_t &client_ip_, uint64_t &client_port_, int flags_){
+int64_t yUdpServer::recvfrom(void * buffer_, uint64_t size_to_read_, std::string &client_ip_, uint64_t &client_port_, int flags_){
 
     if (!socket_is_ready()){
 
@@ -213,8 +215,8 @@ int64_t yUdpServer::recvfrom(void * buffer_, uint64_t size_to_read_, uint64_t &c
         return -1;
     }
 
-    client_ip_ = _tmp_sockaddr_in.sin_addr.s_addr;
-    client_port_ = _tmp_sockaddr_in.sin_port;
+    client_ip_ = get_ip_from_binary(_tmp_sockaddr_in.sin_addr.s_addr);
+    client_port_ = get_port_from_binary(_tmp_sockaddr_in.sin_port);
 
     client_socket_addr_vec.push_back(_tmp_sockaddr_in);
 

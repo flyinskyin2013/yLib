@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-09-08 10:26:28
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-14 17:47:58
+ * @LastEditTime: 2020-09-16 14:14:04
  * @Description: 
  */
 
@@ -21,6 +21,12 @@ namespace yLib{
     protected:
         /* data */
         yAbstractSocket(/* args */);
+
+        static std::string get_ip_from_binary(uint64_t ip_);
+        static uint64_t get_port_from_binary(uint64_t port_);
+
+        static int64_t translate_ip_to_binary(const std::string &ip_);
+        static uint64_t translate_port_to_binary(uint64_t port_);
     public:
         ~yAbstractSocket();
 
@@ -37,9 +43,6 @@ namespace yLib{
          */
         
         inline bool socket_is_valid(void);
-
-        static std::string get_ip_str(uint64_t ip_);
-        static uint64_t get_port(uint64_t port_);
 
         /**
          * @description: Check socket(), bind(), listen(), accept() and so on.

@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2018-10-23 11:09:07
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-15 18:15:46
+ * @LastEditTime: 2020-09-16 14:39:16
  * @Description: 
  */
 
@@ -36,14 +36,14 @@ std::string yLib::yCommon::GetyLibBuildInfo() const noexcept{
     std::string ylib_build_info;
 
     ylib_build_info = "--------------yLib Build Infos-----------------\n";
-    ylib_build_info += "BuildType:      " + yLib::GetyLibBuildType() + " \n";
-    ylib_build_info += "BuildArch:      " + yLib::GetyLibBuildArch() + " \n";
-    ylib_build_info += "BuildPlatform:  " + yLib::GetyLibBuildPlatform() + " \n";
-    ylib_build_info += "BuildVersion:   " + GetyLibVersion() + " \n";
-    //ylib_build_info += "BuildTimeStamp: " + std::string(__DATE__) + " " + std::string(std::string(__TIME__)) + " \n";
-    ylib_build_info += "BuildTimeStamp: " + yLib::GetyLibBuildTimeStamp() + " \n";
-    ylib_build_info += "BuildId:        " + yLib::GetyLibBuildGitCommitId() + " \n";
-    ylib_build_info += "BuiltinModule:  " + yLib::GetyLibBuildBuiltinModule() + " \n";
+    ylib_build_info += "BuildType      : " + yLib::GetyLibBuildType() + " \n";
+    ylib_build_info += "BuildArch      : " + yLib::GetyLibBuildArch() + " \n";
+    ylib_build_info += "BuildPlatform  : " + yLib::GetyLibBuildPlatform() + " \n";
+    ylib_build_info += "BuildVersion   : " + GetyLibVersion() + " \n";
+    //ylib_build_info += "BuildTimeStamp:: " + std::string(__DATE__) + " " + std::string(std::string(__TIME__)) + " \n";
+    ylib_build_info += "BuildTimeStamp : " + yLib::GetyLibBuildTimeStamp() + " \n";
+    ylib_build_info += "BuildId        : " + yLib::GetyLibBuildGitCommitId() + " \n";
+    ylib_build_info += "BuiltinModule  : " + yLib::GetyLibBuildBuiltinModule() + " \n";
     ylib_build_info += "-----------------------------------------------\n";
 
 
