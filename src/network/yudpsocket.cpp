@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-09-08 10:27:33
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-14 18:18:40
+ * @LastEditTime: 2020-09-16 14:15:13
  * @Description: 
  */
 
@@ -100,14 +100,17 @@ int64_t yUdpSocket::sendto(const void * buffer_, uint64_t size_to_send_, std::st
     struct sockaddr_in _send_addr;
     ::memset(&_send_addr, 0, sizeof(_send_addr));
 
-    if (0 == ::inet_aton(ip_.c_str(), &_send_addr.sin_addr)){//invalid ip
+    int64_t _binary_ip = 0;
+    if (0 > (_binary_ip = translate_ip_to_binary(ip_))){//invalid ip
 
         std::cout<<"yUdpClient: Invalid ip_. please check."<<std::endl;
         return -1;
     }
 
+    
+    _send_addr.sin_addr.s_addr = _binary_ip;
     _send_addr.sin_family = AF_INET;
-	_send_addr.sin_port = htons(port_);
+	_send_addr.sin_port = translate_port_to_binary(port_);
 
     ssize_t _complete_send_len = 0;
     if ( 0 > (_complete_send_len = ::sendto(socket_fd, buffer_, size_to_send_, 0, reinterpret_cast<const struct sockaddr *>(&_send_addr), sizeof(struct sockaddr_in))) ){
@@ -131,7 +134,7 @@ int64_t yUdpSocket::sendto(const void * buffer_, uint64_t size_to_send_, std::st
     return _complete_send_len;
 }
 
-int64_t yUdpSocket::recvfrom(void * buffer_, uint64_t size_to_read_,  uint64_t &client_ip_, uint64_t &client_port_, int flags_){
+int64_t yUdpSocket::recvfrom(void * buffer_, uint64_t size_to_read_,  std::string &client_ip_, uint64_t &client_port_, int flags_){
     
 
     if (!socket_is_ready()){
@@ -164,8 +167,8 @@ int64_t yUdpSocket::recvfrom(void * buffer_, uint64_t size_to_read_,  uint64_t &
         return -1;
     }
 
-    client_ip_ = _recv_addr.sin_addr.s_addr;
-    client_port_ = _recv_addr.sin_port;
+    client_ip_ = get_ip_from_binary(_recv_addr.sin_addr.s_addr);
+    client_port_ = get_port_from_binary(_recv_addr.sin_port);
 
     return _complete_read_len;
 }

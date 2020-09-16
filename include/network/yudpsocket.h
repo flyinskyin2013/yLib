@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-09-08 10:27:22
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-14 18:17:59
+ * @LastEditTime: 2020-09-16 14:10:19
  * @Description: 
  */
 #ifndef __YLIB_NETWORK_YUDP_SOCKET_H__
@@ -71,7 +71,7 @@ namespace yLib{
          * @param {type} 
          * @return {type} 
          */
-        int64_t recvfrom(void * buffer_, uint64_t size_to_read_, uint64_t &client_ip_, uint64_t &client_port_, int flags_ = 0);
+        int64_t recvfrom(void * buffer_, uint64_t size_to_read_, std::string &client_ip_, uint64_t &client_port_, int flags_ = 0);
     };
 
 

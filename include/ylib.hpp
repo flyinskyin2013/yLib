@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-11-20 15:29:40
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-14 18:33:50
+ * @LastEditTime: 2020-09-16 09:15:01
  * @Description: 
  */
 #ifndef __YLIB_HPP__
@@ -22,6 +22,9 @@
     //basic_algorithm
     #include "basic_algorithm/ybasic_algorithm.hpp"
 
+    //network
+    #include "network/ynetwork.hpp"
+
 #elif defined(__linux__) || defined(__linux)
     
     //core
@@ -35,6 +38,9 @@
 
     //basic_algorithm
     #include "basic_algorithm/ybasic_algorithm.hpp"
+
+    //network
+    #include "network/ynetwork.hpp"
     
 #elif defined(__unix__) || defined(__unix)
 

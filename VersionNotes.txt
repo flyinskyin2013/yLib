@@ -7,10 +7,19 @@
  -->
 Version Notes:
 ==========
+v0.0.8
+----------
+    1 Optimize cmake-structure and source-codes-structure.
+    2 Improve some modules(ycommon/ymain ... ...).
+    3 Import some new modules(yhttp/ytcp*/yudp*/basic_algorithm_* ... ...).
+    4 Fix some errors about yhttp/basic_algorithm_* ... ... .
+    5 Add some convenience for compiling third-part and ylib.
+    6 Other small optimizations.
+
 v0.07
 ----------
     1 On Windows plateform, we transplant and support yLog-module, ySharedMemory
-    5 Release ySharedMemory-module to transmit data between processes.
+    2 Release ySharedMemory-module to transmit data between processes.
 
 v0.06
 ----------
