@@ -1,8 +1,8 @@
 <!--
  * @Author: Sky
  * @Date: 2019-10-21 13:51:28
- * @LastEditors  : Sky
- * @LastEditTime : 2020-01-07 10:46:28
+ * @LastEditors: Sky
+ * @LastEditTime: 2020-09-16 16:19:43
  * @Description: 
  -->
 ## yLib
@@ -34,7 +34,7 @@ GithubAction Current Build Status <br>
 
 ## Version:
 ****
-Current lastest version: V0.07<br> 
+Current lastest version: V0.0.8<br> 
 Major versions maintain interface-compatibility<br> 
 More details,please see [Version Notes](VersionNotes.txt)
 

@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-09-08 10:26:28
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-16 14:14:04
+ * @LastEditTime: 2020-09-16 16:33:57
  * @Description: 
  */
 
@@ -40,9 +40,11 @@ namespace yLib{
          * @description: Check socket()
          * @param {type} 
          * @return {type} 
+         * http://isocpp.org/wiki/faq/inline-functions#inline-member-fns
+         * Inline funciton defines must put in header-file.
          */
         
-        inline bool socket_is_valid(void);
+        inline bool socket_is_valid(void){return (0 > socket_fd)?false:true;}
 
         /**
          * @description: Check socket(), bind(), listen(), accept() and so on.
