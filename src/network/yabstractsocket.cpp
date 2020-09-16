@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-09-08 10:26:39
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-16 14:05:48
+ * @LastEditTime: 2020-09-16 16:33:05
  * @Description: 
  */
 #include "network/yabstractsocket.h"
@@ -21,13 +21,12 @@ extern "C"{
 
 #include "ylib.hpp"
 
-using namespace yLib;
 
-yAbstractSocket::yAbstractSocket(/* args */)
+yLib::yAbstractSocket::yAbstractSocket(/* args */)
 {
 }
 
-yAbstractSocket::~yAbstractSocket()
+yLib::yAbstractSocket::~yAbstractSocket()
 {
 }
 /**
@@ -35,7 +34,7 @@ yAbstractSocket::~yAbstractSocket()
  * @param {type} 
  * @return {type} 
  */
-int64_t yAbstractSocket::close(int64_t fd_){
+int64_t yLib::yAbstractSocket::close(int64_t fd_){
 
     if (socket_is_valid()){
 
@@ -44,17 +43,8 @@ int64_t yAbstractSocket::close(int64_t fd_){
 
     return -1;
 }
-/**
- * @description: Check socket()
- * @param {type} 
- * @return {type} 
- */
-inline bool yAbstractSocket::socket_is_valid(void){
 
-    return (0 > socket_fd)?false:true;
-}
-
-std::string yAbstractSocket::get_ip_from_binary(uint64_t ip_){
+std::string yLib::yAbstractSocket::get_ip_from_binary(uint64_t ip_){
     
     struct in_addr _tmp_in_addr;
 
@@ -63,12 +53,12 @@ std::string yAbstractSocket::get_ip_from_binary(uint64_t ip_){
 }
 
 
-uint64_t yAbstractSocket::get_port_from_binary(uint64_t port_){
+uint64_t yLib::yAbstractSocket::get_port_from_binary(uint64_t port_){
 
     return ::ntohs(port_);
 }
 
-int64_t yAbstractSocket::translate_ip_to_binary(const std::string &ip_){
+int64_t yLib::yAbstractSocket::translate_ip_to_binary(const std::string &ip_){
 
     struct in_addr _sin_addr;
     if (0 == ::inet_aton(ip_.c_str(), &_sin_addr)){//invalid ip
@@ -80,7 +70,7 @@ int64_t yAbstractSocket::translate_ip_to_binary(const std::string &ip_){
     return _sin_addr.s_addr;
 }
 
-uint64_t yAbstractSocket::translate_port_to_binary(uint64_t port_){
+uint64_t yLib::yAbstractSocket::translate_port_to_binary(uint64_t port_){
 
     return ::htons(port_);
 }
