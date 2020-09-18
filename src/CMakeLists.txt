@@ -312,6 +312,12 @@ INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/utility DESTINATION inc
     #PATTERN "libxml" EXCLUDE
 )
 
+#for network header files
+INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/network DESTINATION include
+
+    #PATTERN "curl" EXCLUDE
+    #PATTERN "libxml" EXCLUDE
+)
 
 INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/basic_algorithm DESTINATION include
 
