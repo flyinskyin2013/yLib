@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-10-28 14:15:15
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-14 18:40:01
+ * @LastEditTime: 2020-09-18 10:14:21
  * @Description: 
  */
 
@@ -77,13 +77,14 @@ int yLib::yJson::yJsonReadFile(std::string file){
         
         std::string parse_error = "";
         //JSONCPP_STRING parse_error = "";
+        //begin of buffer, end of buffer + len
         bool parse_ret = _json_reader_builder->newCharReader()->parse(_json_str_buf, \
-            _json_str_buf + file_len - 1, _json_root_value, &parse_error);
+            _json_str_buf + file_len, _json_root_value, &parse_error);
         
         delete [] _json_str_buf;
         if ( !parse_ret ){
 
-            yLib::yLog::E("parse json str error, error info is %s", parse_error.c_str());
+            yLib::yLog::E("parse json str error, error info is %s, file read len is %d", parse_error.c_str(), file_len);
             return -1;
         }
     }
