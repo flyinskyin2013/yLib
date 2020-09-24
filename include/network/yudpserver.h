@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-09-08 14:52:59
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-16 13:57:10
+ * @LastEditTime: 2020-09-24 16:08:15
  * @Description: 
  */
 #ifndef __YLIB_NETWORK_YUDP_SERVER_H__
@@ -24,7 +24,7 @@ namespace yLib{
         std::vector<struct sockaddr_in> client_socket_addr_vec; //ipv4
     public:
         yUdpServer(void);
-        yUdpServer(uint64_t max_client_num_, int socket_flags_ = IPPROTO_UDP, bool is_block_ = true);
+        yUdpServer(uint64_t max_client_num_, int socket_flags_ = 0, bool is_block_ = true);
         ~yUdpServer();
 
         /**
