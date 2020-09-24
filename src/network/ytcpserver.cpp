@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-09-08 10:50:08
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-14 18:24:22
+ * @LastEditTime: 2020-09-24 16:40:00
  * @Description: 
  */
 #include "network/ytcpserver.h"
@@ -296,6 +296,7 @@ void yTcpServer::epoll_thread_context(OnClientConnectCB con_cb_, OnClientDisconn
 
                     std::string _accept_client_ip = ::inet_ntoa(_client_addr.sin_addr);
 
+                    /* server don't control client-fd
                     //set nonblocking
                     if (0 > ::fcntl(_new_client_fd, F_SETFL, ::fcntl(_new_client_fd, F_GETFL, 0) | O_NONBLOCK)) {
                         
@@ -313,6 +314,7 @@ void yTcpServer::epoll_thread_context(OnClientConnectCB con_cb_, OnClientDisconn
                         std::cout<<"yTcpServer: server call accept() failed, error num is" << errno<<std::endl;
                         continue;
                     }
+                    */
 
                     client_info_map.insert(std::make_pair(_new_client_fd, _client_addr));
 

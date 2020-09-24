@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-09-08 10:49:42
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-14 18:22:00
+ * @LastEditTime: 2020-09-24 16:46:32
  * @Description: 
  */
 #ifndef __YLIB_NETWORK_YTCP_SERVER_H__
@@ -57,7 +57,7 @@ namespace yLib{
 
     public:
         yTcpServer(void);
-        yTcpServer(uint64_t max_client_num_, int socket_flags_ = IPPROTO_TCP, bool is_block_ = true);
+        yTcpServer(uint64_t max_client_num_, int socket_flags_ = 0, bool is_block_ = true);
         ~yTcpServer();
 
         /**
