@@ -464,12 +464,13 @@ build_module_examples(CORE yException)
 
 build_module_examples(CORE yCommon)
 
+build_module_examples(CORE yBasicValue)
 
 ##########################################################################
 # core module
-if(BUILD_MODULE_YBASICVALUE)
-    build_module_examples(CORE yBasicValue)
-endif()
+
+    
+
 
 
 
