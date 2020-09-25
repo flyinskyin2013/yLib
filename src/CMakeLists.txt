@@ -35,6 +35,8 @@ set(SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/core/ycommon.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/core/yobject.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/core/yexception.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/ybasicvalue.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/ylinuxerrnohelper.cpp
 
     #for network module
     ${CMAKE_CURRENT_SOURCE_DIR}/network/yabstractsocket.cpp
@@ -114,17 +116,13 @@ if(BUILD_MODULE_YJSON)
 
 endif()
 
+
 if(BUILD_MODULE_YSHAREDMEMORY)
 
     ylib_build(IPC YSHAREDMEMORY)
 
 endif()
 
-if(BUILD_MODULE_YBASICVALUE)
-
-    ylib_build(CORE YBASICVALUE)
-
-endif()
 
 if(BUILD_MODULE_YTCPSERVER)
 
@@ -292,34 +290,34 @@ endif()
 
 
 #for core header files
-INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/core DESTINATION include
+INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/core DESTINATION include/yLib
 
     #PATTERN "curl" EXCLUDE
     #PATTERN "libxml" EXCLUDE
 )
 
 #for ipc header files
-INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/ipc DESTINATION include
+INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/ipc DESTINATION include/yLib
 
     #PATTERN "curl" EXCLUDE
     #PATTERN "libxml" EXCLUDE
 )
 
 #for utility header files
-INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/utility DESTINATION include
+INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/utility DESTINATION include/yLib
 
     #PATTERN "curl" EXCLUDE
     #PATTERN "libxml" EXCLUDE
 )
 
 #for network header files
-INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/network DESTINATION include
+INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/network DESTINATION include/yLib
 
     #PATTERN "curl" EXCLUDE
     #PATTERN "libxml" EXCLUDE
 )
 
-INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/basic_algorithm DESTINATION include
+INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/basic_algorithm DESTINATION include/yLib
 
     #PATTERN "curl" EXCLUDE
     #PATTERN "libxml" EXCLUDE
@@ -327,7 +325,7 @@ INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/basic_algorithm DESTINA
 
 INSTALL(FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/../include/ylib.hpp
-    DESTINATION include
+    DESTINATION include/yLib
 )
 
 #INSTALL(SCRIPT
