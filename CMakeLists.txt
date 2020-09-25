@@ -28,7 +28,6 @@ option(BUILD_MODULE_YXML "Build module-yxml " ON)
 option(BUILD_MODULE_YCONFIG "Build module-yconfig " ON)
 option(BUILD_MODULE_YJSON "Build module-yjson " ON)
 option(BUILD_MODULE_YSHAREDMEMORY "Build module-ysharedmemory " ON)
-option(BUILD_MODULE_YBASICVALUE "Build module-ybasicvalue " ON)
 option(BUILD_MODULE_YTCPSERVER "Build module-ytcpserver " ON)
 option(BUILD_MODULE_YTCPCLIENT "Build module-ytcpclient " ON)
 option(BUILD_MODULE_YUDPSERVER "Build module-yudpserver " ON)
@@ -129,6 +128,14 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
     #set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -std=c99")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
+    # if gcc > 4.9 add sanitizers
+    if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.1)
+
+        message(STATUS "Enable AddressSanitizer MemorySanitizer")
+        set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize=leak -fsanitize=undefined")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize=leak -fsanitize=undefined")
+    endif()
+
 elseif(ANDROID)
     
 endif()
@@ -174,6 +181,7 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
         set(BUILD_MODULE_YTCPSOCKET "ON")
         set(BUILD_MODULE_YUDPSERVER "ON")
         set(BUILD_MODULE_YUDPSOCKET "ON")
+
 
 
         set(BUILD_MODULE_YTEMP "ON")
