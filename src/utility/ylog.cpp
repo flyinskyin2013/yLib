@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:53
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-14 18:40:29
+ * @LastEditTime: 2020-11-18 16:47:51
  * @Description: 
  */
 
@@ -144,11 +144,13 @@ void yLib::yLog::SetLog4cpp(bool enable_log4cpp, std::string log_path ){
 	
 	if ( enable_log4cpp && (nullptr == _ptr_log4_category_root) ){//true, enable feature of log4cpp
 
-        _b_enable_log4cpp = enable_log4cpp;
-        
         //log4cpp
+        //log4cpp::PropertyConfigurator::configure will throw 'ConfigureFailure' if the method encountered a read or syntax error.
         log4cpp::PropertyConfigurator::configure(log_path);
+        
         _ptr_log4_category_root = & log4cpp::Category::getRoot(); //rootCategory init by log4cpp::PropertyConfigurator::configure()
+
+        _b_enable_log4cpp = enable_log4cpp;
     }
 
 	if ( !enable_log4cpp && (nullptr != _ptr_log4_category_root) ){
