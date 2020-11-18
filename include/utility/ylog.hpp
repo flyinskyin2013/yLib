@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:52
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-14 18:26:13
+ * @LastEditTime: 2020-11-18 16:45:23
  * @Description: 
  */
 
@@ -139,7 +139,19 @@ namespace yLib{
             yLog(yLog && log) = delete;
             yLog && operator=(yLog && log) = delete;
  
-
+            /**
+            * @description: 
+            * Enable or disable log4cpp
+            * 
+            * @param 
+            * enable_log4cpp: if enable log4cpp
+            * log_path: log4cpp's cfg-file
+            * 
+            * @return 
+            * 
+            * @exception
+            * throw a anonymous exception if the log4cpp's cfg-file is invalid.
+            */         
 			static void SetLog4cpp(bool enable_log4cpp = false, std::string log_path = "log4cplus.properties");	
             static void SetLog4cppSubCategory(std::string category_name);
 
