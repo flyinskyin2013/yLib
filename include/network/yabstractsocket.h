@@ -12,9 +12,11 @@
 #include <string>
 #include <cstdint>
 
+#include "core/yobject.hpp"
+
 namespace yLib{
     
-    class yAbstractSocket 
+    class __YLIB_EXPORT__ yAbstractSocket MACRO_PUBLIC_INHERIT_YOBJECT
     {
     private:
 

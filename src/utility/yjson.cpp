@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-10-28 14:15:15
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-18 10:14:21
+ * @LastEditTime: 2020-11-30 16:06:45
  * @Description: 
  */
 
@@ -254,7 +254,7 @@ int yLib::yJson::yJsonSetJsonObject(yJsonValue & obj_val_){
 yLib::yJsonValue::yJsonValue(int64_t value_) noexcept 
 {
 
-    _object_name = "yJsonValue";
+    object_name = "yJsonValue";
 
     _value_type = yJsonValueType::INT64_TYPE;
     _cur_basic_value_type = yBasicValueType::INT64_YBASICVALUE_TYPE;
@@ -264,7 +264,7 @@ yLib::yJsonValue::yJsonValue(int64_t value_) noexcept
 }
 yLib::yJsonValue::yJsonValue(bool value_) noexcept 
 {
-    _object_name = "yJsonValue";
+    object_name = "yJsonValue";
 
     _value_type = yJsonValueType::BOOL_TYPE;
     _cur_basic_value_type = yBasicValueType::BOOL_YBASICVALUE_TYPE;
@@ -275,7 +275,7 @@ yLib::yJsonValue::yJsonValue(bool value_) noexcept
 yLib::yJsonValue::yJsonValue(double value_) noexcept 
 {
 
-    _object_name = "yJsonValue";
+    object_name = "yJsonValue";
 
     _value_type = yJsonValueType::DOUBLE_TYPE;
     _cur_basic_value_type = yBasicValueType::DOUBLE_YBASICVALUE_TYPE;
@@ -286,7 +286,7 @@ yLib::yJsonValue::yJsonValue(double value_) noexcept
 yLib::yJsonValue::yJsonValue(std::string stdstr_) noexcept 
 {
 
-    _object_name = "yJsonValue";
+    object_name = "yJsonValue";
 
     _value_type = yJsonValueType::STRING_TYPE;
     _cur_basic_value_type = yBasicValueType::STRING_YBASICVALUE_TYPE;
@@ -298,7 +298,7 @@ yLib::yJsonValue::yJsonValue(std::string stdstr_) noexcept
 yLib::yJsonValue::yJsonValue(yJsonValueType value_type_) noexcept 
 {
 
-    _object_name = "yJsonValue";
+    object_name = "yJsonValue";
 
     _value_type = value_type_;
 
@@ -330,7 +330,7 @@ yLib::yJsonValue::yJsonValue(yJsonValueType value_type_) noexcept
 yLib::yJsonValue::yJsonValue(const yLib::yJsonValue & value_) noexcept 
 {
 
-    _object_name = "yJsonValue";
+    object_name = "yJsonValue";
 
     _value_type = value_._value_type;
     _cur_basic_value_type = value_._cur_basic_value_type;
@@ -374,7 +374,7 @@ yLib::yJsonValue::yJsonValue(const yLib::yJsonValue & value_) noexcept
 yLib::yJsonValue::yJsonValue(yLib::yJsonValue && value_) noexcept 
 {
 
-    _object_name = "yJsonValue";
+    object_name = "yJsonValue";
 
 
     _value_type = value_._value_type;

@@ -24,12 +24,14 @@ namespace yLib{
     //_MSC_VER >= 1400 //vs 2005 or higher
 
     #ifdef _WIN32
+
         #define __YLIB_EXPORT__ __declspec(dllexport)
         #define __YLIB_IMPORT__ __declspec(dllimport)
 
         #define __YLIB_DEPRECATED_ATTRIBUTE__ __declspec(deprecated)
         #define __YLIB_DEPRECATED_ATTRIBUTE_WITH_MSG__(msg) __declspec(deprecated(msg))
     #elif __linux__ || __linux
+
         #define __YLIB_EXPORT__
         #define __YLIB_IMPORT__
 

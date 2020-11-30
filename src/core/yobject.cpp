@@ -7,7 +7,7 @@
  */
 #include "core/yobject.hpp"
 
-yLib::yObject::yObject(std::string object_name){
+yLib::yObject::yObject(std::string object_name_){
 
-    _object_name = object_name;
+    object_name = object_name_;
 }

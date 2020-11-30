@@ -39,6 +39,8 @@ option(BUILD_MODULE_YMAIN "Build example module-ymain" ON)
 
 #yLib build-all flags
 option(BUILD_ALL_MODULE "build all module flags" ON)
+option(BUILD_EXAMPLE "build example flags" ON)
+option(BUILD_UNIT_TEST "build unit-test flags" ON)
 ################################################################
 
 #----------------------------------------------------------------------------------------
@@ -215,9 +217,13 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/tests/Catch2/inc)
 
 add_subdirectory(src)
 
-add_subdirectory(examples)
+if(BUILD_EXAMPLE)
+    add_subdirectory(examples)
+endif()
 
-add_subdirectory(tests)
+if(BUILD_UNIT_TEST)
+    add_subdirectory(tests)
+endif()
 
 MESSAGE("----------------------------------------------------------------")
 MESSAGE("             ${PROJECT_NAME}'s Configure Information")
