@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-09-20 10:11:02
  * @LastEditors: Sky
- * @LastEditTime: 2019-11-28 19:09:22
+ * @LastEditTime: 2020-11-30 17:38:16
  * @Description: 
  */
 
@@ -10,16 +10,16 @@
 
 #include <iostream>
 
-//LOG_TAIL will add current filename , function-name, line-number
+//LOG_FILE_AND_FUNCTION_INFO_STRING will add current filename , function-name, line-number
 //such as str:<<  FileName=log.cpp  LineNum=40  FuncName=void a::b(log4cpp::Category&)
 int main (int argc, char * argv[]){
 
     std::cout<<" =======================test yLib::yLog==========================="<<std::endl;
 
     yLib::yLog::I( "class call" );
-    yLib::yLog::D( ("class call A %d, %f test ylog" + LOG_TAIL).c_str(), 1234, 66.5555);
-    yLib::yLog::W(("class call A %d, %f test ylog" + LOG_TAIL).c_str(), 1234, 66.5555);
-    yLib::yLog::E(("class call A %d, %f test ylog" + LOG_TAIL).c_str(), 1234, 66.5555);
+    yLib::yLog::D( ("class call A %d, %f test ylog" + LOG_FILE_AND_FUNCTION_INFO_STRING).c_str(), 1234, 66.5555);
+    yLib::yLog::W(("class call A %d, %f test ylog" + LOG_FILE_AND_FUNCTION_INFO_STRING).c_str(), 1234, 66.5555);
+    yLib::yLog::E(("class call A %d, %f test ylog" + LOG_FILE_AND_FUNCTION_INFO_STRING).c_str(), 1234, 66.5555);
 
     yLib::yLog::SetLog4cpp(true);//open log4cpp
     
@@ -43,34 +43,34 @@ int main (int argc, char * argv[]){
         i++;
         
         yLib::yLog::I("object call" );
-        yLib::yLog::E(("object call A %d, %f test ylog" + LOG_TAIL).c_str(), 123, 54.5555);
+        yLib::yLog::E(("object call A %d, %f test ylog" + LOG_FILE_AND_FUNCTION_INFO_STRING).c_str(), 123, 54.5555);
         yLib::yLog::I("class call" );
-        yLib::yLog::D(("class call A %d, %f test ylog" + LOG_TAIL).c_str(), 1234, 66.5555);
-        yLib::yLog::W(("class call A %d, %f test ylog" + LOG_TAIL).c_str(), 1234, 66.5555);
-        yLib::yLog::E(("class call A %d, %f test ylog" + LOG_TAIL).c_str(), 1234, 66.5555);
+        yLib::yLog::D(("class call A %d, %f test ylog" + LOG_FILE_AND_FUNCTION_INFO_STRING).c_str(), 1234, 66.5555);
+        yLib::yLog::W(("class call A %d, %f test ylog" + LOG_FILE_AND_FUNCTION_INFO_STRING).c_str(), 1234, 66.5555);
+        yLib::yLog::E(("class call A %d, %f test ylog" + LOG_FILE_AND_FUNCTION_INFO_STRING).c_str(), 1234, 66.5555);
 
         yLib::yLog::I(log_idx0, "object call" );
-        yLib::yLog::E(log_idx0, ("object call A %d, %f test_ylog0" + LOG_TAIL).c_str(), 123, 54.5555);
+        yLib::yLog::E(log_idx0, ("object call A %d, %f test_ylog0" + LOG_FILE_AND_FUNCTION_INFO_STRING).c_str(), 123, 54.5555);
         yLib::yLog::I(log_idx0, "class call" );
-        yLib::yLog::D(log_idx0, ("class call A %d, %f test_ylog0" + LOG_TAIL).c_str(), 1234, 66.5555);
-        yLib::yLog::W(log_idx0, ("class call A %d, %f test_ylog0" + LOG_TAIL).c_str(), 1234, 66.5555);
-        yLib::yLog::E(log_idx0, ("class call A %d, %f test_ylog0" + LOG_TAIL).c_str(), 1234, 66.5555);
+        yLib::yLog::D(log_idx0, ("class call A %d, %f test_ylog0" + LOG_FILE_AND_FUNCTION_INFO_STRING).c_str(), 1234, 66.5555);
+        yLib::yLog::W(log_idx0, ("class call A %d, %f test_ylog0" + LOG_FILE_AND_FUNCTION_INFO_STRING).c_str(), 1234, 66.5555);
+        yLib::yLog::E(log_idx0, ("class call A %d, %f test_ylog0" + LOG_FILE_AND_FUNCTION_INFO_STRING).c_str(), 1234, 66.5555);
 
         yLib::yLog::I(log_idx1, "object call" );
-        yLib::yLog::E(log_idx1, ("object call A %d, %f test_ylog1" + LOG_TAIL).c_str(), 123, 54.5555);
+        yLib::yLog::E(log_idx1, ("object call A %d, %f test_ylog1" + LOG_FILE_AND_FUNCTION_INFO_STRING).c_str(), 123, 54.5555);
         yLib::yLog::I(log_idx1, "class call" );
-        yLib::yLog::D(log_idx1, ("class call A %d, %f test_ylog1" + LOG_TAIL).c_str(), 1234, 66.5555);
-        yLib::yLog::W(log_idx1, ("class call A %d, %f test_ylog1" + LOG_TAIL).c_str(), 1234, 66.5555);
-        yLib::yLog::E(log_idx1, ("class call A %d, %f test_ylog1" + LOG_TAIL).c_str(), 1234, 66.5555);
+        yLib::yLog::D(log_idx1, ("class call A %d, %f test_ylog1" + LOG_FILE_AND_FUNCTION_INFO_STRING).c_str(), 1234, 66.5555);
+        yLib::yLog::W(log_idx1, ("class call A %d, %f test_ylog1" + LOG_FILE_AND_FUNCTION_INFO_STRING).c_str(), 1234, 66.5555);
+        yLib::yLog::E(log_idx1, ("class call A %d, %f test_ylog1" + LOG_FILE_AND_FUNCTION_INFO_STRING).c_str(), 1234, 66.5555);
     }
     
     yLib::yLog::SetLog4cpp(false);
     yLib::yLog::I("object call" );
-    yLib::yLog::E(("object call A %d, %f test ylog" + LOG_TAIL).c_str(), 123456, 88.5555);
+    yLib::yLog::E(("object call A %d, %f test ylog" + LOG_FILE_AND_FUNCTION_INFO_STRING).c_str(), 123456, 88.5555);
     yLib::yLog::I("class call" );
-    yLib::yLog::D(("class call A %d, %f test ylog" + LOG_TAIL).c_str(), 123456, 88.5555);
-    yLib::yLog::W(("class call A %d, %f test ylog" + LOG_TAIL).c_str(), 123456, 88.5555);
-    yLib::yLog::E(("class call A %d, %f test ylog" + LOG_TAIL).c_str(), 123456, 88.5555);
+    yLib::yLog::D(("class call A %d, %f test ylog" + LOG_FILE_AND_FUNCTION_INFO_STRING).c_str(), 123456, 88.5555);
+    yLib::yLog::W(("class call A %d, %f test ylog" + LOG_FILE_AND_FUNCTION_INFO_STRING).c_str(), 123456, 88.5555);
+    yLib::yLog::E(("class call A %d, %f test ylog" + LOG_FILE_AND_FUNCTION_INFO_STRING).c_str(), 123456, 88.5555);
 
 
 //#define _TEST_ISSUE_USE_XML_LOG_AT_SAME_TIME_SEGMENT_FAULT_ 1
