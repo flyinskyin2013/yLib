@@ -3,7 +3,7 @@
  * @Author: Sky
  * @Date: 2020-03-19 13:50:29
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-14 18:38:37
+ * @LastEditTime: 2020-11-30 16:04:47
  * @FilePath: \yLib\src\ybasicvalue.cpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -228,12 +228,12 @@ yLib::yBasicValue & yLib::yBasicValue::operator=(std::string && value_){
     return *this;
 }
 
-yLib::yBasicValue & yLib::yBasicValue::operator=(const char * value_){
+// yLib::yBasicValue & yLib::yBasicValue::operator=(const char * value_){
 
-    this->_cur_basic_value_type = yLib::yBasicValueType::STRING_YBASICVALUE_TYPE;
-    this->_value_containter._str_value_string = value_;
-    return *this;
-}
+//     this->_cur_basic_value_type = yLib::yBasicValueType::STRING_YBASICVALUE_TYPE;
+//     this->_value_containter._str_value_string = value_;
+//     return *this;
+// }
 
 
 yLib::yBasicValueType yLib::yBasicValue::GetyBasicValueType(void) const{

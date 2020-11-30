@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:53
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-14 18:39:33
+ * @LastEditTime: 2020-11-30 16:06:10
  * @Description: 
  */
 
@@ -339,7 +339,7 @@ yLib::yConfigValue::yConfigValue(const yConfigValue & config_value) noexcept
 : yBasicValue()
 {
 
-    _object_name = "yConfigValue";
+    object_name = "yConfigValue";
 
     this->_current_data_type_ = config_value._current_data_type_;
 
@@ -387,7 +387,7 @@ yLib::yConfigValue::yConfigValue(const yConfigValue & config_value) noexcept
 
 yLib::yConfigValue & yLib::yConfigValue::operator=(const yConfigValue & config_value) noexcept{
 
-    _object_name = "yConfigValue";
+    object_name = "yConfigValue";
 
     this->_current_data_type_ = config_value._current_data_type_;
 
@@ -436,7 +436,7 @@ yLib::yConfigValue & yLib::yConfigValue::operator=(const yConfigValue & config_v
 yLib::yConfigValue::yConfigValue(yConfigValue && config_value) noexcept 
 : yBasicValue()
 {
-    _object_name = "yConfigValue";
+    object_name = "yConfigValue";
 
     this->_current_data_type_ = config_value._current_data_type_;
 
@@ -482,7 +482,7 @@ yLib::yConfigValue::yConfigValue(yConfigValue && config_value) noexcept
 }
 yLib::yConfigValue & yLib::yConfigValue::operator=(yConfigValue && config_value) noexcept{
 
-    _object_name = "yConfigValue";
+    object_name = "yConfigValue";
 
     this->_current_data_type_ = config_value._current_data_type_;
 

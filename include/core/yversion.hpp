@@ -12,7 +12,14 @@
 
 namespace yLib{
 
+    /** \def YLIB_STR
+        \brief Convert __S to string.
+    */
     #define YLIB_STR(__S) YLIB_STR_CONVERT(__S)
+
+    /** \def YLIB_STR_CONVERT
+        \brief Convert __S to string.
+    */
     #define YLIB_STR_CONVERT(__S) #__S
 
     // #define YLIB_VERSION_MAJOR 0

@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-09-20 17:06:18
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-14 18:30:18
+ * @LastEditTime: 2020-11-30 16:46:00
  * @Description: 
  */
 #ifndef __YLIB_CORE_YEXCEPTION_HPP__
@@ -15,6 +15,10 @@
 
 namespace yLib{
 
+    /**
+     *  @struct yExceptionTable
+     *  @brief This is a exception table.
+     */   
     struct yExceptionTable
     {
         /* data */
@@ -23,6 +27,10 @@ namespace yLib{
 
     };
     
+    /**
+     *  @enum yExceptionIdx
+     *  @brief This is a index of exception table
+     */   
     enum yExceptionIdx{
 
         IDX_RESERVE_EXCEPTION = 0,
@@ -30,15 +38,44 @@ namespace yLib{
         
     };
     
+    /**
+     *  @class yException
+     *  @brief This is base-class of the all exception in yLib.
+     */    
     class __YLIB_EXPORT__ yException MACRO_PUBLIC_INHERIT_YOBJECT
     {
     private:
         /* data */
+        /**
+         *  @var _exception_msg
+         *  @brief The exception msg.
+         */   
         std::string _exception_msg;
     public:
-        yException(/* args */) noexcept; 
-        yException(/* args */std::string exception_msg) noexcept; 
+        /**
+         *  @fn    yException()
+         *  @brief Default constructor
+         */
+        yException() noexcept; 
+
+        /**
+         *  @fn    yException()
+         *  @brief Default constructor(overide)
+         *  @param exception_msg the exception msg.
+         */
+        yException(std::string exception_msg) noexcept; 
+
+        /**
+         *  @fn    virtual ~yException() noexcept
+         *  @brief Default destructor
+         */
         virtual ~yException() noexcept; 
+
+        /**
+         *  @fn    virtual const char * what() noexcept
+         *  @brief get the exception msg-str.
+         *  @return the exception msg-str
+         */
         virtual const char * what() noexcept;
     };
 
