@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:52
  * @LastEditors: Sky
- * @LastEditTime: 2020-11-30 17:39:25
+ * @LastEditTime: 2020-11-30 17:54:40
  * @Description: 
  */
 
@@ -408,7 +408,7 @@ namespace yLib{
         static void _ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg_list);
 
         /**
-         *  @fn      static void _ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg_list)
+         *  @fn      static void _ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg_list, std::string & category_name)
          *  @brief   the basic-implement of D I W E
          *  @param   log_type the sub-category name.
          *  @param   fmt the format of info-string.
