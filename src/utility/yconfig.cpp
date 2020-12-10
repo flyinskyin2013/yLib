@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:53
  * @LastEditors: Sky
- * @LastEditTime: 2020-12-10 16:40:45
+ * @LastEditTime: 2020-12-10 16:55:31
  * @Description: 
  */
 
@@ -357,3 +357,46 @@ yLib::yConfigValue & yLib::yConfigValue::operator=(const char *value_){
     return (*this);
 }
 
+/**
+ * @fn  operator uint32_t() const
+ * @brief convert yConfigValue to uint32_t
+ * @return return a uint32_t's val from obj.
+ */
+yLib::yConfigValue::operator uint32_t() const
+{
+    return value_containter.uint32_val;
+}
+
+/**
+ * @fn  operator bool() const
+ * @brief convert yConfigValue to bool
+ * @return return a bool's val from obj.
+ */
+yLib::yConfigValue::operator bool() const
+{
+    return value_containter.bool_val;
+}
+
+
+/**
+ * @fn  operator float() const
+ * @brief convert yConfigValue to float
+ * @return return a float's val from obj.
+ */
+yLib::yConfigValue::operator float() const
+{
+
+    return value_containter.float_val;
+}
+
+
+/**
+ * @fn  operator std::string() const
+ * @brief convert yConfigValue to std::string
+ * @return return a std::string's val from obj.
+ */
+yLib::yConfigValue::operator std::string() const
+{
+
+    return value_containter.string_val;
+}
