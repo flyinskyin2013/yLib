@@ -3,7 +3,7 @@
  * @Author: Sky
  * @Date: 2020-03-19 13:50:15
  * @LastEditors: Sky
- * @LastEditTime: 2020-12-10 15:12:17
+ * @LastEditTime: 2020-12-10 16:33:38
  * @FilePath: \yLib\include\core\ybasicvalue.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -224,12 +224,20 @@ namespace yLib{
         explicit yValue(double value_) noexcept;
 
         /**
-         * @fn  explicit yValue(std::string value_) noexcept
+         * @fn  explicit yValue(std::string &value_) noexcept
          * @brief override constructor
          * @param value_ the initial val.
          * @return 
          */
         explicit yValue(const std::string & value_) noexcept;
+
+        /**
+         * @fn  explicit yValue(const char *value_) noexcept
+         * @brief override constructor
+         * @param value_ the initial val.
+         * @return 
+         */
+        explicit yValue(const char *value_) noexcept;
 
         /**
          * @fn  yValue(yValueType type_, void * value_) noexcept
@@ -408,6 +416,12 @@ namespace yLib{
          */
         virtual yValue & operator=(const std::string &value_);
 
+        /**
+         * @fn  virtual yValue & operator=(const char *value_)
+         * @brief convert char * to exsited obj of yValue
+         * @return return obj of yValue
+         */
+        virtual yValue & operator=(const char *value_);
 
         /**
          * @fn  virtual yValueType GetType(void) const
