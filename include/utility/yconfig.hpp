@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:52
  * @LastEditors: Sky
- * @LastEditTime: 2020-12-10 16:38:45
+ * @LastEditTime: 2020-12-10 16:55:59
  * @Description: 
  */
 
@@ -153,35 +153,35 @@ namespace yLib{
          */    
         yConfigValue & operator=(const char *value_);
             
-        // /**
-        //  * @fn  virtual operator uint32_t() const
-        //  * @brief convert yConfigValue to uint32_t
-        //  * @return return a uint32_t's val from obj.
-        //  */
-        // operator uint32_t() const;
+        /**
+         * @fn  operator uint32_t() const
+         * @brief convert yConfigValue to uint32_t
+         * @return return a uint32_t's val from obj.
+         */
+        operator uint32_t() const;
 
-        // /**
-        //  * @fn  virtual operator bool() const
-        //  * @brief convert yConfigValue to bool
-        //  * @return return a bool's val from obj.
-        //  */
-        // operator bool() const;
-
-
-        // /**
-        //  * @fn  virtual operator float() const
-        //  * @brief convert yConfigValue to float
-        //  * @return return a float's val from obj.
-        //  */
-        // operator float() const;
+        /**
+         * @fn  operator bool() const
+         * @brief convert yConfigValue to bool
+         * @return return a bool's val from obj.
+         */
+        operator bool() const;
 
 
-        // /**
-        //  * @fn  virtual operator std::string() const
-        //  * @brief convert yConfigValue to std::string
-        //  * @return return a std::string's val from obj.
-        //  */
-        // operator std::string() const;
+        /**
+         * @fn  operator float() const
+         * @brief convert yConfigValue to float
+         * @return return a float's val from obj.
+         */
+        operator float() const;
+
+
+        /**
+         * @fn  operator std::string() const
+         * @brief convert yConfigValue to std::string
+         * @return return a std::string's val from obj.
+         */
+        operator std::string() const;
 
         friend class yConfig;
 
