@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:52
  * @LastEditors: Sky
- * @LastEditTime: 2020-12-07 14:22:59
+ * @LastEditTime: 2020-12-10 16:38:45
  * @Description: 
  */
 
@@ -73,6 +73,15 @@ namespace yLib{
          * @return 
          */
         explicit yConfigValue(const std::string &value_) noexcept;
+        
+        /**
+         * @fn  explicit yConfigValue(const char *value_) noexcept
+         * @brief override constructor
+         * @param value_ the initial val.
+         * @return 
+         */
+        explicit yConfigValue(const char *value_) noexcept;
+
 
         /**
          * @fn  yConfigValue(const yConfigValue &value_)
@@ -136,7 +145,14 @@ namespace yLib{
          */    
         yConfigValue & operator=(const std::string &value_);
 
-        
+        /**
+         * @fn  yConfigValue & operator=(const char *value_)
+         * @brief convert char * to exsited obj of yConfigValue
+         * @param value_ std::string value.
+         * @return return obj of yConfigValue
+         */    
+        yConfigValue & operator=(const char *value_);
+            
         // /**
         //  * @fn  virtual operator uint32_t() const
         //  * @brief convert yConfigValue to uint32_t
