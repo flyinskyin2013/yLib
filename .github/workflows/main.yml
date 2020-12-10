@@ -38,6 +38,11 @@ jobs:
         make
         make install
 
+    - name: test ylib
+      working-directory: /home/runner/work/yLib/yLib/build
+      run: |
+        cd install/tests
+        ./scripts_for_tests.sh
         
 
 

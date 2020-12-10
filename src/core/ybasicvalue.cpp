@@ -3,7 +3,7 @@
  * @Author: Sky
  * @Date: 2020-03-19 13:50:29
  * @LastEditors: Sky
- * @LastEditTime: 2020-12-10 16:36:45
+ * @LastEditTime: 2020-12-10 18:44:19
  * @FilePath: \yLib\src\ybasicvalue.cpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -633,6 +633,7 @@ void yLib::yValue::CopyValueContainer(const yValue & src_, yValue & dst_){
 
     dst_.value_containter.bool_val = src_.value_containter.bool_val;
 
+    dst_.value_containter.string_val = src_.value_containter.string_val;
     
     dst_.value_containter.object_val = src_.value_containter.object_val;
     dst_.value_containter.array_val = src_.value_containter.array_val;

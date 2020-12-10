@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-04-23 17:18:50
  * @LastEditors: Sky
- * @LastEditTime: 2020-05-13 16:37:34
+ * @LastEditTime: 2020-12-10 18:19:27
  * @Description: 
  */
 
@@ -104,14 +104,14 @@ int8_t yLib::yShell::RunShellCommandEx(std::vector<std::string> & cmd_, std::vec
 
         parse_cmd_array[_iter - cmd_.begin()] = (char *)_iter->c_str();
     }
-    parse_cmd_array[cmd_.size() + 1] = NULL;
+    parse_cmd_array[cmd_.size()] = NULL;
 
 
     for (auto _iter = cmd_env_.begin(); _iter != cmd_env_.end(); _iter ++){
 
         parse_cmd_env_array[_iter - cmd_env_.begin()] = (char *)_iter->c_str();
     }
-    parse_cmd_env_array[cmd_env_.size() + 1] = NULL;
+    parse_cmd_env_array[cmd_env_.size()] = NULL;
 
 
     //we can call popen , but it can't set env.so we use uname execv and uname-pipe
@@ -143,9 +143,36 @@ int8_t yLib::yShell::RunShellCommandEx(std::vector<std::string> & cmd_, std::vec
         if ( WIFEXITED(status) ){
             
             if ( WEXITSTATUS(status) != 0 ){
-
-                yLib::yLog::E("WEXITSTATUS is not 0, WEXITSTATUS is %d", WEXITSTATUS(status));
                 
+                yLib::yLog::E("WEXITSTATUS is not 0, WEXITSTATUS is %d .", WEXITSTATUS(status));
+
+                FILE * _ret_read_stream = fdopen(_pipe_fd[0], "r");
+                while ( 1 ){
+                    
+                    memset(result_read_buffer, 0, _result_line_buf_size + 1);
+                    if ( NULL == fgets(result_read_buffer, _result_line_buf_size, _ret_read_stream) ){
+
+                        break;//have no charactor or error
+                    }
+                    else {
+                        
+                        int64_t _read_line_num = std::strlen(result_read_buffer);
+
+                        if ('\n' == result_read_buffer[_read_line_num - 1]){
+
+                            result_read_buffer[_read_line_num - 1] = 0x00;//get rid of '\n'
+                            cmd_result_.push_back(result_read_buffer);//push per line to result vec
+                        }
+                        else
+                            cmd_result_.push_back(result_read_buffer);//push per line to result vec
+
+
+                        yLib::yLog::E("ErrorInfo is %s", result_read_buffer);
+                    }
+                }
+
+                fclose(_ret_read_stream);//
+
                 close(_pipe_fd[0]);//close pipe read
                 //close(_pipe_fd[1]);
                 return -1;
@@ -196,16 +223,20 @@ int8_t yLib::yShell::RunShellCommandEx(std::vector<std::string> & cmd_, std::vec
 
             if ( STDOUT_FILENO != dup2(_pipe_fd[1], STDOUT_FILENO)){
 
-                yLib::yLog::E("copy stdout to write-pipe failed.errno is %d", errno);
+                yLib::yLog::E("copy stdout to write-pipe failed. errno is %d", errno);
                 close(_pipe_fd[1]);
                 _exit(127);
             }
         }
 
         int _ret = 0;
-        if ( 0 > (_ret = execve(parse_cmd_array[0],parse_cmd_array + 1, parse_cmd_env_array)) ){
+        if ( 0 > (_ret = execve(parse_cmd_array[0], parse_cmd_array + 1, parse_cmd_env_array)) ){
             
-            yLib::yLog::E("execve failed.errno is %d", errno);
+            // yLib::yLog::E("execve failed.errno is %d", errno); 
+            //we can't use yLib::yLog::X, because stdout is connected with _pipe_fd[1]
+            std::string _e_msg = std::string("execve failed. errno is ") + std::to_string(errno);
+            ::write(_pipe_fd[1], _e_msg.c_str(), _e_msg.length());
+
             close(_pipe_fd[1]);
             _exit(127);
         }
