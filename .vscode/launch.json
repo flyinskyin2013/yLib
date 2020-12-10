@@ -19,7 +19,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/install/tests/test_unit_yjson",
+            "program": "${workspaceFolder}/build/install/tests/test_unit_yshell",
             //"program": "${workspaceFolder}/build/install/examples/test_yjson",
             // "program":"/home/sky/WorkDir/AMQP-CPP/build/install/MqRelationship/build/test_mq",
             "args": ["-s"],

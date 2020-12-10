@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:53
  * @LastEditors: Sky
- * @LastEditTime: 2020-12-10 16:55:31
+ * @LastEditTime: 2020-12-10 17:24:06
  * @Description: 
  */
 
@@ -14,6 +14,7 @@ using namespace yLib;
 #define CONVERT_POINTER_TO_LIBCONFIG_CONFIG_INSTANCE(pointer)\
     static_cast<libconfig::Config *>(config_instance)
 
+static yLib::yConfigValue g_yconfig_value_default_obj;
 
 yLib::yConfig::yConfig() 
 MACRO_INIT_YOBJECT_PROPERTY(yConfig), 
@@ -112,7 +113,7 @@ yLib::yConfigValue yLib::yConfig::GetValue(const std::string &node_path_) {
 		}
         case libconfig::Setting::Type::TypeString:{
 
-            std::string _result_str = (const char *)(*_setting_value);
+            std::string _result_str = _setting_value->operator const char *();
             _tmpValue = _result_str;
             break;
 		}
