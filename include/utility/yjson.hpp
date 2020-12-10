@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-10-28 14:16:37
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-14 18:27:17
+ * @LastEditTime: 2020-12-10 15:34:14
  * @Description: 
  */
 
@@ -13,132 +13,343 @@
 #include "core/ybasicvalue.hpp"
 #include "ylog.hpp"
 
-
 #include <memory>
 #include <cstring>
-
-namespace Json{
-
-    class CharReader;
-    class CharReaderBuilder;
-    class StreamWriter;
-    class StreamWriterBuilder;
-    class Value;
-}
+#include <unordered_map>
+#include <utility>
 
 namespace yLib{
     class yJsonValue;
-
+    /**
+     *  @class yJson
+     *  @brief This is a tool to parse the json file.
+     */
     class __YLIB_EXPORT__ yJson  MACRO_PUBLIC_INHERIT_YOBJECT
     {
     private:
         /* data */
+        
     public:
+        /**
+         * @fn  yJson() noexcept
+         * @brief default constructor
+         * @param 
+         * @return 
+         * @warning 
+         */
         yJson(/* args */) noexcept;
+
+        /**
+         * @fn  ~yJson() noexcept
+         * @brief default destructor
+         * @param 
+         * @return 
+         */
         ~yJson();
 
         //I/O,Defaultly, json-str decode or encode  by utf-8
-        int yJsonReadFile(std::string file);
-        int yJsonReadMemory(const int8_t * mem_addr, uint64_t mem_size);
-        int yJsonWriteFile(std::string file);
-        int yJsonWriteMemory(int8_t * mem_addr, uint64_t mem_max_size);
+        /**
+         * @fn  int8_t ReadFile(const std::string &file_path_)
+         * @brief parse json object from json-file.
+         * @param file_path_ the json-file.
+         * @return this op's status.
+         * @retval 0 ok.
+         * @retval -1 error.
+         * @warning 
+         */
+        int8_t ReadFile(const std::string &file_path_);
+        /**
+         * @fn  int8_t ReadMemory(const int8_t * addr_, uint64_t size_)
+         * @brief parse json object from memory.
+         * @param addr_ the mem's addr to be parsed.
+         * @param size_ the mem's size to be parsed.
+         * @return this op's status.
+         * @retval 0 ok.
+         * @retval -1 error.
+         * @warning 
+         */
+        int8_t ReadMemory(const int8_t * addr_, uint64_t size_);
+        
+        /**
+         * @fn  int8_t WriteFile(const std::string &file_path_)
+         * @brief write the str of a json object to a json-file.
+         * @param file_path_ the json-file.
+         * @return this op's status.
+         * @retval 0 ok.
+         * @retval -1 error.
+         * @warning 
+         */
+        int8_t WriteFile(const std::string &file_path_);
+        /**
+         * @fn  int8_t WriteMemory(int8_t * addr_, uint64_t max_size_)
+         * @brief write the str of a json object to memory.
+         * @param addr_ the mem's addr to be written.
+         * @param max_size_ the max mem's size to be written.
+         * @return this op's status.
+         * @retval 0 ok.
+         * @retval -1 error.
+         * @warning 
+         */
+        int8_t WriteMemory(int8_t * addr_, uint64_t max_size_);
 
-        //deprecate apis
-        __YLIB_DEPRECATED_ATTRIBUTE__ yJsonValue yJsonGetValue(void);
-        __YLIB_DEPRECATED_ATTRIBUTE__ int yJsonWriteValue(yJsonValue & value);
-
-        yJsonValue  yJsonGetParsedJsonObject(void);
-        int yJsonSetJsonObject(yJsonValue & obj_val_);
+        /**
+         * @fn  yJsonValue GetRootObject(void)
+         * @brief get the root-obj of json to be read.
+         * @return the obj of yJsonValue
+         * @warning 
+         */
+        yJsonValue GetRootObject(void);
+        /**
+         * @fn  int8_t SetRootObject(const yJsonValue & val_)
+         * @brief set the root-obj of json to be written.
+         * @param value_ the root-obj
+         * @return this op's status.
+         * @retval 0 ok.
+         * @retval -1 error.
+         * @warning 
+         */
+        int8_t SetRootObject(const yJsonValue & value_);
     private:
-        Json::CharReader * _json_reader = nullptr;
-        Json::CharReaderBuilder * _json_reader_builder = nullptr;
-        Json::StreamWriter * _json_writer = nullptr;
-        Json::StreamWriterBuilder * _json_writer_builder = nullptr;
-
-
-        Json::Value * _json_root_value = nullptr;
-
-        char * _json_str_buf = nullptr;
+        void * json_reader = nullptr;
+        void * json_reader_builder = nullptr;
+        void * json_writer = nullptr;
+        void * json_writer_builder = nullptr;
+        void * json_root_value = nullptr;
     };
 
-
+    /**
+     *  @class yJsonValue
+     *  @brief This is the yJson's value-container, it inherits from yValue.
+     */
     class __YLIB_EXPORT__ yJsonValue  :public yBasicValue
     {
     public:
         friend class yJson;
-        enum yJsonValueType{
-            
-            //basic type
-            NONE_TYPE = 0,
-            INT64_TYPE = 1,
-            BOOL_TYPE = 2,
-            FLOAT_TYPE = 3,
-            DOUBLE_TYPE = 4,
-            STRING_TYPE = 5,
-            
-            //some other type
-            ARRAY_TYPE = 100, // []
-            OBJECT_TYPE = 101, // {}
-            NULL_TYPE = 102, //null
-            ERROR_TYPE = 200,
-        };
 
-        yJsonValueType _value_type = yJsonValueType::NONE_TYPE;
     private:
-        /* data */
-        /*
-        int64_t _int64_value = 0;
-        bool _boolean_value = false;
-        double _double_value = 0.0f;
-        std::string _stdstring_value = "";
-        */
-       
-        Json::Value * _json_root_value = nullptr ;
-        
-        //special for operator[](char * str)
-        Json::Value * _json_root_value_bak = nullptr;
+        void * json_value;
+        typedef std::unordered_map<std::string, yJsonValue> yJsonValueHolderMap;
+        std::unordered_map<std::string, yJsonValue> * value_holder_map;
+        /**
+         * @fn yJsonValue(bool build_special_, void * ptr_) noexcept
+         * @brief sepacial constructor, we will build a empty obj.
+         * @param 
+         * @return 
+         * @warning this will set a flag that controls the desconstructer's behavior, this op is only used by yJsonValue.
+         */
+        yJsonValue(bool build_special_, void * ptr_) noexcept;
+        bool is_special_obj;
     public:
+        /**
+         * @fn  yJsonValue() noexcept
+         * @brief default constructor
+         * @param 
+         * @return 
+         * @warning 
+         */
+        yJsonValue() noexcept;
         
-
-        //yJsonValue(/*Value args */) noexcept;
-        //special yJsonValue
+        //special constructor
+        /**
+         * @fn  explicit yJsonValue(int64_t value_) noexcept
+         * @brief override constructor
+         * @param value_ the initial val.
+         * @return 
+         * @warning 
+         */
         explicit yJsonValue(int64_t value_) noexcept;
+        /**
+         * @fn  explicit yJsonValue(uint64_t value_) noexcept
+         * @brief override constructor
+         * @param value_ the initial val.
+         * @return 
+         * @warning 
+         */
+        explicit yJsonValue(uint64_t value_) noexcept;
+
+        /**
+         * @fn  explicit yJsonValue(bool value_) noexcept
+         * @brief override constructor
+         * @param value_ the initial val.
+         * @return 
+         * @warning 
+         */        
         explicit yJsonValue(bool value_) noexcept;
+
+        /**
+         * @fn  explicit yJsonValue(double value_) noexcept
+         * @brief override constructor
+         * @param value_ the initial val.
+         * @return 
+         * @warning 
+         */             
         explicit yJsonValue(double value_) noexcept;
-        explicit yJsonValue(std::string stdstr_) noexcept;
-        explicit yJsonValue(yJsonValueType value_type_ = NULL_TYPE) noexcept;
+
+        /**
+         * @fn  explicit yJsonValue(std::string value_) noexcept
+         * @brief override constructor
+         * @param value_ the initial val.
+         * @return 
+         * @warning 
+         */             
+        explicit yJsonValue(std::string value_) noexcept;
+
+        /**
+         * @fn  explicit yJsonValue(yValueType type_) noexcept
+         * @brief override constructor
+         * @param type_ the initial type.
+         * @return 
+         * @warning 
+         */             
+        explicit yJsonValue(yValueType type_) noexcept;
         
+        /**
+         * @fn  ~yJsonValue() noexcept
+         * @brief default destructor
+         * @param 
+         * @return 
+         */
         ~yJsonValue();
 
         //copy and move constructor, not deep copy,_json_root_value==value_._json_root_value
+        /**
+         * @fn  yJsonValue(const yJsonValue &value_)
+         * @brief copy constructor
+         * @param value_ a exsited obj
+         * @return 
+         */
         yJsonValue(const yJsonValue & value_) noexcept;
-        yJsonValue(yJsonValue && value_) noexcept;
+        /**
+         * @fn  yJsonValue(const yJsonValue &value_)
+         * @brief move constructor
+         * @param value_ a exsited obj
+         * @return 
+         */
+        yJsonValue(const yJsonValue && value_) noexcept;
 
-        yJsonValue & operator =(const yJsonValue & value_) noexcept;
-        yJsonValue & operator =(yJsonValue && value_) noexcept;
-/*
-        operator int64_t();
-        operator bool();
-        operator double();
-        operator std::string();
-*/
+        /**
+         * @fn  yJsonValue & operator=(const yJsonValue &value_) noexcept
+         * @brief assignment func
+         * @param value_ a exsited obj
+         * @return the obj's reference of yJsonValue
+         * @warning this op will swap value_ and *this, deep copy
+         */
+        yJsonValue & operator=(const yJsonValue & value_) noexcept;
+        /**
+         * @fn  yJsonValue & operator=(const yJsonValue &&value_) noexcept
+         * @brief assignment func
+         * @param value_ a exsited obj
+         * @return the obj's reference of yJsonValue
+         * @warning this op will swap value_ and *this, deep copy
+         */
+        yJsonValue & operator=(const yJsonValue && value_) noexcept;
 
-        yJsonValue & operator=(int64_t value);
-        yJsonValue & operator=(bool value);
-        //Important notes: the float-type is treated as double-type.
-        // yJsonValue & operator=(float value);
-        yJsonValue & operator=(double value);
-        yJsonValue & operator=(std::string & value);
-        yJsonValue & operator=(std::string && value);
-        yJsonValue & operator=(const char * value);
 
+        //other op
+        /**
+         * @fn  yJsonValue & operator=(int64_t value_) noexcept
+         * @brief assignment func
+         * @param value_ a exsited obj
+         * @return the obj's reference of yJsonValue
+         */
+        yJsonValue & operator=(int64_t value_) noexcept;
+        /**
+         * @fn  yJsonValue & operator=(uint64_t value_) noexcept
+         * @brief assignment func
+         * @param value_ a exsited obj
+         * @return the obj's reference of yJsonValue
+         */        
+        yJsonValue & operator=(uint64_t value_) noexcept;
+        /**
+         * @fn  yJsonValue & operator=(bool value_) noexcept
+         * @brief assignment func
+         * @param value_ a exsited obj
+         * @return the obj's reference of yJsonValue
+         */
+        yJsonValue & operator=(bool value_) noexcept;
+        /**
+         * @fn  yJsonValue & operator=(double value_) noexcept
+         * @brief assignment func
+         * @param value_ a exsited obj
+         * @return the obj's reference of yJsonValue
+         */
+        yJsonValue & operator=(double value_) noexcept;
+        /**
+         * @fn  yJsonValue & operator=(const std::string &value_) noexcept
+         * @brief assignment func
+         * @param value_ a exsited obj
+         * @return the obj's reference of yJsonValue
+         */        
+        yJsonValue & operator=(const std::string &value_) noexcept;
+        /**
+         * @fn  yJsonValue & operator=(const char *value_) noexcept
+         * @brief assignment func
+         * @param value_ a exsited obj
+         * @return the obj's reference of yJsonValue
+         */        
+        yJsonValue & operator=(const char *value_) noexcept;
 
-        yJsonValue operator [](std::string key_str);
-        yJsonValue operator [](const char * key_str);
-        yJsonValue operator [](uint64_t elment_idx);
-
-        //yJsonValue & operator =(yJsonValue value_);//
+        /**
+         * @fn  yJsonValue & operator [](const std::string &key_)
+         * @brief search key_'s value
+         * @param key_ the key_ to search
+         * @return the obj's reference of yJsonValue
+         * @warning the same as yJsonValue & operator [](const char *key_). @see yJsonValue & operator [](const char *key_)
+         */     
+        yJsonValue & operator [](const std::string &key_);
+        /**
+         * @fn  yJsonValue & operator [](const char *key_)
+         * @brief search key_'s value
+         * @param key_ the key_ to search
+         * @return the obj's reference of yJsonValue
+         * @warning if the obj's type is not object-type, this op will throw a exception.
+         */     
+        yJsonValue & operator [](const char *key_);
         
+        /**
+         * @fn  yJsonValue & operator [](uint64_t idx_)
+         * @brief get idx_'s value of json-array
+         * @param idx_ the value's idx
+         * @return the obj's reference of yJsonValue
+         * @warning if the obj's type is not array-type, this op will throw a exception.
+         */             
+        yJsonValue & operator [](uint64_t idx_);
+
+        /**
+         * @fn operator int64_t() const
+         * @brief convert yJsonValue to int64_t
+         * @return return a int64_t's val from obj.
+         */
+        operator int64_t();
+
+        /**
+         * @fn operator uint64_t() const
+         * @brief convert yJsonValue to uint64_t
+         * @return return a uint64_t's val from obj.
+         */
+        operator uint64_t();
+
+        /**
+         * @fn operator bool() const
+         * @brief convert yJsonValue to bool
+         * @return return a bool's val from obj.
+         */
+        operator bool();
+
+        /**
+         * @fn operator double() const
+         * @brief convert yJsonValue to double
+         * @return return a double's val from obj.
+         */
+        operator double();
+
+        /**
+         * @fn operator std::string() const
+         * @brief convert yJsonValue to std::string
+         * @return return a std::string's val from obj.
+         */
+        operator std::string();
+
     };
 
     

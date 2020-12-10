@@ -7,6 +7,11 @@
  -->
 Version Notes:
 ==========
+v0.0.9
+----------
+    1 Reconstructed yBasicValue/yConfig,yConfigValue/yJson,yJsonValue.
+    2 Release api docs by doxygen.
+
 v0.0.8
 ----------
     1 Optimize cmake-structure and source-codes-structure.
