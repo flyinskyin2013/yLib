@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:53
  * @LastEditors: Sky
- * @LastEditTime: 2020-12-07 14:23:08
+ * @LastEditTime: 2020-12-10 16:40:45
  * @Description: 
  */
 
@@ -289,6 +289,12 @@ yLib::yConfigValue::yConfigValue(const std::string &value_) noexcept
     object_name = YLIB_STR(yConfigValue);
 }
 
+yLib::yConfigValue::yConfigValue(const char *value_) noexcept
+:yValue(value_)
+{
+    object_name = YLIB_STR(yConfigValue);
+}
+
 yLib::yConfigValue::yConfigValue(const yConfigValue &value_) noexcept
 :yBasicValue()
 {
@@ -340,6 +346,11 @@ yLib::yConfigValue & yLib::yConfigValue::operator=(float value_){
     return (*this);
 }
 yLib::yConfigValue & yLib::yConfigValue::operator=(const std::string &value_){
+
+    return operator=(value_.c_str());
+}
+
+yLib::yConfigValue & yLib::yConfigValue::operator=(const char *value_){
 
     this->CleanAllToDefault();
     yLib::yBasicValue::CopyValueContainer(yValue(value_), *this);

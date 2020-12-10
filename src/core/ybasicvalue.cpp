@@ -3,7 +3,7 @@
  * @Author: Sky
  * @Date: 2020-03-19 13:50:29
  * @LastEditors: Sky
- * @LastEditTime: 2020-12-10 15:12:01
+ * @LastEditTime: 2020-12-10 16:36:45
  * @FilePath: \yLib\src\ybasicvalue.cpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -215,6 +215,15 @@ MACRO_INIT_YOBJECT_PROPERTY(yValue)
     cur_value_type = yValueType::STRING_TYPE;
 }
 
+yLib::yValue::yValue(const char * value_) noexcept
+MACRO_INIT_YOBJECT_PROPERTY(yValue)
+{
+
+    CleanAllToDefault();
+
+    value_containter.string_val = value_; 
+    cur_value_type = yValueType::STRING_TYPE;
+}
 
 yLib::yValue::yValue(yValueType type_, void * value_) noexcept
 MACRO_INIT_YOBJECT_PROPERTY(yValue)
@@ -496,6 +505,11 @@ yLib::yValue & yLib::yValue::operator=(bool value_)
  */
 yLib::yValue & yLib::yValue::operator=(const std::string &value_)
 {
+    return operator=(value_.c_str());
+}
+
+yLib::yValue & yLib::yValue::operator=(const char *value_)
+{
     CleanAllToDefault();
 
     cur_value_type = yValueType::STRING_TYPE;
@@ -503,8 +517,6 @@ yLib::yValue & yLib::yValue::operator=(const std::string &value_)
 
     return *this;
 }
-
-
 
 yLib::yValue::yValueType yLib::yValue::GetType(void) const
 {
