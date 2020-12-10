@@ -487,3 +487,13 @@ build_basic_algorithm(yLinkedList)
 build_basic_algorithm(yStack)
 build_basic_algorithm(yQueue)
 ##########################################################################
+
+INSTALL(FILES
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/scripts_for_tests.sh
+    DESTINATION 
+    tests
+    PERMISSIONS
+    OWNER_READ
+    OWNER_EXECUTE
+)

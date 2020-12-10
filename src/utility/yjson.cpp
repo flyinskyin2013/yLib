@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-10-28 14:15:15
  * @LastEditors: Sky
- * @LastEditTime: 2020-11-30 16:06:45
+ * @LastEditTime: 2020-12-10 15:13:24
  * @Description: 
  */
 
@@ -12,79 +12,104 @@
 
 #include <fstream>
 
-yLib::yJson::yJson() noexcept MACRO_INIT_YOBJECT_PROPERTY(yJson){
+yLib::yJson::yJson() noexcept 
+MACRO_INIT_YOBJECT_PROPERTY(yJson),
+json_reader(nullptr),
+json_reader_builder(nullptr),
+json_writer(nullptr),
+json_writer_builder(nullptr),
+json_root_value(nullptr)
+{
+    //write
+    json_writer_builder = new Json::StreamWriterBuilder();
+    json_writer = static_cast<Json::StreamWriterBuilder*>(json_writer_builder)->newStreamWriter();
 
-    _json_writer_builder = new Json::StreamWriterBuilder();
-    _json_reader_builder = new Json::CharReaderBuilder();
-    _json_root_value = new Json::Value(Json::ValueType::nullValue);
+    //copy
+    json_reader_builder = new Json::CharReaderBuilder();
+    json_reader = static_cast<Json::CharReaderBuilder*>(json_reader_builder)->newCharReader();
+    
+    json_root_value = new Json::Value(Json::ValueType::nullValue);
 }
 
 yLib::yJson::~yJson(){
 
-    if ( nullptr != _json_writer_builder ){
+    //write
+    if ( nullptr != json_writer_builder ){
 
-        delete _json_writer_builder;
+        delete static_cast<Json::StreamWriterBuilder*>(json_writer_builder);
+        json_writer_builder = nullptr;
     }
-    _json_writer_builder = nullptr;
+    if (nullptr != json_writer){
 
-
-    if ( nullptr != _json_reader_builder ){
-
-        delete _json_reader_builder;
+        delete static_cast<Json::StreamWriter*>(json_writer);
+        json_writer = nullptr;
     }
-    _json_reader_builder = nullptr;
 
-    if ( nullptr != _json_root_value ){
+    //read
+    if ( nullptr != json_reader_builder ){
 
-        delete _json_root_value;
+        delete static_cast<Json::CharReaderBuilder*>(json_reader_builder);
+        json_reader_builder = nullptr;
     }
-    _json_root_value = nullptr;
+    if (nullptr != json_reader){
+
+        delete static_cast<Json::CharReader*>(json_reader);
+        json_reader = nullptr;
+    }
+
+
+    if ( nullptr != json_root_value ){
+
+        delete static_cast<Json::Value*>(json_root_value);
+        json_root_value = nullptr;
+    }
+    
 }
 
 
-int yLib::yJson::yJsonReadFile(std::string file){
+int8_t yLib::yJson::ReadFile(const std::string &file_path_){
 
-    _json_reader_builder->setDefaults(&_json_reader_builder->settings_);
+    //reset settings_
+    static_cast<Json::CharReaderBuilder*>(json_reader_builder)->setDefaults(&static_cast<Json::CharReaderBuilder*>(json_reader_builder)->settings_);
+
+    std::ifstream _in_file;
     
-    // //get a new json value
-    // if (nullptr == _json_root_value){
+    _in_file.open(file_path_);
 
-    //     _json_root_value = new Json::Value(Json::ValueType::nullValue);
-    // }
-    // else
-    // {
-    //     delete _json_root_value;//remove exsited json value
-    //     _json_root_value = new Json::Value(Json::ValueType::nullValue);
-    // }
-    
+    if ( _in_file.is_open() ){
 
-    
-    std::ifstream in_file;
-    
-    in_file.open(file);
+        _in_file.seekg(0, _in_file.end);
+        int64_t _file_len = _in_file.tellg();
+        _in_file.seekg(0, _in_file.beg);
 
-    if ( in_file.is_open() ){
+        char * _json_str_buf = nullptr;
+        try
+        {
+            _json_str_buf = new char[_file_len];
+        }
+        catch(const std::exception& e)
+        {
+            yLib::yLog::E("Allocate memory failed.please check the usage of memory");
+            _in_file.close();
+            return -1;
+        }
 
-        in_file.seekg(0, in_file.end);
-        int64_t file_len = in_file.tellg();
-        in_file.seekg(0, in_file.beg);
+        _in_file.read(_json_str_buf, _file_len);
 
-        _json_str_buf = new char[file_len];
-
-        in_file.read(_json_str_buf, file_len);
-
-        in_file.close();
+        _in_file.close();
         
-        std::string parse_error = "";
+        std::string _parse_error = "";
         //JSONCPP_STRING parse_error = "";
         //begin of buffer, end of buffer + len
-        bool parse_ret = _json_reader_builder->newCharReader()->parse(_json_str_buf, \
-            _json_str_buf + file_len, _json_root_value, &parse_error);
+        bool _parse_ret = static_cast<Json::CharReader*>(json_reader)->parse(_json_str_buf, \
+            _json_str_buf + _file_len, static_cast<Json::Value*>(json_root_value), &_parse_error);
         
-        delete [] _json_str_buf;
-        if ( !parse_ret ){
+        delete [] _json_str_buf;//delete mem
+        _json_str_buf = nullptr;
 
-            yLib::yLog::E("parse json str error, error info is %s, file read len is %d", parse_error.c_str(), file_len);
+        if (!_parse_ret){
+
+            yLib::yLog::E("parse json str error, error info is %s, file read len is %d", _parse_error.c_str(), _file_len);
             return -1;
         }
     }
@@ -96,798 +121,763 @@ int yLib::yJson::yJsonReadFile(std::string file){
 
     return 0;
 }
-int yLib::yJson::yJsonReadMemory(const int8_t * mem_addr, uint64_t mem_size){
+int8_t yLib::yJson::ReadMemory(const int8_t * addr_, uint64_t size_){
     
-    _json_reader_builder->setDefaults(&_json_reader_builder->settings_);
+    static_cast<Json::CharReaderBuilder*>(json_reader_builder)->setDefaults(&static_cast<Json::CharReaderBuilder*>(json_reader_builder)->settings_);
 
-    // //get a new json value
-    // if (nullptr == _json_root_value){
+    std::string _parse_error = "";
+    bool _parse_ret = static_cast<Json::CharReader*>(json_reader)->parse( \
+        reinterpret_cast<const char *>(addr_), \
+        reinterpret_cast<const char *>(addr_) + size_, static_cast<Json::Value*>(json_root_value), &_parse_error);
+    if ( !_parse_ret ){
 
-    //     _json_root_value = new Json::Value(Json::ValueType::nullValue);
-    // }
-    // else
-    // {
-    //     delete _json_root_value;//remove exsited json value
-    //     _json_root_value = new Json::Value(Json::ValueType::nullValue);
-    // }
-
-
-    std::string parse_error = "";
-    bool parse_ret = _json_reader_builder->newCharReader()->parse( \
-        reinterpret_cast<const char *>(mem_addr), \
-        reinterpret_cast<const char *>(mem_addr) + mem_size - 1, _json_root_value, &parse_error);
-    if ( !parse_ret ){
-
-        yLib::yLog::E("parse json str error, error info is %s", parse_error.c_str());
+        yLib::yLog::E("parse json str error, error info is %s", _parse_error.c_str());
         return -1;
     }
     return 0;
 }
 
 
-int yLib::yJson::yJsonWriteFile(std::string file){
+int8_t yLib::yJson::WriteFile(const std::string &file_path_){
 
-    std::ofstream out_file;
+    std::ofstream _out_file;
 
-    out_file.open(file);
-    if ( !out_file.is_open() ){
+    _out_file.open(file_path_);
+    if (!_out_file.is_open()){
 
-        yLib::yLog::E("yJsonWriteFile: file open failed.");
+        yLib::yLog::E("WriteFile: file open failed.");
         return -1;
     }
-    if ( 0 > _json_writer_builder->newStreamWriter()->write(*_json_root_value, &out_file) ){
+    if ( 0 > static_cast<Json::StreamWriter*>(json_writer)->write(*static_cast<Json::Value*>(json_root_value), &_out_file) ){
 
-        yLib::yLog::E("yJsonWriteFile: file write failed.");
+        yLib::yLog::E("WriteFile: file write failed.");
         return -1;
     }
 
-    out_file.close();
+    _out_file.close();
     return 0;   
 }
-int yLib::yJson::yJsonWriteMemory(int8_t * mem_addr, uint64_t mem_max_size){
+int8_t yLib::yJson::WriteMemory(int8_t * addr_, uint64_t max_size_){
 
-    std::string json_str = _json_root_value->toStyledString();
-    
-    const char * ptr_json_str = json_str.c_str();
+    std::string _json_str = static_cast<Json::Value*>(json_root_value)->toStyledString();
 
-    int json_str_len = _json_root_value->toStyledString().length();
+    int _json_str_len = _json_str.length();
 
-    if ( mem_max_size - 1 <= json_str_len ){
+    if ( max_size_ - 1 <= _json_str_len ){
 
-        yLib::yLog::E("input mem's size - 1 is less than json_str_size");
+        yLib::yLog::E("input mem's size - 1 is less than _json_str_len");
         return -1;
     }
 
-    memset((void *)mem_addr, 0, mem_max_size);
-    memcpy((void *)mem_addr, ptr_json_str, json_str_len);
+    memset((void *)addr_, 0, max_size_);
+    memcpy((void *)addr_, _json_str.c_str(), _json_str_len);
     return 0;
 }
 
 
-yLib::yJsonValue yLib::yJson::yJsonGetValue(void){
+yLib::yJsonValue yLib::yJson::GetRootObject(void){
 
-    return yJsonGetParsedJsonObject();
-}
+    if ( static_cast<Json::Value*>(json_root_value)->type() == Json::ValueType::objectValue ){
 
-int yLib::yJson::yJsonWriteValue(yJsonValue & value){
+        yLib::yJsonValue _tmp_val(yLib::yValue::OBJECT_TYPE);
 
-    return yJsonSetJsonObject(value);
-}
+        //deep copy a Json::Value object
+        delete static_cast<Json::Value*>(_tmp_val.json_value);
+        _tmp_val.json_value = nullptr;
 
+        //reconstruct a obj using deepcopy
+        _tmp_val.json_value = new Json::Value(*static_cast<Json::Value*>(json_root_value));
 
+        //deep copy a Json::Value object
+        _tmp_val.value_containter.object_val = reinterpret_cast<uintptr_t>(_tmp_val.json_value);
 
-yLib::yJsonValue yLib::yJson::yJsonGetParsedJsonObject(void){
-    
-    // switch (_json_root_value->type())
-    // {
-    // case Json::ValueType::intValue:
-    //     /* code */
-    //     return yJsonValue((int64_t)_json_root_value->asInt());
-    //     break;
-
-    // case Json::ValueType::uintValue:
-    //     /* code */
-    //     return yJsonValue((uint64_t)_json_root_value->asUInt());
-    //     break;
-        
-    // case Json::ValueType::realValue:
-    //     /* code */
-    //     return yJsonValue(_json_root_value->asDouble());
-    //     break;
-        
-    // case Json::ValueType::stringValue:
-    //     /* code */
-    //     return yJsonValue(_json_root_value->asString());
-    //     break;        
-    // case Json::ValueType::booleanValue:
-    //     return yJsonValue(_json_root_value->asBool());
-    //     break;
-    // case Json::ValueType::arrayValue:
-
-    //     yJsonValue _tmp_val(yLib::yJsonValue::yJsonValueType::ARRAY_TYPE);
-    //     *_tmp_val._json_root_value = _json_root_value
-    //     break;
-    // case Json::ValueType::objectValue:
-    //     value_._value_type = yLib::yJsonValue::yJsonValueType::OBJECT_TYPE;
-    //     break;
-    // case Json::ValueType::nullValue:
-    //     value_._value_type = yLib::yJsonValue::yJsonValueType::NULL_TYPE;
-    //     break;
-    // default:
-    //     yLib::yLog::E("not support yet.");
-    //     value_._value_type = yLib::yJsonValue::yJsonValueType::NULL_TYPE;
-    //     break;
-    // }
-
-    if ( _json_root_value->type() == Json::ValueType::objectValue ){
-
-        yLib::yJsonValue _tmp_val(yLib::yJsonValue::yJsonValueType::OBJECT_TYPE);
-        *_tmp_val._json_root_value = *_json_root_value;
         return _tmp_val;
     }
     else{
 
-        return yLib::yJsonValue();
+        return yLib::yJsonValue(yValue::NULL_TYPE);
     }
-
 }
-int yLib::yJson::yJsonSetJsonObject(yJsonValue & obj_val_){
 
-    *_json_root_value = *obj_val_._json_root_value;
+int8_t yLib::yJson::SetRootObject(const yJsonValue & value_){
+
+    if (Json::ValueType::objectValue != static_cast<Json::Value*>((void*)value_.value_containter.object_val)->type()){
+
+        yLib::yLog::E("Invalid json object.");
+        return -1;
+    }
+    //deep copy a Json::Value object
+    delete static_cast<Json::Value*>(json_root_value);
+    json_root_value = nullptr;
+
+    //deep copy a Json::Value object
+    //reconstruct a obj using deepcopy
+    json_root_value = new Json::Value(*static_cast<Json::Value*>((void*)value_.value_containter.object_val));
+
     return 0;
 }
 
 
-// yLib::yJsonValue::yJsonValue() noexcept MACRO_INIT_YOBJECT_PROPERTY(yJsonValue){
+//////////////////////////////////////
+//////////////////////////////////////
+/////////////yJsonValue
+//////////////////////////////////////
+//////////////////////////////////////
+#define COVERT_POINTER_TO_JSONVALUE_PTR(PTR)\
+    static_cast<Json::Value*>(PTR)
 
-    
-// }
+static yLib::yJsonValue g_yjson_value_null_reference_obj;
 
+yLib::yJsonValue::yJsonValue() noexcept
+:yBasicValue(NULL_TYPE, nullptr),
+json_value(nullptr),
+is_special_obj(false),
+value_holder_map(nullptr)
+{
 
+    object_name = YLIB_STR(yJsonValue);
 
+    cur_value_type = yValueType::NULL_TYPE;//repeat set val
 
-
-
-
-
+    json_value = new Json::Value();
+}
 
 yLib::yJsonValue::yJsonValue(int64_t value_) noexcept 
+:yBasicValue(value_),
+json_value(nullptr),
+is_special_obj(false),
+value_holder_map(nullptr)
 {
 
-    object_name = "yJsonValue";
+    object_name = YLIB_STR(yJsonValue);
 
-    _value_type = yJsonValueType::INT64_TYPE;
-    _cur_basic_value_type = yBasicValueType::INT64_YBASICVALUE_TYPE;
-    _value_containter._n_value_int64 = value_;
+    cur_value_type = yValueType::INT64_TYPE;
 
-    _json_root_value = new Json::Value(value_);
+    json_value = new Json::Value(value_);
 }
+
+yLib::yJsonValue::yJsonValue(uint64_t value_) noexcept 
+:yBasicValue(value_),
+json_value(nullptr),
+is_special_obj(false),
+value_holder_map(nullptr)
+{
+
+    object_name = YLIB_STR(yJsonValue);
+
+    cur_value_type = yValueType::UINT64_TYPE;
+
+    json_value = new Json::Value(value_);
+}
+
+
 yLib::yJsonValue::yJsonValue(bool value_) noexcept 
+:yBasicValue(value_),
+json_value(nullptr),
+is_special_obj(false),
+value_holder_map(nullptr)
 {
-    object_name = "yJsonValue";
+    object_name = YLIB_STR(yJsonValue);
 
-    _value_type = yJsonValueType::BOOL_TYPE;
-    _cur_basic_value_type = yBasicValueType::BOOL_YBASICVALUE_TYPE;
-    _value_containter._b_value_bool = value_;
+    cur_value_type = yValueType::BOOL_TYPE;
 
-    _json_root_value = new Json::Value(value_);
+    json_value = new Json::Value(value_);
 }
+
 yLib::yJsonValue::yJsonValue(double value_) noexcept 
+:yBasicValue(value_),
+json_value(nullptr),
+is_special_obj(false),
+value_holder_map(nullptr)
 {
 
-    object_name = "yJsonValue";
+    object_name = YLIB_STR(yJsonValue);
 
-    _value_type = yJsonValueType::DOUBLE_TYPE;
-    _cur_basic_value_type = yBasicValueType::DOUBLE_YBASICVALUE_TYPE;
-    _value_containter._f_value_double = value_;
+    cur_value_type = yValueType::DOUBLE_TYPE;
 
-    _json_root_value = new Json::Value(value_);
-}
-yLib::yJsonValue::yJsonValue(std::string stdstr_) noexcept 
-{
-
-    object_name = "yJsonValue";
-
-    _value_type = yJsonValueType::STRING_TYPE;
-    _cur_basic_value_type = yBasicValueType::STRING_YBASICVALUE_TYPE;
-    _value_containter._str_value_string = stdstr_;
-
-    _json_root_value = new Json::Value(stdstr_);
+    json_value = new Json::Value(value_);
 }
 
-yLib::yJsonValue::yJsonValue(yJsonValueType value_type_) noexcept 
+yLib::yJsonValue::yJsonValue(std::string value_) noexcept 
+:yBasicValue(value_),
+json_value(nullptr),
+is_special_obj(false),
+value_holder_map(nullptr)
 {
 
-    object_name = "yJsonValue";
+    object_name = YLIB_STR(yJsonValue);
 
-    _value_type = value_type_;
+    cur_value_type = yValueType::STRING_TYPE;
+
+    json_value = new Json::Value(value_);
+}
+
+yLib::yJsonValue::yJsonValue(yValueType value_type_) noexcept 
+:yBasicValue(value_type_, nullptr),
+json_value(nullptr),
+is_special_obj(false),
+value_holder_map(nullptr)
+{
+
+    object_name = YLIB_STR(yJsonValue);
+
+    cur_value_type = value_type_;
 
     switch (value_type_)
     {
-    case yJsonValueType::OBJECT_TYPE:
-        /* code */
-        _json_root_value = new Json::Value(Json::ValueType::objectValue);
-        break;
+        case yValueType::OBJECT_TYPE:{
+            
+            /* code */
+            json_value = new Json::Value(Json::ValueType::objectValue);
+            value_containter.object_val = reinterpret_cast<uintptr_t>(json_value);
+            value_holder_map = new  std::unordered_map<std::string, yJsonValue>();
+            break;
+        }
+        case yValueType::ARRAY_TYPE:{
 
-    case yJsonValueType::ARRAY_TYPE:
-        /* code */
-        _json_root_value = new Json::Value(Json::ValueType::arrayValue);
-        break;
+            /* code */
+            json_value = new Json::Value(Json::ValueType::arrayValue);
+            value_containter.array_val = reinterpret_cast<uintptr_t>(json_value);
+            value_holder_map = new  std::unordered_map<std::string, yJsonValue>();
+            break;
+        }
+        case yValueType::NULL_TYPE:{
 
-    case yJsonValueType::NULL_TYPE:
-        /* code */
-        _json_root_value = new Json::Value();
-        break;    
-    default:
-        _json_root_value = new Json::Value();
-        yLib::yLog::E("not support yet.");
-        break;
+            /* code */
+            json_value = new Json::Value();
+            value_containter.null_val = reinterpret_cast<uintptr_t>(json_value);
+            break;    
+        }
+        default:{
+
+            json_value = new Json::Value();
+            value_containter.null_val = reinterpret_cast<uintptr_t>(json_value);
+            cur_value_type = yValue::NULL_TYPE;
+
+            yLib::yLog::E("Invalid type.");
+            break;
+        }
     }
-    
-    
+}
+
+//only used by yJsonValue
+yLib::yJsonValue::yJsonValue(bool build_special_, void * ptr_) noexcept
+:yBasicValue(),
+json_value(nullptr),
+is_special_obj(true),
+value_holder_map(nullptr)
+{
+
 }
 
 yLib::yJsonValue::yJsonValue(const yLib::yJsonValue & value_) noexcept 
+:yBasicValue(),//the base obj is null-obj
+json_value(nullptr),
+is_special_obj(false),
+value_holder_map(nullptr)
 {
+    CleanAllToDefault();//must be clean first,this op will modify type and value-container
 
-    object_name = "yJsonValue";
+    object_name = YLIB_STR(yJsonValue);
 
-    _value_type = value_._value_type;
-    _cur_basic_value_type = value_._cur_basic_value_type;
+    cur_value_type = value_.cur_value_type;
+    is_special_obj = value_.is_special_obj;
 
-    switch (_value_type)
-    {
-    case yJsonValueType::INT64_TYPE:
-        /* code */
-        _value_containter._n_value_int64 = value_._value_containter._n_value_int64;
-        break;
-    case yJsonValueType::DOUBLE_TYPE:
-        _value_containter._f_value_double = value_._value_containter._f_value_double;
-        break;
-    case yJsonValueType::BOOL_TYPE:
-        _value_containter._b_value_bool = value_._value_containter._b_value_bool;
-        break;
-    case yJsonValueType::STRING_TYPE:
-        _value_containter._str_value_string = value_._value_containter._str_value_string;
-        break;
-    case yJsonValueType::OBJECT_TYPE:
-        break;
-    case yJsonValueType::ARRAY_TYPE:
-        break;
-    case yJsonValueType::NULL_TYPE:
-        break;
-    default:
-        break;
+    //sepcial object, not deep copy
+    if (value_.is_special_obj){
+
+        json_value = value_.json_value;
+        value_holder_map = value_.value_holder_map;
+    }
+    else{//not special obj, deep copy
+    
+        json_value = new Json::Value(*static_cast<Json::Value*>(value_.json_value));//create json::value
+
+        //for copy object-type array-type
+        if ( nullptr != value_.value_holder_map && \
+            (value_.cur_value_type == yJsonValue::OBJECT_TYPE || value_.cur_value_type == yJsonValue::ARRAY_TYPE)){
+                
+                //deep copy
+                value_holder_map = new std::unordered_map<std::string, yJsonValue>(*value_.value_holder_map);
+        }
     }
 
+    if (cur_value_type == yJsonValue::OBJECT_TYPE){ 
 
-    if ( value_._json_root_value ==  value_._json_root_value_bak){//only call by yLib::yJsonValue::operator[]
+        //update special value
+        value_containter.object_val = reinterpret_cast<uintptr_t>(json_value);
+    }
+    else if (cur_value_type == yJsonValue::NULL_TYPE){
 
-        _json_root_value = value_._json_root_value_bak;
+        //update special value
+        value_containter.null_val = reinterpret_cast<uintptr_t>(json_value);
+    }
+    else if (cur_value_type == yJsonValue::ARRAY_TYPE){
+
+        //update special value
+        value_containter.array_val = reinterpret_cast<uintptr_t>(json_value);
     }
     else{
 
-        _json_root_value = new Json::Value();//new a null json object
-        *_json_root_value = *value_._json_root_value;
-    }
-}
-yLib::yJsonValue::yJsonValue(yLib::yJsonValue && value_) noexcept 
-{
-
-    object_name = "yJsonValue";
-
-
-    _value_type = value_._value_type;
-    _cur_basic_value_type = value_._cur_basic_value_type;
-
-    switch (_value_type)
-    {
-    case yJsonValueType::INT64_TYPE:
-        /* code */
-        _value_containter._n_value_int64 = value_._value_containter._n_value_int64;
-        break;
-    case yJsonValueType::DOUBLE_TYPE:
-        _value_containter._f_value_double = value_._value_containter._f_value_double;
-        break;
-    case yJsonValueType::BOOL_TYPE:
-        _value_containter._b_value_bool = value_._value_containter._b_value_bool;
-        break;
-    case yJsonValueType::STRING_TYPE:
-        _value_containter._str_value_string = value_._value_containter._str_value_string;
-        break;
-    case yJsonValueType::OBJECT_TYPE:
-        break;
-    case yJsonValueType::ARRAY_TYPE:
-        break;
-    case yJsonValueType::NULL_TYPE:
-        break;
-    default:
-        break;
+        CopyValueContainer(value_, *this);
     }
     
-    if ( value_._json_root_value == value_._json_root_value_bak){//only call by yLib::yJsonValue::operator[]
+}
 
-        _json_root_value = value_._json_root_value_bak;
+yLib::yJsonValue::yJsonValue(const yLib::yJsonValue && value_) noexcept 
+:yBasicValue(value_),
+json_value(nullptr),
+is_special_obj(false),
+value_holder_map(nullptr)
+{
+    CleanAllToDefault();//must be clean first,this op will modify type and value-container
+
+    object_name = YLIB_STR(yJsonValue);
+
+    cur_value_type = value_.cur_value_type;
+    is_special_obj = value_.is_special_obj;
+
+    //sepcial object, not deep copy
+    if (value_.is_special_obj){
+
+        json_value = value_.json_value;
+        value_holder_map = value_.value_holder_map;
+    }
+    else{//not special obj, deep copy
+    
+        json_value = new Json::Value(*static_cast<Json::Value*>(value_.json_value));//create json::value
+
+        //for copy object-type array-type
+        if ( nullptr != value_.value_holder_map && \
+            (value_.cur_value_type == yJsonValue::OBJECT_TYPE || value_.cur_value_type == yJsonValue::ARRAY_TYPE)){
+                
+                //deep copy
+                value_holder_map = new std::unordered_map<std::string, yJsonValue>(*value_.value_holder_map);
+        }
+    }
+
+    
+    if (cur_value_type == yJsonValue::OBJECT_TYPE){ 
+
+        //update special value
+        value_containter.object_val = reinterpret_cast<uintptr_t>(json_value);
+    }
+    else if (cur_value_type == yJsonValue::NULL_TYPE){
+
+        //update special value
+        value_containter.null_val = reinterpret_cast<uintptr_t>(json_value);
+    }
+    else if (cur_value_type == yJsonValue::ARRAY_TYPE){
+
+        //update special value
+        value_containter.array_val = reinterpret_cast<uintptr_t>(json_value);
     }
     else{
 
-        _json_root_value = new Json::Value();//new a null json object
-        *_json_root_value = *value_._json_root_value;
+        CopyValueContainer(value_, *this);
     }
+}
+
+yLib::yJsonValue & yLib::yJsonValue::operator =(const yLib::yJsonValue & value_) noexcept
+{
+    //copy map
+    if (yJsonValue::OBJECT_TYPE == value_.cur_value_type || yJsonValue::ARRAY_TYPE == value_.cur_value_type){
+
+        if (nullptr == value_holder_map)
+            value_holder_map = new std::unordered_map<std::string, yJsonValue>();
+
+        value_holder_map->swap(*value_.value_holder_map);
+    }
+
+    //copy json_value
+    *static_cast<Json::Value*>(json_value) = *static_cast<Json::Value*>(value_.json_value);
+
+    CleanAllToDefault();
+    CopyValueContainer(value_, *this);
+
+    cur_value_type = value_.cur_value_type;
+
+    //Note: we can not modified the is_special_obj, we should keep this property
+    // is_special_obj
+    return *this;
+}
+
+yLib::yJsonValue & yLib::yJsonValue::operator =(const yLib::yJsonValue && value_) noexcept{
+    
+    //copy map
+    if (yJsonValue::OBJECT_TYPE == value_.cur_value_type || yJsonValue::ARRAY_TYPE == value_.cur_value_type){
+
+        if (nullptr == value_holder_map)
+            value_holder_map = new std::unordered_map<std::string, yJsonValue>();
+
+        value_holder_map->swap(*value_.value_holder_map);
+    }
+
+    //copy json_value
+    *static_cast<Json::Value*>(json_value) = *static_cast<Json::Value*>(value_.json_value);
+
+    CleanAllToDefault();
+    CopyValueContainer(value_, *this);
+
+    cur_value_type = value_.cur_value_type;
+
+    //Note: we can not modified the is_special_obj, we should keep this property
+    return *this;
 }
 
 yLib::yJsonValue::~yJsonValue(){
 
-    _json_root_value = nullptr;
-    
-    if ( _json_root_value == _json_root_value_bak ){
+    if (!is_special_obj){
 
+        //if it is special obj, we can not delete value_holder_map, it managered by the first yJsonValue.
+        if (nullptr != value_holder_map){
+
+            delete value_holder_map;
+            value_holder_map = nullptr;
+        }
+
+        //if it is special obj, we can not delete json_value, it managered by the Json::Value.
+        if(nullptr != json_value){
+
+            delete static_cast<Json::Value*>(json_value);
+            json_value = nullptr;
+        }
     }
-    else{
 
-        delete _json_root_value;
-        _json_root_value = nullptr;
-        _json_root_value_bak = nullptr;
-    }
-
+    //set pointer to default-val
+    value_holder_map = nullptr;
+    json_value = nullptr;
+    CleanAllToDefault();
 }
 
-/*
+
 yLib::yJsonValue::operator int64_t(){
 
-    if ( _json_root_value->isInt64() \
-        || _json_root_value->isInt() \
-        || _json_root_value->isIntegral() \
-        || _json_root_value->isUInt64() \
-        || _json_root_value->isUInt()){
+    if ( COVERT_POINTER_TO_JSONVALUE_PTR(json_value)->isInt64() \
+        || COVERT_POINTER_TO_JSONVALUE_PTR(json_value)->isInt()){
 
 
-        _int64_value = _json_root_value->asInt64();
-        _value_type = yJsonValueType::INT64_TYPE;
+        return COVERT_POINTER_TO_JSONVALUE_PTR(json_value)->asInt64();
     }
-    else{// is not int64
-
-        _value_type = yJsonValueType::ERROR_TYPE;
-        _int64_value = 0;
-        return -1;//Default error value;
-    }
-    return _int64_value;
+    // is not int64
+    return -1;//Default error value;
 }
+
+yLib::yJsonValue::operator uint64_t(){
+
+    if ( COVERT_POINTER_TO_JSONVALUE_PTR(json_value)->isUInt64() \
+        || COVERT_POINTER_TO_JSONVALUE_PTR(json_value)->isUInt()){
+
+
+        return COVERT_POINTER_TO_JSONVALUE_PTR(json_value)->asUInt64();
+    }
+    // is not uint64
+    return -1;//Default error value;
+}
+
+
 yLib::yJsonValue::operator bool(){
 
-    if ( _json_root_value->isBool() ){
+    if ( COVERT_POINTER_TO_JSONVALUE_PTR(json_value)->isBool()){
 
-        _boolean_value = _json_root_value->asBool();
-        _value_type = yJsonValueType::BOOL_TYPE;
+
+        return COVERT_POINTER_TO_JSONVALUE_PTR(json_value)->asBool();
     }
-    else
-    {
-        _value_type = yJsonValueType::ERROR_TYPE;
-        _boolean_value = false;
-        return false;//Default error value;
-    }
-    
-    return _boolean_value;
+    // is not bool
+    return false;//Default error value;
 }
 yLib::yJsonValue::operator double(){
 
-    if ( _json_root_value->isDouble() ){
+    if ( COVERT_POINTER_TO_JSONVALUE_PTR(json_value)->isDouble()){
 
-        _double_value = _json_root_value->asDouble();
-        _value_type = yJsonValueType::DOUBLE_TYPE;
+
+        return COVERT_POINTER_TO_JSONVALUE_PTR(json_value)->asDouble();
     }
-    else
-    {
-        _value_type = yJsonValueType::ERROR_TYPE;
-        _double_value = 0.0f;
-        return -1.0f; //Default error value;
-    }
-    
-    return _double_value;
+    // is not bool
+    return -1.f;//Default error value;
 }
 yLib::yJsonValue::operator std::string(){
 
-    if ( _json_root_value->isString() ){
+    if ( COVERT_POINTER_TO_JSONVALUE_PTR(json_value)->isString()){
 
-        _stdstring_value = _json_root_value->asString();
-        _value_type = yJsonValueType::STRING_TYPE;
+
+        return COVERT_POINTER_TO_JSONVALUE_PTR(json_value)->asString();
     }
-    else
-    {
-        _value_type = yJsonValueType::ERROR_TYPE;
-        _stdstring_value = "";
-        return std::string("");//Default error value;
-    }
-    
-    return _stdstring_value;
-}
-*/
-
-yLib::yJsonValue  yLib::yJsonValue::operator [](std::string key_str){
-
-    return operator[](key_str.c_str());
+    // is not bool
+    return "";//Default error value;
 }
 
-yLib::yJsonValue  yLib::yJsonValue::operator [](const char * key_str){
+yLib::yJsonValue & yLib::yJsonValue::operator [](const char *key_){
 
-    yLib::yJsonValue value_;
+    if(cur_value_type != yValue::OBJECT_TYPE){
 
-    //value_._json_root_value_bak = value_._json_root_value;
-    delete value_._json_root_value;
-    value_._json_root_value = nullptr;
+        yLib::yLog::E("yLib::yJsonValue::operator [](const char *key_( = %s)) error: requires a array value( = %d)", key_, cur_value_type);
+        throw "in yLib::yJsonValue::operator [](const char *key_): requires a object value.";
+    }
 
-    
+    Json::Value * _find_result = nullptr;
     try
     {
-        //now, we can not delete value_._json_root_value in destruct, it is managed by Json::Value
-        value_._json_root_value = &_json_root_value->operator[](key_str);
+
+        //create a null member if it does not exist
+        //COVERT_POINTER_TO_JSONVALUE_PTR(json_value)->isMember(key_)  check if the key is exsited.
+        //if the key_ is invalid, this op will throw a exception.
+        _find_result = &COVERT_POINTER_TO_JSONVALUE_PTR(json_value)->operator[](key_);
     }
-    catch(const Json::LogicError & e)
+    catch(const Json::LogicError & e)//is not object type
     {
         yLib::yLog::E("yLib::yJsonValue::operator [](const char * key_str) error: %s", e.what());
-        return yLib::yJsonValue();//null value
+        return g_yjson_value_null_reference_obj;//null value
     }
+
+    std::unordered_map<std::string, yJsonValue>::iterator _iter = value_holder_map->find(std::to_string((uintptr_t)_find_result));
+    if ( value_holder_map->end() != _iter){//found key
+
+        return _iter->second;//return exsited obj
+    }
+
+    //build a special obj
+    yLib::yJsonValue _value(true, nullptr);
+
+    _value.json_value = _find_result;
+
+    _value.value_holder_map = value_holder_map;//we don't deep copy this map, because it managerd by first yJsonValue(OBJECT_TYPE)
     
-    value_._json_root_value_bak = value_._json_root_value;
-
-
-
-
-    switch (value_._json_root_value->type())
+    switch (_find_result->type())
     {
-    case Json::ValueType::uintValue:
-    case Json::ValueType::intValue:{
-     
-        value_._value_type = yLib::yJsonValue::INT64_TYPE;
-        value_._cur_basic_value_type = yLib::yBasicValueType::INT64_YBASICVALUE_TYPE;
-        value_._value_containter._n_value_int64 = value_._json_root_value->asInt64();
-        break;
+        case Json::ValueType::uintValue:{
+
+            _value.cur_value_type = yLib::yJsonValue::UINT64_TYPE;
+            _value.value_containter.uint64_val = _find_result->asUInt64();
+            break;
+        }
+        case Json::ValueType::intValue:{
+        
+            _value.cur_value_type = yLib::yJsonValue::INT64_TYPE;
+            _value.value_containter.int64_val = _find_result->asInt64();
+            break;
+        }
+
+        case Json::ValueType::booleanValue :{
+        
+            _value.cur_value_type = yLib::yJsonValue::BOOL_TYPE;
+            _value.value_containter.bool_val = _find_result->asBool();
+            break;
+        }
+
+        case Json::ValueType::realValue :{
+        
+            _value.cur_value_type = yLib::yJsonValue::DOUBLE_TYPE;
+            _value.value_containter.double_val = _find_result->asDouble();
+            break;
+        }
+
+        case Json::ValueType::stringValue :{
+        
+            _value.cur_value_type = yLib::yJsonValue::STRING_TYPE;
+            _value.value_containter.string_val = _find_result->asString();
+            break;
+        }
+
+        case Json::ValueType::arrayValue :{
+        
+            _value.cur_value_type = yLib::yJsonValue::ARRAY_TYPE;
+            _value.value_containter.array_val = reinterpret_cast<uintptr_t>(_find_result);
+            break;
+        }
+
+        case Json::ValueType::objectValue :{
+        
+            _value.cur_value_type = yLib::yJsonValue::OBJECT_TYPE;
+            _value.value_containter.object_val = reinterpret_cast<uintptr_t>(_find_result);
+            break;
+        }
+
+        case Json::ValueType::nullValue :{
+        
+            _value.cur_value_type = yLib::yJsonValue::NULL_TYPE;
+            _value.value_containter.null_val = reinterpret_cast<uintptr_t>(_find_result);
+            break;
+        }
+        
+        default:{
+            //do nothing
+            break;
+        }
     }
 
-    case Json::ValueType::booleanValue :{
-     
-        value_._value_type = yLib::yJsonValue::BOOL_TYPE;
-        value_._cur_basic_value_type = yLib::yBasicValueType::BOOL_YBASICVALUE_TYPE;
-        value_._value_containter._b_value_bool = value_._json_root_value->asBool();
-        break;
-    }
+    std::pair<yJsonValueHolderMap::iterator, bool> _ret_pair = \
+        value_holder_map->insert(std::make_pair(std::to_string((uintptr_t)_find_result), _value));//insert a new special obj to map
 
-    case Json::ValueType::realValue :{
-     
-        value_._value_type = yLib::yJsonValue::DOUBLE_TYPE;
-        value_._cur_basic_value_type = yLib::yBasicValueType::DOUBLE_YBASICVALUE_TYPE;
-        value_._value_containter._f_value_double = value_._json_root_value->asDouble();
-        break;
-    }
-
-    case Json::ValueType::stringValue :{
-     
-        value_._value_type = yLib::yJsonValue::STRING_TYPE;
-        value_._cur_basic_value_type = yLib::yBasicValueType::STRING_YBASICVALUE_TYPE;
-        value_._value_containter._str_value_string = value_._json_root_value->asString();
-        break;
-    }
-
-    case Json::ValueType::arrayValue :{
-     
-        value_._value_type = yLib::yJsonValue::ARRAY_TYPE;
-        break;
-    }
-
-    case Json::ValueType::objectValue :{
-     
-        value_._value_type = yLib::yJsonValue::OBJECT_TYPE;
-
-        break;
-    }
-
-    case Json::ValueType::nullValue :{
-     
-        value_._value_type = yLib::yJsonValue::NULL_TYPE;
-
-        break;
-    }
-    
-    default:
-        break;
-    }
-
-
-
-    //check special value type
-    // if ( value_._json_root_value->isObject() ){
-
-    //     value_._value_type = yLib::yJsonValue::yJsonValueType::OBJECT_TYPE;
-    // }
-
-    // if ( value_._json_root_value->isArray() ){
-
-    //     value_._value_type = yLib::yJsonValue::yJsonValueType::ARRAY_TYPE;
-    // }
-
-    // if ( value_._json_root_value->isNull() ){
-
-    //     value_._value_type = yLib::yJsonValue::yJsonValueType::NULL_TYPE;
-    // }
-
-    return value_;
+    return _ret_pair.first->second;
 }
-yLib::yJsonValue  yLib::yJsonValue::operator [](uint64_t elment_idx){
 
-    yLib::yJsonValue value_;
+yLib::yJsonValue & yLib::yJsonValue::operator [](const std::string &key_){
 
+    return operator[](key_.c_str());
+}
+
+yLib::yJsonValue & yLib::yJsonValue::operator [](uint64_t idx_){
+
+    if(cur_value_type != yValue::ARRAY_TYPE){
+
+        yLib::yLog::E("yLib::yJsonValue::operator [](uint64_t idx_( = %d)) error: requires a array value( = %d)", idx_, cur_value_type);
+        throw "in yLib::yJsonValue::operator [](uint64_t idx_): requires a array value.";
+    }
+
+    Json::Value * _find_result = nullptr;
     try
     {
-        //now, we can not delete value_._json_root_value in destruct, it is managed by Json::Value
-        value_._json_root_value =  &_json_root_value->operator[]((Json::ArrayIndex)elment_idx);
+        //create a null member if it does not exist
+        //COVERT_POINTER_TO_JSONVALUE_PTR(json_value)->isMember(key_)  check if the key is exsited.
+        //we should deep copy to avoid double free
+        _find_result = &COVERT_POINTER_TO_JSONVALUE_PTR(json_value)->operator[]((Json::ArrayIndex)idx_);
     }
-    catch(const Json::LogicError & e)
+    catch(const Json::LogicError & e)//is not array type
     {
         yLib::yLog::E("yLib::yJsonValue::operator [](uint64_t elment_idx) error: %s", e.what());
-        return yLib::yJsonValue();//null value
+        return g_yjson_value_null_reference_obj;//null value
     }
 
-    value_._json_root_value_bak = value_._json_root_value;
+    std::unordered_map<std::string, yJsonValue>::iterator _iter = value_holder_map->find(std::to_string((uintptr_t)_find_result));
+    if ( value_holder_map->end() != _iter){//found key
 
+        return _iter->second;//return exsited obj
+    }
 
+    //build a special obj
+    yLib::yJsonValue _value(true, nullptr);
 
-    switch (value_._json_root_value->type())
+    _value.json_value = _find_result;
+
+    //we don't deep copy this map, because it managerd by first yJsonValue(OBJECT_TYPE) in all special obj 
+    _value.value_holder_map = value_holder_map;
+
+    switch (_find_result->type())
     {
-    case Json::ValueType::uintValue:
-    case Json::ValueType::intValue:{
-     
-        value_._value_type = yLib::yJsonValue::INT64_TYPE;
-        value_._cur_basic_value_type = yLib::yBasicValueType::INT64_YBASICVALUE_TYPE;
-        value_._value_containter._n_value_int64 = value_._json_root_value->asInt64();
-        break;
+        case Json::ValueType::uintValue:{
+
+            _value.cur_value_type = yLib::yJsonValue::UINT64_TYPE;
+            _value.value_containter.uint64_val = _find_result->asUInt64();
+            break;
+        }
+        case Json::ValueType::intValue:{
+        
+            _value.cur_value_type = yLib::yJsonValue::INT64_TYPE;
+            _value.value_containter.int64_val = _find_result->asInt64();
+            break;
+        }
+
+        case Json::ValueType::booleanValue :{
+        
+            _value.cur_value_type = yLib::yJsonValue::BOOL_TYPE;
+            _value.value_containter.bool_val = _find_result->asBool();
+            break;
+        }
+
+        case Json::ValueType::realValue :{
+        
+            _value.cur_value_type = yLib::yJsonValue::DOUBLE_TYPE;
+            _value.value_containter.double_val = _find_result->asDouble();
+            break;
+        }
+
+        case Json::ValueType::stringValue :{
+        
+            _value.cur_value_type = yLib::yJsonValue::STRING_TYPE;
+            _value.value_containter.string_val = _find_result->asString();
+            break;
+        }
+
+        case Json::ValueType::arrayValue :{
+        
+            _value.cur_value_type = yLib::yJsonValue::ARRAY_TYPE;
+            _value.value_containter.array_val = reinterpret_cast<uintptr_t>(_find_result);
+            break;
+        }
+
+        case Json::ValueType::objectValue :{
+        
+            _value.cur_value_type = yLib::yJsonValue::OBJECT_TYPE;
+            _value.value_containter.object_val = reinterpret_cast<uintptr_t>(_find_result);
+            break;
+        }
+
+        case Json::ValueType::nullValue :{
+        
+            _value.cur_value_type = yLib::yJsonValue::NULL_TYPE;
+            _value.value_containter.null_val = reinterpret_cast<uintptr_t>(_find_result);
+            break;
+        }
+        
+        default:{
+            //do nothing
+            break;
+        }
     }
 
-    case Json::ValueType::booleanValue :{
-     
-        value_._value_type = yLib::yJsonValue::BOOL_TYPE;
-        value_._cur_basic_value_type = yLib::yBasicValueType::BOOL_YBASICVALUE_TYPE;
-        value_._value_containter._b_value_bool = value_._json_root_value->asBool();
-        break;
-    }
+    std::pair<yJsonValueHolderMap::iterator, bool> _ret_pair = \
+        value_holder_map->insert(std::make_pair(std::to_string((uintptr_t)_find_result), _value));//insert a new special obj to map
 
-    case Json::ValueType::realValue :{
-     
-        value_._value_type = yLib::yJsonValue::DOUBLE_TYPE;
-        value_._cur_basic_value_type = yLib::yBasicValueType::DOUBLE_YBASICVALUE_TYPE;
-        value_._value_containter._f_value_double = value_._json_root_value->asDouble();
-        break;
-    }
-
-    case Json::ValueType::stringValue :{
-     
-        value_._value_type = yLib::yJsonValue::STRING_TYPE;
-        value_._cur_basic_value_type = yLib::yBasicValueType::STRING_YBASICVALUE_TYPE;
-        value_._value_containter._str_value_string = value_._json_root_value->asString();
-        break;
-    }
-
-    case Json::ValueType::arrayValue :{
-     
-        value_._value_type = yLib::yJsonValue::ARRAY_TYPE;
-        break;
-    }
-
-    case Json::ValueType::objectValue :{
-     
-        value_._value_type = yLib::yJsonValue::OBJECT_TYPE;
-
-        break;
-    }
-
-    case Json::ValueType::nullValue :{
-     
-        value_._value_type = yLib::yJsonValue::NULL_TYPE;
-
-        break;
-    }
-    
-    default:
-        break;
-    }
-
-
-
-
-
-
-
-
-
-
-
-    // //check special value type
-    // if ( value_._json_root_value->isObject() ){
-
-    //     value_._value_type = yLib::yJsonValue::yJsonValueType::OBJECT_TYPE;
-    // }
-
-    // if ( value_._json_root_value->isArray() ){
-
-    //     value_._value_type = yLib::yJsonValue::yJsonValueType::ARRAY_TYPE;
-    // }
-
-    // if ( value_._json_root_value->isNull() ){
-
-    //     value_._value_type = yLib::yJsonValue::yJsonValueType::NULL_TYPE;
-    // }
-    
-    return value_;
+    //For Debuger
+    yJsonValue & _dbg_ptr = _ret_pair.first->second;
+    return _ret_pair.first->second;
 }
 
 
+yLib::yJsonValue & yLib::yJsonValue::operator=(int64_t value_)noexcept{
 
-yLib::yJsonValue & yLib::yJsonValue::operator =(const yLib::yJsonValue & value_) noexcept{
-
-    _value_type = value_._value_type;
-    _cur_basic_value_type = value_._cur_basic_value_type;
-    
-    switch (_value_type)
-    {
-    case yJsonValueType::INT64_TYPE:
-        /* code */
-        _value_containter._n_value_int64 = value_._value_containter._n_value_int64;
-        break;
-    case yJsonValueType::DOUBLE_TYPE:
-        _value_containter._f_value_double = value_._value_containter._f_value_double;
-        break;
-    case yJsonValueType::BOOL_TYPE:
-        _value_containter._b_value_bool = value_._value_containter._b_value_bool;
-        break;
-    case yJsonValueType::STRING_TYPE:
-        _value_containter._str_value_string = value_._value_containter._str_value_string;
-        break;
-    case yJsonValueType::OBJECT_TYPE:
-        break;
-    case yJsonValueType::ARRAY_TYPE:
-        break;
-    case yJsonValueType::NULL_TYPE:
-        break;
-    default:
-        break;
-    }
-
-
-    *(_json_root_value) = *(value_._json_root_value);
-    return *this;
-}
-yLib::yJsonValue & yLib::yJsonValue::operator =(yLib::yJsonValue && value_) noexcept{
-    
-    _value_type = value_._value_type;
-    _cur_basic_value_type = value_._cur_basic_value_type;
-
-    switch (_value_type)
-    {
-    case yJsonValueType::INT64_TYPE:
-        /* code */
-        _value_containter._n_value_int64 = value_._value_containter._n_value_int64;
-        break;
-    case yJsonValueType::DOUBLE_TYPE:
-        _value_containter._f_value_double = value_._value_containter._f_value_double;
-        break;
-    case yJsonValueType::BOOL_TYPE:
-        _value_containter._b_value_bool = value_._value_containter._b_value_bool;
-        break;
-    case yJsonValueType::STRING_TYPE:
-        _value_containter._str_value_string = value_._value_containter._str_value_string;
-        break;
-    case yJsonValueType::OBJECT_TYPE:
-        break;
-    case yJsonValueType::ARRAY_TYPE:
-        break;
-    case yJsonValueType::NULL_TYPE:
-        break;
-    default:
-        break;
-    }
-
-
-    *_json_root_value = *value_._json_root_value;
+    value_containter.int64_val = value_;
+    cur_value_type = yValue::INT64_TYPE;
+    *COVERT_POINTER_TO_JSONVALUE_PTR(json_value) = Json::Value(value_);
     return *this;
 }
 
-// yLib::yJsonValue & yLib::yJsonValue::operator =(yJsonValue value_){
+yLib::yJsonValue & yLib::yJsonValue::operator=(uint64_t value_)noexcept{
 
-    
-//     switch (value_._value_type)
-//     {
-//     case yJsonValueType::INT64_TYPE:
-//         /* code */
-//         break;
-//     case yJsonValueType::DOUBLE_TYPE:
-//         break;
-//     case yJsonValueType::BOOL_TYPE:
-//         break;
-//     case yJsonValueType::STRING_TYPE:
-//         break;
-//     case yJsonValueType::OBJECT_TYPE:
-//         break;
-//     case yJsonValueType::ARRAY_TYPE:
-//         break;
-//     case yJsonValueType::NULL_TYPE:
-//         break;
-//     default:
-//         break;
-//     }
-// }
-
-
-yLib::yJsonValue & yLib::yJsonValue::operator=(int64_t value){
-
-    _cur_basic_value_type = yLib::yBasicValueType::INT64_YBASICVALUE_TYPE;
-    _value_type = yLib::yJsonValue::INT64_TYPE;
-
-    _value_containter._n_value_int64 = value;
-    *_json_root_value = value;
+    value_containter.uint64_val = value_;
+    cur_value_type = yValue::UINT64_TYPE;
+    *COVERT_POINTER_TO_JSONVALUE_PTR(json_value) = Json::Value(value_);
 
     return *this;
 }
-yLib::yJsonValue & yLib::yJsonValue::operator=(bool value){
 
-    _cur_basic_value_type = yLib::yBasicValueType::BOOL_YBASICVALUE_TYPE;
-    _value_type = yLib::yJsonValue::BOOL_TYPE;
+yLib::yJsonValue & yLib::yJsonValue::operator=(bool value_)noexcept{
 
-    _value_containter._b_value_bool = value;
-    *_json_root_value = value;
+    value_containter.bool_val = value_;
+    cur_value_type = yValue::BOOL_TYPE;
+    *COVERT_POINTER_TO_JSONVALUE_PTR(json_value) = Json::Value(value_);
 
     return *this;
 }
-// yLib::yJsonValue & yLib::yJsonValue::operator=(float value){
 
-//     _cur_basic_value_type = yLib::yBasicValueType::DOUBLE_YBASICVALUE_TYPE;
-//     _value_type = yLib::yJsonValue::DOUBLE_TYPE;
+yLib::yJsonValue & yLib::yJsonValue::operator=(double value_) noexcept{
 
-//     _value_containter._f_value_double = value;
-//     *_json_root_value = value;
-
-//     return *this;
-// }
-
-yLib::yJsonValue & yLib::yJsonValue::operator=(double value){
-
-    _cur_basic_value_type = yLib::yBasicValueType::DOUBLE_YBASICVALUE_TYPE;
-    _value_type = yLib::yJsonValue::DOUBLE_TYPE;
-
-    _value_containter._f_value_double = (double)value;
-    *_json_root_value = value;
+    value_containter.double_val = value_;
+    cur_value_type = yValue::DOUBLE_TYPE;
+    *COVERT_POINTER_TO_JSONVALUE_PTR(json_value) = Json::Value(value_);
 
     return *this;
 }
 
 
-yLib::yJsonValue & yLib::yJsonValue::operator=(std::string & value){
+yLib::yJsonValue & yLib::yJsonValue::operator=(const std::string & value_) noexcept{
 
-    _cur_basic_value_type = yLib::yBasicValueType::STRING_YBASICVALUE_TYPE;
-    _value_type = yLib::yJsonValue::STRING_TYPE;
-
-    _value_containter._str_value_string = value;
-    *_json_root_value = value;
-
-    return *this;
+    return operator=(value_.c_str());
 }
 
-yLib::yJsonValue & yLib::yJsonValue::operator=(std::string && value){
+/**
+ * @fn  yJsonValue & operator=(const char *value_) noexcept
+ * @brief assignment func
+ * @param value_ a exsited obj
+ * @return the obj's reference of yJsonValue
+ */        
+yLib::yJsonValue & yLib::yJsonValue::operator=(const char *value_) noexcept
+{
 
-    _cur_basic_value_type = yLib::yBasicValueType::STRING_YBASICVALUE_TYPE;
-    _value_type = yLib::yJsonValue::STRING_TYPE;
+    value_containter.string_val = value_;
+    cur_value_type = yValue::STRING_TYPE;
+    *COVERT_POINTER_TO_JSONVALUE_PTR(json_value) = Json::Value(value_);
 
-    _value_containter._str_value_string = value;
-    *_json_root_value = value;
-
-    return *this;
-}
-
-yLib::yJsonValue & yLib::yJsonValue::operator=(const char * value){
-
-    _cur_basic_value_type = yLib::yBasicValueType::STRING_YBASICVALUE_TYPE;
-    _value_type = yLib::yJsonValue::STRING_TYPE;
-
-    _value_containter._str_value_string = value;
-    *_json_root_value = value;
-    
     return *this;
 }

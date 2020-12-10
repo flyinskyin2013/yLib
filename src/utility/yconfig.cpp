@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:53
  * @LastEditors: Sky
- * @LastEditTime: 2020-11-30 16:06:10
+ * @LastEditTime: 2020-12-07 14:23:08
  * @Description: 
  */
 
@@ -10,21 +10,26 @@
 #include <libconfig.h++>
 
 using namespace yLib;
+
+#define CONVERT_POINTER_TO_LIBCONFIG_CONFIG_INSTANCE(pointer)\
+    static_cast<libconfig::Config *>(config_instance)
+
+
 yLib::yConfig::yConfig() 
 MACRO_INIT_YOBJECT_PROPERTY(yConfig), 
-_libconfig_config(*new libconfig::Config()){
-
+config_instance(static_cast<void * >(new libconfig::Config()))
+{
 }
-yLib::yConfig::~yConfig(){
-
-    delete & _libconfig_config;
+yLib::yConfig::~yConfig()
+{
+    delete CONVERT_POINTER_TO_LIBCONFIG_CONFIG_INSTANCE(config_instance);
 }
-int yLib::yConfig::yConfigReadFile(const std::string & file_path){
+
+int8_t yLib::yConfig::ReadFile(const std::string &file_path_){
 
     try{
 
-        _libconfig_config.readFile(file_path.c_str());
-       
+        CONVERT_POINTER_TO_LIBCONFIG_CONFIG_INSTANCE(config_instance)->readFile(file_path_.c_str());
     }
     catch(libconfig::FileIOException e){
 
@@ -41,17 +46,17 @@ int yLib::yConfig::yConfigReadFile(const std::string & file_path){
         yLib::yLog::E("yConfigReadFile UNKOWN Exception : %s");
         return -1;
     }
-    
+
     return 0;
 }
 
 
 
-int yLib::yConfig::yConfigWriteFile(const std::string & file_path){
+int8_t yLib::yConfig::WriteFile(const std::string &file_path_){
 
     try{
 
-        _libconfig_config.writeFile(file_path.c_str());
+       CONVERT_POINTER_TO_LIBCONFIG_CONFIG_INSTANCE(config_instance)->writeFile(file_path_.c_str());
     }
     catch(libconfig::FileIOException e){
 
@@ -71,532 +76,273 @@ int yLib::yConfig::yConfigWriteFile(const std::string & file_path){
     return 0;
 }
 
-yLib::yConfigValue yLib::yConfig::yConfigGetValue(const char * node_path) {
+yLib::yConfigValue yLib::yConfig::GetValue(const std::string &node_path_) {
 
-    libconfig::Setting & root = _libconfig_config.getRoot();
-    libconfig::Setting * setting_value = nullptr;
-    yConfigValue tmpValue;
+    libconfig::Setting & _root = CONVERT_POINTER_TO_LIBCONFIG_CONFIG_INSTANCE(config_instance)->getRoot();
+    libconfig::Setting * _setting_value = nullptr;
+    yConfigValue _tmpValue;
+
     try
     {
-        setting_value = &root.lookup(node_path);
+        _setting_value = &_root.lookup(node_path_);//search node
     }
     catch(...)//SettingNotFoundException 
     {
 
-        yLib::yLog::E("node(%s) is not found", node_path);
-        return std::move(tmpValue);//gcc enable RVO(return value optimization) defaultly.
+        yLib::yLog::E("Node(%s) is not found", node_path_);
+        return std::move(_tmpValue);//gcc enable RVO(return value optimization) defaultly.
     }
     
-    switch(setting_value->getType()){
+    switch(_setting_value->getType()){
 
         case libconfig::Setting::Type::TypeInt:{
 
-            tmpValue._value_containter._n_value_int64 = (int)*setting_value;
-            tmpValue._cur_basic_value_type = yLib::yBasicValueType::INT64_YBASICVALUE_TYPE;
-            tmpValue._current_data_type_ = yLib::yConfigValueType::INT_TYPE;
+            _tmpValue = (int32_t)(*_setting_value);
             break;
 		}
         case libconfig::Setting::Type::TypeBoolean:{
 
-            tmpValue._value_containter._b_value_bool = (bool)*setting_value;
-            tmpValue._cur_basic_value_type = yLib::yBasicValueType::BOOL_YBASICVALUE_TYPE;
-            tmpValue._current_data_type_ = yLib::yConfigValueType::BOOL_TYPE;
+            _tmpValue = (bool)(*_setting_value);
             break;
 		}
         case libconfig::Setting::Type::TypeFloat:{
 
-            tmpValue._value_containter._f_value_float = (float)*setting_value;
-            tmpValue._cur_basic_value_type = yLib::yBasicValueType::FLOAT_YBASICVALUE_TYPE;
-            tmpValue._current_data_type_ = yLib::yConfigValueType::FLOAT_TYPE;
+            _tmpValue = (float)(*_setting_value);
             break;
 		}
         case libconfig::Setting::Type::TypeString:{
 
-            tmpValue._value_containter._str_value_string = (const char * )*setting_value;
-            tmpValue._cur_basic_value_type = yLib::yBasicValueType::STRING_YBASICVALUE_TYPE;
-            tmpValue._current_data_type_ = yLib::yConfigValueType::STRING_TYPE;
+            std::string _result_str = (const char *)(*_setting_value);
+            _tmpValue = _result_str;
             break;
 		}
         default :{
         
-            yLib::yLog::E("yConfigValueType: Invalid setting_value type error");
+            yLib::yLog::E("yConfigValueType: Invalid setting_value type(%s)", node_path_.c_str());
             throw "yConfigValueType Error";
         }
             
     }
 
-    return std::move(tmpValue);////gcc enable RVO(return value optimization) defaultly.
-}
-yLib::yConfigValue yLib::yConfig::yConfigGetValue(const std::string & node_path){
-    
-    return yConfigGetValue(node_path.c_str()); 
+    return std::move(_tmpValue);////gcc enable RVO(return value optimization) defaultly.
 }
 
 
-int yLib::yConfig::yConfigSetValue(const char * node_path, const yLib::yConfigValue & value){
+int8_t yLib::yConfig::SetValue(const std::string &node_path_, const yConfigValue &value_){
 
-    if ( !_libconfig_config.exists(node_path) ){//node_path not found
+    if ( !CONVERT_POINTER_TO_LIBCONFIG_CONFIG_INSTANCE(config_instance)->exists(node_path_) ){//node_path not found
         
-        yLib::yLog::E("node_path is not found");
+        yLib::yLog::E("node_path_(%s) is not found, please add node firstly.", node_path_.c_str());
         return -1;
     }
 
-    libconfig::Setting & root = _libconfig_config.getRoot();
-    libconfig::Setting & setting_value = root.lookup(node_path);
+    libconfig::Setting & _root = CONVERT_POINTER_TO_LIBCONFIG_CONFIG_INSTANCE(config_instance)->getRoot();
+    libconfig::Setting & _setting_value = _root.lookup(node_path_);
 
-    switch(value._current_data_type_){
+    switch(value_.cur_value_type){
 
-        case yLib::yConfigValueType::INT_TYPE:
-        setting_value = (int)value;
-        break;
+        case yLib::yValue::INT32_TYPE:{
 
-        case yLib::yConfigValueType::BOOL_TYPE:
-        setting_value = (bool)value;
-        break;
+            _setting_value = (int32_t)value_;
+            break;
+        }
+        case yLib::yValue::BOOL_TYPE:{
+            
+            _setting_value = (bool)value_;
+            break;
+        }
+        case yLib::yValue::FLOAT_TYPE:{
 
-        case yLib::yConfigValueType::FLOAT_TYPE:
-        setting_value = (float)value;
-        break;
+            _setting_value = (float)value_;
+            break;
+        }
+        case yLib::yValue::STRING_TYPE:{
 
-        case yLib::yConfigValueType::STRING_TYPE:
-        setting_value = (std::string)value;
-        break;
+            _setting_value = (std::string)value_;
+            break;
+        }
+        default :{
 
-        default :
-        yLib::yLog::E("value type not found");
-        return -1;
-        break;
+            yLib::yLog::E("Invalid value type.");
+            return -1;
+            break;
+        }
+        
     }
 
     return 0;
 }
-int yLib::yConfig::yConfigSetValue(const std::string & node_path, const yLib::yConfigValue & value){
-
-    return yConfigSetValue(node_path.c_str(), value);
-}
 
 
-int yLib::yConfig::yConfigAddNode(const char * add_node_pos, const char * add_node_name, yConfigValueType add_node_type, const yConfigValue & value){
+int8_t yLib::yConfig::AddNode(const std::string & pos_, const std::string & name_, yValue::yValueType type_, const yConfigValue &value_){
 
-    libconfig::Setting & root = _libconfig_config.getRoot();
+    libconfig::Setting & _root = CONVERT_POINTER_TO_LIBCONFIG_CONFIG_INSTANCE(config_instance)->getRoot();
 
-    if ( 0 == strcmp(add_node_pos, ".") ){//add node to root
+    if ( "." == pos_ || "" == pos_ ){//add node to root
 
-        switch(add_node_type){
+        switch(type_){
 
-            case yLib::yConfigValueType::INT_TYPE:
-            root.add( add_node_name, libconfig::Setting::Type::TypeInt) = (int)value;
-            break;
-            
-            case yLib::yConfigValueType::BOOL_TYPE:
-            root.add( add_node_name, libconfig::Setting::Type::TypeBoolean) = (bool)value;
-            break;
+            case yLib::yValue::INT32_TYPE:{
 
-            case yLib::yConfigValueType::FLOAT_TYPE:
-            root.add( add_node_name, libconfig::Setting::Type::TypeFloat) = (float)value;
-            break;
+                _root.add(name_, libconfig::Setting::Type::TypeInt) = (int32_t)value_;
+                break;
+            }
+            case yLib::yValue::BOOL_TYPE:{
 
-            case yLib::yConfigValueType::STRING_TYPE:
-            root.add( add_node_name, libconfig::Setting::Type::TypeString) = (std::string)value;
-            break;
+                _root.add(name_, libconfig::Setting::Type::TypeBoolean) = (bool)value_;
+                break;
+            }
+            case yLib::yValue::FLOAT_TYPE:{
 
-            case yLib::yConfigValueType::GROUP_TYPE:
-            root.add( add_node_name, libconfig::Setting::Type::TypeGroup);
-            break;
-
+                _root.add(name_, libconfig::Setting::Type::TypeFloat) = (float)value_;
+                break;
+            }
+            case yLib::yValue::STRING_TYPE:{
+                
+                _root.add(name_, libconfig::Setting::Type::TypeString) = (std::string)value_;
+                break;
+            }
+            case yLib::yValue::GROUP_TYPE:{
+                
+                _root.add(name_, libconfig::Setting::Type::TypeGroup);
+                break;
+            }
             default :
-
-            yLib::yLog::E("add_node_type not found");
-            return -1;
-            break;
+            {
+                yLib::yLog::E("Invalid value type.");
+                return -1;
+                break;
+            }
         }
     }
     else{//not root node
 
-        libconfig::Setting & lookup_node = root.lookup(add_node_pos);
-        switch(add_node_type){
+        libconfig::Setting & _lookup_node = _root.lookup(pos_);
+        switch(type_){
 
-            case yLib::yConfigValueType::INT_TYPE:
-            lookup_node.add( add_node_name, libconfig::Setting::Type::TypeInt) = (int)value;
-            break;
-            
-            case yLib::yConfigValueType::BOOL_TYPE:
-            lookup_node.add( add_node_name, libconfig::Setting::Type::TypeBoolean) = (bool)value;
-            break;
+            case yLib::yValue::INT32_TYPE:{
 
-            case yLib::yConfigValueType::FLOAT_TYPE:
-            lookup_node.add( add_node_name, libconfig::Setting::Type::TypeFloat) = (float)value;
-            break;
+                _lookup_node.add(name_, libconfig::Setting::Type::TypeInt) = (int32_t)value_;
+                break;
+            }
+            case yLib::yValue::BOOL_TYPE:{
 
-            case yLib::yConfigValueType::STRING_TYPE:
-            lookup_node.add( add_node_name, libconfig::Setting::Type::TypeString) = (std::string)value;
-            break;
+                _lookup_node.add(name_, libconfig::Setting::Type::TypeBoolean) = (bool)value_;
+                break;
+            }
+            case yLib::yValue::FLOAT_TYPE:{
 
-            case yLib::yConfigValueType::GROUP_TYPE:
-            lookup_node.add( add_node_name, libconfig::Setting::Type::TypeGroup);
-            break;
+                _lookup_node.add(name_, libconfig::Setting::Type::TypeFloat) = (float)value_;
+                break;
+            }
+            case yLib::yValue::STRING_TYPE:{
+                
+                _lookup_node.add(name_, libconfig::Setting::Type::TypeString) = (std::string)value_;
+                break;
+            }
+            case yLib::yValue::GROUP_TYPE:{
+                
+                _lookup_node.add(name_, libconfig::Setting::Type::TypeGroup);
+                break;
+            }
+            default :{
 
-            default :
-
-            yLib::yLog::E("add_node_type not found");
-            return -1;
-            break;
+                yLib::yLog::E("Invalid value type.");
+                return -1;
+                break;
+            }
         }
     }
     return 0;
 }
-int yLib::yConfig::yConfigAddNode(const std::string & add_node_pos, const std::string & add_node_name, yConfigValueType add_node_type, const yConfigValue & value){
-
-    return yConfigAddNode(add_node_pos.c_str(), add_node_name.c_str(), add_node_type, value);
-}
 
 
-int yLib::yConfig::yConfigAddNode(const char * add_node_pos, const char * add_node_name, yConfigValueType add_node_type){
-
-    yConfigValue tmpValue;
-    
-    return yConfigAddNode(add_node_pos, add_node_name, add_node_type, tmpValue);
-}
-int yLib::yConfig::yConfigAddNode(const std::string & add_node_pos, const std::string & add_node_name, yConfigValueType add_node_type){
-
-    return yConfigAddNode(add_node_pos.c_str(), add_node_name.c_str(), add_node_type);
-}
-
-/*
-int yLib::yConfig::yConfigGetIntValue(const char * node_path){
-
-    libconfig::Setting & root = m_config.getRoot();
-    return (int) root.lookup(node_path);
-}
-bool yLib::yConfig::yConfigGetBoolValue(const char * node_path){
-
-    libconfig::Setting & root = m_config.getRoot();
-    return (bool) root.lookup(node_path);
-}
-float yLib::yConfig::yConfigGetFloatValue(const char * node_path){
-
-    libconfig::Setting & root = m_config.getRoot();
-    return (float) root.lookup(node_path);
-}
-std::string yLib::yConfig::yConfigGetStringValue(const char * node_path){
-        
-    libconfig::Setting & root = m_config.getRoot();
-    return (const char *) root.lookup(node_path);
-}
-*/
-
-
-
-
-
-
-
-yLib::yConfigValue::yConfigValue(int64_t value_) noexcept{
-    
-    _cur_basic_value_type = yLib::yBasicValueType::INT64_YBASICVALUE_TYPE ;
-    _value_containter._n_value_int64 = value_;
-}
-yLib::yConfigValue::yConfigValue(uint64_t value_) noexcept{
-
-    _cur_basic_value_type = yLib::yBasicValueType::UINT64_YBASICVALUE_TYPE ;
-    _value_containter._n_value_uint64 = value_;
-}
-yLib::yConfigValue::yConfigValue(bool value_) noexcept{
-
-    _cur_basic_value_type = yLib::yBasicValueType::BOOL_YBASICVALUE_TYPE ;
-    _value_containter._b_value_bool = value_;
-}
-yLib::yConfigValue::yConfigValue(float value_) noexcept{
-
-    _cur_basic_value_type = yLib::yBasicValueType::FLOAT_YBASICVALUE_TYPE ;
-    _value_containter._f_value_float = value_;
-}
-yLib::yConfigValue::yConfigValue(double value_) noexcept{
-
-    _cur_basic_value_type = yLib::yBasicValueType::DOUBLE_YBASICVALUE_TYPE ;
-    _value_containter._f_value_double = value_;
-}
-yLib::yConfigValue::yConfigValue(std::string & value_) noexcept{
-
-    _cur_basic_value_type = yLib::yBasicValueType::STRING_YBASICVALUE_TYPE ;
-    _value_containter._str_value_string = value_;
-}
-yLib::yConfigValue::yConfigValue(const char * value_) noexcept{
-
-    _cur_basic_value_type = yLib::yBasicValueType::STRING_YBASICVALUE_TYPE ;
-    _value_containter._str_value_string = value_;
-}
-
-
-
-
-
-
-
-
-
-yLib::yConfigValue::yConfigValue(const yConfigValue & config_value) noexcept
-: yBasicValue()
+//////////////////////////////////////////////////
+///////////////////yConfigValue
+//////////////////////////////////////////////////
+yConfigValue::yConfigValue() noexcept 
+:yValue()
 {
+    object_name = YLIB_STR(yConfigValue);
+}
 
-    object_name = "yConfigValue";
+yConfigValue::yConfigValue(int32_t value_) noexcept
+:yValue(value_)
+{
+    object_name = YLIB_STR(yConfigValue);
+}
 
-    this->_current_data_type_ = config_value._current_data_type_;
+yLib::yConfigValue::yConfigValue(bool value_) noexcept
+:yValue(value_)
+{
+    object_name = YLIB_STR(yConfigValue);
+}
+yLib::yConfigValue::yConfigValue(float value_) noexcept
+:yValue(value_)
+{
+    object_name = YLIB_STR(yConfigValue);
+}
 
-    switch(this->_current_data_type_){
+yLib::yConfigValue::yConfigValue(const std::string &value_) noexcept
+:yValue(value_)
+{
+    object_name = YLIB_STR(yConfigValue);
+}
 
-        case yLib::yConfigValueType::INT_TYPE:{
-            
-            this->_value_containter._n_value_int64 = config_value._value_containter._n_value_int64;
-            this->_cur_basic_value_type = yLib::yBasicValueType::INT64_YBASICVALUE_TYPE;
-            break;
-        }
-        case yLib::yConfigValueType::BOOL_TYPE:{
-
-            this->_value_containter._b_value_bool = config_value._value_containter._b_value_bool;
-            this->_cur_basic_value_type = yLib::yBasicValueType::BOOL_YBASICVALUE_TYPE;
-            break;
-        }
-        case yLib::yConfigValueType::FLOAT_TYPE:{
-
-            this->_value_containter._f_value_float = config_value._value_containter._f_value_float;
-            this->_cur_basic_value_type = yLib::yBasicValueType::FLOAT_YBASICVALUE_TYPE;
-            break;
-        }
-        case yLib::yConfigValueType::STRING_TYPE:{
-
-            this->_value_containter._str_value_string = config_value._value_containter._str_value_string;
-            this->_cur_basic_value_type = yLib::yBasicValueType::STRING_YBASICVALUE_TYPE;
-            break;
-        }
-        case yLib::yConfigValueType::GROUP_TYPE:{
-            //not support type
-            break;
-        }
-        case yLib::yConfigValueType::NONE_TYPE:{
-            //no value
-            break;
-        }
-        default :{
-            yLib::yLog::E("Copy-Construct of yConfigValue failed: data type error.");
-            break;
-        }
-    }
+yLib::yConfigValue::yConfigValue(const yConfigValue &value_) noexcept
+:yBasicValue()
+{
+    object_name = YLIB_STR(yConfigValue);
+    yLib::yBasicValue::CopyValueContainer(value_, *this);
 }
 
 
-yLib::yConfigValue & yLib::yConfigValue::operator=(const yConfigValue & config_value) noexcept{
+yLib::yConfigValue& yLib::yConfigValue::operator=(const yConfigValue & value_) noexcept
+{
+    this->CleanAllToDefault();
+    yLib::yBasicValue::CopyValueContainer(value_, *this);
 
-    object_name = "yConfigValue";
-
-    this->_current_data_type_ = config_value._current_data_type_;
-
-    switch(this->_current_data_type_){
-
-        case yLib::yConfigValueType::INT_TYPE:{
-            
-            this->_value_containter._n_value_int64 = config_value._value_containter._n_value_int64;
-            this->_cur_basic_value_type = yLib::yBasicValueType::INT64_YBASICVALUE_TYPE;
-            break;
-        }
-        case yLib::yConfigValueType::BOOL_TYPE:{
-
-            this->_value_containter._b_value_bool = config_value._value_containter._b_value_bool;
-            this->_cur_basic_value_type = yLib::yBasicValueType::BOOL_YBASICVALUE_TYPE;
-            break;
-        }
-        case yLib::yConfigValueType::FLOAT_TYPE:{
-
-            this->_value_containter._f_value_float = config_value._value_containter._f_value_float;
-            this->_cur_basic_value_type = yLib::yBasicValueType::FLOAT_YBASICVALUE_TYPE;
-            break;
-        }
-        case yLib::yConfigValueType::STRING_TYPE:{
-
-            this->_value_containter._str_value_string = config_value._value_containter._str_value_string;
-            this->_cur_basic_value_type = yLib::yBasicValueType::STRING_YBASICVALUE_TYPE;
-            break;
-        }
-        case yLib::yConfigValueType::GROUP_TYPE:{
-            //not support type
-            break;
-        }
-        case yLib::yConfigValueType::NONE_TYPE:{
-            //no value
-            break;
-        }
-        default :{
-            yLib::yLog::E("Copy-Construct of yConfigValue failed: data type error.");
-            break;
-        }
-    }
     return *this;
 }
 
-yLib::yConfigValue::yConfigValue(yConfigValue && config_value) noexcept 
-: yBasicValue()
+yLib::yConfigValue::yConfigValue(const yConfigValue &&value_) noexcept 
+:yBasicValue()
 {
-    object_name = "yConfigValue";
-
-    this->_current_data_type_ = config_value._current_data_type_;
-
-    switch(this->_current_data_type_){
-
-        case yLib::yConfigValueType::INT_TYPE:{
-            
-            this->_value_containter._n_value_int64 = config_value._value_containter._n_value_int64;
-            this->_cur_basic_value_type = yLib::yBasicValueType::INT64_YBASICVALUE_TYPE;
-            break;
-        }
-        case yLib::yConfigValueType::BOOL_TYPE:{
-
-            this->_value_containter._b_value_bool = config_value._value_containter._b_value_bool;
-            this->_cur_basic_value_type = yLib::yBasicValueType::BOOL_YBASICVALUE_TYPE;
-            break;
-        }
-        case yLib::yConfigValueType::FLOAT_TYPE:{
-
-            this->_value_containter._f_value_float = config_value._value_containter._f_value_float;
-            this->_cur_basic_value_type = yLib::yBasicValueType::FLOAT_YBASICVALUE_TYPE;
-            break;
-        }
-        case yLib::yConfigValueType::STRING_TYPE:{
-
-            this->_value_containter._str_value_string = config_value._value_containter._str_value_string;
-            this->_cur_basic_value_type = yLib::yBasicValueType::STRING_YBASICVALUE_TYPE;
-            break;
-        }
-        case yLib::yConfigValueType::GROUP_TYPE:{
-            //not support type
-            break;
-        }
-        case yLib::yConfigValueType::NONE_TYPE:{
-            //no value
-            break;
-        }
-        default :{
-            yLib::yLog::E("Move-Construct of yConfigValue failed: data type error.");
-            break;
-        }
-    }
+    object_name = YLIB_STR(yConfigValue);
+    yLib::yBasicValue::CopyValueContainer(value_, *this);
 }
-yLib::yConfigValue & yLib::yConfigValue::operator=(yConfigValue && config_value) noexcept{
-
-    object_name = "yConfigValue";
-
-    this->_current_data_type_ = config_value._current_data_type_;
-
-    switch(this->_current_data_type_){
-
-        case yLib::yConfigValueType::INT_TYPE:{
-            
-            this->_value_containter._n_value_int64 = config_value._value_containter._n_value_int64;
-            this->_cur_basic_value_type = yLib::yBasicValueType::INT64_YBASICVALUE_TYPE;
-            break;
-        }
-        case yLib::yConfigValueType::BOOL_TYPE:{
-
-            this->_value_containter._b_value_bool = config_value._value_containter._b_value_bool;
-            this->_cur_basic_value_type = yLib::yBasicValueType::BOOL_YBASICVALUE_TYPE;
-            break;
-        }
-        case yLib::yConfigValueType::FLOAT_TYPE:{
-
-            this->_value_containter._f_value_float = config_value._value_containter._f_value_float;
-            this->_cur_basic_value_type = yLib::yBasicValueType::FLOAT_YBASICVALUE_TYPE;
-            break;
-        }
-        case yLib::yConfigValueType::STRING_TYPE:{
-
-            this->_value_containter._str_value_string = config_value._value_containter._str_value_string;
-            this->_cur_basic_value_type = yLib::yBasicValueType::STRING_YBASICVALUE_TYPE;
-            break;
-        }
-        case yLib::yConfigValueType::GROUP_TYPE:{
-            //not support type
-            break;
-        }
-        case yLib::yConfigValueType::NONE_TYPE:{
-            //no value
-            break;
-        }
-        default :{
-            yLib::yLog::E("Move-Construct of yConfigValue failed: data type error.");
-            break;
-        }
-    }
+yLib::yConfigValue& yLib::yConfigValue::operator=(const yConfigValue &&value_) noexcept
+{
+    
+    this->CleanAllToDefault();
+    yLib::yBasicValue::CopyValueContainer(value_, *this);
 
     return *this;
 }
-/* merge to ybasicvalue
-yLib::yConfigValue::operator int() const{
 
-   return this->_n_value_int;
-}
-yLib::yConfigValue::operator bool() const{
+yLib::yConfigValue & yLib::yConfigValue::operator=(int32_t value_){
 
-    return this->_b_value_bool;
-}
-yLib::yConfigValue::operator float() const{
-
-    return this->_f_value_float;
-}
-yLib::yConfigValue::operator std::string() const{
-
-    return this->_str_value_string;
-}
-*/
-// yLib::yConfigValue::operator const char *() const{
-
-//     return (char *)this->value_string.c_str();
-// }
-
-yLib::yConfigValueType yLib::yConfigValue::GetyConfigValueType(void) const {
-	
-	return _current_data_type_;
-}
-
-yLib::yConfigValue & yLib::yConfigValue::operator=(int value){
-
-    this->_current_data_type_ = yConfigValueType::INT_TYPE;
-    this->_value_containter._n_value_int64 = value;
-    this->_cur_basic_value_type = yLib::yBasicValueType::INT64_YBASICVALUE_TYPE;
-    return (*this);
-}
-yLib::yConfigValue & yLib::yConfigValue::operator=(bool value){
-
-    this->_current_data_type_ = yConfigValueType::BOOL_TYPE;
-    this->_value_containter._b_value_bool = value;
-    this->_cur_basic_value_type = yLib::yBasicValueType::BOOL_YBASICVALUE_TYPE;
-    return (*this);
-}
-yLib::yConfigValue & yLib::yConfigValue::operator=(float value){
-
-    this->_current_data_type_ = yConfigValueType::FLOAT_TYPE;
-    this->_value_containter._f_value_float = value;
-    this->_cur_basic_value_type = yLib::yBasicValueType::FLOAT_YBASICVALUE_TYPE;
-    return (*this);
-}
-yLib::yConfigValue & yLib::yConfigValue::operator=(std::string & value){
-
-    this->_current_data_type_ = yConfigValueType::STRING_TYPE;
-    this->_value_containter._str_value_string = value;
-    this->_cur_basic_value_type = yLib::yBasicValueType::STRING_YBASICVALUE_TYPE;
+    this->CleanAllToDefault();
+    yLib::yBasicValue::CopyValueContainer(yValue(value_), *this);
     return (*this);
 }
 
-yLib::yConfigValue & yLib::yConfigValue::operator=(std::string && value){
+yLib::yConfigValue & yLib::yConfigValue::operator=(bool value_){
 
-    this->_current_data_type_ = yConfigValueType::STRING_TYPE;
-    this->_value_containter._str_value_string = value;
-    this->_cur_basic_value_type = yLib::yBasicValueType::STRING_YBASICVALUE_TYPE;
+    this->CleanAllToDefault();
+    yLib::yBasicValue::CopyValueContainer(yValue(value_), *this);
+    return (*this);
+}
+yLib::yConfigValue & yLib::yConfigValue::operator=(float value_){
+
+    this->CleanAllToDefault();
+    yLib::yBasicValue::CopyValueContainer(yValue(value_), *this);
+    return (*this);
+}
+yLib::yConfigValue & yLib::yConfigValue::operator=(const std::string &value_){
+
+    this->CleanAllToDefault();
+    yLib::yBasicValue::CopyValueContainer(yValue(value_), *this);
     return (*this);
 }
 
-yLib::yConfigValue & yLib::yConfigValue::operator=(const char *  value){
-
-    this->_current_data_type_ = yConfigValueType::STRING_TYPE;
-    this->_value_containter._str_value_string = value;
-    this->_cur_basic_value_type = yLib::yBasicValueType::STRING_YBASICVALUE_TYPE;
-    return (*this);
-}
