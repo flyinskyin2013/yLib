@@ -4,7 +4,7 @@ on: push
 jobs:
   build_linux_x86_64:
     name: build yLib on linux_x86_64 platefrom
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     steps:
     - name: check out my rep
       uses: actions/checkout@v1
