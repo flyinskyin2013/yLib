@@ -49,47 +49,47 @@ jobs:
         cd install/tests
         ./scripts_for_tests.sh
         
-  build_ubuntu_1604_x86_64:
-    name: build yLib on x86_64(ubuntu_1604) platefrom
-    runs-on: ubuntu-16.04
-    steps:
-    - name: check out my rep
-      uses: actions/checkout@v1
+  # build_ubuntu_1604_x86_64:
+  #   name: build yLib on x86_64(ubuntu_1604) platefrom
+  #   runs-on: ubuntu-16.04
+  #   steps:
+  #   - name: check out my rep
+  #     uses: actions/checkout@v1
 
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
-      run: |
-        echo $GITHUB_WORKSPACE
-        ls $GITHUB_WORKSPACE
-        cd $GITHUB_WORKSPACE
-        chmod +x build_deps.sh
-        mkdir -p build
+  #   - name: set env and init
+  #     env:
+  #       THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+  #     run: |
+  #       echo $GITHUB_WORKSPACE
+  #       ls $GITHUB_WORKSPACE
+  #       cd $GITHUB_WORKSPACE
+  #       chmod +x build_deps.sh
+  #       mkdir -p build
         
 
-      working-directory: /home/runner/work/yLib/yLib
+  #     working-directory: /home/runner/work/yLib/yLib
 
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
-      run: |
-        cd $GITHUB_WORKSPACE
-        ./build_deps.sh All
+  #   - name: build third part
+  #     env:
+  #       THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+  #     run: |
+  #       cd $GITHUB_WORKSPACE
+  #       ./build_deps.sh All
 
-      working-directory: /home/runner/work/yLib/yLib
+  #     working-directory: /home/runner/work/yLib/yLib
 
-    - name: build ylib
-      working-directory: /home/runner/work/yLib/yLib/build
-      run: |
-        cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 ..
-        make
-        make install
+  #   - name: build ylib
+  #     working-directory: /home/runner/work/yLib/yLib/build
+  #     run: |
+  #       cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 ..
+  #       make
+  #       make install
 
-    - name: test ylib
-      working-directory: /home/runner/work/yLib/yLib/build
-      run: |
-        cd install/tests
-        ./scripts_for_tests.sh
+  #   - name: test ylib
+  #     working-directory: /home/runner/work/yLib/yLib/build
+  #     run: |
+  #       cd install/tests
+  #       ./scripts_for_tests.sh
 
   build_win32_x86:
     name: build yLib on win32 platefrom
