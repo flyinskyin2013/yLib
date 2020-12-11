@@ -3,7 +3,7 @@
  * @Author: Sky
  * @Date: 2020-03-18 15:42:09
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-28 11:39:56
+ * @LastEditTime: 2020-12-11 09:44:55
  * @FilePath: \yLib\src\yhttp.cpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -47,28 +47,28 @@ static void __little_endian_buf_to_uint32__(uint8_t * buf_,uint32_t * len_){
 static size_t write_callback(char *buffer_, size_t size_, size_t nmemb_, void *userdata_){
     
     
-    uint8_t * _data_buf = (uint8_t *)userdata_;
+    uint8_t ** _data_buf = (uint8_t **)userdata_;
     uint32_t _buffer_len = 0;
     uint32_t _buffer_used_len = 0;
 
     //yLib::yLog::I("buffer_ %x, size_ %d, nmemb_ %d, userdata_ %x", buffer_, size_, nmemb_, _data_buf);
 
-    __little_endian_buf_to_uint32__(_data_buf, &_buffer_len);
-    __little_endian_buf_to_uint32__(_data_buf + 4, &_buffer_used_len);
+    __little_endian_buf_to_uint32__(*_data_buf, &_buffer_len);
+    __little_endian_buf_to_uint32__(*_data_buf + 4, &_buffer_used_len);
 
     //yLib::yLog::I("_buffer_len %d, _buffer_used_len %d", _buffer_len, _buffer_used_len);
     if ( (_buffer_len - _buffer_used_len) >= size_* nmemb_ ){
         
-        memcpy(_data_buf + 8 + _buffer_used_len, buffer_, size_*nmemb_);
+        memcpy(*_data_buf + 8 + _buffer_used_len, buffer_, size_*nmemb_);
         _buffer_used_len += size_*nmemb_;
-        __little_endian_uint32_to_buf__(_data_buf + 4, _buffer_used_len);
+        __little_endian_uint32_to_buf__(*_data_buf + 4, _buffer_used_len);
     }
     else{
 
         uint32_t _now_not_used_len = _buffer_len - _buffer_used_len;
         uint32_t _alloc_4k_count = (size_* nmemb_ / 4096) + 1;
 
-        uint8_t * _new_buf_addr = (uint8_t *)realloc(_data_buf, _buffer_len + _alloc_4k_count * 4096);
+        uint8_t * _new_buf_addr = (uint8_t *)realloc(*_data_buf, _buffer_len + _alloc_4k_count * 4096);
         if (NULL == _new_buf_addr){
 
             yLib::yLog::E("Realloc mem failed.");
@@ -76,15 +76,15 @@ static size_t write_callback(char *buffer_, size_t size_, size_t nmemb_, void *u
         }
         else
         {
-            _data_buf = _new_buf_addr;
-            *(uint8_t **)userdata_ = _data_buf;
-            __little_endian_uint32_to_buf__(_data_buf, _buffer_len + _alloc_4k_count * 4096);
+            *_data_buf = _new_buf_addr;
+            *(uint8_t **)userdata_ = _new_buf_addr;
+            __little_endian_uint32_to_buf__(*_data_buf, _buffer_len + _alloc_4k_count * 4096);
         }
         
 
         memcpy((*(uint8_t **)userdata_) + 8 + _buffer_used_len, buffer_, size_*nmemb_);
         _buffer_used_len += size_*nmemb_;
-        __little_endian_uint32_to_buf__(_data_buf + 4, _buffer_used_len);
+        __little_endian_uint32_to_buf__(*_data_buf + 4, _buffer_used_len);
     }
 
     return size_* nmemb_;
@@ -201,7 +201,7 @@ static int8_t __yhttp_parse_set_http_url__(CURL * ptr_http_handle, const yLib::y
     return 0;
 }
 
-static int8_t __yhttp_set_response_callback_buffer__(CURL * ptr_http_handle, uint8_t *data_buffer_ptr_, uint32_t buffer_len_){
+static int8_t __yhttp_set_response_callback_buffer__(CURL * ptr_http_handle, uint8_t **data_buffer_ptr_, uint32_t buffer_len_){
 
     if ( CURLE_OK != curl_easy_setopt(ptr_http_handle, CURLOPT_WRITEFUNCTION, write_callback) ){
 
@@ -209,8 +209,8 @@ static int8_t __yhttp_set_response_callback_buffer__(CURL * ptr_http_handle, uin
         return -1;
     }
     //yLib::yLog::I("data_buffer_ptr_ %x, buffer_len_ %d", data_buffer_ptr_, buffer_len_);
-    __little_endian_uint32_to_buf__(data_buffer_ptr_, buffer_len_);//all len
-    __little_endian_uint32_to_buf__(data_buffer_ptr_ + 4, 0);//read len
+    __little_endian_uint32_to_buf__(*data_buffer_ptr_, buffer_len_);//all len
+    __little_endian_uint32_to_buf__(*data_buffer_ptr_ + 4, 0);//read len
     if ( CURLE_OK != curl_easy_setopt(ptr_http_handle, CURLOPT_WRITEDATA, (void *)data_buffer_ptr_) ){
 
         yLib::yLog::E("set http write data ptr failed.");
@@ -324,7 +324,7 @@ int8_t yLib::yHttp::yHttpGet(const yHttpRequestParam &request_param_, yHttpRespo
 
     //set response callback and buffer
     data_buffer_ptr_ = (uint8_t *)malloc(1024 * sizeof(uint8_t));
-    if (0 > __yhttp_set_response_callback_buffer__(ptr_http_handle, data_buffer_ptr_, 1024 * sizeof(uint8_t))){
+    if (0 > __yhttp_set_response_callback_buffer__(ptr_http_handle, &data_buffer_ptr_, 1024 * sizeof(uint8_t))){
             
         __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
         return -1;
@@ -405,7 +405,7 @@ int8_t yLib::yHttp::yHttpPostDefault(const yHttpRequestParam &request_param_, yH
 
     //set response callback and buffer
     data_buffer_ptr_ = (uint8_t *)malloc(1024 * sizeof(uint8_t));
-    if (0 > __yhttp_set_response_callback_buffer__(ptr_http_handle, data_buffer_ptr_, 1024 * sizeof(uint8_t))){
+    if (0 > __yhttp_set_response_callback_buffer__(ptr_http_handle, &data_buffer_ptr_, 1024 * sizeof(uint8_t))){
             
         __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
         return -1;
@@ -479,7 +479,7 @@ int8_t yLib::yHttp::yHttpPostJson(const yHttpRequestParam &request_param_, yHttp
 
     //set response callback and buffer
     data_buffer_ptr_ = (uint8_t *)malloc(1024 * sizeof(uint8_t));
-    if (0 > __yhttp_set_response_callback_buffer__(ptr_http_handle, data_buffer_ptr_, 1024 * sizeof(uint8_t))){
+    if (0 > __yhttp_set_response_callback_buffer__(ptr_http_handle, &data_buffer_ptr_, 1024 * sizeof(uint8_t))){
             
         __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
         return -1;
@@ -595,7 +595,7 @@ int8_t yLib::yHttp::yHttpPostMultiPart(const yHttpRequestParam &request_param_, 
 
     //set response callback and buffer
     data_buffer_ptr_ = (uint8_t *)malloc(1024 * sizeof(uint8_t));
-    if (0 > __yhttp_set_response_callback_buffer__(ptr_http_handle, data_buffer_ptr_, 1024 * sizeof(uint8_t))){
+    if (0 > __yhttp_set_response_callback_buffer__(ptr_http_handle, &data_buffer_ptr_, 1024 * sizeof(uint8_t))){
             
         __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
         return -1;
