@@ -2,7 +2,7 @@
  # @Author: Sky
  # @Date: 2020-03-31 10:41:36
  # @LastEditors: Sky
- # @LastEditTime: 2020-12-11 10:03:46
+ # @LastEditTime: 2020-12-11 10:39:22
  # @Description: 
  ###
 echo 'scripts for tests'
@@ -44,12 +44,12 @@ fi
 #network
 
 #utility
-./test_unit_yconfig -d yes
-if [ $? -ne 0 ]
-then
-    echo 'test per unit error.'
-    exit -1
-fi
+# ./test_unit_yconfig -d yes
+# if [ $? -ne 0 ]
+# then
+#     echo 'test per unit error.'
+#     exit -1
+# fi
 
 ./test_unit_yhttp -d yes
 if [ $? -ne 0 ]
