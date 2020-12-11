@@ -2,7 +2,7 @@
  # @Author: Sky
  # @Date: 2020-03-31 10:41:36
  # @LastEditors: Sky
- # @LastEditTime: 2020-12-11 09:47:26
+ # @LastEditTime: 2020-12-11 09:59:43
  # @Description: 
  ###
 echo 'scripts for tests'
@@ -79,12 +79,12 @@ then
     exit -1
 fi
 
-# ./test_unit_yxml -d yes
-# if [ $? -ne 0 ]
-# then
-#     echo 'test per unit error.'
-#     exit -1
-# fi
+./test_unit_yxml -d yes
+if [ $? -ne 0 ]
+then
+    echo 'test per unit error.'
+    exit -1
+fi
 
 
 # echo 'test all ... ...'

@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2018-10-23 11:09:25
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-14 18:40:51
+ * @LastEditTime: 2020-12-11 09:59:07
  * @Description: 
  */
 
@@ -491,7 +491,8 @@ yLib::yXml::yXml() MACRO_INIT_YOBJECT_PROPERTY(yXml){
 
 yLib::yXml::~yXml(){
 
-	
+	if (nullptr != xmlfile_pdoc_ptr)
+		xmlFreeDoc(xmlfile_pdoc_ptr);
 }
 
 int8_t yLib::yXml::ReadFromXmlFile(std::string & xml_file_){
@@ -508,6 +509,7 @@ int8_t yLib::yXml::ReadFromXmlFile(std::string & xml_file_){
 	xmlKeepBlanksDefault(0) ;//libxml2 global variable . 保证格式正确
 	xmlIndentTreeOutput = 1 ;// indent .with \n 
 
+	xmlfile_pdoc_ptr = NULL;
 	xmlfile_pdoc_ptr = xmlReadFile(xml_file_.c_str(), "UTF-8", XML_PARSE_NOBLANKS | XML_PARSE_RECOVER);//libxml只能解析UTF-8格式数据
 
 	if (xmlfile_pdoc_ptr == NULL)
