@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-09-08 10:26:39
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-16 16:33:05
+ * @LastEditTime: 2020-12-11 13:39:41
  * @Description: 
  */
 #include "network/yabstractsocket.h"
@@ -55,7 +55,12 @@ std::string yLib::yAbstractSocket::get_ip_from_binary(uint64_t ip_){
 
 uint64_t yLib::yAbstractSocket::get_port_from_binary(uint64_t port_){
 
-    return ::ntohs(port_);
+    // In "in.h" file, Tere are two definations of noths/ntohl and htons/htonl .
+    // If enable macro __OPTIMIZE__(have -Ox param for gcc ), noths/ntohl and htons/htonl are defined as macro.
+    // If disable macro __OPTIMIZE__,(don't have -Ox param for gcc ) noths/ntohl and htons/htonl are defined as function.
+    // so we can't call noths/ntohl and htons/htonl using '::', when we enable macro '__OPTIMIZE__'(have -Ox param for gcc )
+    // return ::ntohs(port_);
+    return ntohs(port_);
 }
 
 int64_t yLib::yAbstractSocket::translate_ip_to_binary(const std::string &ip_){
@@ -72,5 +77,10 @@ int64_t yLib::yAbstractSocket::translate_ip_to_binary(const std::string &ip_){
 
 uint64_t yLib::yAbstractSocket::translate_port_to_binary(uint64_t port_){
 
-    return ::htons(port_);
+    // In "in.h" file, Tere are two definations of noths/ntohl and htons/htonl .
+    // If enable macro __OPTIMIZE__(have -Ox param for gcc ), noths/ntohl and htons/htonl are defined as macro.
+    // If disable macro __OPTIMIZE__,(don't have -Ox param for gcc ) noths/ntohl and htons/htonl are defined as function.
+    // so we can't call noths/ntohl and htons/htonl using '::', when we enable macro '__OPTIMIZE__'(have -Ox param for gcc )
+    // return ::ntohs(port_);
+    return htons(port_);
 }
