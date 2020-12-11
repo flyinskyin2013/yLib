@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-09-08 10:50:08
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-24 16:40:00
+ * @LastEditTime: 2020-12-11 13:41:08
  * @Description: 
  */
 #include "network/ytcpserver.h"
@@ -319,7 +319,12 @@ void yTcpServer::epoll_thread_context(OnClientConnectCB con_cb_, OnClientDisconn
                     client_info_map.insert(std::make_pair(_new_client_fd, _client_addr));
 
                     //call OnClientConnectCB
-                    con_cb_(_new_client_fd, _accept_client_ip, ::ntohs(_client_addr.sin_port));
+                    // In "in.h" file, Tere are two definations of noths/ntohl and htons/htonl .
+                    // If enable macro __OPTIMIZE__(have -Ox param for gcc ), noths/ntohl and htons/htonl are defined as macro.
+                    // If disable macro __OPTIMIZE__,(don't have -Ox param for gcc ) noths/ntohl and htons/htonl are defined as function.
+                    // so we can't call noths/ntohl and htons/htonl using '::', when we enable macro '__OPTIMIZE__'(have -Ox param for gcc )
+                    // call ::ntohs(port_);
+                    con_cb_(_new_client_fd, _accept_client_ip, ntohs(_client_addr.sin_port));
 
                 }//while
 
@@ -425,7 +430,14 @@ void yTcpServer::epoll_thread_context(OnClientConnectCB con_cb_, OnClientDisconn
                 yTcpServerSocketMap::iterator _tmp_iter = client_info_map.find(_ret_events_array[i].data.fd);
 
                 std::string _close_client_ip = ::inet_ntoa(_tmp_iter->second.sin_addr);
-                discon_cb_(_ret_events_array[i].data.fd, _close_client_ip, ::ntohs(_tmp_iter->second.sin_port));
+
+                //call OnClientConnectCB
+                // In "in.h" file, Tere are two definations of noths/ntohl and htons/htonl .
+                // If enable macro __OPTIMIZE__(have -Ox param for gcc ), noths/ntohl and htons/htonl are defined as macro.
+                // If disable macro __OPTIMIZE__,(don't have -Ox param for gcc ) noths/ntohl and htons/htonl are defined as function.
+                // so we can't call noths/ntohl and htons/htonl using '::', when we enable macro '__OPTIMIZE__'(have -Ox param for gcc )
+                // call ::ntohs(port_);
+                discon_cb_(_ret_events_array[i].data.fd, _close_client_ip, ntohs(_tmp_iter->second.sin_port));
                 client_info_map.erase(_ret_events_array[i].data.fd);
 
                 continue;

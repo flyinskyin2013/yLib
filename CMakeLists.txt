@@ -131,7 +131,8 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
     # if gcc > 4.9 add sanitizers
-    if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.1)
+    # gcc 5.x has bug for "ld: unrecognized option '--push-state--no-as-needed'", we should use gcc 7.5
+    if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 7.3)
 
         message(STATUS "Enable AddressSanitizer MemorySanitizer")
         set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize=leak -fsanitize=undefined")
