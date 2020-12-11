@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-09-08 10:27:12
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-14 18:00:59
+ * @LastEditTime: 2020-12-11 13:41:47
  * @Description: 
  */
 #include "network/ytcpsocket.h"
@@ -103,7 +103,12 @@ int8_t yTcpSocket::connect(const std::string & ip_, int32_t port_){
     socklen_t _server_socket_addr_len = sizeof(_server_socket_addr);
     ::memset(&_server_socket_addr, 0, sizeof(_server_socket_addr));
 
-    _server_socket_addr.sin_port = ::htons(port_);
+    // In "in.h" file, Tere are two definations of noths/ntohl and htons/htonl .
+    // If enable macro __OPTIMIZE__(have -Ox param for gcc ), noths/ntohl and htons/htonl are defined as macro.
+    // If disable macro __OPTIMIZE__,(don't have -Ox param for gcc ) noths/ntohl and htons/htonl are defined as function.
+    // so we can't call noths/ntohl and htons/htonl using '::', when we enable macro '__OPTIMIZE__'(have -Ox param for gcc )
+    // call ::ntohs(port_);
+    _server_socket_addr.sin_port = htons(port_);
     if (0 == ::inet_aton(ip_.c_str(), &_server_socket_addr.sin_addr)){//invalid ip
 
         std::cout<<"yUdpClient: Invalid ip_. please check."<<std::endl;
