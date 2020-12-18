@@ -1,0 +1,18 @@
+name: linux_arm_gcc
+on: [push, pull_request]
+
+jobs:
+  build_linux_gnueabi:
+    name: build on gnueabi(last_ubuntu) platefrom  using gcc
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout my rep
+      uses: actions/checkout@v2
+
+
+  build_linux_gnueabihf:
+    name: build on gnueabihf(last_ubuntu) platefrom  using gcc
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout my rep
+      uses: actions/checkout@v2

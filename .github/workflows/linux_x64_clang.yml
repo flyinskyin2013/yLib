@@ -1,0 +1,10 @@
+name: linux_x64_clang
+on: [push, pull_request]
+
+jobs:
+  build_last_ubuntu_x86_64_clang:
+    name: build on x86_64(last_ubuntu) platefrom  using clang
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout my rep
+      uses: actions/checkout@v2
