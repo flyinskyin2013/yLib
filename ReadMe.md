@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-10-21 13:51:28
  * @LastEditors: Sky
- * @LastEditTime: 2020-12-10 15:31:16
+ * @LastEditTime: 2020-12-18 17:33:04
  * @Description: 
  -->
 ## yLib
@@ -11,25 +11,15 @@
 
 This lib collect and collate usage of common skills in my daily-work.
 
-
-Travis Current Build Status <br> 
-
-| Platefrom | CPU(32bits)  | CPU (64bits) |
-| :---: | :---: | :---: |
-| Linux (GCC) | [![Build Travis Status](https://travis-ci.org/flyinskyin2013/yLib.svg?branch=master)](https://travis-ci.org/flyinskyin2013/yLib) |  [![Build Travis Status](https://travis-ci.org/flyinskyin2013/yLib.svg?branch=master)](https://travis-ci.org/flyinskyin2013/yLib) |  
-| Linux (Clang) | [![Build Travis Status](https://travis-ci.org/flyinskyin2013/yLib.svg?branch=master)](https://travis-ci.org/flyinskyin2013/yLib) |  [![Build Travis Status](https://travis-ci.org/flyinskyin2013/yLib.svg?branch=master)](https://travis-ci.org/flyinskyin2013/yLib) |  
-| Linux (ARM GCC) | [![Build Travis Status](https://travis-ci.org/flyinskyin2013/yLib.svg?branch=master)](https://travis-ci.org/flyinskyin2013/yLib) |  [![Build Travis Status](https://travis-ci.org/flyinskyin2013/yLib.svg?branch=master)](https://travis-ci.org/flyinskyin2013/yLib) |  
-| Windows (VS2017) | [![Build Travis Status](https://travis-ci.org/flyinskyin2013/yLib.svg?branch=master)](https://travis-ci.org/flyinskyin2013/yLib) |  [![Build Travis Status](https://travis-ci.org/flyinskyin2013/yLib.svg?branch=master)](https://travis-ci.org/flyinskyin2013/yLib) |  
-
-
-GithubAction Current Build Status <br> 
+yLib current build matrix <br> 
 
 | Platefrom | CPU(32bits)  | CPU (64bits) |
 | :---: | :---: | :---: |
-| Linux (GCC) | [![Build github action Status](https://github.com/flyinskyin2013/yLib/workflows/Build%20yLib%20CI/badge.svg)](https://github.com/flyinskyin2013/yLib/workflows/Build%20yLib%20CI/badge.svg) |  [![Build github action Status](https://github.com/flyinskyin2013/yLib/workflows/Build%20yLib%20CI/badge.svg)](https://github.com/flyinskyin2013/yLib/workflows/Build%20yLib%20CI/badge.svg) |  
-| Linux (Clang) | [![Build github action Status](https://github.com/flyinskyin2013/yLib/workflows/Build%20yLib%20CI/badge.svg)](https://github.com/flyinskyin2013/yLib/workflows/Build%20yLib%20CI/badge.svg) |  [![Build github action Status](https://github.com/flyinskyin2013/yLib/workflows/Build%20yLib%20CI/badge.svg)](https://github.com/flyinskyin2013/yLib/workflows/Build%20yLib%20CI/badge.svg) |  
-| Linux (ARM GCC) | [![Build github action Status](https://github.com/flyinskyin2013/yLib/workflows/Build%20yLib%20CI/badge.svg)](https://github.com/flyinskyin2013/yLib/workflows/Build%20yLib%20CI/badge.svg) |  [![Build github action Status](https://github.com/flyinskyin2013/yLib/workflows/Build%20yLib%20CI/badge.svg)](https://github.com/flyinskyin2013/yLib/workflows/Build%20yLib%20CI/badge.svg) |  
-| Windows (VS2015) | [![Build github action Status](https://github.com/flyinskyin2013/yLib/workflows/Build%20yLib%20CI/badge.svg)](https://github.com/flyinskyin2013/yLib/workflows/Build%20yLib%20CI/badge.svg) |  [![Build github action Status](https://github.com/flyinskyin2013/yLib/workflows/Build%20yLib%20CI/badge.svg)](https://github.com/flyinskyin2013/yLib/workflows/Build%20yLib%20CI/badge.svg) |  
+| Linux (GCC) | [![Build Status](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x86_gcc)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x86_gcc) |  [![Build Status](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x64_gcc)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x64_gcc) |  
+| Linux (Clang) | [![Build Status](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x86_clang)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x86_clang) |  [![Build Status](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x64_clang)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x64_clang) |  
+| Linux (ARM GCC) | [![Build Status](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_arm_gcc)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_arm_gcc) |  [![Build Status](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_aarch64_gcc)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_aarch64_gcc) |  
+| Windows (VS2017) | [![Build Status](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x86_vs2017)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x86_vs2017) |  [![Build Status](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x64_vs2017)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x64_vs2017) |  
+| Windows (VS2019) | [![Build Status](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x86_vs2019)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x86_vs2019) |  [![Build Status](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x64_vs2019)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x64_vs2019) |  
 
 
 ## Version:

@@ -1,0 +1,2 @@
+name: linux_x64_clang
+on: [push, pull_request]
