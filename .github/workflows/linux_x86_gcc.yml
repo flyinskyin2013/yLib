@@ -1,6 +1,13 @@
 name: linux_x86_gcc
 on: [push, pull_request]
 
+jobs:
+  build_last_ubuntu_x86_gcc:
+    name: build on x86(last_ubuntu) platefrom  using gcc
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout my rep
+      uses: actions/checkout@v2
 # jobs:
 #   build_last_ubuntu_x86_64:
 #     name: build yLib on x86_64(last_ubuntu) platefrom

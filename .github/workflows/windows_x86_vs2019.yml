@@ -1,2 +1,10 @@
 name: windows_x86_vs2019
 on: [push, pull_request]
+
+jobs:
+  build_windows_x86_vs2019:
+    name: build on x86(windows) platefrom  using vs2019
+    runs-on: windows-latest
+    steps:
+    - name: checkout my rep
+      uses: actions/checkout@v2

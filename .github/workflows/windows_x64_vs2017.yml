@@ -1,2 +1,10 @@
 name: windows_x64_vs2017
 on: [push, pull_request]
+
+jobs:
+  build_windows_x64_vs2017:
+    name: build on x64(windows) platefrom  using vs2017
+    runs-on: windows-latest
+    steps:
+    - name: checkout my rep
+      uses: actions/checkout@v2

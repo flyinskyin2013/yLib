@@ -1,2 +1,19 @@
 name: linux_aarch64_gcc
 on: [push, pull_request]
+
+
+jobs:
+  build_linux_aarch64:
+    name: build on aarch64(last_ubuntu) platefrom  using gcc
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout my rep
+      uses: actions/checkout@v2
+
+
+  build_linux_arm82:
+    name: build on arm82(last_ubuntu) platefrom  using gcc
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout my rep
+      uses: actions/checkout@v2
