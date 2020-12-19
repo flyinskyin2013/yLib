@@ -44,12 +44,12 @@ fi
 #network
 
 #utility
-./test_unit_yconfig -d yes
-if [ $? -ne 0 ]
-then
-    echo 'test per unit error.'
-    exit -1
-fi
+# ./test_unit_yconfig -d yes
+# if [ $? -ne 0 ]
+# then
+#     echo 'test per unit error.'
+#     exit -1
+# fi
 
 ./test_unit_yhttp -d yes
 if [ $? -ne 0 ]

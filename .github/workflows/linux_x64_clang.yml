@@ -8,3 +8,38 @@ jobs:
     steps:
     - name: checkout my rep
       uses: actions/checkout@v2
+
+
+    - name: set env and init
+      env:
+        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+      run: |
+        echo $GITHUB_WORKSPACE
+        ls $GITHUB_WORKSPACE
+        cd $GITHUB_WORKSPACE
+        chmod +x build_deps.sh
+        mkdir -p build
+        
+      working-directory: /home/runner/work/yLib/yLib
+
+    - name: build third part
+      env:
+        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+      run: |
+        cd $GITHUB_WORKSPACE
+        ./build_deps.sh All
+
+      working-directory: /home/runner/work/yLib/yLib
+
+    - name: build ylib
+      working-directory: /home/runner/work/yLib/yLib/build
+      run: |
+        cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_x64_clang.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 ..
+        make
+        make install
+
+    - name: test ylib
+      working-directory: /home/runner/work/yLib/yLib/build
+      run: |
+        cd install/tests
+        ./scripts_for_tests.sh

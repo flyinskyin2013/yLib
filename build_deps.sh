@@ -51,6 +51,9 @@ THIRD_PART_DIR=${ROOT_DIR}/third_part
 self_print I "Welcome yLib build dependence."
 echo ""
 
+Default_Arch="x86_64"
+Default_Platform="linux"
+
 function check_download_third_part(){
 
 	self_print I "Now,we will check and download third-part resources.please wait ... ..."
@@ -152,7 +155,8 @@ function copy_prepared_file(){
 		then 
 			echo "Got it."
 		else
-			platform_type="linux"
+			# platform_type="linux"
+			platform_type=${Default_Platform}
 		fi
 		case ${platform_type} in
 			"linux")
@@ -181,7 +185,8 @@ function copy_prepared_file(){
 		then 
 			echo "Got it."
 		else
-			arch_type="x86_64"
+			# arch_type="x86_64"
+			arch_type=${Default_Arch}
 		fi
 		case ${arch_type} in
 			"x86")
@@ -240,10 +245,52 @@ case $1 in
 		;;
 	*)
 		echo "Help info:"
-		echo "You can pass those argument(Download, Build, Copy, All) to scripts"
+		echo "You can pass those ActionTypes(Download, Build, Copy, All) to script as first argument"
+		echo "You can pass those optional ArchType(x86/x86_64(default)/armeabi/armeabi-v7a/arm64-v8a) to script as second argument"
+		echo "You can pass those optional Platform(linux(default)/windows/android) to script as third argument"
 		echo ""
+		echo "Format:"
+		echo "./build_deps.sh ActionType ArchType Platform"
 		echo "Example:"
-		echo "./build_deps.sh Download      ||   ./build_deps.sh     All"
+		echo "./build_deps.sh Download    ||   ./build_deps.sh     All"
+		echo "./build_deps.sh Download  x86_64 linux ||  ./build_deps.sh  All x86 windows"
+		exit 0
+esac
+
+case $2 in
+	"x86")
+		Default_Arch="x86"
+		;;
+	"x86_64")
+		Default_Arch="x86_64"
+		;;
+	"armeabi")
+		Default_Arch="armeabi"
+		;;
+	"armeabi-v7a")
+		Default_Arch="armeabi-v7a"
+		;;
+	"arm64-v8a")
+		Default_Arch="arm64-v8a"
+		;;
+	*)
+		echo "Notice: set Default_Arch is x86_64"
+		Default_Arch="x86_64"
+esac
+
+case $3 in
+	"linux")
+		Default_Platform="linux"
+		;;
+	"windows")
+		Default_Platform="windows"
+		;;
+	"android")
+		Default_Platform="android"
+		;;
+	*)
+		echo "Notice: set Default_Platform is linux"
+		Default_Platform="linux"
 esac
 
 
