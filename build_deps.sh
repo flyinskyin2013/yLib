@@ -132,9 +132,9 @@ function build_third_part(){
 
 	chmod +x build_third_part.sh
 
-	./build_third_part.sh clean
-	./build_third_part.sh init
-	./build_third_part.sh make
+	./build_third_part.sh clean ${Default_Arch}
+	./build_third_part.sh init ${Default_Arch}
+	./build_third_part.sh make ${Default_Arch}
 
 
 	self_print I "Build complete."

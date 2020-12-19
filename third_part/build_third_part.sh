@@ -8,8 +8,8 @@
 #!/bin/bash
 
 Default_Arch="x86_64"
-SLEF_C_FLAGS=-fPIC 
-SLEF_CXX_FLAGS=-FPIC
+SELF_C_FLAGS="-fPIC" 
+SELF_CXX_FLAGS="-fPIC"
 
 function clean(){
 
@@ -58,7 +58,7 @@ function build_libcurl(){
 # -DCURL_STATICLIB=ON -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_C_FLAGS=-fPIC -DUSE_LIBRTMP=OFF  ..
 # cmakelists.txt may have some issue
 
-	./configure --prefix=${third_part_root_dir}/build_out --without-ssl --without-zlib --without-librtmp --disable-rtsp --disable-ldap --disable-ldaps   CFLAGS=${SLEF_C_FLAGS} CPPFLAGS=${SLEF_CXX_FLAGS}
+	./configure --prefix=${third_part_root_dir}/build_out --without-ssl --without-zlib --without-librtmp --disable-rtsp --disable-ldap --disable-ldaps   CFLAGS=${SELF_C_FLAGS} CPPFLAGS=${SELF_CXX_FLAGS}
 	if [ $? -ne 0 ]
 	then
 
@@ -95,7 +95,7 @@ function build_libxml(){
 	cp ../config.sub .
 
  
-	./configure --prefix=${third_part_root_dir}/build_out  CFLAGS=${SLEF_C_FLAGS} CPPFLAGS=${SLEF_CXX_FLAGS}  --with-lzma=no
+	./configure --prefix=${third_part_root_dir}/build_out  CFLAGS=${SELF_C_FLAGS} CPPFLAGS=${SELF_CXX_FLAGS}  --with-lzma=no
 	if [ $? -ne 0 ]
 	then
 		
@@ -134,7 +134,7 @@ function build_libxml_2_9_9(){
  	# ./configure --prefix=xxxx  CFLAGS=-fPIC CPPFLAGS=-fPIC --with-python=no
 	# ./configure --prefix=${third_part_root_dir}/build_out  CFLAGS=-fPIC CPPFLAGS=-fPIC
 	# autogen.sh note:I am going to run ./configure with no arguments - if you wish to pass any to it, please specify them on the ./autogen.sh command line.
-	./autogen.sh --prefix=${third_part_root_dir}/build_out  CFLAGS=${SLEF_C_FLAGS} CPPFLAGS=${SLEF_CXX_FLAGS} --with-python=no  --with-lzma=no
+	./autogen.sh --prefix=${third_part_root_dir}/build_out  CFLAGS=${SELF_C_FLAGS} CPPFLAGS=${SELF_CXX_FLAGS} --with-python=no  --with-lzma=no
 
 	if [ $? -ne 0 ]
 	then
@@ -172,7 +172,7 @@ function build_libconfig(){
 	
 	cd build
 	
-	cmake -DCMAKE_INSTALL_PREFIX=${third_part_root_dir}/build_out -DCMAKE_C_FLAGS=${SLEF_C_FLAGS} -DCMAKE_CXX_FLAGS=${SLEF_CXX_FLAGS}  -DCMAKE_C_FLAGS=-std=c99  -DCMAKE_CXX_FLAGS=-std=c++11 -DBUILD_SHARED_LIBS=OFF ..
+	cmake -DCMAKE_INSTALL_PREFIX=${third_part_root_dir}/build_out -DCMAKE_C_FLAGS=${SELF_C_FLAGS} -DCMAKE_CXX_FLAGS=${SELF_CXX_FLAGS}  -DCMAKE_C_FLAGS=-std=c99  -DCMAKE_CXX_FLAGS=-std=c++11 -DBUILD_SHARED_LIBS=OFF ..
 	if [ $? -ne 0 ]
 	then 
 	
@@ -214,7 +214,7 @@ function build_liblog4cpp(){
 	cp ../config.sub ./config/
 
 
-	./configure --prefix=${third_part_root_dir}/build_out  CFLAGS=${SLEF_C_FLAGS} CPPFLAGS=${SLEF_CXX_FLAGS}
+	./configure --prefix=${third_part_root_dir}/build_out  CFLAGS=${SELF_C_FLAGS} CPPFLAGS=${SELF_CXX_FLAGS}
 	if [ $? -ne -0 ]
 	then 
 	
@@ -249,7 +249,7 @@ function build_libjsoncpp(){
 	fi
 
 	cd build
-	cmake -DCMAKE_INSTALL_PREFIX=${third_part_root_dir}/build_out -DCMAKE_C_FLAGS=${SLEF_C_FLAGS} -DCMAKE_CXX_FLAGS=${SLEF_CXX_FLAGS} -DCMAKE_C_FLAGS=-std=c99  -DCMAKE_CXX_FLAGS=-std=c++11 -DBUILD_SHARED_LIBS=OFF ..
+	cmake -DCMAKE_INSTALL_PREFIX=${third_part_root_dir}/build_out -DCMAKE_C_FLAGS=${SELF_C_FLAGS} -DCMAKE_CXX_FLAGS=${SELF_CXX_FLAGS} -DCMAKE_C_FLAGS=-std=c99  -DCMAKE_CXX_FLAGS=-std=c++11 -DBUILD_SHARED_LIBS=OFF ..
 	if [ $? -ne -0 ]
 	then 
 	
@@ -317,8 +317,8 @@ function make_lib(){
 case $2 in
 	"x86")
 		Default_Arch="x86"
-		SLEF_C_FLAGS=${SLEF_C_FLAGS}" -m32"
-		SLEF_CXX_FLAGS=${SLEF_CXX_FLAGS}" -m32"
+		SLEF_C_FLAGS=${SELF_C_FLAGS}" -m32"
+		SLEF_CXX_FLAGS=${SELF_CXX_FLAGS}" -m32"
 		;;
 	"x86_64")
 		Default_Arch="x86_64"

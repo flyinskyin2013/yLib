@@ -2,17 +2,23 @@ name: Build yLib CI
 on:
   push:
     # Sequence of patterns matched against refs/heads
-    branches:    
-      # Push events on master branch
-      - master
+    tags:
+      - '*'
 
 jobs:
-  # build_last_ubuntu_x86_64:
-  #   name: build yLib on x86_64(last_ubuntu) platefrom
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - name: check out my rep
-  #     uses: actions/checkout@v1
+  release_ylib_x86_linux:
+    name: build yLib on x86_64(last_ubuntu) platefrom
+    runs-on: ubuntu-latest
+    steps:
+    - name: check out my rep
+      uses: actions/checkout@v1
+  
+  release_ylib_x86_64_linux:
+    name: build yLib on x86_64(last_ubuntu) platefrom
+    runs-on: ubuntu-latest
+    steps:
+    - name: check out my rep
+      uses: actions/checkout@v1
 
   #   - name: set env and init
   #     env:
