@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-09-25 11:51:23
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-25 16:43:44
+ * @LastEditTime: 2020-12-21 10:54:48
  * @Description: 
  */
 #include "core/ylinuxerrnohelper.hpp"
@@ -315,13 +315,13 @@ namespace yLib{
     static uint16_t g_errno_max = 133;
 }
 
-
+static std::string g_null_std_string = "";
 const std::string & yLib::yLinuxErrnoHelper::GetDetailByErrno(uint16_t errno_){
 
     if (errno_ < g_errno_min || errno_ > g_errno_max){
 
         yLib::yLog::E("The errno_(%d) is invalid.", errno_);
-        return nullptr;
+        return g_null_std_string;
     }
 
     return g_errno_desc_array[errno_].detail;
@@ -331,7 +331,7 @@ const std::string & yLib::yLinuxErrnoHelper::GetShortHandByErrno(uint16_t errno_
     if (errno_ < g_errno_min || errno_ > g_errno_max){
 
         yLib::yLog::E("The errno_(%d) is invalid.", errno_);
-        return nullptr;
+        return g_null_std_string;
     }   
 
     return g_errno_desc_array[errno_].shorthand;
