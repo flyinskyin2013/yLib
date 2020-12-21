@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:53
  * @LastEditors: Sky
- * @LastEditTime: 2020-12-10 17:24:06
+ * @LastEditTime: 2020-12-21 15:09:54
  * @Description: 
  */
 
@@ -90,7 +90,7 @@ yLib::yConfigValue yLib::yConfig::GetValue(const std::string &node_path_) {
     catch(...)//SettingNotFoundException 
     {
 
-        yLib::yLog::E("Node(%s) is not found", node_path_);
+        yLib::yLog::E("Node(%s) is not found", node_path_.c_str());
         return std::move(_tmpValue);//gcc enable RVO(return value optimization) defaultly.
     }
     

@@ -228,35 +228,6 @@ function copy_prepared_file(){
 	
 }
 
-case $1 in
-	"Download")
-		check_download_third_part
-		;;
-	"Build")
-		build_third_part
-		;;
-	"Copy")
-		copy_prepared_file
-		;;
-	"All")
-		check_download_third_part
-		build_third_part
-		copy_prepared_file
-		;;
-	*)
-		echo "Help info:"
-		echo "You can pass those ActionTypes(Download, Build, Copy, All) to script as first argument"
-		echo "You can pass those optional ArchType(x86/x86_64(default)/armeabi/armeabi-v7a/arm64-v8a) to script as second argument"
-		echo "You can pass those optional Platform(linux(default)/windows/android) to script as third argument"
-		echo ""
-		echo "Format:"
-		echo "./build_deps.sh ActionType ArchType Platform"
-		echo "Example:"
-		echo "./build_deps.sh Download    ||   ./build_deps.sh     All"
-		echo "./build_deps.sh Download  x86_64 linux ||  ./build_deps.sh  All x86 windows"
-		exit 0
-esac
-
 case $2 in
 	"x86")
 		Default_Arch="x86"
@@ -292,6 +263,37 @@ case $3 in
 		echo "Notice: set Default_Platform is linux"
 		Default_Platform="linux"
 esac
+
+case $1 in
+	"Download")
+		check_download_third_part
+		;;
+	"Build")
+		build_third_part
+		;;
+	"Copy")
+		copy_prepared_file
+		;;
+	"All")
+		check_download_third_part
+		build_third_part
+		copy_prepared_file
+		;;
+	*)
+		echo "Help info:"
+		echo "You can pass those ActionTypes(Download, Build, Copy, All) to script as first argument"
+		echo "You can pass those optional ArchType(x86/x86_64(default)/armeabi/armeabi-v7a/arm64-v8a) to script as second argument"
+		echo "You can pass those optional Platform(linux(default)/windows/android) to script as third argument"
+		echo ""
+		echo "Format:"
+		echo "./build_deps.sh ActionType ArchType Platform"
+		echo "Example:"
+		echo "./build_deps.sh Download    ||   ./build_deps.sh     All"
+		echo "./build_deps.sh Download  x86_64 linux ||  ./build_deps.sh  All x86 windows"
+		exit 0
+esac
+
+
 
 
 self_print I "Build dependence complete."
