@@ -40,3 +40,8 @@ SET ( CMAKE_CXX_COMPILER "g++" )
 # set c/c++ flags
 set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -m32")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
+
+# Set the given cache <variable> (cache entry). Since cache entries are meant to provide user-settable 
+# values this does not overwrite existing cache entries by default. Use the FORCE option to overwrite existing entries.
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}" CACHE STRING "pre c flags")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" CACHE STRING "pre c++ flags")

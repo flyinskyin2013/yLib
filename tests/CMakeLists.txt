@@ -59,9 +59,15 @@ endif()
 #set(CMAKE_SKIP_RPATH TRUE)
 #set(CMAKE_SKIP_INSTALL_RPATH TRUE)
 #----------------------------------------------------------------------------------------
+
+#For compile-speed, we set a shared-target
+add_library(YLIB_TESTS_SHARED_MAIN STATIC ${CMAKE_CURRENT_SOURCE_DIR}/test_main.cpp)
+set(DEP_LIBS
+YLIB_TESTS_SHARED_MAIN)
+
 function(AppendBUILTIN_TEST_LIST val)
 
-set(BUILTIN_TEST_LIST ${BUILTIN_TEST_LIST} ${val} CACHE STRING INTERNAL FORCE)
+    set(BUILTIN_TEST_LIST ${BUILTIN_TEST_LIST} ${val} CACHE STRING INTERNAL FORCE)
 endfunction()
 
 
@@ -69,7 +75,6 @@ function(build_basic_algorithm name)
 
     string(TOLOWER ${name} module_name)
     set(SRC
-        ${CMAKE_CURRENT_SOURCE_DIR}/test_main.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/basic_algorithm/${module_name}_tests.cpp)
 
     add_executable(test_algorithm_${module_name} ${SRC})  
@@ -77,6 +82,7 @@ function(build_basic_algorithm name)
     foreach(param ${ARGN})
         #message("dep lib  ${param}")
         set(DEP_LIBS
+        YLIB_TESTS_SHARED_MAIN
         ${DEP_LIBS}
         ${param})
     endforeach()
@@ -86,10 +92,10 @@ function(build_basic_algorithm name)
 
         if(BUILD_SHARED_YLIB)
             target_link_libraries(test_algorithm_${module_name} ylib ws2_32  ${DEP_LIBS})
-            add_dependencies(test_algorithm_${module_name} ylib)
+            add_dependencies(test_algorithm_${module_name} ylib YLIB_TESTS_SHARED_MAIN)
         else()
             target_link_libraries(test_algorithm_${module_name} ylib_s   ${DEP_LIBS})
-            add_dependencies(test_algorithm_${module_name} ylib_s)
+            add_dependencies(test_algorithm_${module_name} ylib_s YLIB_TESTS_SHARED_MAIN)
         endif()
 
         # RUNTIME-rpath maybe be diffcult.
@@ -108,10 +114,10 @@ function(build_basic_algorithm name)
 
         if(BUILD_SHARED_YLIB)
             target_link_libraries(test_algorithm_${module_name} libylib.so  -lssl -lcrypto -lz -pthread  ${DEP_LIBS})
-            add_dependencies(test_algorithm_${module_name} ylib)
+            add_dependencies(test_algorithm_${module_name} ylib YLIB_TESTS_SHARED_MAIN)
         else()
             target_link_libraries(test_algorithm_${module_name} libylib_s.so  -lssl -lcrypto  -lz -pthread ${DEP_LIBS})
-            add_dependencies(test_algorithm_${module_name} ylib_s)
+            add_dependencies(test_algorithm_${module_name} ylib_s YLIB_TESTS_SHARED_MAIN)
         endif()
         # RUNTIME-rpath maybe be diffcult.
         #    INSTALL(TARGETS  test_${module_name}
@@ -141,7 +147,6 @@ function(build_module_examples class_name name)
     string(TOLOWER ${class_name} class_dir_name)
 
     set(SRC
-        ${CMAKE_CURRENT_SOURCE_DIR}/test_main.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/${class_dir_name}/${module_name}/${module_name}_tests.cpp)
 
     add_executable(test_unit_${module_name} ${SRC})  
@@ -149,19 +154,19 @@ function(build_module_examples class_name name)
     foreach(param ${ARGN})
         #message("dep lib  ${param}")
         set(DEP_LIBS
+        YLIB_TESTS_SHARED_MAIN
         ${DEP_LIBS}
         ${param})
     endforeach()
-
     #message("dep lib  ${DEP_LIBS}")
     if(WIN32)
 
         if(BUILD_SHARED_YLIB)
             target_link_libraries(test_unit_${module_name} ylib ws2_32  ${DEP_LIBS})
-            add_dependencies(test_unit_${module_name} ylib)
+            add_dependencies(test_unit_${module_name} ylib YLIB_TESTS_SHARED_MAIN)
         else()
             target_link_libraries(test_unit_${module_name} ylib_s   ${DEP_LIBS})
-            add_dependencies(test_unit_${module_name} ylib_s)
+            add_dependencies(test_unit_${module_name} ylib_s YLIB_TESTS_SHARED_MAIN)
         endif()
 
         # RUNTIME-rpath maybe be diffcult.
@@ -180,10 +185,10 @@ function(build_module_examples class_name name)
 
         if(BUILD_SHARED_YLIB)
             target_link_libraries(test_unit_${module_name} libylib.so  -lssl -lcrypto -lz -pthread  ${DEP_LIBS})
-            add_dependencies(test_unit_${module_name} ylib)
+            add_dependencies(test_unit_${module_name} ylib YLIB_TESTS_SHARED_MAIN)
         else()
             target_link_libraries(test_unit_${module_name} libylib_s.so  -lssl -lcrypto  -lz -pthread ${DEP_LIBS})
-            add_dependencies(test_unit_${module_name} ylib_s)
+            add_dependencies(test_unit_${module_name} ylib_s YLIB_TESTS_SHARED_MAIN)
         endif()
         # RUNTIME-rpath maybe be diffcult.
         #    INSTALL(TARGETS  test_${module_name}
@@ -208,7 +213,6 @@ function(build_module_examples1 name)
     string(TOLOWER ${name} module_name)
 
     set(SRC
-        ${CMAKE_CURRENT_SOURCE_DIR}/test_main.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/${module_name}/${module_name}_tests.cpp)
 
     add_executable(test_unit_${module_name} ${SRC})  
@@ -216,6 +220,7 @@ function(build_module_examples1 name)
     foreach(param ${ARGN})
         #message("dep lib  ${param}")
         set(DEP_LIBS
+        YLIB_TESTS_SHARED_MAIN
         ${DEP_LIBS}
         ${param})
     endforeach()
@@ -225,10 +230,10 @@ function(build_module_examples1 name)
 
         if(BUILD_SHARED_YLIB)
             target_link_libraries(test_unit_${module_name} ylib ws2_32  ${DEP_LIBS})
-            add_dependencies(test_unit_${module_name} ylib)
+            add_dependencies(test_unit_${module_name} ylib YLIB_TESTS_SHARED_MAIN)
         else()
             target_link_libraries(test_unit_${module_name} ylib_s   ${DEP_LIBS})
-            add_dependencies(test_unit_${module_name} ylib_s)
+            add_dependencies(test_unit_${module_name} ylib_s YLIB_TESTS_SHARED_MAIN)
         endif()
 
         # RUNTIME-rpath maybe be diffcult.
@@ -246,10 +251,10 @@ function(build_module_examples1 name)
 
         if(BUILD_SHARED_YLIB)
             target_link_libraries(test_unit_${module_name} libylib.so  -lssl -lcrypto -lz -pthread  ${DEP_LIBS})
-            add_dependencies(test_unit_${module_name} ylib)
+            add_dependencies(test_unit_${module_name} ylib YLIB_TESTS_SHARED_MAIN)
         else()
             target_link_libraries(test_unit_${module_name} libylib_s.so  -lssl -lcrypto  -lz -pthread ${DEP_LIBS})
-            add_dependencies(test_unit_${module_name} ylib_s)
+            add_dependencies(test_unit_${module_name} ylib_s YLIB_TESTS_SHARED_MAIN)
         endif()
         # RUNTIME-rpath maybe be diffcult.
         #    INSTALL(TARGETS  test_${module_name}
@@ -277,7 +282,6 @@ function(build_module_examples3 class_name_ module_name_ target_name_)
     string(TOLOWER ${module_name_} module_name)
 
     set(SRC
-        ${CMAKE_CURRENT_SOURCE_DIR}/test_main.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/${class_name}/${module_name}/${target_name}_tests.cpp)
 
     add_executable(test_unit_${target_name} ${SRC})  
@@ -285,6 +289,7 @@ function(build_module_examples3 class_name_ module_name_ target_name_)
     foreach(param ${ARGN})
         #message("dep lib  ${param}")
         set(DEP_LIBS
+        YLIB_TESTS_SHARED_MAIN
         ${DEP_LIBS}
         ${param})
     endforeach()
@@ -294,10 +299,10 @@ function(build_module_examples3 class_name_ module_name_ target_name_)
 
         if(BUILD_SHARED_YLIB)
             target_link_libraries(test_unit_${target_name} ylib ws2_32  ${DEP_LIBS})
-            add_dependencies(test_unit_${target_name} ylib)
+            add_dependencies(test_unit_${target_name} ylib YLIB_TESTS_SHARED_MAIN)
         else()
             target_link_libraries(test_unit_${target_name} ylib_s   ${DEP_LIBS})
-            add_dependencies(test_unit_${target_name} ylib_s)
+            add_dependencies(test_unit_${target_name} ylib_s YLIB_TESTS_SHARED_MAIN)
         endif()
 
         # RUNTIME-rpath maybe be diffcult.
@@ -315,10 +320,10 @@ function(build_module_examples3 class_name_ module_name_ target_name_)
 
         if(BUILD_SHARED_YLIB)
             target_link_libraries(test_unit_${target_name} libylib.so  -lssl -lcrypto -lz -pthread  ${DEP_LIBS})
-            add_dependencies(test_unit_${target_name} ylib)
+            add_dependencies(test_unit_${target_name} ylib YLIB_TESTS_SHARED_MAIN)
         else()
             target_link_libraries(test_unit_${target_name} libylib_s.so  -lssl -lcrypto  -lz -pthread ${DEP_LIBS})
-            add_dependencies(test_unit_${target_name} ylib_s)
+            add_dependencies(test_unit_${target_name} ylib_s YLIB_TESTS_SHARED_MAIN)
         endif()
         # RUNTIME-rpath maybe be diffcult.
         #    INSTALL(TARGETS  test_${target_name}
