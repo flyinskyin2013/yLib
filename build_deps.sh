@@ -179,7 +179,7 @@ function copy_prepared_file(){
 	arch_type=""
 	while [ 1 -eq 1 ]
 	do
-		self_print NORMAL "Please input build arch[x86/x86_64/armeabi/armeabi-v7a/arm64-v8a]"
+		self_print NORMAL "Please input build arch[x86/x86_64/armeabi/armeabihf/aarch64]"
 
 		if read -t 30 -p "build arch(wait for 30s, default is 'x86_64'):" arch_type
 		then 
@@ -198,10 +198,10 @@ function copy_prepared_file(){
 			"armeabi")
 				break;
 				;;
-			"armeabi-v7a")
+			"armeabihf")
 				break;
 				;;
-			"arm64-v8a")
+			"aarch64")
 				break;
 				;;
 				*)
@@ -238,11 +238,11 @@ case $2 in
 	"armeabi")
 		Default_Arch="armeabi"
 		;;
-	"armeabi-v7a")
-		Default_Arch="armeabi-v7a"
+	"armeabihf")
+		Default_Arch="armeabihf"
 		;;
-	"arm64-v8a")
-		Default_Arch="arm64-v8a"
+	"aarch64")
+		Default_Arch="aarch64"
 		;;
 	*)
 		echo "Notice: set Default_Arch is x86_64"

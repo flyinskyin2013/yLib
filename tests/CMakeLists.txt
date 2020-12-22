@@ -26,16 +26,15 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
     elseif(${BUILD_YLIB_ARCH} MATCHES "(x86|X86)")
         #linux 32bits ylib
         link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/x86)
-    elseif(${BUILD_YLIB_ARCH} MATCHES "armeabi")
-        #linux armeabi 32bits ylib
+
+    elseif(${BUILD_YLIB_ARCH} MATCHES "^armeabi$")
         link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/armeabi)
-    elseif(${BUILD_YLIB_ARCH} MATCHES "armeabi-v7a")
-        #linux armeabi-v7a 32bits ylib
-        link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/armeabi-v7a)
-    elseif(${BUILD_YLIB_ARCH} MATCHES "arm64-v8a")
-        #linux arme64-v8a 64bits ylib
-        link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/arme64-v8a)
+    elseif(${BUILD_YLIB_ARCH} MATCHES "^armeabihf$")
+        link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/armeabihf)
+    elseif(${BUILD_YLIB_ARCH} MATCHES "aarch64")
+        link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/aarch64)
     endif()
+
 
     #set path to run test-examples
     link_directories(${CMAKE_INSTALL_PREFIX}/lib)

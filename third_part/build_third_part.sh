@@ -2,7 +2,7 @@
 # @Author: Sky
  # @Date: 2019-10-28 17:35:17
  # @LastEditors: Sky
- # @LastEditTime: 2020-12-22 09:34:45
+ # @LastEditTime: 2020-12-22 16:05:57
  # @Description: 
  ###
 #!/bin/bash
@@ -10,6 +10,15 @@
 Default_Arch="x86_64"
 SELF_C_FLAGS="-fPIC" 
 SELF_CXX_FLAGS="-fPIC"
+
+CONFIGURE_HOST=""
+CONFIGURE_BUILD=""
+CONFIGURE_CC=""
+CONFIGURE_CXX=""
+
+DEF_CMAKE_SYSTEM_PROCESSOR="arm"
+DEF_CMAKE_C_COMPILER=""
+DEF_CMAKE_CXX_COMPILER=""
 
 function clean(){
 
@@ -60,11 +69,26 @@ function build_libcurl(){
 # -DCURL_STATICLIB=ON -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_C_FLAGS=-fPIC -DUSE_LIBRTMP=OFF  ..
 # cmakelists.txt may have some issue
 
-	./configure --prefix=${third_part_root_dir}/build_out --without-ssl --without-zlib --without-librtmp --disable-rtsp --disable-ldap --disable-ldaps   CFLAGS="${SELF_C_FLAGS}" CPPFLAGS="${SELF_CXX_FLAGS}"
-	if [ $? -ne 0 ]
+	if [ ${Default_Arch} = "x86" ] && [ ${Default_Arch} = "x86_64" ]
 	then
 
-		exit 1
+		./configure --prefix=${third_part_root_dir}/build_out --without-ssl --without-zlib --without-librtmp --disable-rtsp --disable-ldap --disable-ldaps   CFLAGS="${SELF_C_FLAGS}" CPPFLAGS="${SELF_CXX_FLAGS}"
+		if [ $? -ne 0 ]
+		then
+
+			exit 1
+		fi
+
+	else
+
+		# in cross compile mode
+		./configure --prefix=${third_part_root_dir}/build_out --without-ssl --without-zlib --without-librtmp --disable-rtsp --disable-ldap --disable-ldaps --host=${CONFIGURE_HOST}  CFLAGS="${SELF_C_FLAGS}" CPPFLAGS="${SELF_CXX_FLAGS}" CC="${CONFIGURE_CC}" CXX="${CONFIGURE_CXX}"
+		if [ $? -ne 0 ]
+		then
+
+			exit 1
+		fi
+
 	fi
 
 	make -j8
@@ -72,43 +96,6 @@ function build_libcurl(){
 	make install
 
 	echo -e "\033[1;32;40m building libcurl end ...  \033[0m"
-}
-
-function build_libxml(){
-
-	echo -e "\033[1;32;40m building libxml start ...  \033[0m"
-
-	cd libxml2-2.7.1
-
-	if [  ! -d 'build' ]
-	then
-		echo -e "\033[0;33;40m create dir --- > build ...  \033[0m"
-		mkdir build
-	fi
-
-	if [  ! -d'_install' ]
-	then
-		echo -e "\033[0;33;40m create dir --- > _install ...  \033[0m"
-		mkdir _install
-	fi
-
-	echo "update scripts of config.guess and config.sub for tx2-board " 
-	cp ../config.guess .
-	cp ../config.sub .
-
- 
-	./configure --prefix=${third_part_root_dir}/build_out  CFLAGS="${SELF_C_FLAGS}" CPPFLAGS="${SELF_CXX_FLAGS}"  --with-lzma=no
-	if [ $? -ne 0 ]
-	then
-		
-		exit 1
-	fi
-
-	make -j8
-
-	make install
-
-	echo -e "\033[1;32;40m building libxml end ...  \033[0m"
 }
 
 function build_libxml_2_9_9(){
@@ -136,12 +123,31 @@ function build_libxml_2_9_9(){
  	# ./configure --prefix=xxxx  CFLAGS=-fPIC CPPFLAGS=-fPIC --with-python=no
 	# ./configure --prefix=${third_part_root_dir}/build_out  CFLAGS=-fPIC CPPFLAGS=-fPIC
 	# autogen.sh note:I am going to run ./configure with no arguments - if you wish to pass any to it, please specify them on the ./autogen.sh command line.
-	./autogen.sh --prefix=${third_part_root_dir}/build_out  CFLAGS="${SELF_C_FLAGS}" CPPFLAGS="${SELF_CXX_FLAGS}" --with-python=no  --with-lzma=no --with-zlib=no
 
-	if [ $? -ne 0 ]
+
+	if [ ${Default_Arch} = "x86" ] && [ ${Default_Arch} = "x86_64" ]
 	then
+
+		./autogen.sh --prefix=${third_part_root_dir}/build_out  CFLAGS="${SELF_C_FLAGS}" CPPFLAGS="${SELF_CXX_FLAGS}" --with-python=no  --with-lzma=no --with-zlib=no
+
+		if [ $? -ne 0 ]
+		then
+			
+			exit 1
+		fi
+
+	else
+
+		# in cross compile mode
+		./autogen.sh --prefix=${third_part_root_dir}/build_out  CFLAGS="${SELF_C_FLAGS}" CPPFLAGS="${SELF_CXX_FLAGS}" --with-python=no  --with-lzma=no --with-zlib=no --host="${CONFIGURE_HOST}"  CC="${CONFIGURE_CC}" CXX="${CONFIGURE_CXX}"
 		
-		exit 1
+
+		if [ $? -ne 0 ]
+		then
+			
+			exit 1
+		fi
+
 	fi
 
 	make -j8
@@ -173,15 +179,32 @@ function build_libconfig(){
 
 	
 	cd build
-	SELF_C_FLAGS=${SELF_C_FLAGS}" -std=c99"
-	SELF_CXX_FLAGS=${SELF_CXX_FLAGS}" -std=c++11"
-	cmake -DCMAKE_INSTALL_PREFIX=${third_part_root_dir}/build_out -DCMAKE_C_FLAGS="${SELF_C_FLAGS}" -DCMAKE_CXX_FLAGS="${SELF_CXX_FLAGS}" -DBUILD_SHARED_LIBS=OFF ..
-	if [ $? -ne 0 ]
-	then 
-	
-		exit 1
-	fi 
 
+	if [ ${Default_Arch} = "x86" ] && [ ${Default_Arch} = "x86_64" ]
+	then
+
+		SELF_C_FLAGS=${SELF_C_FLAGS}" -std=c99"
+		SELF_CXX_FLAGS=${SELF_CXX_FLAGS}" -std=c++11"
+		cmake -DCMAKE_INSTALL_PREFIX=${third_part_root_dir}/build_out -DCMAKE_C_FLAGS="${SELF_C_FLAGS}" -DCMAKE_CXX_FLAGS="${SELF_CXX_FLAGS}" -DBUILD_SHARED_LIBS=OFF ..
+		if [ $? -ne 0 ]
+		then 
+		
+			exit 1
+		fi 
+
+	else
+
+		# in cross compile mode
+		SELF_C_FLAGS=${SELF_C_FLAGS}" -std=c99"
+		SELF_CXX_FLAGS=${SELF_CXX_FLAGS}" -std=c++11"
+		cmake -DCMAKE_SYSTEM_PROCESSOR=${DEF_CMAKE_SYSTEM_PROCESSOR} -DCMAKE_C_COMPILER=${DEF_CMAKE_C_COMPILER} -DCMAKE_CXX_COMPILER=${DEF_CMAKE_CXX_COMPILER} -DCMAKE_INSTALL_PREFIX=${third_part_root_dir}/build_out -DCMAKE_C_FLAGS="${SELF_C_FLAGS}" -DCMAKE_CXX_FLAGS="${SELF_CXX_FLAGS}" -DBUILD_SHARED_LIBS=OFF ..
+		if [ $? -ne 0 ]
+		then 
+		
+			exit 1
+		fi 
+
+	fi
 	#./configure --prefix=${third_part_root_dir}/build_out  CFLAGS=-fPIC CPPFLAGS=-fPIC
 
 
@@ -216,25 +239,51 @@ function build_liblog4cpp(){
 	cp ../config.guess ./config/
 	cp ../config.sub ./config/
 
-	if [ ${Default_Arch} = "x86" ]
+
+
+	if [ ${Default_Arch} = "x86" ] && [ ${Default_Arch} = "x86_64" ]
 	then
+
+		if [ ${Default_Arch} = "x86" ]
+		then
+			mv tests/Makefile.in tests/Makefile.in.bak
+			touch tests/Makefile.in
+		fi
+
+		./configure --prefix=${third_part_root_dir}/build_out  CFLAGS="${SELF_C_FLAGS}" CPPFLAGS="${SELF_CXX_FLAGS}" --enable-shared=no --disable-remote-syslog --disable-smtp 
+		
+		if [ $? -ne -0 ]
+		then 
+		
+			exit 1
+		fi
+
+		if [ ${Default_Arch} = "x86" ]
+		then
+			
+			echo "all:" > tests/Makefile
+		fi
+
+	else
+
+		# in cross compile mode
+
 		mv tests/Makefile.in tests/Makefile.in.bak
 		touch tests/Makefile.in
-	fi
 
-	./configure --prefix=${third_part_root_dir}/build_out  CFLAGS="${SELF_C_FLAGS}" CPPFLAGS="${SELF_CXX_FLAGS}" --enable-shared=no --disable-remote-syslog --disable-smtp
-	
-	if [ $? -ne -0 ]
-	then 
-	
-		exit 1
-	fi
 
-	if [ ${Default_Arch} = "x86" ]
-	then
+		./configure --prefix=${third_part_root_dir}/build_out  CFLAGS="${SELF_C_FLAGS}" CPPFLAGS="${SELF_CXX_FLAGS}" --enable-shared=no --disable-remote-syslog --disable-smtp --host="${CONFIGURE_HOST}"  CC="${CONFIGURE_CC}" CXX="${CONFIGURE_CXX}"
 		
+		if [ $? -ne -0 ]
+		then 
+		
+			exit 1
+		fi
+
 		echo "all:" > tests/Makefile
+
 	fi
+
 
 	make -j8
 
@@ -263,15 +312,33 @@ function build_libjsoncpp(){
 	fi
 
 	cd build
-	SELF_C_FLAGS=${SELF_C_FLAGS}" -std=c99"
-	SELF_CXX_FLAGS=${SELF_CXX_FLAGS}" -std=c++11"
-	cmake -DCMAKE_INSTALL_PREFIX=${third_part_root_dir}/build_out -DCMAKE_C_FLAGS="${SELF_C_FLAGS}" -DCMAKE_CXX_FLAGS="${SELF_CXX_FLAGS}" -DBUILD_SHARED_LIBS=OFF ..
-	if [ $? -ne -0 ]
-	then 
-	
-		exit 1
-	fi
 
+
+	if [ ${Default_Arch} = "x86" ] && [ ${Default_Arch} = "x86_64" ]
+	then
+
+		SELF_C_FLAGS=${SELF_C_FLAGS}" -std=c99"
+		SELF_CXX_FLAGS=${SELF_CXX_FLAGS}" -std=c++11"
+		cmake -DCMAKE_INSTALL_PREFIX=${third_part_root_dir}/build_out -DCMAKE_C_FLAGS="${SELF_C_FLAGS}" -DCMAKE_CXX_FLAGS="${SELF_CXX_FLAGS}" -DBUILD_SHARED_LIBS=OFF ..
+		if [ $? -ne -0 ]
+		then 
+		
+			exit 1
+		fi
+
+	else
+
+		# in cross compile mode
+		SELF_C_FLAGS=${SELF_C_FLAGS}" -std=c99"
+		SELF_CXX_FLAGS=${SELF_CXX_FLAGS}" -std=c++11"
+		cmake -DCMAKE_SYSTEM_PROCESSOR=${DEF_CMAKE_SYSTEM_PROCESSOR} -DCMAKE_C_COMPILER=${DEF_CMAKE_C_COMPILER} -DCMAKE_CXX_COMPILER=${DEF_CMAKE_CXX_COMPILER} -DCMAKE_INSTALL_PREFIX=${third_part_root_dir}/build_out -DCMAKE_C_FLAGS="${SELF_C_FLAGS}" -DCMAKE_CXX_FLAGS="${SELF_CXX_FLAGS}" -DBUILD_SHARED_LIBS=OFF -DJSONCPP_WITH_TESTS=OFF ..
+		if [ $? -ne -0 ]
+		then 
+		
+			exit 1
+		fi
+
+	fi
 
 	make -j8
 
@@ -344,14 +411,39 @@ case $2 in
 	"armeabi")
 		Default_Arch="armeabi"
 		echo "Notice(build_third_part.sh): set Default_Arch is "${Default_Arch}
+
+		CONFIGURE_HOST="arm-linux-gnueabi"
+		CONFIGURE_CC="arm-linux-gnueabi-gcc"
+		CONFIGURE_CXX="arm-linux-gnueabi-g++"
+
+		DEF_CMAKE_C_COMPILER="arm-linux-gnueabi-gcc"
+		DEF_CMAKE_CXX_COMPILER="arm-linux-gnueabi-g++"
+		SELF_C_FLAGS=${SELF_C_FLAGS}" -march=armv7-a -mfloat-abi=softfp -mfpu=neon-vfpv4"
+		SELF_CXX_FLAGS=${SELF_CXX_FLAGS}" -march=armv7-a -mfloat-abi=softfp -mfpu=neon-vfpv4"
 		;;
-	"armeabi-v7a")
-		Default_Arch="armeabi-v7a"
+	"armeabihf")
+		Default_Arch="armeabihf"
 		echo "Notice(build_third_part.sh): set Default_Arch is "${Default_Arch}
+		CONFIGURE_HOST="arm-linux-gnueabihf"
+		CONFIGURE_CC="arm-linux-gnueabihf-gcc"
+		CONFIGURE_CXX="arm-linux-gnueabihf-g++"
+
+		DEF_CMAKE_C_COMPILER="arm-linux-gnueabihf-gcc"
+		DEF_CMAKE_CXX_COMPILER="arm-linux-gnueabihf-g++"
+		SELF_C_FLAGS=${SELF_C_FLAGS}" -march=armv7-a -mfloat-abi=hard -mfpu=neon"
+		SELF_CXX_FLAGS=${SELF_CXX_FLAGS}" -march=armv7-a -mfloat-abi=hard -mfpu=neon"
 		;;
-	"arm64-v8a")
-		Default_Arch="arm64-v8a"
+	"aarch64")
+		Default_Arch="aarch64"
 		echo "Notice(build_third_part.sh): set Default_Arch is "${Default_Arch}
+		CONFIGURE_HOST="aarch64-linux-gnu"
+		CONFIGURE_CC="aarch64-linux-gnu-gcc"
+		CONFIGURE_CXX="aarch64-linux-gnu-g++"
+		
+		DEF_CMAKE_C_COMPILER="aarch64-linux-gnu-gcc"
+		DEF_CMAKE_CXX_COMPILER="aarch64-linux-gnu-g++"
+		SELF_C_FLAGS=${SELF_C_FLAGS}" -march=armv8-a"
+		SELF_CXX_FLAGS=${SELF_CXX_FLAGS}" -march=armv8-a"
 		;;
 	*)
 		Default_Arch="x86_64"

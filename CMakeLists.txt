@@ -48,15 +48,15 @@ option(BUILD_UNIT_TEST "build unit-test flags" ON)
 
 #----------------------------check-args--------------------------------------------------
 # BUILD_YLIB_ARCH
-#arch should be x86 X86 x86_64 X86_64 armeabi armeabi-v7a arm64-v8a
+#arch should be x86 x86_64 armeabi armeabihf aarch64
 #set(BUILD_YLIB_ARCH x86_64 CACHE STRING "Arch of ylib" FORCE)
 
 # check necessary CMAKE-ARGS
 if (NOT DEFINED BUILD_YLIB_ARCH)
-    message(FATAL_ERROR "User must define ARG: BUILD_YLIB_ARCH. The value of it can be one of 'x86|X86|x86_64|X86_64|armeabi|armeabi-v7a|arm64-v8a'")
+    message(FATAL_ERROR "User must define ARG: BUILD_YLIB_ARCH. The value of it can be one of 'x86|x86_64|armeabi|armeabihf|aarch64'")
 else()
-    if(NOT BUILD_YLIB_ARCH  MATCHES "(x86|X86|x86_64|X86_64|armeabi|armeabi-v7a|arm64-v8a)")
-        message(FATAL_ERROR "User must define ARG: BUILD_YLIB_ARCH. The value of it can be one of 'x86|X86|x86_64|X86_64|armeabi|armeabi-v7a|arm64-v8a'")
+    if(NOT BUILD_YLIB_ARCH  MATCHES "(x86|x86_64|armeabi|armeabihf|aarch64)")
+        message(FATAL_ERROR "User must define ARG: BUILD_YLIB_ARCH. The value of it can be one of 'x86|x86_64|armeabi|armeabihf|aarch64'")
     endif()
 endif()
 

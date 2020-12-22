@@ -20,6 +20,12 @@ jobs:
         mkdir -p build
         
       working-directory: /home/runner/work/yLib/yLib
+      
+    - name: update
+      run: sudo apt-get update
+
+    - name: install gcc multilib
+      run: sudo apt-get install gcc-multilib g++-multilib
 
     - name: build third part
       env:
