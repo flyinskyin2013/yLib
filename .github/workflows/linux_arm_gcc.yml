@@ -28,6 +28,7 @@ jobs:
     - name: qemu
       if: steps.cache-qemu.outputs.cache-hit != 'true'
       run: |
+        sudo apt-get install ninja-build
         cd qemu
         mkdir build
         cd build
@@ -90,6 +91,7 @@ jobs:
     - name: qemu
       if: steps.cache-qemu.outputs.cache-hit != 'true'
       run: |
+        sudo apt-get install ninja-build
         cd qemu
         mkdir build
         cd build
