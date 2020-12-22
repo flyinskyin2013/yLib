@@ -2,7 +2,7 @@
 # @Author: Sky
  # @Date: 2019-10-28 17:35:17
  # @LastEditors: Sky
- # @LastEditTime: 2020-12-22 16:05:57
+ # @LastEditTime: 2020-12-22 17:50:39
  # @Description: 
  ###
 #!/bin/bash
@@ -69,7 +69,7 @@ function build_libcurl(){
 # -DCURL_STATICLIB=ON -DCMAKE_CXX_FLAGS=-fPIC -DCMAKE_C_FLAGS=-fPIC -DUSE_LIBRTMP=OFF  ..
 # cmakelists.txt may have some issue
 
-	if [ ${Default_Arch} = "x86" ] && [ ${Default_Arch} = "x86_64" ]
+	if [ ${Default_Arch} = "x86" ] || [ ${Default_Arch} = "x86_64" ]
 	then
 
 		./configure --prefix=${third_part_root_dir}/build_out --without-ssl --without-zlib --without-librtmp --disable-rtsp --disable-ldap --disable-ldaps   CFLAGS="${SELF_C_FLAGS}" CPPFLAGS="${SELF_CXX_FLAGS}"
@@ -125,7 +125,7 @@ function build_libxml_2_9_9(){
 	# autogen.sh note:I am going to run ./configure with no arguments - if you wish to pass any to it, please specify them on the ./autogen.sh command line.
 
 
-	if [ ${Default_Arch} = "x86" ] && [ ${Default_Arch} = "x86_64" ]
+	if [ ${Default_Arch} = "x86" ] || [ ${Default_Arch} = "x86_64" ]
 	then
 
 		./autogen.sh --prefix=${third_part_root_dir}/build_out  CFLAGS="${SELF_C_FLAGS}" CPPFLAGS="${SELF_CXX_FLAGS}" --with-python=no  --with-lzma=no --with-zlib=no
@@ -180,7 +180,7 @@ function build_libconfig(){
 	
 	cd build
 
-	if [ ${Default_Arch} = "x86" ] && [ ${Default_Arch} = "x86_64" ]
+	if [ ${Default_Arch} = "x86" ] || [ ${Default_Arch} = "x86_64" ]
 	then
 
 		SELF_C_FLAGS=${SELF_C_FLAGS}" -std=c99"
@@ -241,7 +241,7 @@ function build_liblog4cpp(){
 
 
 
-	if [ ${Default_Arch} = "x86" ] && [ ${Default_Arch} = "x86_64" ]
+	if [ ${Default_Arch} = "x86" ] || [ ${Default_Arch} = "x86_64" ]
 	then
 
 		if [ ${Default_Arch} = "x86" ]
