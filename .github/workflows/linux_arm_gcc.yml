@@ -9,6 +9,60 @@ jobs:
     - name: checkout my rep
       uses: actions/checkout@v2
 
+    - name: cache-qemu
+      id: cache-qemu
+      uses: actions/cache@v1
+      with:
+        path: qemu-install
+        key: qemu-arm-install-cache-key
+
+    - name: checkout-qemu
+      #if we don't hit cache-qemu, we should compile qemu
+      if: steps.cache-qemu.outputs.cache-hit != 'true'
+      uses: actions/checkout@v2
+      with:
+        repository: qemu/qemu
+        path: qemu
+        #v5.2.0
+        ref: 553032db17440f8de011390e5a1cfddd13751b0b
+    - name: qemu
+      if: steps.cache-qemu.outputs.cache-hit != 'true'
+      run: |
+        cd qemu
+        mkdir build
+        cd build
+        ../configure --prefix=`pwd`/install --target-list=arm-linux-user --disable-system
+        make -j2
+        make install
+        cp -r arm-linux-user/qemu-arm $GITHUB_WORKSPACE/qemu-install
+
+    - name: arm-gnu-toolchain
+      run: |
+        sudo apt-get update
+        sudo apt-get install g++-arm-linux-gnueabi     
+
+    - name: build third part
+      env:
+        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+      run: |
+        cd $GITHUB_WORKSPACE
+        ./build_deps.sh All armeabi linux
+
+      working-directory: /home/runner/work/yLib/yLib           
+
+    - name: build ylib
+      working-directory: /home/runner/work/yLib/yLib/build
+      run: |
+        cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_armgnueabi_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=armeabi ..
+        make
+        make install
+
+    - name: test ylib
+      working-directory: /home/runner/work/yLib/yLib/build
+      run: |
+        export PATH=$GITHUB_WORKSPACE/qemu-install/bin:$PATH
+        cd install/tests
+        ./scripts_for_tests.sh qemu-gnueabi
 
   build_linux_gnueabihf:
     name: build on gnueabihf(last_ubuntu) platefrom  using gcc
@@ -16,3 +70,58 @@ jobs:
     steps:
     - name: checkout my rep
       uses: actions/checkout@v2
+
+    - name: cache-qemu
+      id: cache-qemu
+      uses: actions/cache@v1
+      with:
+        path: qemu-install
+        key: qemu-arm-install-cache-key
+
+    - name: checkout-qemu
+      #if we don't hit cache-qemu, we should compile qemu
+      if: steps.cache-qemu.outputs.cache-hit != 'true'
+      uses: actions/checkout@v2
+      with:
+        repository: qemu/qemu
+        path: qemu
+        #v5.2.0
+        ref: 553032db17440f8de011390e5a1cfddd13751b0b
+    - name: qemu
+      if: steps.cache-qemu.outputs.cache-hit != 'true'
+      run: |
+        cd qemu
+        mkdir build
+        cd build
+        ../configure --prefix=`pwd`/install --target-list=arm-linux-user --disable-system
+        make -j2
+        make install
+        cp -r arm-linux-user/qemu-arm $GITHUB_WORKSPACE/qemu-install
+
+    - name: arm-gnu-toolchain
+      run: |
+        sudo apt-get update
+        sudo apt-get install g++-arm-linux-gnueabihf   
+
+    - name: build third part
+      env:
+        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+      run: |
+        cd $GITHUB_WORKSPACE
+        ./build_deps.sh All armeabihf linux
+
+      working-directory: /home/runner/work/yLib/yLib           
+
+    - name: build ylib
+      working-directory: /home/runner/work/yLib/yLib/build
+      run: |
+        cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_armgnueabihf_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=armeabihf ..
+        make
+        make install
+
+    - name: test ylib
+      working-directory: /home/runner/work/yLib/yLib/build
+      run: |
+        export PATH=$GITHUB_WORKSPACE/qemu-install/bin:$PATH
+        cd install/tests
+        ./scripts_for_tests.sh qemu-gnueabihf
