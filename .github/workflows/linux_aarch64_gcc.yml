@@ -10,6 +10,18 @@ jobs:
     - name: checkout my rep
       uses: actions/checkout@v2
 
+    - name: set env and init
+      env:
+        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+      run: |
+        echo $GITHUB_WORKSPACE
+        ls $GITHUB_WORKSPACE
+        cd $GITHUB_WORKSPACE
+        chmod +x build_deps.sh
+        mkdir -p build
+        
+      working-directory: /home/runner/work/yLib/yLib
+
     - name: cache-qemu
       id: cache-qemu
       uses: actions/cache@v1
