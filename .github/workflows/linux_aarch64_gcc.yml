@@ -10,6 +10,18 @@ jobs:
     - name: checkout my rep
       uses: actions/checkout@v2
 
+    - name: set env and init
+      env:
+        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+      run: |
+        echo $GITHUB_WORKSPACE
+        ls $GITHUB_WORKSPACE
+        cd $GITHUB_WORKSPACE
+        chmod +x build_deps.sh
+        mkdir -p build
+        
+      working-directory: /home/runner/work/yLib/yLib
+
     - name: cache-qemu
       id: cache-qemu
       uses: actions/cache@v1
@@ -37,7 +49,7 @@ jobs:
         ../configure --prefix=`pwd`/install --target-list=aarch64-linux-user --disable-system
         make -j2
         make install
-        cp -r aarch64-linux-user/qemu-arm $GITHUB_WORKSPACE/qemu-install
+        cp -r aarch64-linux-user/qemu-aarch64 $GITHUB_WORKSPACE/qemu-install
 
     - name: arm-gnu-toolchain
       run: |
@@ -49,7 +61,7 @@ jobs:
         THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
       run: |
         cd $GITHUB_WORKSPACE
-        ./build_deps.sh All armeabi linux
+        ./build_deps.sh All aarch64 linux
 
       working-directory: /home/runner/work/yLib/yLib           
 

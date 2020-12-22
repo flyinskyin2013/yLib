@@ -9,6 +9,19 @@ jobs:
     - name: checkout my rep
       uses: actions/checkout@v2
 
+    - name: set env and init
+      env:
+        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+      run: |
+        echo $GITHUB_WORKSPACE
+        ls $GITHUB_WORKSPACE
+        cd $GITHUB_WORKSPACE
+        chmod +x build_deps.sh
+        mkdir -p build
+        
+      working-directory: /home/runner/work/yLib/yLib
+    
+
     - name: cache-qemu
       id: cache-qemu
       uses: actions/cache@v1
@@ -25,6 +38,7 @@ jobs:
         path: qemu
         #v5.2.0
         ref: 553032db17440f8de011390e5a1cfddd13751b0b
+
     - name: qemu
       if: steps.cache-qemu.outputs.cache-hit != 'true'
       run: |
@@ -35,7 +49,10 @@ jobs:
         ../configure --prefix=`pwd`/install --target-list=arm-linux-user --disable-system
         make -j2
         make install
-        cp -r arm-linux-user/qemu-arm $GITHUB_WORKSPACE/qemu-install
+        chmod +x qemu-arm
+        cp qemu-arm $GITHUB_WORKSPACE/qemu-install
+        ls -al qemu-arm
+        ls $GITHUB_WORKSPACE/qemu-install
 
     - name: arm-gnu-toolchain
       run: |
@@ -61,9 +78,11 @@ jobs:
     - name: test ylib
       working-directory: /home/runner/work/yLib/yLib/build
       run: |
-        export PATH=$GITHUB_WORKSPACE/qemu-install/bin:$PATH
+        export PATH=$GITHUB_WORKSPACE/qemu/build/:$PATH
         cd install/tests
         ./scripts_for_tests.sh qemu-gnueabi
+
+
 
   build_linux_gnueabihf:
     name: build on gnueabihf(last_ubuntu) platefrom  using gcc
@@ -71,6 +90,19 @@ jobs:
     steps:
     - name: checkout my rep
       uses: actions/checkout@v2
+
+    - name: set env and init
+      env:
+        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+      run: |
+        echo $GITHUB_WORKSPACE
+        ls $GITHUB_WORKSPACE
+        cd $GITHUB_WORKSPACE
+        chmod +x build_deps.sh
+        mkdir -p build
+        
+      working-directory: /home/runner/work/yLib/yLib
+
 
     - name: cache-qemu
       id: cache-qemu
@@ -98,7 +130,9 @@ jobs:
         ../configure --prefix=`pwd`/install --target-list=arm-linux-user --disable-system
         make -j2
         make install
-        cp -r arm-linux-user/qemu-arm $GITHUB_WORKSPACE/qemu-install
+        chmod +x qemu-arm
+        cp qemu-arm $GITHUB_WORKSPACE/qemu-install
+        ls $GITHUB_WORKSPACE/qemu-install
 
     - name: arm-gnu-toolchain
       run: |
@@ -124,6 +158,6 @@ jobs:
     - name: test ylib
       working-directory: /home/runner/work/yLib/yLib/build
       run: |
-        export PATH=$GITHUB_WORKSPACE/qemu-install/bin:$PATH
+        export PATH=$GITHUB_WORKSPACE/qemu/build/:$PATH
         cd install/tests
         ./scripts_for_tests.sh qemu-gnueabihf
