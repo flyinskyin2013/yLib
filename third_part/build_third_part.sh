@@ -2,7 +2,7 @@
 # @Author: Sky
  # @Date: 2019-10-28 17:35:17
  # @LastEditors: Sky
- # @LastEditTime: 2020-12-21 14:14:43
+ # @LastEditTime: 2020-12-22 09:34:45
  # @Description: 
  ###
 #!/bin/bash
@@ -136,7 +136,7 @@ function build_libxml_2_9_9(){
  	# ./configure --prefix=xxxx  CFLAGS=-fPIC CPPFLAGS=-fPIC --with-python=no
 	# ./configure --prefix=${third_part_root_dir}/build_out  CFLAGS=-fPIC CPPFLAGS=-fPIC
 	# autogen.sh note:I am going to run ./configure with no arguments - if you wish to pass any to it, please specify them on the ./autogen.sh command line.
-	./autogen.sh --prefix=${third_part_root_dir}/build_out  CFLAGS="${SELF_C_FLAGS}" CPPFLAGS="${SELF_CXX_FLAGS}" --with-python=no  --with-lzma=no
+	./autogen.sh --prefix=${third_part_root_dir}/build_out  CFLAGS="${SELF_C_FLAGS}" CPPFLAGS="${SELF_CXX_FLAGS}" --with-python=no  --with-lzma=no --with-zlib=no
 
 	if [ $? -ne 0 ]
 	then
@@ -216,14 +216,25 @@ function build_liblog4cpp(){
 	cp ../config.guess ./config/
 	cp ../config.sub ./config/
 
+	if [ ${Default_Arch} = "x86" ]
+	then
+		mv tests/Makefile.in tests/Makefile.in.bak
+		touch tests/Makefile.in
+	fi
 
-	./configure --prefix=${third_part_root_dir}/build_out  CFLAGS="${SELF_C_FLAGS}" CPPFLAGS="${SELF_CXX_FLAGS}"
+	./configure --prefix=${third_part_root_dir}/build_out  CFLAGS="${SELF_C_FLAGS}" CPPFLAGS="${SELF_CXX_FLAGS}" --enable-shared=no --disable-remote-syslog --disable-smtp
+	
 	if [ $? -ne -0 ]
 	then 
 	
 		exit 1
 	fi
 
+	if [ ${Default_Arch} = "x86" ]
+	then
+		
+		echo "all:" > tests/Makefile
+	fi
 
 	make -j8
 
