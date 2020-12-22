@@ -2,7 +2,7 @@
 # @Author: Sky
  # @Date: 2019-10-28 17:35:17
  # @LastEditors: Sky
- # @LastEditTime: 2020-12-22 17:50:39
+ # @LastEditTime: 2020-12-22 17:53:46
  # @Description: 
  ###
 #!/bin/bash
@@ -314,7 +314,7 @@ function build_libjsoncpp(){
 	cd build
 
 
-	if [ ${Default_Arch} = "x86" ] && [ ${Default_Arch} = "x86_64" ]
+	if [ ${Default_Arch} = "x86" ] || [ ${Default_Arch} = "x86_64" ]
 	then
 
 		SELF_C_FLAGS=${SELF_C_FLAGS}" -std=c99"
