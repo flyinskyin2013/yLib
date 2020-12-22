@@ -37,7 +37,7 @@ jobs:
         ../configure --prefix=`pwd`/install --target-list=aarch64-linux-user --disable-system
         make -j2
         make install
-        cp -r aarch64-linux-user/qemu-arm $GITHUB_WORKSPACE/qemu-install
+        cp -r aarch64-linux-user/qemu-aarch64 $GITHUB_WORKSPACE/qemu-install
 
     - name: arm-gnu-toolchain
       run: |
