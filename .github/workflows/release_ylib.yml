@@ -346,8 +346,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source.zip
-        asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source.zip
+        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-ubuntu_18_04/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-ubuntu_18_04.zip
+        asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-ubuntu_18_04.zip
         asset_content_type: application/zip
 
     - name: upload-armeabi_gcc_7_5
