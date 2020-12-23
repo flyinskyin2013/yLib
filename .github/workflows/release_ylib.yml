@@ -320,8 +320,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/ylib-${{ ubuntu_18_04 }}-full-source/ylib-${{ ubuntu_18_04 }}-full-source.zip
-        asset_name: ylib-${{ ubuntu_18_04 }}-full-source.zip
+        asset_path: artifacts/ylib-${{ github.ref }}-full-source/ylib-${{ github.ref }}-full-source.zip
+        asset_name: ylib-${{ github.ref }}-full-source.zip
         asset_content_type: application/zip
 
     - name: upload-armeabi_gcc_7_5
