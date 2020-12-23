@@ -48,6 +48,7 @@ jobs:
         ../configure --prefix=`pwd`/install --target-list=arm-linux-user --disable-system
         make -j2
         make install
+        chmod +x qemu-arm
         cp -r arm-linux-user/qemu-arm $GITHUB_WORKSPACE/qemu-install
 
     - name: arm-gnu-toolchain
@@ -126,7 +127,9 @@ jobs:
         ../configure --prefix=`pwd`/install --target-list=arm-linux-user --disable-system
         make -j2
         make install
+        chmod +x qemu-arm
         cp -r arm-linux-user/qemu-arm $GITHUB_WORKSPACE/qemu-install
+        
 
     - name: arm-gnu-toolchain
       run: |
