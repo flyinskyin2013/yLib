@@ -9,9 +9,13 @@ jobs:
   prepare_release:
     name: prepare_release
     runs-on: ubuntu-latest
+    outputs:
+      YLIB_RELEASE_VERSION: ${{ steps.set_version.outputs.YLIB_RELEASE_VERSION }}
     steps:
-    - name: check out my rep
-      uses: actions/checkout@v1
+    - name: set-version
+      id: set_version
+      # regx
+      run: echo ::set-output name=YLIB_RELEASE_VERSION::${GITHUB_REF/refs\/tags\//}
   
   full_source:
     needs: [prepare_release]
@@ -24,14 +28,14 @@ jobs:
     - name: package
       run: |
         rm -rf .git
-        rm -f /tmp/ylib-${{ github.ref }}-full-source.zip
-        zip -9 -r /tmp/ylib-${{ github.ref }}-full-source.zip .
+        rm -f /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source.zip
+        zip -9 -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source.zip .
 
     - name: upload-zip
       uses: actions/upload-artifact@v2
       with:
-        name: ylib-${{ github.ref }}-full-source
-        path: /tmp/ylib-${{ github.ref }}-full-source.zip
+        name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source
+        path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source.zip
 
   ubuntu_16_04:
     needs: [prepare_release]
@@ -71,14 +75,14 @@ jobs:
     - name: package
       run: |
         cd build/install
-        rm -f /tmp/ylib-${{ github.ref }}-ubuntu_16_04.zip
-        zip -9 -r /tmp/ylib-${{ github.ref }}-ubuntu_16_04.zip .
+        rm -f /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-ubuntu_16_04.zip
+        zip -9 -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-ubuntu_16_04.zip .
 
     - name: upload-zip
       uses: actions/upload-artifact@v2
       with:
-        name: ylib-${{ github.ref }}-ubuntu_16_04
-        path: /tmp/ylib-${{ github.ref }}-ubuntu_16_04.zip      
+        name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-ubuntu_16_04
+        path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-ubuntu_16_04.zip      
 
   ubuntu_18_04:
     needs: [prepare_release]
@@ -118,14 +122,14 @@ jobs:
     - name: package
       run: |
         cd build/install
-        rm -f /tmp/ylib-${{ github.ref }}-ubuntu_18_04.zip
-        zip -9 -r /tmp/ylib-${{ github.ref }}-ubuntu_18_04.zip .
+        rm -f /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-ubuntu_18_04.zip
+        zip -9 -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-ubuntu_18_04.zip .
 
     - name: upload-zip
       uses: actions/upload-artifact@v2
       with:
-        name: ylib-${{ github.ref }}-ubuntu_18_04
-        path: /tmp/ylib-${{ github.ref }}-ubuntu_18_04.zip    
+        name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-ubuntu_18_04
+        path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-ubuntu_18_04.zip    
 
 
   armeabi_gcc_7_5:
@@ -166,14 +170,14 @@ jobs:
     - name: package
       run: |
         cd build/install
-        rm -f /tmp/ylib-${{ github.ref }}-armeabi_gcc_7_5.zip
-        zip -9 -r /tmp/ylib-${{ github.ref }}-armeabi_gcc_7_5.zip .
+        rm -f /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-armeabi_gcc_7_5.zip
+        zip -9 -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-armeabi_gcc_7_5.zip .
 
     - name: upload-zip
       uses: actions/upload-artifact@v2
       with:
-        name: ylib-${{ github.ref }}-armeabi_gcc_7_5
-        path: /tmp/ylib-${{ github.ref }}-armeabi_gcc_7_5.zip    
+        name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-armeabi_gcc_7_5
+        path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-armeabi_gcc_7_5.zip    
 
   armeabihf_gcc_7_5:
     needs: [prepare_release]
@@ -213,14 +217,14 @@ jobs:
     - name: package
       run: |
         cd build/install
-        rm -f /tmp/ylib-${{ github.ref }}-armeabihf_gcc_7_5.zip
-        zip -9 -r /tmp/ylib-${{ github.ref }}-armeabihf_gcc_7_5.zip .
+        rm -f /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-armeabihf_gcc_7_5.zip
+        zip -9 -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-armeabihf_gcc_7_5.zip .
 
     - name: upload-zip
       uses: actions/upload-artifact@v2
       with:
-        name: ylib-${{ github.ref }}-armeabihf_gcc_7_5
-        path: /tmp/ylib-${{ github.ref }}-armeabihf_gcc_7_5.zip     
+        name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-armeabihf_gcc_7_5
+        path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-armeabihf_gcc_7_5.zip     
 
 
   aarch64_gcc_7_5:
@@ -261,14 +265,14 @@ jobs:
     - name: package
       run: |
         cd build/install
-        rm -f /tmp/ylib-${{ github.ref }}-aarch64_gcc_7_5.zip
-        zip -9 -r /tmp/ylib-${{ github.ref }}-aarch64_gcc_7_5.zip .
+        rm -f /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-aarch64_gcc_7_5.zip
+        zip -9 -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-aarch64_gcc_7_5.zip .
 
     - name: upload-zip
       uses: actions/upload-artifact@v2
       with:
-        name: ylib-${{ github.ref }}-aarch64_gcc_7_5
-        path: /tmp/ylib-${{ github.ref }}-aarch64_gcc_7_5.zip     
+        name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-aarch64_gcc_7_5
+        path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-aarch64_gcc_7_5.zip     
 
 
   release_ylib:
@@ -289,8 +293,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag_name: ${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}
+        release_name: Release ${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}
         draft: false
         prerelease: false
 
@@ -300,8 +304,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/ylib-${{ github.ref }}-full-source/ylib-${{ github.ref }}-full-source.zip
-        asset_name: ylib-${{ github.ref }}-full-source.zip
+        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source.zip
+        asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source.zip
         asset_content_type: application/zip
 
     - name: upload-ubuntu_16_04
@@ -310,8 +314,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/ylib-${{ github.ref }}-ubuntu_16_04/ylib-${{ github.ref }}-ubuntu_16_04.zip
-        asset_name: ylib-${{ github.ref }}-ubuntu_16_04.zip
+        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-ubuntu_16_04/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-ubuntu_16_04.zip
+        asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-ubuntu_16_04.zip
         asset_content_type: application/zip
 
     - name: upload-ubuntu_18_04
@@ -320,8 +324,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/ylib-${{ github.ref }}-full-source/ylib-${{ github.ref }}-full-source.zip
-        asset_name: ylib-${{ github.ref }}-full-source.zip
+        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source.zip
+        asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source.zip
         asset_content_type: application/zip
 
     - name: upload-armeabi_gcc_7_5
@@ -330,8 +334,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/ylib-${{ github.ref }}-armeabi_gcc_7_5/ylib-${{ github.ref }}-armeabi_gcc_7_5.zip
-        asset_name: ylib-${{ github.ref }}-armeabi_gcc_7_5.zip
+        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-armeabi_gcc_7_5/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-armeabi_gcc_7_5.zip
+        asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-armeabi_gcc_7_5.zip
         asset_content_type: application/zip
 
     - name: upload-armeabihf_gcc_7_5
@@ -340,8 +344,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/ylib-${{ github.ref }}-armeabihf_gcc_7_5/ylib-${{ github.ref }}-armeabihf_gcc_7_5.zip
-        asset_name: ylib-${{ github.ref }}-armeabihf_gcc_7_5.zip
+        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-armeabihf_gcc_7_5/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-armeabihf_gcc_7_5.zip
+        asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-armeabihf_gcc_7_5.zip
         asset_content_type: application/zip
 
     - name: upload-aarch64_gcc_7_5
@@ -350,6 +354,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/ylib-${{ github.ref }}-aarch64_gcc_7_5/ylib-${{ github.ref }}-aarch64_gcc_7_5.zip
-        asset_name: ylib-${{ github.ref }}-aarch64_gcc_7_5.zip
+        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-aarch64_gcc_7_5/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-aarch64_gcc_7_5.zip
+        asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-aarch64_gcc_7_5.zip
         asset_content_type: application/zip
