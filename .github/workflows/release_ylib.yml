@@ -301,7 +301,7 @@ jobs:
 
 
   release_ylib:
-    needs: [full_source, ubuntu_16_04, ubuntu_18_04, armeabi_gcc_7_5, armeabihf_gcc_7_5, aarch64_gcc_7_5]
+    needs: [prepare_release, full_source, ubuntu_16_04, ubuntu_18_04, armeabi_gcc_7_5, armeabihf_gcc_7_5, aarch64_gcc_7_5]
     runs-on: ubuntu-latest
     steps:
     - name: download
