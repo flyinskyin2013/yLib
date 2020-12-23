@@ -20,7 +20,7 @@ option(BUILD_STATIC_YLIB "Build static ylib " ON)
 option(BUILD_SHARED_YLIB "Build shared ylib " ON)
 
 #yLib build flags
-option(ENABLE_GNU_SANITIZER) "enable gnu-sanitizer " ON)
+option(ENABLE_GNU_SANITIZER "enable gnu-sanitizer " ON)
 
 #yLib built-in module
 option(BUILD_MODULE_YCURL "Build module-ycurl(it insteads by yhttp) " ON)
