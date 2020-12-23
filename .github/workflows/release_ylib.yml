@@ -68,7 +68,7 @@ jobs:
     - name: build ylib
       working-directory: /home/runner/work/yLib/yLib/build
       run: |
-        cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_x64_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 ..
+        cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_x64_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 -DENABLE_GNU_SANITIZER=OFF ..
         make
         make install
 
@@ -117,7 +117,7 @@ jobs:
     - name: build ylib
       working-directory: /home/runner/work/yLib/yLib/build
       run: |
-        cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_x64_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 ..
+        cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_x64_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 -DENABLE_GNU_SANITIZER=OFF ..
         make
         make install
 
@@ -172,7 +172,7 @@ jobs:
     - name: build ylib
       working-directory: /home/runner/work/yLib/yLib/build
       run: |
-        cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_armgnueabi_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=armeabi ..
+        cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_armgnueabi_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=armeabi -DENABLE_GNU_SANITIZER=OFF ..
         make
         make install
 
@@ -226,7 +226,7 @@ jobs:
     - name: build ylib
       working-directory: /home/runner/work/yLib/yLib/build
       run: |
-        cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_armgnueabihf_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=armeabihf ..
+        cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_armgnueabihf_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=armeabihf -DENABLE_GNU_SANITIZER=OFF ..
         make
         make install
 
@@ -281,7 +281,7 @@ jobs:
     - name: build ylib
       working-directory: /home/runner/work/yLib/yLib/build
       run: |
-        cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_aarch64_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=aarch64 ..
+        cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_aarch64_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=aarch64 -DENABLE_GNU_SANITIZER=OFF ..
         make
         make install
 
@@ -304,13 +304,14 @@ jobs:
     needs: [prepare_release, full_source, ubuntu_16_04, ubuntu_18_04, armeabi_gcc_7_5, armeabihf_gcc_7_5, aarch64_gcc_7_5]
     runs-on: ubuntu-latest
     steps:
+    - name: checkout my rep
+      uses: actions/checkout@v2
+
+
     - name: download
       uses: actions/download-artifact@v2
       with:
         path: artifacts
-        
-    - name: checkout my rep
-      uses: actions/checkout@v2
 
     - name: create-release
       id: create_release
