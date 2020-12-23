@@ -304,10 +304,6 @@ jobs:
     needs: [prepare_release, full_source, ubuntu_16_04, ubuntu_18_04, armeabi_gcc_7_5, armeabihf_gcc_7_5, aarch64_gcc_7_5]
     runs-on: ubuntu-latest
     steps:
-    - name: checkout my rep
-      uses: actions/checkout@v2
-
-
     - name: download
       uses: actions/download-artifact@v2
       with:
