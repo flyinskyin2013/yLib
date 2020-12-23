@@ -61,7 +61,7 @@ jobs:
         THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
       run: |
         cd $GITHUB_WORKSPACE
-        ./build_deps.sh All armeabi linux
+        ./build_deps.sh All aarch64 linux
 
       working-directory: /home/runner/work/yLib/yLib           
 
