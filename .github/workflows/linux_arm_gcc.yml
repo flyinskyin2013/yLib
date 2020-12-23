@@ -50,6 +50,7 @@ jobs:
         make install
         chmod +x qemu-arm
         cp qemu-arm $GITHUB_WORKSPACE/qemu-install
+        ls -al qemu-arm
         ls $GITHUB_WORKSPACE/qemu-install
 
     - name: arm-gnu-toolchain
