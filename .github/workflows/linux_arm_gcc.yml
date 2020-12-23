@@ -49,7 +49,7 @@ jobs:
         make -j2
         make install
         chmod +x qemu-arm
-        cp -r arm-linux-user/qemu-arm $GITHUB_WORKSPACE/qemu-install
+        cp qemu-arm $GITHUB_WORKSPACE/qemu-install
         ls $GITHUB_WORKSPACE/qemu-install
 
     - name: arm-gnu-toolchain
@@ -129,7 +129,7 @@ jobs:
         make -j2
         make install
         chmod +x qemu-arm
-        cp -r arm-linux-user/qemu-arm $GITHUB_WORKSPACE/qemu-install
+        cp qemu-arm $GITHUB_WORKSPACE/qemu-install
         ls $GITHUB_WORKSPACE/qemu-install
 
     - name: arm-gnu-toolchain
