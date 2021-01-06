@@ -2,14 +2,16 @@
  * @Author: Sky
  * @Date: 2019-10-21 13:51:28
  * @LastEditors: Sky
- * @LastEditTime: 2020-12-24 10:00:41
+ * @LastEditTime: 2020-12-24 10:19:46
  * @Description: 
  -->
 ## yLib
 
 ****
 
-This lib collect and collate usage of common skills in my daily-work.
+[![License](https://img.shields.io/badge/license-BSD--3--Clause-green.svg)](License.txt) 
+
+yLib collects , collates and verifies some useful knowledges in my daily-work
 
 yLib current build matrix <br> 
 
