@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-09-25 11:51:23
  * @LastEditors: Sky
- * @LastEditTime: 2020-12-21 10:54:48
+ * @LastEditTime: 2021-01-07 15:12:56
  * @Description: 
  */
 #include "core/ylinuxerrnohelper.hpp"
@@ -36,7 +36,8 @@ namespace yLib{
     };
 
     static struct __errno_desc_st__ g_errno_desc_array[] = {
-
+        {0, "Reserve", "Reserve Error"},
+#ifndef _WIN32
 //errno base part ------------------------------------------------ start
         {EPERM,                  "EPERM",               "Operation not permitted"},
                              
@@ -308,6 +309,7 @@ namespace yLib{
 
         {EHWPOISON,              "EHWPOISON",           "Structure needs cleaning"},
 
+#endif // _WIN32
 //errno general part ------------------------------------------------ end(35-133)
     };
 

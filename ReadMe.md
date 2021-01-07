@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-10-21 13:51:28
  * @LastEditors: Sky
- * @LastEditTime: 2020-12-24 10:19:46
+ * @LastEditTime: 2021-01-07 09:42:21
  * @Description: 
  -->
 ## yLib
@@ -20,6 +20,7 @@ yLib current build matrix <br>
 | Linux (GCC) | [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/linux_x86_gcc)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x86_gcc) |  [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/linux_x64_gcc)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x64_gcc) |  
 | Linux (Clang) | [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/linux_x86_clang)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x86_clang) |  [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/linux_x64_clang)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x64_clang) |  
 | Linux (ARM GCC) | [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/linux_arm_gcc)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_arm_gcc) |  [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/linux_aarch64_gcc)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_aarch64_gcc) |  
+| Windows (VS2015) | [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/windows_x86_vs2015)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x86_vs2015) |  [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/windows_x64_vs2015)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x64_vs2015) |  
 | Windows (VS2017) | [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/windows_x86_vs2017)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x86_vs2017) |  [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/windows_x64_vs2017)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x64_vs2017) |  
 | Windows (VS2019) | [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/windows_x86_vs2019)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x86_vs2019) |  [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/windows_x64_vs2019)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x64_vs2019) |  
 

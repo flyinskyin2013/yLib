@@ -82,7 +82,7 @@ function(build_module_examples name)
         #    )
 
         INSTALL(PROGRAMS 
-            ${CMAKE_CURRENT_BINARY_DIR}/test_${module_name}.exe
+            ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/test_${module_name}.exe
             DESTINATION examples
         )
 
@@ -242,8 +242,8 @@ if(BUILD_MODULE_YSHAREDMEMORY)
             add_dependencies(test_${module_name} ylib_s)
         endif()
         INSTALL(PROGRAMS 
-            ${CMAKE_CURRENT_BINARY_DIR}/test_ysharedmemory_r.exe
-            ${CMAKE_CURRENT_BINARY_DIR}/test_ysharedmemory_w.exe
+            ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/test_ysharedmemory_r.exe
+            ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/test_ysharedmemory_w.exe
             DESTINATION examples
         )
 

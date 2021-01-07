@@ -282,7 +282,7 @@ case $1 in
 	*)
 		echo "Help info:"
 		echo "You can pass those ActionTypes(Download, Build, Copy, All) to script as first argument"
-		echo "You can pass those optional ArchType(x86/x86_64(default)/armeabi/armeabi-v7a/arm64-v8a) to script as second argument"
+		echo "You can pass those optional ArchType(x86/x86_64(default)/armeabi/armeabihf/aarch64) to script as second argument"
 		echo "You can pass those optional Platform(linux(default)/windows/android) to script as third argument"
 		echo ""
 		echo "Format:"
