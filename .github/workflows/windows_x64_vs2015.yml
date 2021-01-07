@@ -11,7 +11,7 @@ jobs:
     
     - name: set env and init
       env:
-        THIRD_PART_PATH_ROOT: $GITHUB_WORKSPACE/third_part
+        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
       run: |
         echo $GITHUB_WORKSPACE
         ls $GITHUB_WORKSPACE
@@ -20,7 +20,7 @@ jobs:
 
     - name: build third part
       env:
-        THIRD_PART_PATH_ROOT: $GITHUB_WORKSPACE/third_part
+        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
       run: |
         cd $GITHUB_WORKSPACE
         build_deps.bat vs2015 x86_64 
