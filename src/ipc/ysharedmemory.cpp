@@ -27,7 +27,7 @@ MACRO_INIT_YOBJECT_PROPERTY(ySharedMemory)
 			PAGE_READWRITE, \
 			(DWORD)((mem_size_ >> 32) & 0x00000000FFFFFFFF), \
 			(DWORD)((mem_size_) & 0x00000000FFFFFFFF), \
-			shm_param_.c_str() \
+			shm_param_.mem_name.c_str() \
 		);
 
 	if (NO_ERROR == GetLastError()) {//check last error
@@ -54,7 +54,7 @@ MACRO_INIT_YOBJECT_PROPERTY(ySharedMemory)
 
 	//=============================================attach shm===============================
 
-	shm_addr = MapViewOfFile(\
+	shm_ptr = MapViewOfFile(\
 		shm_handle, \
 		FILE_MAP_ALL_ACCESS,
 		0,
@@ -62,7 +62,7 @@ MACRO_INIT_YOBJECT_PROPERTY(ySharedMemory)
 		0 //If this parameter is 0 (zero), the mapping extends from the specified offset to the end of the file mapping.
 	);
 
-	if (NULL != shm_addr) {
+	if (NULL != shm_ptr) {
 		
 		shm_is_attach_ready = true;
 	}
@@ -174,7 +174,7 @@ yLib::ySharedMemory::~ySharedMemory()
 
 #ifdef _WIN32
 
-		if (!CloseHandle(hMapFile) && NO_ERROR != GetLastError()) {
+		if (!CloseHandle(shm_handle) && NO_ERROR != GetLastError()) {
 		
 				HLOCAL LocalAddress = NULL;
 			FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,

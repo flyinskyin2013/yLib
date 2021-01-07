@@ -38,10 +38,6 @@ set(SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/core/ybasicvalue.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/core/ylinuxerrnohelper.cpp
 
-    #for network module
-    ${CMAKE_CURRENT_SOURCE_DIR}/network/yabstractsocket.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/network/yabstractsocketserver.cpp
-
     ${CMAKE_CURRENT_BINARY_DIR}/ylib_extra_infos.cpp
     )
 
@@ -263,15 +259,15 @@ if(WIN32)
         ARCHIVE DESTINATION lib
     )
     INSTALL(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/ylib.dll
+    ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/ylib.dll
     DESTINATION examples
     )
     INSTALL(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/ylib.dll
+    ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/ylib.dll
     DESTINATION lib
     )
     INSTALL(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/ylib.dll
+    ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/ylib.dll
     DESTINATION tests
     )
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")

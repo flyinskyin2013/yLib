@@ -2,13 +2,14 @@
  * @Author: Sky
  * @Date: 2020-09-15 16:49:43
  * @LastEditors: Sky
- * @LastEditTime: 2020-11-30 16:33:43
+ * @LastEditTime: 2021-01-07 16:29:06
  * @Description: 
  */
 #ifndef __YLIB_CORE_YLIB_EXTRA_INFOS_HPP__
 #define __YLIB_CORE_YLIB_EXTRA_INFOS_HPP__
 
 #include <string>
+#include <core/yobject.hpp>
 
 namespace yLib{
 
@@ -18,7 +19,7 @@ namespace yLib{
      *  @warning 
      *  @return The build-type-string 
      */
-    const std::string & GetyLibBuildType(void);
+    __YLIB_EXPORT__ const std::string & GetyLibBuildType(void);
 
     /**
      *  @fn      const std::string & GetyLibBuildArch(void)
@@ -26,7 +27,7 @@ namespace yLib{
      *  @warning 
      *  @return The build-arch-string 
      */
-    const std::string & GetyLibBuildArch(void);
+    __YLIB_EXPORT__ const std::string & GetyLibBuildArch(void);
 
     /**
      *  @fn      const std::string & GetyLibBuildPlatform(void)
@@ -34,7 +35,7 @@ namespace yLib{
      *  @warning 
      *  @return The build-platform-string 
      */
-    const std::string & GetyLibBuildPlatform(void);
+    __YLIB_EXPORT__ const std::string & GetyLibBuildPlatform(void);
 
     /**
      *  @fn      const int GetyLibBuildVersionMajor(void)
@@ -42,7 +43,7 @@ namespace yLib{
      *  @warning 
      *  @return The build-version-major-string
      */
-    const int GetyLibBuildVersionMajor(void);
+    __YLIB_EXPORT__ const int GetyLibBuildVersionMajor(void);
 
     /**
      *  @fn      const int GetyLibBuildVersionMinor(void)
@@ -50,7 +51,7 @@ namespace yLib{
      *  @warning 
      *  @return The build-version-minor-string
      */
-    const int GetyLibBuildVersionMinor(void);
+    __YLIB_EXPORT__ const int GetyLibBuildVersionMinor(void);
 
     /**
      *  @fn      const int GetyLibBuildVersionPatch(void)
@@ -58,7 +59,7 @@ namespace yLib{
      *  @warning 
      *  @return The build-version-patch-string
      */
-    const int GetyLibBuildVersionPatch(void);
+    __YLIB_EXPORT__ const int GetyLibBuildVersionPatch(void);
 
     /**
      *  @fn      const int GetyLibBuildTimeStamp(void)
@@ -66,7 +67,7 @@ namespace yLib{
      *  @warning 
      *  @return The build-timestamp-string
      */    
-    const std::string & GetyLibBuildTimeStamp(void);
+    __YLIB_EXPORT__ const std::string & GetyLibBuildTimeStamp(void);
 
     /**
      *  @fn      const std::string & GetyLibBuildGitCommitId(void)
@@ -74,7 +75,7 @@ namespace yLib{
      *  @warning 
      *  @return The build-git-commit-id-string
      */    
-    const std::string & GetyLibBuildGitCommitId(void);
+    __YLIB_EXPORT__ const std::string & GetyLibBuildGitCommitId(void);
 
     /**
      *  @fn      const std::string & GetyLibBuildBuiltinModule(void)
@@ -82,7 +83,7 @@ namespace yLib{
      *  @warning 
      *  @return The build-in-module-string
      */    
-    const std::string & GetyLibBuildBuiltinModule(void);
+    __YLIB_EXPORT__ const std::string & GetyLibBuildBuiltinModule(void);
 }
 
 

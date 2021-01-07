@@ -8,34 +8,21 @@
 Install:
 cmake, libtool and autoconf are needed.
 ==========
-For Win32
+For Windows
 -------------------------------------
 1. For msvc
-    Open cmd.exe
+    Open vs2015/vs2017/vs2019 native cmd
     >>%comspec% /k "D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86 or amd64
 
-    Open git-bash.exe
-
 2. For third_part resources.
-    In git-bash.exe
     >>cd yLib
-    >>./build_deps_win.sh Download
+    >>build_deps.bat vs2015 x86_64
 
-3. For third_part build.
-    In cmd.exe
-    >>cd yLib/third_part
-    >>build_third_part.bat init 
-    >>build_third_part.bat make
-
-4. For third_part install.
-    In git-bash.exe
-    >>cd yLib
-    >>./build_deps_win.sh Copy
-    
 5. For yLib.
-    >>mkdir -p build 
-    >>cd build && cmake -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=%cd%/install -DBUILD_YLIB_ARCH=x86 ..
-    >>nmake && nmake install
+    >>mkdir build_vs2015_x64 
+    >>cd build_vs2015_x64 
+    >>cmake -T v140,host=x64 -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=%cd%/install -DBUILD_YLIB_ARCH=x86_64 ..
+    >>cmake --build . --config Release --target install
 
 For Linux:
 -------------------------------------
@@ -48,7 +35,7 @@ run the following commmands.
 
 2. For yLib.
     >>mkdir -p build 
-    >>cd build && cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=arm64-v8a ..
+    >>cd build && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 ..
     >>make -j4 && make install
 
 Defaultly,In directory(yLib/build/install), it may have those directories including cmake, examples, include, lib and so on. You can use them by following way:
