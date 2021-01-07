@@ -11,7 +11,7 @@ jobs:
     
     - name: set env and init
       env:
-        THIRD_PART_PATH_ROOT: $GITHUB_WORKSPACE/third_part
+        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
       run: |
         echo $GITHUB_WORKSPACE
         ls $GITHUB_WORKSPACE
@@ -20,7 +20,7 @@ jobs:
 
     - name: build third part
       env:
-        THIRD_PART_PATH_ROOT: $GITHUB_WORKSPACE/third_part
+        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
       run: |
         cd $GITHUB_WORKSPACE
         build_deps.bat vs2015 x86_64 
@@ -28,7 +28,7 @@ jobs:
       working-directory: $GITHUB_WORKSPACE
 
     - name: build ylib
-      working-directory: /home/runner/work/yLib/yLib/build
+      working-directory: D:\a\yLib\yLib\
       run: |
         cd $GITHUB_WORKSPACE\build_vs2015_x64
         cmake -T v140,host=x64 -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=%cd%/install -DBUILD_YLIB_ARCH=x86_64 ..
