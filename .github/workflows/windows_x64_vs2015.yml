@@ -13,10 +13,11 @@ jobs:
       env:
         THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
       run: |
+        pwd
         echo $GITHUB_WORKSPACE
-        ls $GITHUB_WORKSPACE
         cd $GITHUB_WORKSPACE
         mkdir build_vs2015_x64
+        ls $GITHUB_WORKSPACE
 
     - name: build third part
       env:
