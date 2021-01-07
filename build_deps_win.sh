@@ -51,6 +51,10 @@ THIRD_PART_DIR=${ROOT_DIR}/third_part
 self_print I "Welcome yLib build dependence."
 echo ""
 
+Default_Arch="x86_64"
+Default_Platform="linux"
+Default_CompileSet="vs2015"
+
 function check_download_third_part(){
 
 	self_print I "Now,we will check and download third-part resources.please wait ... ..."
@@ -97,6 +101,46 @@ function check_download_third_part(){
 
 }
 ###############################################################################
+
+function build_third_part(){
+
+	cd ${THIRD_PART_DIR}
+	build_type=""
+	self_print I "Now,we will build third-part.please wait ... ..."
+	self_print W "The compileSet is "${Default_CompileSet}
+	while [ 1 -eq 1 ]
+	do
+		self_print NORMAL "Please input build type[debug/release]"
+
+		if read -t 30 -p "build-type(wait for 30s, default is 'release'):" build_type
+		then 
+			echo "Got it."
+		else
+			build_type="release"
+		fi
+		case ${build_type} in
+			"debug")
+				break;
+				;;
+			"release")
+				break;
+				;;
+				*)
+				self_print E "Input build type error."
+				;;
+		esac
+	done
+	self_print I "BuildTypeIs:$build_type"
+
+	# chmod +x build_third_part.sh
+
+	# ./build_third_part.sh clean ${Default_Arch}
+	# ./build_third_part.sh init ${Default_Arch}
+	# ./build_third_part.sh make ${Default_Arch}
+
+
+	self_print I "Build complete."
+}
 ###############################################################################
 ###############################################################################
 ###############################################################################
@@ -109,7 +153,13 @@ function copy_prepared_file(){
 	while [ 1 -eq 1 ]
 	do
 		self_print NORMAL "Please input build platform[linux/windows/android]"
-		read -p "platform:" platform_type
+		if read -t 30 -p "platform(wait for 30s, default is 'linux'):" platform_type
+		then 
+			echo "Got it."
+		else
+			# platform_type="linux"
+			platform_type=${Default_Platform}
+		fi
 		case ${platform_type} in
 			"linux")
 				break;
@@ -125,13 +175,21 @@ function copy_prepared_file(){
 				;;
 		esac
 	done
+	self_print I "platform_typeIs:$platform_type"
+
 
 	arch_type=""
 	while [ 1 -eq 1 ]
 	do
-		self_print NORMAL "Please input build arch[x86/x86_64/armeabi/armeabi-v7a/arm64-v8a]"
+		self_print NORMAL "Please input build arch[x86/x86_64/armeabi/armeabihf/aarch64]"
 
-		read -p "build arch:" arch_type
+		if read -t 30 -p "build arch(wait for 30s, default is 'x86_64'):" arch_type
+		then 
+			echo "Got it."
+		else
+			# arch_type="x86_64"
+			arch_type=${Default_Arch}
+		fi
 		case ${arch_type} in
 			"x86")
 				break;
@@ -142,10 +200,10 @@ function copy_prepared_file(){
 			"armeabi")
 				break;
 				;;
-			"armeabi-v7a")
+			"armeabihf")
 				break;
 				;;
-			"arm64-v8a")
+			"aarch64")
 				break;
 				;;
 				*)
@@ -153,39 +211,107 @@ function copy_prepared_file(){
 				;;
 		esac
 	done
-    self_print I "BuildArchIs:$arch_type"	
+	self_print I "arch_typeIs:$arch_type"
 	
 	mkdir -p ${ROOT_DIR}/include/third_part/$platform_type/
 	mkdir -p ${ROOT_DIR}/include/third_part/$platform_type/libconfig
 
-	mkdir -p ${ROOT_DIR}/lib/$platform_type/$arch_type
+	mkdir -p ${ROOT_DIR}/lib/$platform_type/$Default_CompileSet/$arch_type
 
 	cp build_out/include/* ${ROOT_DIR}/include/third_part/$platform_type/ -r
-	cp build_out/lib/* ${ROOT_DIR}/lib/$platform_type/$arch_type -r
+	cp build_out/lib/* ${ROOT_DIR}/lib/$platform_type/$Default_CompileSet/$arch_type -r
 
 	cd ${ROOT_DIR}/include/third_part/$platform_type/
 	cp libconfig.* libconfig/
-	ln -s libxml2/libxml/ libxml
+	cp -r libxml2/libxml/ libxml
 
 	cd ${ROOT_DIR}
 	self_print I "Copy complete."
 	
 }
 
+case $2 in
+	"x86")
+		Default_Arch="x86"
+		;;
+	"x86_64")
+		Default_Arch="x86_64"
+		;;
+	"armeabi")
+		Default_Arch="armeabi"
+		;;
+	"armeabihf")
+		Default_Arch="armeabihf"
+		;;
+	"aarch64")
+		Default_Arch="aarch64"
+		;;
+	*)
+		echo "Notice: set Default_Arch is x86_64"
+		Default_Arch="x86_64"
+esac
+
+case $3 in
+	"linux")
+		Default_Platform="linux"
+		;;
+	"windows")
+		Default_Platform="windows"
+		;;
+	"android")
+		Default_Platform="android"
+		;;
+	*)
+		echo "Notice: set Default_Platform is linux"
+		Default_Platform="linux"
+esac
+
+case $4 in
+	"vs2015")
+		Default_CompileSet="vs2015"
+		;;
+	"vs2017")
+		Default_CompileSet="vs2017"
+		;;
+	"vs2019")
+		Default_CompileSet="vs2019"
+		;;
+	*)
+		echo "Notice: set Default_CompileSet to be vs2015"
+		Default_CompileSet="vs2015"
+esac
+
 case $1 in
 	"Download")
 		check_download_third_part
 		;;
+	"Build")
+		build_third_part
+		;;
 	"Copy")
+		copy_prepared_file
+		;;
+	"All")
+		check_download_third_part
+		build_third_part
 		copy_prepared_file
 		;;
 	*)
 		echo "Help info:"
-		echo "You can pass those argument(Download, Copy) to scripts"
+		echo "You can pass those ActionTypes(Download, Build, Copy, All) to script as first argument"
+		echo "You can pass those optional ArchType(x86/x86_64(default)/armeabi/armeabihf/aarch64) to script as second argument"
+		echo "You can pass those optional Platform(linux(default)/windows/android) to script as third argument"
+		echo "If the platform is windows, the optional fourth arg is ComplileSet(vs2015(default)/vs2017/vs2019)"
 		echo ""
+		echo "Format:"
+		echo "./build_deps.sh ActionType ArchType Platform [ComplileSet]"
 		echo "Example:"
-		echo "./build_deps.sh Download      ||   ./build_deps.sh     Copy"
+		echo "./build_deps.sh Download    ||   ./build_deps.sh     All"
+		echo "./build_deps.sh Download  x86_64 linux ||  ./build_deps.sh  All x86 windows vs2015"
+		exit 0
 esac
+
+
 
 
 self_print I "Build dependence complete."

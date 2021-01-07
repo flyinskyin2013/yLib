@@ -103,7 +103,7 @@ function(build_basic_algorithm name)
         #    )
 
         INSTALL(PROGRAMS 
-            ${CMAKE_CURRENT_BINARY_DIR}/test_algorithm_${module_name}.exe
+            ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/test_algorithm_${module_name}.exe
             DESTINATION tests/basic_algorithm/
         )
 
@@ -175,7 +175,7 @@ function(build_module_examples class_name name)
         #    )
 
         INSTALL(PROGRAMS 
-            ${CMAKE_CURRENT_BINARY_DIR}/test_unit_${module_name}.exe
+            ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/test_unit_${module_name}.exe
             DESTINATION tests
         )
 
@@ -243,7 +243,7 @@ function(build_module_examples1 name)
         #    )
 
         INSTALL(PROGRAMS 
-            ${CMAKE_CURRENT_BINARY_DIR}/test_unit_${module_name}.exe
+            ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/test_unit_${module_name}.exe
             DESTINATION tests
         )
         #set(BUILTIN_TEST_LIST "${BUILTIN_TEST_LIST}\n test_unit_${module_name}.exe"  CACHE STRING INSTERNAL FORCE)
@@ -313,7 +313,7 @@ function(build_module_examples3 class_name_ module_name_ target_name_)
         #    )
 
         INSTALL(PROGRAMS 
-            ${CMAKE_CURRENT_BINARY_DIR}/test_unit_${target_name}.exe
+            ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/test_unit_${target_name}.exe
             DESTINATION tests
         )
         #set(BUILTIN_TEST_LIST "${BUILTIN_TEST_LIST}\n test_unit_${target_name}.exe"  CACHE STRING INSTERNAL FORCE)
@@ -439,7 +439,7 @@ if(BUILD_MODULE_YTCPSERVER)
     build_module_examples3(NETWORK TCP yTcpserver)
 endif()
 
-if(BUILD_MODULE_YTCPCLIENT)
+if(BUILD_MODULE_YTCPSOCKET)
     build_module_examples3(NETWORK TCP yTcpClient)
 endif()
 
@@ -447,7 +447,7 @@ if(BUILD_MODULE_YUDPSERVER)
     build_module_examples3(NETWORK UDP yUdpServer)
 endif()
 
-if(BUILD_MODULE_YUDPCLIENT)
+if(BUILD_MODULE_YUDPSOCKET)
     build_module_examples3(NETWORK UDP yUdpClient)
 endif()
 

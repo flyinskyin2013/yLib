@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:53
  * @LastEditors: Sky
- * @LastEditTime: 2020-12-21 15:09:54
+ * @LastEditTime: 2021-01-07 16:25:26
  * @Description: 
  */
 
@@ -85,7 +85,7 @@ yLib::yConfigValue yLib::yConfig::GetValue(const std::string &node_path_) {
 
     try
     {
-        _setting_value = &_root.lookup(node_path_);//search node
+        _setting_value = &_root.lookup(node_path_.c_str());//search node
     }
     catch(...)//SettingNotFoundException 
     {
@@ -131,14 +131,14 @@ yLib::yConfigValue yLib::yConfig::GetValue(const std::string &node_path_) {
 
 int8_t yLib::yConfig::SetValue(const std::string &node_path_, const yConfigValue &value_){
 
-    if ( !CONVERT_POINTER_TO_LIBCONFIG_CONFIG_INSTANCE(config_instance)->exists(node_path_) ){//node_path not found
+    if ( !CONVERT_POINTER_TO_LIBCONFIG_CONFIG_INSTANCE(config_instance)->exists(node_path_.c_str()) ){//node_path not found
         
         yLib::yLog::E("node_path_(%s) is not found, please add node firstly.", node_path_.c_str());
         return -1;
     }
 
     libconfig::Setting & _root = CONVERT_POINTER_TO_LIBCONFIG_CONFIG_INSTANCE(config_instance)->getRoot();
-    libconfig::Setting & _setting_value = _root.lookup(node_path_);
+    libconfig::Setting & _setting_value = _root.lookup(node_path_.c_str());
 
     switch(value_.cur_value_type){
 
@@ -185,27 +185,27 @@ int8_t yLib::yConfig::AddNode(const std::string & pos_, const std::string & name
 
             case yLib::yValue::INT32_TYPE:{
 
-                _root.add(name_, libconfig::Setting::Type::TypeInt) = (int32_t)value_;
+                _root.add(name_.c_str(), libconfig::Setting::Type::TypeInt) = (int32_t)value_;
                 break;
             }
             case yLib::yValue::BOOL_TYPE:{
 
-                _root.add(name_, libconfig::Setting::Type::TypeBoolean) = (bool)value_;
+                _root.add(name_.c_str(), libconfig::Setting::Type::TypeBoolean) = (bool)value_;
                 break;
             }
             case yLib::yValue::FLOAT_TYPE:{
 
-                _root.add(name_, libconfig::Setting::Type::TypeFloat) = (float)value_;
+                _root.add(name_.c_str(), libconfig::Setting::Type::TypeFloat) = (float)value_;
                 break;
             }
             case yLib::yValue::STRING_TYPE:{
                 
-                _root.add(name_, libconfig::Setting::Type::TypeString) = (std::string)value_;
+                _root.add(name_.c_str(), libconfig::Setting::Type::TypeString) = (std::string)value_;
                 break;
             }
             case yLib::yValue::GROUP_TYPE:{
                 
-                _root.add(name_, libconfig::Setting::Type::TypeGroup);
+                _root.add(name_.c_str(), libconfig::Setting::Type::TypeGroup);
                 break;
             }
             default :
@@ -218,32 +218,32 @@ int8_t yLib::yConfig::AddNode(const std::string & pos_, const std::string & name
     }
     else{//not root node
 
-        libconfig::Setting & _lookup_node = _root.lookup(pos_);
+        libconfig::Setting & _lookup_node = _root.lookup(pos_.c_str());//fix libconfig unexport Setting & Setting::operator=(const std::string &value) on windows
         switch(type_){
 
             case yLib::yValue::INT32_TYPE:{
 
-                _lookup_node.add(name_, libconfig::Setting::Type::TypeInt) = (int32_t)value_;
+                _lookup_node.add(name_.c_str(), libconfig::Setting::Type::TypeInt) = (int32_t)value_;//
                 break;
             }
             case yLib::yValue::BOOL_TYPE:{
 
-                _lookup_node.add(name_, libconfig::Setting::Type::TypeBoolean) = (bool)value_;
+                _lookup_node.add(name_.c_str(), libconfig::Setting::Type::TypeBoolean) = (bool)value_;
                 break;
             }
             case yLib::yValue::FLOAT_TYPE:{
 
-                _lookup_node.add(name_, libconfig::Setting::Type::TypeFloat) = (float)value_;
+                _lookup_node.add(name_.c_str(), libconfig::Setting::Type::TypeFloat) = (float)value_;
                 break;
             }
             case yLib::yValue::STRING_TYPE:{
                 
-                _lookup_node.add(name_, libconfig::Setting::Type::TypeString) = (std::string)value_;
+                _lookup_node.add(name_.c_str(), libconfig::Setting::Type::TypeString) = (std::string)value_;
                 break;
             }
             case yLib::yValue::GROUP_TYPE:{
                 
-                _lookup_node.add(name_, libconfig::Setting::Type::TypeGroup);
+                _lookup_node.add(name_.c_str(), libconfig::Setting::Type::TypeGroup);
                 break;
             }
             default :{
