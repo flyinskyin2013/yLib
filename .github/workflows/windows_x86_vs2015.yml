@@ -20,7 +20,7 @@ jobs:
       env:
         THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
       run: |
-        build_deps.bat vs2015 x86
+        .\build_deps.bat vs2015 x86
 
       working-directory: D:\a\yLib\yLib\
 
