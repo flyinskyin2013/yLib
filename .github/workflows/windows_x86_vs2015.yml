@@ -13,8 +13,13 @@ jobs:
       env:
         THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
       run: |
-        Invoke-WebRequest -Uri http://www.interlog.com/~tcharron/wgetwin-1_5_3_1-binary.zip -OutFile wgetwin-1_5_3_1-binary.zip
-        7z x ./wgetwin-1_5_3_1-binary.zip
+        cd third_part
+        Invoke-WebRequest -Uri https://github.com/curl/curl/releases/download/curl-7_55_1/curl-7.55.1.tar.gz -OutFile curl-7.55.1.tar.gz
+        Invoke-WebRequest -Uri https://github.com/GNOME/libxml2/archive/v2.9.9.tar.gz -OutFile libxml2-2.9.9.tar.gz
+        Invoke-WebRequest -Uri https://github.com/hyperrealm/libconfig/archive/v1.7.2.tar.gz -OutFile libconfig-1.7.2.tar.gz
+        Invoke-WebRequest -Uri https://github.com/open-source-parsers/jsoncpp/archive/1.8.4.tar.gz -OutFile jsoncpp_1.8.4.tar.gz
+        Invoke-WebRequest -Uri https://udomain.dl.sourceforge.net/project/log4cpp/log4cpp-1.1.x%20%28new%29/log4cpp-1.1/log4cpp-1.1.3.tar.gz -OutFile log4cpp-1.1.3.tar.gz
+        cd ..
         mkdir build_vs2015_x86
         ls 
 
@@ -22,7 +27,6 @@ jobs:
       env:
         THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
       run: |
-        $Env:path=$Env:Path+";D:\a\yLib\yLib\"  
         .\build_deps.bat vs2015 x86
 
       working-directory: D:\a\yLib\yLib\
