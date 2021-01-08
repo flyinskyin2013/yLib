@@ -340,7 +340,7 @@ jobs:
         cd build_vs2015_x86/install
         rm examples/ -r -force
         rm tests/ -r -force
-        rm -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x86.zip -force
+        rm -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x86.zip -force -ErrorAction SilentlyContinue
         7z -tzip a -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x86.zip .
 
     - name: upload-zip
@@ -391,7 +391,7 @@ jobs:
         cd build_vs2015_x64/install
         rm examples/ -r -force
         rm tests/ -r -force
-        rm -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x64.zip -force
+        rm -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x64.zip -force -ErrorAction SilentlyContinue
         7z -tzip a -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x64.zip .
 
     - name: upload-zip
@@ -442,7 +442,7 @@ jobs:
         cd build_vs2017_x86/install
         rm examples/ -r -force
         rm tests/ -r -force
-        rm -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x86.zip -force
+        rm -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x86.zip -force -ErrorAction SilentlyContinue
         7z -tzip a -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x86.zip .
 
     - name: upload-zip
@@ -493,7 +493,7 @@ jobs:
         cd build_vs2017_x64/install
         rm examples/ -r -force
         rm tests/ -r -force
-        rm -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x64.zip -force
+        rm -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x64.zip -force -ErrorAction SilentlyContinue
         7z -tzip a -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x64.zip .
 
     - name: upload-zip
@@ -543,7 +543,7 @@ jobs:
         cd build_vs2019_x86/install
         rm examples/ -r -force
         rm tests/ -r -force
-        rm -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x86.zip -force
+        rm -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x86.zip -force -ErrorAction SilentlyContinue
         7z -tzip a -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x86.zip .
 
     - name: upload-zip
@@ -594,7 +594,7 @@ jobs:
         cd build_vs2019_x64/install
         rm examples/ -r -force
         rm tests/ -r -force
-        rm -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x64.zip -force
+        rm -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x64.zip -force -ErrorAction SilentlyContinue
         7z -tzip a -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x64.zip .
 
     - name: upload-zip
