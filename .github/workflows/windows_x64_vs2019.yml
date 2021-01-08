@@ -28,7 +28,7 @@ jobs:
       run: |
         .\build_deps.bat vs2019 x86_64 
 
-      working-directory: $GITHUB_WORKSPACE
+      working-directory: D:\a\yLib\yLib\
 
     - name: build ylib
       working-directory: D:\a\yLib\yLib\
