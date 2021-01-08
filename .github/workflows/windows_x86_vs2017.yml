@@ -34,5 +34,5 @@ jobs:
       working-directory: D:\a\yLib\yLib\
       run: |
         cd build_vs2017_x86
-        cmake -T v141,host=x64 -A Win32 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=%cd%/install -DBUILD_YLIB_ARCH=x86 ..
+        cmake -T v141,host=x64 -A Win32 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install -DBUILD_YLIB_ARCH=x86 ..
         cmake --build . --config Release --target install      
