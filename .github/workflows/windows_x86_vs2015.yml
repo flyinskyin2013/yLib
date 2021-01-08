@@ -14,7 +14,7 @@ jobs:
         THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
       run: |
         Invoke-WebRequest -Uri https://eternallybored.org/misc/wget/releases/old/wget-1.20-win32.zip -OutFile wget-1.20-win32.zip
-        7z -x wget-1.20-win32.zip
+        7z x wget-1.20-win32.zip
         mkdir build_vs2015_x86
         ls 
 
