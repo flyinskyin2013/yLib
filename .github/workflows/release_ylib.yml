@@ -604,7 +604,7 @@ jobs:
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x64.zip  
 
   release_ylib:
-    needs: [prepare_release, full_source, ubuntu_16_04, ubuntu_18_04, armeabi_gcc_7_5, armeabihf_gcc_7_5, aarch64_gcc_7_5, windows_vs2015_x64, windows_vs2015_x86, windows_vs2018_x64, windows_vs2017_x86, windows_vs2019_x64, windows_vs2019_x86]
+    needs: [prepare_release, full_source, ubuntu_16_04, ubuntu_18_04, armeabi_gcc_7_5, armeabihf_gcc_7_5, aarch64_gcc_7_5, windows_vs2015_x64, windows_vs2015_x86, windows_vs2017_x64, windows_vs2017_x86, windows_vs2019_x64, windows_vs2019_x86]
     runs-on: ubuntu-latest
     steps:
     - name: download
