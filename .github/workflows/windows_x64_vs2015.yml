@@ -13,8 +13,9 @@ jobs:
       env:
         THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
       run: |
-        Invoke-WebRequest -Uri https://eternallybored.org/misc/wget/releases/old/wget-1.20-win32.zip -OutFile wget-1.20-win32.zip
-        7z x wget-1.20-win32.zip
+        Invoke-WebRequest -Uri http://www.interlog.com/~tcharron/wgetwin-1_5_3_1-binary.zip -OutFile wgetwin-1_5_3_1-binary.zip
+        7z x wgetwin-1_5_3_1-binary.zip
+        mv .\wgetwin-1_5_3_1-binary\ wgetwin
         mkdir build_vs2015_x64
         ls 
 
@@ -22,7 +23,7 @@ jobs:
       env:
         THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
       run: |
-        set WgetPath=%cd%\wget-1.20-win32
+        set WgetPath=%cd%\wgetwin
         set PATH=%PATH%;%WgetPath%
         .\build_deps.bat vs2015 x86_64 
 
