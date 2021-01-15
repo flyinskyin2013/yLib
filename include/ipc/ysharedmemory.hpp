@@ -3,7 +3,7 @@
  * @Author: Sky
  * @Date: 2019-11-29 11:35:54
  * @LastEditors: Sky
- * @LastEditTime: 2021-01-06 17:27:30
+ * @LastEditTime: 2021-01-15 10:58:35
  * @FilePath: \yLib\include\core\ysharedmemory.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -86,9 +86,9 @@ namespace yLib {
 
 			__yshmparam__(const __yshmparam__& param_){
 
-				mem_key = mem_key;
-				mem_flag = mem_flag;
-				mem_name = mem_name;
+				mem_key = param_.mem_key;
+				mem_flag =  param_.mem_flag;
+				mem_name =  param_.mem_name;
 			}
 
 			/** @var uint32_t mem_key
