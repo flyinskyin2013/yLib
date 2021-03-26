@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:52
  * @LastEditors: Sky
- * @LastEditTime: 2020-11-30 17:54:40
+ * @LastEditTime: 2021-03-20 11:25:52
  * @Description: 
  */
 
@@ -140,6 +140,20 @@ namespace yLib{
     */
     typedef std::unordered_map<std::string, SubCategoryProperty> TypeSubCategoryMap;
 
+    /** \struct EnableyLogFileParam
+        \brief the param of enabling log file.
+    */
+    typedef struct __st_enable_ylog_file_param__{
+
+        std::string cfg_file_path;
+
+        /**
+         *  @var    other_category_name_vec
+         *  @brief If this vector is empty, the yLog only have root-category. 
+         *  If we want to save log to different files, we can create other categories. 
+        */  
+        std::vector<std::string> other_category_name_vec;
+    } EnableyLogFileParam;
 
     //yLog support thread-safety,defaultly.
     /**
@@ -150,41 +164,53 @@ namespace yLib{
 
         public:
             /**
-             *  @fn      yLog(yLog & log) = delete
+             *  @fn      yLog(const yLog & log) = delete
              *  @brief   Copy constructor
              *  @param   log exsited obj.
              *  @warning This op is deleted.
              *  @return 
              */            
-            yLog(yLog & log) = delete;
+            yLog(const yLog & log) = delete;
 
             /**
-             *  @fn      yLog & operator=(yLog & log) = delete
+             *  @fn      yLog & operator=(const yLog & log) = delete
              *  @brief   Assignment constructor
              *  @param   log exsited obj.
              *  @warning This op is deleted.
              *  @return The reference of yLog's object.
              */
-            yLog & operator=(yLog & log) = delete;
+            yLog & operator=(const yLog & log) = delete;
 
             /**
-             *  @fn      yLog(yLog && log) = delete
+             *  @fn      yLog(const yLog && log) = delete
              *  @brief   Move constructor
              *  @param   log exsited obj.
              *  @warning This op is deleted.
              *  @return 
              */
-            yLog(yLog && log) = delete;
+            yLog(const yLog && log) = delete;
 
             /**
-             *  @fn      yLog && operator=(yLog && log) = delete
+             *  @fn      yLog && operator=(const yLog && log) = delete
              *  @brief   Assignment constructor
              *  @param   log exsited obj.
              *  @warning This op is deleted.
              *  @return The reference of yLog's object.
              */
-            yLog && operator=(yLog && log) = delete;
+            yLog && operator=(const yLog && log) = delete;
   
+            /**
+             *  @fn      static void EnableyLogFile(bool is_enable, const EnableyLogFileParam & param);
+             *  @brief   Enable or disable yLog to file.
+             *  @param   is_enable if enable yLog to file.
+             *  @param   param the param of yLog to file.
+             *  @warning None
+             *  @return  void
+             *  @exception None
+             */    
+            static void EnableyLogFile(bool is_enable, const EnableyLogFileParam & param);
+
+
             /**
              *  @fn      static void SetLog4cpp(bool enable_log4cpp = false, std::string log_path = "log4cplus.properties")
              *  @brief   Enable or disable log4cpp
