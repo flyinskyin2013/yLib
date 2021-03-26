@@ -5,28 +5,16 @@ yLib is mixed-programing basing on c and c++,it only provides c++'s interface to
 Coding And Programing Conventions:
 
 1 Name for class : yXXXXX
-2 Name for viriable of class:
-    general viriable of class : _XXXXX
-    static viriable of class : _s_XXXXX
-    global viriable of class : _g_XXXXX
-    struct viriable of class : _t_XXXXXX
-    ... ... (reference 4)
-3 Name for namespace : yLib 
-4 Name for viriable : 
-    static viriable : s_XXXXX
+
+2 Name for namespace : yLib 
+
+3 Name for viriable : 
     global viriable : g_XXXXX
-    enum viriable : em_XXXXX
-    struct viriable : t_XXXXX
+    local viriable : _XXXXX
 
-    pointer viriable : ptr_XXXXX
+4 Name for member-viriable : XXXXX
 
-    int viriable : n_XXXXX
-    unsigned int : un_XXXXX
-    float viriable : f_XXXXX
-    double viriable : d_XXXXX
-    char viriable : c_XXXXX
-    unsigned char viriable : uc_XXXXX
-
-    bool viriable : b_XXXXX
-    string viriable : str_XXXXX
-    
+5 Name for other situations :
+    static/enum/struct viriable  : XXXXX
+    pointer viriable : XXXXX_ptr
+    string viriable : XXXXX_str

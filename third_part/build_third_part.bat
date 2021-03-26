@@ -127,7 +127,7 @@ call:self_print I "Build dependence complete."
     @cd %THIRD_PART_ROOT_PATH%/jsoncpp-1.8.4
     @mkdir build_vs2015
     @cd build_vs2015
-    cmake -T %compile_tool_set%,host=x64 -A %compile_tool_arch% -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DCMAKE_INSTALL_PREFIX=%THIRD_PART_ROOT_PATH%/build_out ..
+    cmake -T %compile_tool_set%,host=x64 -A %compile_tool_arch% -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DCMAKE_INSTALL_PREFIX=%THIRD_PART_ROOT_PATH%\build_out ..
     cmake --build . --config Release --target install
 
 @goto:eof
@@ -139,7 +139,7 @@ call:self_print I "Build dependence complete."
     @cd %THIRD_PART_ROOT_PATH%/log4cpp
     @mkdir build_vs2015
     @cd build_vs2015
-    cmake -T %compile_tool_set%,host=x64 -A %compile_tool_arch% -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DCMAKE_INSTALL_PREFIX=%THIRD_PART_ROOT_PATH%/build_out ..
+    cmake -T %compile_tool_set%,host=x64 -A %compile_tool_arch% -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DCMAKE_INSTALL_PREFIX=%THIRD_PART_ROOT_PATH%\build_out ..
     cmake --build . --config Release  --target install
 
 @goto:eof
@@ -152,7 +152,7 @@ call:self_print I "Build dependence complete."
     @patch -p1 < ../libconfig_cmake.patch
     @mkdir build_vs2015
     @cd build_vs2015
-    cmake -T %compile_tool_set%,host=x64 -A %compile_tool_arch% -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DCMAKE_INSTALL_PREFIX=%THIRD_PART_ROOT_PATH%/build_out ..
+    cmake -T %compile_tool_set%,host=x64 -A %compile_tool_arch% -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DCMAKE_INSTALL_PREFIX=%THIRD_PART_ROOT_PATH%\build_out ..
     cmake --build . --config Release --target install
 
 @goto:eof
