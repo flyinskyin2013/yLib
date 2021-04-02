@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2021-03-22 15:57:39
  * @LastEditors: Sky
- * @LastEditTime: 2021-03-24 11:40:17
+ * @LastEditTime: 2021-04-01 11:36:35
  * @Description: 
  */
 #include <stack>
@@ -573,23 +573,76 @@ struct RegularNFANode{
 		SINGLE_TYPE,
 		BOTH_TYPE,
 	};
+
+	std::string GetTypeString(NodeType t){
+
+		switch (t)
+		{
+		case NONE_TYPE:{
+			/* code */
+			return std::string("NONE_TYPE");
+			break;
+		}
+		case START_TYPE:{
+			/* code */
+			return std::string("START_TYPE");
+			break;
+		}
+		case END_TYPE:{
+			/* code */
+			return std::string("END_TYPE");
+			break;
+		}
+		case SINGLE_TYPE:{
+			/* code */
+			return std::string("SINGLE_TYPE");
+			break;
+		}	
+		case BOTH_TYPE:{
+			/* code */
+			return std::string("BOTH_TYPE");
+			break;
+		}	
+		default:
+			break;
+		}
+		return std::string("ERROR_TYPE");
+	} 
+
 	RegularNFANode(void) = delete;
-	RegularNFANode(NodeType type, int prop0 = EDGE_PROP_EMPTY, int prop1 = EDGE_PROP_EMPTY)
-	:next0(nullptr),next1(nullptr)
+	RegularNFANode(NodeType type, int prop0 = EDGE_PROP_EMPTY, \
+		const std::shared_ptr<RegularNFANode>& n0 = nullptr, \
+		int prop1 = EDGE_PROP_EMPTY, \
+		const std::shared_ptr<RegularNFANode>& n1 = nullptr
+		)
+	:is_acc(false)
 	{
 
 		node_type = type;
 		edge0_prop = prop0;
 		edge1_prop = prop1;
 
+		next0 = n0;
+		next1 = n1;
+
 	}
 	RegularNFANode(const RegularNFANode& node)
 	{
+		node_type = node.node_type;
+		edge0_prop = node.edge0_prop;
+		edge1_prop = node.edge1_prop;
 
+		next0 = node.next0;
+		next1 = node.next1;
 	}
 	RegularNFANode(const RegularNFANode&& node)
 	{
+		node_type = node.node_type;
+		edge0_prop = node.edge0_prop;
+		edge1_prop = node.edge1_prop;
 
+		next0 = node.next0;
+		next1 = node.next1;
 	}
 
 	std::shared_ptr<RegularNFANode> next0;
@@ -600,21 +653,59 @@ struct RegularNFANode{
 	//-2 EMPTY_PROP
 	int edge0_prop;
 	int edge1_prop;
+
+	bool is_acc;
 };
 
 struct RegularNFANodeFragment
 {	
-	RegularNFANodeFragment(std::shared_ptr<RegularNFANode> start, std::shared_ptr<RegularNFANode> * next)
-	:fragment_next(nullptr)
+	RegularNFANodeFragment(const std::shared_ptr<RegularNFANode> &start, const std::vector<std::shared_ptr<RegularNFANode> *> &next_vec)
 	{
 
 		fragment_start = start;
-		fragment_next = next;
+		fragment_next_vec = next_vec;
 	}
 	std::shared_ptr<RegularNFANode> fragment_start;
 	
-	std::shared_ptr<RegularNFANode> * fragment_next;
+	std::vector<std::shared_ptr<RegularNFANode> *> fragment_next_vec;
 };
+
+
+std::vector<std::shared_ptr<RegularNFANode> *> AppendFGVec(const std::vector<std::shared_ptr<RegularNFANode> *> & vec0, const std::vector<std::shared_ptr<RegularNFANode> *> &vec1){
+
+	std::vector<std::shared_ptr<RegularNFANode> *> _tmp_vec;
+
+	for(auto _n:vec0){
+
+		_tmp_vec.push_back(_n);
+	}
+
+	for(auto _n:vec1){
+
+		_tmp_vec.push_back(_n);
+	}
+
+	return _tmp_vec;
+}
+
+
+void PatchFGVec(std::vector<std::shared_ptr<RegularNFANode> *> & vec0, std::shared_ptr<RegularNFANode> & node){
+
+	for(auto _n:vec0){
+
+		*_n = node;
+	}
+}
+
+std::vector<std::shared_ptr<RegularNFANode> *> CreateFGVec(std::shared_ptr<RegularNFANode> & node)
+{
+
+	std::vector<std::shared_ptr<RegularNFANode> *> _tmp_vec;
+	_tmp_vec.push_back(&node);
+
+	return _tmp_vec;
+}
+
 
 int8_t ConvertRPNRegularToNFA(const std::string &rpn_reg_str, std::shared_ptr<RegularNFANode> &root, std::shared_ptr<RegularNFANode> &end){
 
@@ -626,22 +717,56 @@ int8_t ConvertRPNRegularToNFA(const std::string &rpn_reg_str, std::shared_ptr<Re
 		if (is_normal_element(rpn_reg_str, _i)){
 
 			std::shared_ptr<RegularNFANode>  _tmp_node0 = std::make_shared<RegularNFANode>(RegularNFANode::SINGLE_TYPE, rpn_reg_str[_i]);
-			_stack.push(RegularNFANodeFragment(_tmp_node0, &_tmp_node0->next0));
+			
+			_stack.push(RegularNFANodeFragment(_tmp_node0, CreateFGVec(_tmp_node0->next0)));
 		}
 		else if (rpn_reg_str[_i] == '+'){
 			
 			RegularNFANodeFragment  _tmp_fragment = _stack.top();
 			_stack.pop();
 
-			std::shared_ptr<RegularNFANode>  _tmp_node1 = std::make_shared<RegularNFANode>(RegularNFANode::BOTH_TYPE, EDGE_PROP_EPSILON, EDGE_PROP_EPSILON);
+			std::shared_ptr<RegularNFANode>  _tmp_node1 = std::make_shared<RegularNFANode>(RegularNFANode::BOTH_TYPE, \
+				EDGE_PROP_EPSILON, \
+				_tmp_fragment.fragment_start ,\
+				EDGE_PROP_EPSILON);
 
+			//add node to next vec
+			PatchFGVec(_tmp_fragment.fragment_next_vec, _tmp_node1);
+
+
+			_stack.push(RegularNFANodeFragment(_tmp_fragment.fragment_start, CreateFGVec(_tmp_node1->next1)));
 
 		}
 		else if (rpn_reg_str[_i] == '?'){
-			
+
+			RegularNFANodeFragment  _tmp_fragment = _stack.top();
+			_stack.pop();
+
+			std::shared_ptr<RegularNFANode>  _tmp_node1 = std::make_shared<RegularNFANode>(RegularNFANode::BOTH_TYPE, \
+				EDGE_PROP_EPSILON, \
+				_tmp_fragment.fragment_start ,\
+				EDGE_PROP_EPSILON);
+
+			//add node to next vec
+			//PatchFGVec(_tmp_fragment.fragment_next_vec, _tmp_node1);
+
+			_stack.push(RegularNFANodeFragment(_tmp_node1, AppendFGVec(_tmp_fragment.fragment_next_vec, CreateFGVec(_tmp_node1->next1))));
+
 		}
 		else if (rpn_reg_str[_i] == '*'){
 			
+			RegularNFANodeFragment  _tmp_fragment = _stack.top();
+			_stack.pop();
+
+			std::shared_ptr<RegularNFANode>  _tmp_node1 = std::make_shared<RegularNFANode>(RegularNFANode::BOTH_TYPE, \
+				EDGE_PROP_EPSILON, \
+				_tmp_fragment.fragment_start ,\
+				EDGE_PROP_EPSILON);
+
+			//add node to next vec
+			PatchFGVec(_tmp_fragment.fragment_next_vec, _tmp_node1);
+
+			_stack.push(RegularNFANodeFragment(_tmp_node1, CreateFGVec(_tmp_node1->next1)));			
 		}
 		else if (rpn_reg_str[_i] == ','){
 			
@@ -651,32 +776,145 @@ int8_t ConvertRPNRegularToNFA(const std::string &rpn_reg_str, std::shared_ptr<Re
 			_stack.pop();		
 
 			//connect fg0 fg1
-			*_tmp_fragment0.fragment_next = _tmp_fragment1.fragment_start;
+			PatchFGVec(_tmp_fragment0.fragment_next_vec ,_tmp_fragment1.fragment_start);
 			
 
-			_stack.push(RegularNFANodeFragment(_tmp_fragment0.fragment_start, _tmp_fragment1.fragment_next));
+			_stack.push(RegularNFANodeFragment(_tmp_fragment0.fragment_start, _tmp_fragment1.fragment_next_vec));
 
 		}
 		else if (rpn_reg_str[_i] == '|'){
 
-			std::shared_ptr<RegularNFANode>  _tmp_node_a = _stack.top();
-			_stack.pop();
-			std::shared_ptr<RegularNFANode>  _tmp_node_b = _stack.top();
-			_stack.pop();			
+			RegularNFANodeFragment  _tmp_fragment1 = _stack.top();
+			_stack.pop();	
+			RegularNFANodeFragment  _tmp_fragment0 = _stack.top();
+			_stack.pop();		
 
-			_tmp_input_node->next0 = _tmp_node_a;
-			_tmp_input_node->next1 = _tmp_node_b;
-			_tmp_input_node = _tmp_node_b;			
+
+			std::shared_ptr<RegularNFANode>  _tmp_node1 = std::make_shared<RegularNFANode>(RegularNFANode::BOTH_TYPE, \
+				EDGE_PROP_EPSILON, \
+				_tmp_fragment0.fragment_start ,\
+				EDGE_PROP_EPSILON, \
+				_tmp_fragment1.fragment_start );
+
+			_stack.push(RegularNFANodeFragment(_tmp_node1, AppendFGVec(_tmp_fragment0.fragment_next_vec, _tmp_fragment1.fragment_next_vec)));		
 		}
 		else{
 
 			std::cout<<"ConvertRPNRegularToNFA: Don't support op ......"<<std::endl;
 		}
 		
-
 	}
 
+	RegularNFANodeFragment  _tmp_fragment1 = _stack.top();
+	_stack.pop();	
+
+	PatchFGVec(_tmp_fragment1.fragment_next_vec, end);//connect to end
+
+	root->next0 = _tmp_fragment1.fragment_start;//connect to start
 	return 0;
+}
+
+
+void PrintNFA(std::shared_ptr<RegularNFANode> & nfa){
+
+	//wfs
+	std::queue<std::shared_ptr<RegularNFANode>> _nfa_node_queue;
+	_nfa_node_queue.push(nfa);
+
+
+	while(_nfa_node_queue.size() != 0){
+
+		printf("layer+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");	
+		int _cur_layer_size = _nfa_node_queue.size();
+		for (int _i = 0; _i < _cur_layer_size; _i++){
+
+			std::shared_ptr<RegularNFANode> & _cur_node = _nfa_node_queue.front();
+			
+			if (_cur_node->node_type == RegularNFANode::SINGLE_TYPE){
+				
+				if (_cur_node->is_acc)
+					printf("-----------------RegularNFANode node is accessed----------------\n");
+
+				printf("RegularNFANode: type %s , node addr 0x%x\n", _cur_node->GetTypeString(_cur_node->node_type).c_str(), _cur_node.get());
+				printf("RegularNFANode: Prop %c \n", _cur_node->edge0_prop);
+				printf("RegularNFANode: next node addr 0x%x\n",_cur_node->next0.get());
+
+				if (_cur_node->next0 != nullptr && !_cur_node->is_acc)
+					_nfa_node_queue.push(_cur_node->next0);
+					
+				_cur_node->is_acc = true;
+				printf("======\n");	
+			}
+			else if (_cur_node->node_type == RegularNFANode::BOTH_TYPE){
+
+				if (_cur_node->is_acc)
+					printf("-----------------RegularNFANode node is accessed----------------\n");
+					
+				printf("RegularNFANode: type %s, node addr 0x%x \n", "BOTH_TYPE", _cur_node.get());
+				_cur_node->is_acc = true;
+
+				if (_cur_node->next0 != nullptr && !_cur_node->next0->is_acc){
+
+					printf("RegularNFANode: type BOTH_TYPE, next0 node addr 0x%x\n", _cur_node->next0.get());
+					printf("RegularNFANode: type BOTH_TYPE, LastNode: type %s, Prop0 0x%x, Prop1 0x%x\n", \
+						_cur_node->GetTypeString(_cur_node->next0->node_type).c_str(), \
+						_cur_node->next0->edge0_prop, _cur_node->next0->edge1_prop);
+						
+					_nfa_node_queue.push(_cur_node->next0);
+					printf("++++++\n");
+
+				}
+
+				if (_cur_node->next1 != nullptr && !_cur_node->next1->is_acc){
+					
+					printf("RegularNFANode: type BOTH_TYPE, next1 node addr 0x%x \n", _cur_node->next1.get());
+					printf("RegularNFANode: type BOTH_TYPE, LastNode: type %s, Prop0 0x%x, Prop1 0x%x\n", \
+						_cur_node->GetTypeString(_cur_node->next1->node_type).c_str(), \
+						_cur_node->next1->edge0_prop, _cur_node->next1->edge1_prop);
+						
+					_nfa_node_queue.push(_cur_node->next1);
+					printf("++++++\n");	
+				}	
+				
+				printf("======\n");	
+			}
+			else if (_cur_node->node_type == RegularNFANode::START_TYPE){
+
+				if (_cur_node->is_acc)
+					printf("-----------------RegularNFANode node is accessed----------------\n");
+					
+				printf("RegularNFANode: type %s , node addr 0x%x\n", "START_TYPE", _cur_node.get());
+				printf("RegularNFANode: next node addr 0x%x\n",_cur_node->next0.get());
+				_cur_node->is_acc = true;
+
+				if (_cur_node->next0 != nullptr)
+					_nfa_node_queue.push(_cur_node->next0);		
+				
+				printf("======\n");
+
+				
+			}
+			else if (_cur_node->node_type == RegularNFANode::END_TYPE){
+
+				if (_cur_node->is_acc)
+					printf("-----------------RegularNFANode node is accessed----------------\n");
+					
+				printf("RegularNFANode: type %s , node addr 0x%x\n", "END_TYPE", _cur_node.get());
+				printf("RegularNFANode: next node addr 0x%x\n",_cur_node->next0.get());
+				_cur_node->is_acc = true;
+				printf("======\n");
+			}
+			else{
+
+				printf("Invalid RegularNFANode type .\n");
+			}
+
+			_nfa_node_queue.pop();
+		}
+	}
+
+
+	return;
 }
 
 
@@ -695,9 +933,12 @@ int main(int argc, char * argv[])
 	RegularExpressionToPostfixExpression(_input, _ret);
 	std::cout<<"Ret: "<<_ret<<std::endl;
 
-	std::shared_ptr<RegularNFANode> _root = std::make_shared<RegularNFANode>(RegularNFANode::START_TYPE, -1, -2);//next0 EPSILON, next1 EMPTY
-	std::shared_ptr<RegularNFANode> _end = std::make_shared<RegularNFANode>(RegularNFANode::START_TYPE, -2, -2);//next0 EMPTY, next1 EMPTY
+	std::shared_ptr<RegularNFANode> _root = std::make_shared<RegularNFANode>(RegularNFANode::START_TYPE, EDGE_PROP_EPSILON, nullptr);//next0 EPSILON, next1 EMPTY
+	std::shared_ptr<RegularNFANode> _end = std::make_shared<RegularNFANode>(RegularNFANode::END_TYPE);//next0 EMPTY, next1 EMPTY
 	ConvertRPNRegularToNFA(_ret, _root, _end);
+
+	//
+	PrintNFA(_root);
 	return 0;
 }
 
