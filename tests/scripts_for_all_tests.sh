@@ -1,10 +1,11 @@
 ###
  # @Author: Sky
- # @Date: 2020-03-31 10:41:36
+ # @Date: 2021-04-09 14:22:29
  # @LastEditors: Sky
- # @LastEditTime: 2021-04-09 14:12:30
+ # @LastEditTime: 2021-04-09 14:54:23
  # @Description: 
- ###
+### 
+
 echo 'scripts for tests'
 echo 'test per unit ... ...'
 
@@ -72,14 +73,25 @@ fi
 #ipc
 
 #network
+#tcp 
+sleep 2
+./test_unit_ytcpserver -d yes &
+sleep 2
+./test_unit_ytcpclient -d yes
+
+#udp
+sleep 2
+./test_unit_yudpserver -d yes &
+sleep 2
+./test_unit_yudpclient -d yes
 
 #utility
-# ./test_unit_yconfig -d yes
-# if [ $? -ne 0 ]
-# then
-#     echo 'test per unit error.'
-#     exit -1
-# fi
+./test_unit_yconfig -d yes
+if [ $? -ne 0 ]
+then
+    echo 'test per unit error.'
+    exit -1
+fi
 
 ${EXECUTE_PREFIX}./test_unit_yhttp -d yes
 if [ $? -ne 0 ]
@@ -123,7 +135,13 @@ then
     exit -1
 fi
 
-# echo 'test all ... ...'
+#Algorithm
+./basic_algorithm/test_algorithm_ylinearlist -d yes
+./basic_algorithm/test_algorithm_ylinkedlist -d yes
+./basic_algorithm/test_algorithm_yqueue -d yes
+./basic_algorithm/test_algorithm_ystack -d yes
+
+#echo 'test all ... ...'
 # ./test_unit_all_in_one -d yes
 # if [ $? -ne 0 ]
 # then

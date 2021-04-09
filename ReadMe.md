@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-10-21 13:51:28
  * @LastEditors: Sky
- * @LastEditTime: 2021-04-07 16:23:01
+ * @LastEditTime: 2021-04-09 14:14:58
  * @Description: 
  -->
 ## yLib
@@ -10,6 +10,8 @@
 ****
 
 [![License](https://img.shields.io/badge/license-BSD--3--Clause-green.svg)](License.txt) 
+[![Build Status](https://www.travis-ci.org/flyinskyin2013/yLib.svg?branch=master)](https://www.travis-ci.org/flyinskyin2013/yLib)
+[![codecov](https://codecov.io/gh/flyinskyin2013/yLib/branch/master/graph/badge.svg?token=CIOCB761NA)](https://codecov.io/gh/flyinskyin2013/yLib)
 
 yLib 学习、收集、整理和验证在我日常工作中一些有用的知识。
 
@@ -22,7 +24,7 @@ In addition, in my daily-work, I usually use some third-libraries to implement s
 
 
 
-yLib current build matrix <br> 
+yLib BuildMatrix(GithubAction) <br> 
 
 | Platefrom | Compiler | CPU(32bits)  | CPU (64bits) |
 | :---: | :---: | :---: | :---: |
