@@ -72,12 +72,12 @@ jobs:
 
       working-directory: /home/runner/work/yLib/yLib           
 
-    - name: build ylib
-      working-directory: /home/runner/work/yLib/yLib/build
-      run: |
-        cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_armgnueabi_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=armeabi ..
-        make
-        make install
+    # - name: build ylib
+    #   working-directory: /home/runner/work/yLib/yLib/build
+    #   run: |
+    #     cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_armgnueabi_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=armeabi ..
+    #     make
+    #     make install
 
     # - name: test ylib
     #   working-directory: /home/runner/work/yLib/yLib/build
