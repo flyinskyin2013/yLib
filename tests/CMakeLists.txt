@@ -474,6 +474,8 @@ build_module_examples(CORE yCommon)
 
 build_module_examples(CORE yBasicValue)
 
+build_module_examples(UTILITY yTimer)
+
 ##########################################################################
 # core module
 

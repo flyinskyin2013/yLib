@@ -7,51 +7,81 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - cmake
-
+      - lcov
 
 matrix:
   include:
     - name: "linux-x86_64-gcc"
       os: linux
-      dist: xenial
+      dist: bionic
       compiler: gcc
       env:
         - INIT_DIRS="chmod +x build_deps.sh "
         - BUILD_THIRD_LIB="./build_deps.sh All"
-        - BUILD_YLIB="mkdir -p build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 .. && make && make install"
+        - BUILD_YLIB="mkdir -p build && cd build && cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_x64_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 .. && make && make install"
+        - YLIB_RUN_TEST=""
 
     - name: "linux-x86_64-clang"
       os: linux
-      dist: xenial
+      dist: bionic
       compiler: clang
       env:
         - INIT_DIRS="chmod +x build_deps.sh "
         - BUILD_THIRD_LIB="./build_deps.sh All"
-        - BUILD_YLIB="mkdir -p build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 .. && make && make install"
+        - BUILD_YLIB="mkdir -p build && cd build && cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_x64_clang.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 .. && make && make install"
+        - YLIB_RUN_TEST=""
 
     - name: "windows-vs2017"
       os: windows
       dist: 1803-containers
       env:
-        - INIT_DIRS="mkdir -p lib/windows/x86 && mkdir -p lib/windows/x86_64 && mkdir -p lib/linux/x86 && mkdir -p lib/linux/x86_64 && mkdir -p lib/linux/armeabi && mkdir -p lib/linux/arm64-v8a && mkdir -p include/third_part"
-        - BUILD_THIRD_LIB="cd third_part && ./build_third_part.bat init   && ./build_third_part.bat make -j2  && cp build_out/lib/* -r ../lib/linux/x86_64 && cp build_out/include/* -r ../include/third_part"
-        - BUILD_YLIB="cd .. && mkdir build && cd build && cmake -DBUILD_ALL_MODULE=ON -DBUILD_YLIB_ARCH=x86_64  .. && make && make install"
+        - INIT_DIRS=""
+        - BUILD_THIRD_LIB=".\build_deps.bat vs2017 x86_64"
+        - BUILD_YLIB="mkdir build && cmake -T v141,host=x64 -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install -DBUILD_YLIB_ARCH=x86_64 .. && cmake --build . --config Release --target install   "
+        - YLIB_RUN_TEST=""
 
-    - name: "arm-linux-armv7"
+    - name: "linux-arm64-gcc"
       os: linux
-      dist: xenial
+      arch: arm64
+      dist: bionic
+      compiler: gcc
       env:
-        - BEFORE_BUILD_YLIB="wget https://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/arm-linux-gnueabihf/gcc-linaro-4.9-2016.02-x86_64_arm-linux-gnueabihf.tar.xz && wget https://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/arm-linux-gnueabihf/runtime-linaro-gcc4.9-2016.02-arm-linux-gnueabihf.tar.xz && wget https://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/arm-linux-gnueabihf/sysroot-linaro-eglibc-gcc4.9-2016.02-arm-linux-gnueabihf.tar.xz && tar -xJf gcc-linaro-4.9-2016.02-x86_64_arm-linux-gnueabihf.tar.xz && tar -xJf runtime-linaro-gcc4.9-2016.02-arm-linux-gnueabihf.tar.xz && tar -xJf sysroot-linaro-eglibc-gcc4.9-2016.02-arm-linux-gnueabihf.tar.xz && mv gcc-linaro-4.9-2016.02-x86_64_arm-linux-gnueabihf arm_gcc && mv runtime-linaro-gcc4.9-2016.02-arm-linux-gnueabihf arm_gcc_runtime && mv sysroot-linaro-eglibc-gcc4.9-2016.02-arm-linux-gnueabihf arm_gcc_sysroot"
-        - BUILD_THIRD_LIB="cd third_part && chmod +x build_third_part.sh && ./build_third_part.sh init >/dev/null 2>&1 && ./build_third_part.sh make -j2 >/dev/null 2>&1 && cp build_out/lib* -r ../lib/linux_x86_64"
-        - BUILD_YLIB="cd .. && mkdir build && cd build && cmake -DCMAKE_TOOLCHAIN_FILE=`pwd`/../toolchains/arm-linux-gnu.toolchain.cmake -DCMAKE_SYSROOT=`pwd`/../arm_gcc_sysroot -DCMAKE_C_COMPILER=`pwd`/../arm_gcc/bin/arm-linux-gnu-gcc -DCMAKE_CXX_COMPILER=`pwd`/../arm_gcc/bin/arm-linux-gnu-g++ .. && make -j2"
+        - INIT_DIRS=""
+        - BUILD_THIRD_LIB=""
+        - BUILD_YLIB=""
+        - YLIB_RUN_TEST=""
 
-    - name: "arm-linux-aarch64"
+    - name: "linux-arm64-clang"
       os: linux
-      dist: xenial
+      arch: arm64
+      dist: bionic
+      compiler: clang
       env:
-          - BEFORE_BUILD_YLIB="wget https://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/aarch64-linux-gnu/gcc-linaro-4.9-2016.02-x86_64_aarch64-linux-gnu.tar.xz && wget https://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/aarch64-linux-gnu/runtime-linaro-gcc4.9-2016.02-aarch64-linux-gnu.tar.xz && wget https://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/aarch64-linux-gnu/sysroot-linaro-eglibc-gcc4.9-2016.02-aarch64-linux-gnu.tar.xz && tar -xJf gcc-linaro-4.9-2016.02-x86_64_aarch64-linux-gnu.tar.xz && tar -xJf runtime-linaro-gcc4.9-2016.02-aarch64-linux-gnu.tar.xz && tar -xJf sysroot-linaro-eglibc-gcc4.9-2016.02-aarch64-linux-gnu.tar.xz && mv gcc-linaro-4.9-2016.02-x86_64_aarch64-linux-gnu aarch64_gcc && mv runtime-linaro-gcc4.9-2016.02-aarch64-linux-gnu aarch64_gcc_runtime && mv sysroot-linaro-eglibc-gcc4.9-2016.02-aarch64-linux-gnu aarch64_gcc_sysroot"
-          - BUILD_THIRD_LIB="cd third_part && chmod +x build_third_part.sh && ./build_third_part.sh init >/dev/null 2>&1 && ./build_third_part.sh make -j2 >/dev/null 2>&1 && cp build_out/lib* -r ../lib/linux_x86_64"
-          - BUILD_YLIB="cd .. && mkdir build && cd build && cmake -DCMAKE_TOOLCHAIN_FILE=`pwd`/../toolchains/aarch64-linux-gnu.toolchain.cmake -DCMAKE_SYSROOT=`pwd`/../aarch64_gcc_sysroot -DCMAKE_C_COMPILER=`pwd`/../aarch64_gcc/bin/arm-linux-gnu-gcc -DCMAKE_CXX_COMPILER=`pwd`/../aarch64_gcc/bin/arm-linux-gnu-g++  .. && make -j2"
+        - INIT_DIRS=""
+        - BUILD_THIRD_LIB=""
+        - BUILD_YLIB=""
+        - YLIB_RUN_TEST=""
+
+    - name: "linux-arm32-gcc"
+      os: linux
+      arch: arm64
+      dist: bionic
+      env:
+        - INIT_DIRS=""
+        - BUILD_THIRD_LIB=""
+        - BUILD_YLIB=""
+        - YLIB_RUN_TEST=""
+
+    - name: "linux-x86_64-gcc_CodeCoverage"
+      os: linux
+      dist: bionic
+      compiler: gcc
+      env:
+        - INIT_DIRS="chmod +x build_deps.sh "
+        - BUILD_THIRD_LIB="./build_deps.sh All"
+        - BUILD_YLIB="mkdir -p build && cd build && cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_x64_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 -DENABLE_YLIB_COVERAGE=ON .. && make && make install"
+        - YLIB_RUN_TEST="cd install/tests && ./scripts_for_tests.sh"
+        - PROCESS_COVERAGE_FILE="cd ../.. && lcov -d ./src -c -o lcov.info && lcov -r lcov.info '/usr/*' -o lcov.info && bash <(curl -s https://codecov.io/bash) -f lcov.info"
 
 before_install:
   - eval "${INIT_DIRS}"
@@ -60,3 +90,5 @@ before_install:
 
 script:
   - eval "${BUILD_YLIB}"
+  - eval "${YLIB_RUN_TEST}"
+  - eval "${PROCESS_COVERAGE_FILE}"

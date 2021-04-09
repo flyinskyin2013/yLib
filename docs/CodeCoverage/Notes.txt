@@ -1,0 +1,21 @@
+1 add compile flags: '-coverage -fprofile-arcs -ftest-coverage'
+
+2 add link flags: '-coverage -lgcov'
+
+3 when we compile the src-file, it will create *.gcno files.
+
+4 when we run the unit-test about src-file, it will create *.gcda files.
+
+5 run command:
+//process *.gcno and *.gcda in dir(src)
+lcov -d ./src -c -o lcov.info 
+
+//remove the '/usr/*' info in lcov.info 
+lcov -r lcov.info '/usr/*' -o lcov.info 
+
+//print lcov.info
+lcov --list lcov.info
+
+6 run command:
+//gen html report by lcov.info to dir(cover_report)
+genhtml -o cover_report --legend --title "lcov"  --prefix=./ lcov.info 

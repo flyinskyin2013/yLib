@@ -37,6 +37,7 @@ set(SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/core/yexception.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/core/ybasicvalue.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/core/ylinuxerrnohelper.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/utility/ytimer.cpp
 
     ${CMAKE_CURRENT_BINARY_DIR}/ylib_extra_infos.cpp
     )
@@ -218,9 +219,6 @@ if(WIN32)
     endif()
 
 
-
-
-
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
     if(BUILD_STATIC_YLIB)
@@ -245,8 +243,18 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
     if(BUILD_SHARED_YLIB)
 
-        target_link_libraries( ylib
+        if(ENABLE_YLIB_COVERAGE)
+
+            target_compile_options(ylib PUBLIC -coverage -fprofile-arcs -ftest-coverage)
+            target_link_libraries(ylib PUBLIC -coverage -lgcov libcurl.a libxml2.a liblog4cpp.a liblibconfig++.a libjsoncpp.a)
+        
+        else()
+
+            target_link_libraries( ylib
                             libcurl.a libxml2.a liblog4cpp.a liblibconfig++.a libjsoncpp.a)
+        endif()
+
+
 
     endif()
 
