@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2021-04-07 17:45:00
  * @LastEditors: Sky
- * @LastEditTime: 2021-04-08 09:55:13
+ * @LastEditTime: 2021-04-09 17:23:51
  * @Description: 
  */
 #include "catch2/catch.hpp"
@@ -24,7 +24,20 @@ TEST_CASE( "Test yTimer apis" , "[yTimer_Apis]" ){
     SECTION("test GetTime() ") {
 
         timer.GetTime();
+
+#if defined(_WIN32) || defined(_WIN64)
+
+        ::Sleep(2000);
+
+#elif defined(__linux__) || defined(__linux)
+    
         sleep(2);
+        
+#elif defined(__unix__) || defined(__unix)
+
+        
+#endif //__unix__ || __unix        
+        
         timer.GetTime(1);
 
         REQUIRE(timer.GetCalculatedTime() > 2000.f);
@@ -37,12 +50,34 @@ TEST_CASE( "Test yTimer apis" , "[yTimer_Apis]" ){
         int _test_param = 5;
         timer.StartTimer(500, &_test_param);
 
+#if defined(_WIN32) || defined(_WIN64)
+
+        ::Sleep(5000);
+
+#elif defined(__linux__) || defined(__linux)
+    
         sleep(5);
+        
+#elif defined(__unix__) || defined(__unix)
+
+        
+#endif //__unix__ || __unix     
 
         do
         {
             timer.StopTimer();
-            usleep(500);
+#if defined(_WIN32) || defined(_WIN64)
+
+        ::Sleep(1);
+
+#elif defined(__linux__) || defined(__linux)
+    
+        usleep(1000);
+        
+#elif defined(__unix__) || defined(__unix)
+
+        
+#endif //__unix__ || __unix     
             
         } while (timer.TimerRunFlag());//last thread stop        
 
