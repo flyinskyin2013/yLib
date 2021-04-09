@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2021-04-07 16:33:17
  * @LastEditors: Sky
- * @LastEditTime: 2021-04-09 16:01:00
+ * @LastEditTime: 2021-04-09 17:10:53
  * @Description: 
  */
 
@@ -68,6 +68,7 @@ void yTimer::timer_thread_context(void* params)
 
 #if defined(_WIN32) || defined(_WIN64)
 
+        ::Sleep(timer_toggle_time);
 
 #elif defined(__linux__) || defined(__linux)
     
@@ -75,7 +76,7 @@ void yTimer::timer_thread_context(void* params)
         
 #elif defined(__unix__) || defined(__unix)
 
-        ::Sleep(timer_toggle_time);
+        
 #endif //__unix__ || __unix
         
         if (timer_callback != nullptr)
@@ -92,7 +93,19 @@ void yTimer::StartTimer(uint64_t time, void* cb_params) noexcept
     do
     {
         StopTimer();
-        usleep(500);
+
+#if defined(_WIN32) || defined(_WIN64)
+
+        ::Sleep(1);
+
+#elif defined(__linux__) || defined(__linux)
+    
+        usleep(1000);
+        
+#elif defined(__unix__) || defined(__unix)
+
+        
+#endif //__unix__ || __unix
         
     } while (timer_thread_run_flag);//last thread stop
 

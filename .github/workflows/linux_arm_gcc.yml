@@ -80,7 +80,7 @@ jobs:
       run: |
         export PATH=$GITHUB_WORKSPACE/qemu/build/:$PATH
         cd install/tests
-        ./scripts_for_tests.sh qemu-gnueabi
+#        ./scripts_for_tests.sh qemu-gnueabi
 
 
 
@@ -160,4 +160,4 @@ jobs:
       run: |
         export PATH=$GITHUB_WORKSPACE/qemu/build/:$PATH
         cd install/tests
-        ./scripts_for_tests.sh qemu-gnueabihf
+#        ./scripts_for_tests.sh qemu-gnueabihf
