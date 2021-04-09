@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2021-04-07 16:33:17
  * @LastEditors: Sky
- * @LastEditTime: 2021-04-08 10:01:05
+ * @LastEditTime: 2021-04-09 16:01:00
  * @Description: 
  */
 
@@ -66,7 +66,18 @@ void yTimer::timer_thread_context(void* params)
     while (timer_thread_loop_flag)
     {
 
+#if defined(_WIN32) || defined(_WIN64)
+
+
+#elif defined(__linux__) || defined(__linux)
+    
         usleep(1000*timer_toggle_time);
+        
+#elif defined(__unix__) || defined(__unix)
+
+        ::Sleep(timer_toggle_time);
+#endif //__unix__ || __unix
+        
         if (timer_callback != nullptr)
             timer_callback(params);
  
