@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2021-03-22 15:57:39
  * @LastEditors: Sky
- * @LastEditTime: 2021-04-01 11:36:35
+ * @LastEditTime: 2021-04-08 15:56:24
  * @Description: 
  */
 #include <stack>
@@ -13,6 +13,9 @@
 #include <cstdint>
 #include <vector>
 #include <cstring>
+#include <list>
+#include <map>
+#include <set>
 
 struct State 
 { 
@@ -917,6 +920,136 @@ void PrintNFA(std::shared_ptr<RegularNFANode> & nfa){
 	return;
 }
 
+void AddState(std::map<uintptr_t, std::shared_ptr<RegularNFANode>> & state_map, std::shared_ptr<RegularNFANode> & node)
+{
+
+	if (nullptr == node)
+		return;
+	
+	if (state_map.find((uintptr_t)node.get()) == state_map.end()){//not found node
+
+
+		if (node->node_type == RegularNFANode::BOTH_TYPE){
+
+			AddState(state_map, node->next0);
+			AddState(state_map, node->next1);
+		}
+		else//not both type
+			state_map.insert(std::make_pair((uintptr_t)node.get(), node));
+	}
+}
+
+void StepState(std::map<uintptr_t, std::shared_ptr<RegularNFANode>> & cur_map, std::map<uintptr_t, std::shared_ptr<RegularNFANode>> & next_map, char c)
+{
+	next_map.clear();
+	
+	for(auto _c_p:cur_map){
+
+		if (_c_p.second->node_type == RegularNFANode::SINGLE_TYPE){
+
+			if (_c_p.second->edge0_prop == c){
+
+				AddState(next_map, _c_p.second->next0);
+			}
+		}
+		else if (_c_p.second->node_type == RegularNFANode::BOTH_TYPE){
+
+			if (_c_p.second->edge1_prop == c){
+
+				AddState(next_map, _c_p.second->next0);
+			}
+
+			if (_c_p.second->edge1_prop == c){
+
+				AddState(next_map, _c_p.second->next1);
+			}			
+		}
+	}
+}
+
+bool IsMatch(std::map<uintptr_t, std::shared_ptr<RegularNFANode>> & map)
+{
+
+	for (auto _c_p: map){
+
+		if (_c_p.second->node_type == RegularNFANode::END_TYPE){
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool SimulateNFA(const std::string & in_str, std::shared_ptr<RegularNFANode> & start_node)
+{
+	//key is the addr of std::shared_ptr<RegularNFANode>::get()
+	std::map<uintptr_t, std::shared_ptr<RegularNFANode>> _cur_state_map;
+	std::map<uintptr_t, std::shared_ptr<RegularNFANode>> _next_state_map;
+
+	AddState(_cur_state_map, start_node->next0);//input state to start_node
+	
+	for(auto c : in_str){
+
+		StepState(_cur_state_map, _next_state_map, c);
+
+		_cur_state_map.swap(_next_state_map);
+	}
+
+
+	return IsMatch(_cur_state_map);
+}
+
+
+#define MAX_REGULAR_NFA_NODE_TYPE 300
+
+struct RegularDFANode
+{
+	/* data */
+	RegularDFANode()
+	:next(nullptr){
+		dfa_content_vec.resize(MAX_REGULAR_NFA_NODE_TYPE, nullptr);
+	}
+	~RegularDFANode(){}
+
+	//copy cst
+	//move cst
+
+	std::vector<std::shared_ptr<RegularNFANode>> dfa_content_vec;
+
+	std::shared_ptr<RegularDFANode> next;
+};
+
+
+void BuildDFAByNFA(std::shared_ptr<RegularNFANode> & start_nfa_node, std::shared_ptr<RegularDFANode> & start_dfa_node)
+{
+
+	//key is the addr of std::shared_ptr<RegularNFANode>::get()
+	std::map<uintptr_t, std::shared_ptr<RegularNFANode>> _cur_state_map;
+	std::map<uintptr_t, std::shared_ptr<RegularNFANode>> _next_state_map;
+
+	AddState(_cur_state_map, start_nfa_node->next0);//input state to start_node
+
+	std::shared_ptr<RegularDFANode> & _tmp_dfa_node = start_dfa_node;
+
+	while(1){
+
+
+
+	}
+
+}
+
+bool SimulateDFA(const std::string & in_str, std::shared_ptr<RegularNFANode> & start_node)
+{
+
+
+	
+
+
+	return true;
+}
+
 
 int main(int argc, char * argv[])
 {
@@ -925,7 +1058,8 @@ int main(int argc, char * argv[])
 
 	//RegularToAST("abc(def|gh)", _root);
 	//PrintBinaryTree(_root);
-	std::string _input = "ad+c|d*";
+	//std::string _input = "ad+c|d*";
+	std::string _input = "a*b*c*|_a*b*c*";
 	std::cout<<"Input: "<<_input<<std::endl;
 	MyFormatRegularExpression(_input);
 	std::cout<<"Format: "<<_input<<std::endl;
@@ -938,7 +1072,18 @@ int main(int argc, char * argv[])
 	ConvertRPNRegularToNFA(_ret, _root, _end);
 
 	//
-	PrintNFA(_root);
+	//PrintNFA(_root);
+
+	std::string _ret_str0 = SimulateNFA("_aaaabbbbbbcccc", _root)?("IsMatch"):("NotMatch");
+	std::cout<< _ret_str0 <<std::endl;
+
+	std::shared_ptr<RegularDFANode> _start_dfa = std::make_shared<RegularDFANode>();
+	_start_dfa->dfa_content_vec.push_back(_root);
+	BuildDFAByNFA(_root, _start_dfa);
+
+	std::string _ret_str1 = SimulateDFA("_aaaabbbbbbcccc", _root)?("IsMatch"):("NotMatch");
+	std::cout<< _ret_str1 <<std::endl;
+
 	return 0;
 }
 

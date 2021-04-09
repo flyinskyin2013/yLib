@@ -16,6 +16,10 @@ Thompson:(Thompson构造法在计算机科学中是指一个能将正则表达�
     https://blog.csdn.net/tyler_download/article/details/51382346
 
 
+NFA转DFA的子集构造(subset construction)算法
+    https://www.jianshu.com/p/8e0fb9cf3f49
+
+
 正则表达式的功能概括讲主要有四个：
 
 匹配给定的文本。

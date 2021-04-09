@@ -43,10 +43,15 @@ jobs:
       if: steps.cache-qemu.outputs.cache-hit != 'true'
       run: |
         sudo apt-get install ninja-build
+        
+        sudo add-apt-repository ppa:deadsnakes/ppa -y
+        sudo apt update
+        sudo apt-get install python3.6 -y
+        
         cd qemu
         mkdir build
         cd build
-        ../configure --prefix=`pwd`/install --target-list=arm-linux-user --disable-system
+        ../configure --prefix=`pwd`/install --target-list=arm-linux-user --disable-system --python=/usr/bin/python3.6
         make -j2
         make install
         chmod +x qemu-arm

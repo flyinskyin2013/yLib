@@ -21,6 +21,7 @@ option(BUILD_SHARED_YLIB "Build shared ylib " ON)
 
 #yLib build flags
 option(ENABLE_GNU_SANITIZER "enable gnu-sanitizer " ON)
+option(ENABLE_YLIB_COVERAGE "enable ylib code coverage " OFF)
 
 #yLib built-in module
 option(BUILD_MODULE_YCURL "Build module-ycurl(it insteads by yhttp) " ON)
