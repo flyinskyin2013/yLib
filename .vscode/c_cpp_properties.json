@@ -24,7 +24,15 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "D:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/include"
+                "${workspaceFolder}/include/",
+                "${workspaceFolder}/include/core",
+                "${workspaceFolder}/include/ipc",
+                "${workspaceFolder}/include/network",
+                "${workspaceFolder}/include/utility",
+                "${workspaceFolder}/include/third_part/linux/curl",
+                "${workspaceFolder}/include/third_part/linux/libxml",
+                "${workspaceFolder}/tests/catch2",
+                "F:\\program files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.24.28314\\include"
             ],
             "defines": [
                 "_DEBUG",

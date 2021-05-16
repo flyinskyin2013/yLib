@@ -8,10 +8,10 @@
 ## yLib
 
 ****
-
-[![License](https://img.shields.io/badge/license-BSD--3--Clause-green.svg)](License.txt) 
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/flyinskyin2013/yLib)
 [![Build Status](https://www.travis-ci.org/flyinskyin2013/yLib.svg?branch=master)](https://www.travis-ci.org/flyinskyin2013/yLib)
 [![codecov](https://codecov.io/gh/flyinskyin2013/yLib/branch/master/graph/badge.svg?token=CIOCB761NA)](https://codecov.io/gh/flyinskyin2013/yLib)
+[![License](https://img.shields.io/badge/license-BSD--3--Clause-green.svg)](License.txt) 
 
 yLib 学习、收集、整理和验证在我日常工作中一些有用的知识。
 

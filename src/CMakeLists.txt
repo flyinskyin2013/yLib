@@ -36,7 +36,7 @@ set(SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/core/yobject.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/core/yexception.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/core/ybasicvalue.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/ylinuxerrnohelper.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/ysystemerrnohelper.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/utility/ytimer.cpp
 
     ${CMAKE_CURRENT_BINARY_DIR}/ylib_extra_infos.cpp
