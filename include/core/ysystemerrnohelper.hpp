@@ -15,25 +15,25 @@
 namespace yLib{
 
     /**
-     *  @class yLinuxErrnoHelper
-     *  @brief This is a helper class of errno.
+     *  @class ySystemErrnoHelper
+     *  @brief This is a helper class of errno.support win32 and linux
      */
-    class yLinuxErrnoHelper
+    class ySystemErrnoHelper
     {
     private:
         /* data */
         /**
-         *  @fn    yLinuxErrnoHelper()
+         *  @fn    ySystemErrnoHelper()
          *  @brief Default constructor
          *  @warning This is a static class, it can't be instanced. 
          */
-        yLinuxErrnoHelper();
+        ySystemErrnoHelper();
     public:
         /**
-         *  @fn    ~yLinuxErrnoHelper()
+         *  @fn    ~ySystemErrnoHelper()
          *  @brief Default destructor
          */
-        ~yLinuxErrnoHelper();
+        ~ySystemErrnoHelper();
 
         /**
          *  @fn      static const std::string & GetDetailByErrno(uint16_t errno_)

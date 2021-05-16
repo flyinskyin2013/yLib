@@ -5,7 +5,7 @@
  * @LastEditTime: 2021-01-07 15:12:56
  * @Description: 
  */
-#include "core/ylinuxerrnohelper.hpp"
+#include "core/ySystemErrnoHelper.hpp"
 
 #ifdef __cplusplus
 extern "C"{
@@ -17,11 +17,11 @@ extern "C"{
 }
 #endif //__cplusplus
 
-yLib::yLinuxErrnoHelper::yLinuxErrnoHelper(/* args */)
+yLib::ySystemErrnoHelper::ySystemErrnoHelper(/* args */)
 {
 }
 
-yLib::yLinuxErrnoHelper::~yLinuxErrnoHelper()
+yLib::ySystemErrnoHelper::~ySystemErrnoHelper()
 {
 }
 
@@ -308,9 +308,10 @@ namespace yLib{
         {ERFKILL,                "ERFKILL",             "Operation not possible due to RF-kill"},
 
         {EHWPOISON,              "EHWPOISON",           "Structure needs cleaning"},
-
-#endif // _WIN32
 //errno general part ------------------------------------------------ end(35-133)
+#else
+    
+#endif // _WIN32
     };
 
     static uint16_t g_errno_min = 1;
@@ -318,7 +319,7 @@ namespace yLib{
 }
 
 static std::string g_null_std_string = "";
-const std::string & yLib::yLinuxErrnoHelper::GetDetailByErrno(uint16_t errno_){
+const std::string & yLib::ySystemErrnoHelper::GetDetailByErrno(uint16_t errno_){
 
     if (errno_ < g_errno_min || errno_ > g_errno_max){
 
@@ -328,7 +329,7 @@ const std::string & yLib::yLinuxErrnoHelper::GetDetailByErrno(uint16_t errno_){
 
     return g_errno_desc_array[errno_].detail;
 }
-const std::string & yLib::yLinuxErrnoHelper::GetShortHandByErrno(uint16_t errno_){
+const std::string & yLib::ySystemErrnoHelper::GetShortHandByErrno(uint16_t errno_){
 
     if (errno_ < g_errno_min || errno_ > g_errno_max){
 
