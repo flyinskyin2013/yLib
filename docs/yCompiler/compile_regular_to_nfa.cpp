@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2021-03-22 15:57:39
  * @LastEditors: Sky
- * @LastEditTime: 2021-04-08 15:56:24
+ * @LastEditTime: 2021-05-24 18:04:54
  * @Description: 
  */
 #include <stack>
@@ -833,6 +833,7 @@ void PrintNFA(std::shared_ptr<RegularNFANode> & nfa){
 		for (int _i = 0; _i < _cur_layer_size; _i++){
 
 			std::shared_ptr<RegularNFANode> & _cur_node = _nfa_node_queue.front();
+			_nfa_node_queue.pop();
 			
 			if (_cur_node->node_type == RegularNFANode::SINGLE_TYPE){
 				
@@ -913,7 +914,7 @@ void PrintNFA(std::shared_ptr<RegularNFANode> & nfa){
 				printf("Invalid RegularNFANode type .\n");
 			}
 
-			_nfa_node_queue.pop();
+			
 		}
 	}
 
@@ -1003,14 +1004,17 @@ bool SimulateNFA(const std::string & in_str, std::shared_ptr<RegularNFANode> & s
 
 
 #define MAX_REGULAR_NFA_NODE_TYPE 300
-typedef std::shared_ptr<std::map<uintptr_t, std::shared_ptr<RegularNFANode>>> NFAStateMap;
+typedef std::map<uintptr_t, std::shared_ptr<RegularNFANode>> NFAStateMap;
+typedef std::shared_ptr<NFAStateMap> NFAStateMapSharedPtr;
 
 struct RegularDFANode
 {
 	/* data */
 	RegularDFANode()
-	:next(nullptr){}
-	RegularDFANode(NFAStateMap & map)
+	:next(nullptr){
+		dfa_context_map = std::make_shared<NFAStateMap>();
+	}
+	RegularDFANode(NFAStateMapSharedPtr & map)
 	:next(nullptr){
 
 		dfa_context_map = map;
@@ -1020,7 +1024,7 @@ struct RegularDFANode
 	//copy cst
 	//move cst
 
-	NFAStateMap dfa_context_map;
+	NFAStateMapSharedPtr dfa_context_map;
 
 	std::shared_ptr<RegularDFANode> next;
 };
@@ -1030,7 +1034,7 @@ struct RegularDFANode
 
 
 //Convert state-'S' to next NFA set by epsilon-edge, WFS
-void StateToNextNFAStateSetByEpsilonEdge(std::shared_ptr<RegularNFANode> & state, NFAStateMap & nfa_state_map)
+void StateToNextNFAStateSetByEpsilonEdge(std::shared_ptr<RegularNFANode> & state, NFAStateMapSharedPtr & nfa_state_map)
 {
 
 	std::queue<std::shared_ptr<RegularNFANode>> _state_queue;
@@ -1042,6 +1046,8 @@ void StateToNextNFAStateSetByEpsilonEdge(std::shared_ptr<RegularNFANode> & state
 		for(int _i = 0; _i < _tmp_layer_count; _i++){
 
 			std::shared_ptr<RegularNFANode> & _tmp_node = _state_queue.front();
+			_state_queue.pop();
+
 			if (_tmp_node->edge0_prop == EDGE_PROP_EPSILON){
 
 				_state_queue.push(_tmp_node->next0);
@@ -1051,14 +1057,12 @@ void StateToNextNFAStateSetByEpsilonEdge(std::shared_ptr<RegularNFANode> & state
 				_state_queue.push(_tmp_node->next1);
 			}
 			nfa_state_map->insert({(uintptr_t)_tmp_node.get(), _tmp_node});
-
-			_state_queue.pop();
 		}
 	}
 }
 
 //Convert state-set-'T' to next NFA set by epsilon-edge
-void StateSetToNextNFAStateSetByEpsilonEdge(NFAStateMap & in_state_map, NFAStateMap & nfa_state_map)
+void StateSetToNextNFAStateSetByEpsilonEdge(NFAStateMapSharedPtr & in_state_map, NFAStateMapSharedPtr & nfa_state_map)
 {
 
 	for(auto _p:*in_state_map){
@@ -1068,7 +1072,7 @@ void StateSetToNextNFAStateSetByEpsilonEdge(NFAStateMap & in_state_map, NFAState
 }
 
 //Convert state-set-'T' to next NFA set by char-edge
-void StateToNextNFAStateSetByCharEdge(NFAStateMap & in_state_map, NFAStateMap & nfa_state_map, char c)
+void StateToNextNFAStateSetByCharEdge(NFAStateMapSharedPtr & in_state_map, NFAStateMapSharedPtr & nfa_state_map, char c)
 {
 
 	for(auto _p:*in_state_map){
@@ -1084,27 +1088,34 @@ void StateToNextNFAStateSetByCharEdge(NFAStateMap & in_state_map, NFAStateMap & 
 }
 
 
-std::vector<uintptr_t> g_element_key_order_vec;
-void InsertNFAStateSet(std::unordered_map<uintptr_t, std::pair<bool, NFAStateMap>> & save_map, NFAStateMap & map)
+typedef std::vector<std::pair<std::pair<bool, NFAStateMapSharedPtr>, std::vector<NFAStateMapSharedPtr>>> SubsetConstructionStateTable;
+void InsertNFAStateSet(SubsetConstructionStateTable & save_table, NFAStateMapSharedPtr & map, bool is_table_first_col = false, int insert_id = -1)
 {
+	if (is_table_first_col){
 
-	save_map.insert({(uintptr_t)map.get(), std::make_pair(false, map)});
-	g_element_key_order_vec.push_back((uintptr_t)map.get());
+		save_table.push_back({std::make_pair(false,  map), std::vector<NFAStateMapSharedPtr>()});
+	}
+	else{
+		
+		save_table[insert_id].second.push_back(map);
+	}
+
+	return ;
 }
 
-void MarkNFAStateSet(std::unordered_map<uintptr_t, std::pair<bool, NFAStateMap>> & save_map, NFAStateMap & map)
+void MarkNFAStateSet(SubsetConstructionStateTable & save_table, int insert_id)
 {
 
-	save_map[(uintptr_t)map.get()].first = true;
+	save_table[insert_id].first.first = true;
 }
 
 
-bool FindNFAStateSet(std::unordered_map<uintptr_t, std::pair<bool, NFAStateMap>> & save_map, NFAStateMap & map)
+bool FindNFAStateSet(SubsetConstructionStateTable & save_table, NFAStateMapSharedPtr & map)
 {
 
-	for(auto _p:save_map){
+	for(auto _p:save_table){
 
-		for(auto _p1:*_p.second.second){
+		for(auto _p1:*_p.first.second){
 
 			if (map->find((uintptr_t)_p1.second.get()) != map->end()){
 
@@ -1115,50 +1126,58 @@ bool FindNFAStateSet(std::unordered_map<uintptr_t, std::pair<bool, NFAStateMap>>
 	return true;
 }
 
-bool GetNotMarkNFAStateSet(std::unordered_map<uintptr_t, std::pair<bool, NFAStateMap>> & save_map, NFAStateMap & map)
+int GetNotMarkNFAStateSet(SubsetConstructionStateTable & save_table, NFAStateMapSharedPtr & map)
 {
-	
-	for (auto _pair:save_map){
+	for (int _i = 0; _i < save_table.size(); _i ++){
 
-		if (_pair.first == false){//not mark
+		if (save_table[_i].first.first == false){//not mark
 
-			map = _pair.second.second;
-			return true;
+			map = save_table[_i].first.second;
+			return _i;
 		}
 	}
 
-	return false;
+	return -1;
 }
 
 void BuildDFAByNFA(std::shared_ptr<RegularNFANode> & start_nfa_node, std::shared_ptr<RegularDFANode> & start_dfa_node, const std::string & in_str)
 {
 
 	//<mark flag, map>
-	//typedef std::shared_ptr<std::map<uintptr_t, std::shared_ptr<RegularNFANode>>> NFAStateMap;
-	NFAStateMap nfa_state_map;
-	std::unordered_map<uintptr_t, std::pair<bool, NFAStateMap>> nfa_state_map_save_map;//result map
+	//typedef std::shared_ptr<std::map<uintptr_t, std::shared_ptr<RegularNFANode>>> NFAStateMapSharedPtr;
+	NFAStateMapSharedPtr nfa_state_map = std::make_shared<NFAStateMap>();
+	std::unordered_map<uintptr_t, std::pair<bool, NFAStateMapSharedPtr>> nfa_state_map_save_map;//result map
+
+	//std::unordered_map<uintptr_t, std::pair<bool, std::vector<NFAStateMapSharedPtr>>>
+	SubsetConstructionStateTable nfa_state_map_table;//result map
 
 
 	StateToNextNFAStateSetByEpsilonEdge(start_nfa_node, nfa_state_map);//get start-node's next state-set. 
 
-	InsertNFAStateSet(nfa_state_map_save_map, nfa_state_map);
+	int _cur_state_table_col = 0;
+	
+	InsertNFAStateSet(nfa_state_map_table, nfa_state_map, true);
 
 	std::shared_ptr<std::map<uintptr_t, std::shared_ptr<RegularNFANode>>> _tmp_map = nullptr;
-	while(GetNotMarkNFAStateSet(nfa_state_map_save_map, _tmp_map)){
+	while( -1 != (_cur_state_table_col = GetNotMarkNFAStateSet(nfa_state_map_table, _tmp_map)) ){
 
-		MarkNFAStateSet(nfa_state_map_save_map, _tmp_map);//mark
+		MarkNFAStateSet(nfa_state_map_table, _cur_state_table_col);//mark
 
 		for(auto _c:in_str){
 
-			NFAStateMap _out_map;
+			NFAStateMapSharedPtr _out_map = std::make_shared<NFAStateMap>();
 			StateToNextNFAStateSetByCharEdge(_tmp_map, _out_map, _c);
 
-			NFAStateMap _nfa_node_map;
+			NFAStateMapSharedPtr _nfa_node_map = std::make_shared<NFAStateMap>();;
 			StateSetToNextNFAStateSetByEpsilonEdge(_out_map, _nfa_node_map);
 
-			if (!FindNFAStateSet(nfa_state_map_save_map, _nfa_node_map)){
+			if (!FindNFAStateSet(nfa_state_map_table, _nfa_node_map)){//deal with this ???
 
-				InsertNFAStateSet(nfa_state_map_save_map, _tmp_map);
+				InsertNFAStateSet(nfa_state_map_table, _tmp_map, true);
+			}
+			else{
+
+				InsertNFAStateSet(nfa_state_map_table, _tmp_map, false, _cur_state_table_col);
 			}
 		}
 	}
@@ -1166,15 +1185,15 @@ void BuildDFAByNFA(std::shared_ptr<RegularNFANode> & start_nfa_node, std::shared
 	//to do ???
 	std::shared_ptr<RegularDFANode>  _tmp_node = nullptr;
 	std::shared_ptr<RegularDFANode>  _tmp_head = nullptr;
-	for(auto _n:g_element_key_order_vec){
+	for(auto _p:nfa_state_map_table){
 
 		if (_tmp_node == nullptr){
 
-			_tmp_head = _tmp_node = std::make_shared<RegularDFANode>(nfa_state_map_save_map[_n].second);
+			_tmp_head = _tmp_node = std::make_shared<RegularDFANode>(_p.first.second);
 		}
 		else{
 
-			_tmp_node->next = std::make_shared<RegularDFANode>(nfa_state_map_save_map[_n].second);
+			_tmp_node->next = std::make_shared<RegularDFANode>(_p.first.second);
 			_tmp_node = _tmp_node->next;
 		}
 	}
@@ -1185,32 +1204,34 @@ void BuildDFAByNFA(std::shared_ptr<RegularNFANode> & start_nfa_node, std::shared
 
 void PrintDFA(const std::shared_ptr<RegularDFANode> & start_dfa_node){
 
-	const std::shared_ptr<RegularDFANode> & _tmp_node = start_dfa_node;
+	std::shared_ptr<RegularDFANode> _tmp_node = start_dfa_node;
 	int _count = 0;
 	while(_tmp_node != nullptr){
 
 		_count ++;
 		std::cout<<"NodeIdx = "<<_count<<std::endl;
 
-		for(auto _p:*_tmp_node->dfa_context_map){
+		for(auto _p:*(_tmp_node->dfa_context_map)){
 
 			if (_p.second->node_type == RegularNFANode::BOTH_TYPE){
 
-				printf("Type: BothType, ptr %x", _p.second.get());
+				printf("Type: BothType, ptr %x\n", _p.second.get());
 			}
 			else if (_p.second->node_type == RegularNFANode::SINGLE_TYPE){
 
-				printf("Type: SingleType, ptr %x, prop", _p.second->edge0_prop);
+				printf("Type: SingleType, ptr %x, prop\n", _p.second->edge0_prop);
 			}
 			else if (_p.second->node_type == RegularNFANode::START_TYPE){
 				
-				printf("Type: StartType, ptr %x", _p.second.get());
+				printf("Type: StartType, ptr %x\n", _p.second.get());
 			}
 			else if (_p.second->node_type == RegularNFANode::END_TYPE){
 				
-				printf("Type: EndType, ptr %x", _p.second.get());
+				printf("Type: EndType, ptr %x\n", _p.second.get());
 			}
 		}
+
+		_tmp_node = _tmp_node->next;
 	}
 }
 
@@ -1233,8 +1254,8 @@ int main(int argc, char * argv[])
 
 	//RegularToAST("abc(def|gh)", _root);
 	//PrintBinaryTree(_root);
-	//std::string _input = "ad+c|d*";
-	std::string _input = "a*b*c*|_a*b*c*";
+	std::string _input = "ad+c|d*";
+	//std::string _input = "a*b*c*|_a*b*c*";
 	std::cout<<"Input: "<<_input<<std::endl;
 	MyFormatRegularExpression(_input);
 	std::cout<<"Format: "<<_input<<std::endl;
