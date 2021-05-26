@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2021-04-07 16:29:46
  * @LastEditors: Sky
- * @LastEditTime: 2021-04-08 09:53:58
+ * @LastEditTime: 2021-05-26 10:16:05
  * @Description: 
  */
 #ifndef __YLIB_UTILITY_YTIMER_HPP__
@@ -49,6 +49,7 @@ namespace yLib
          * @brief default destructor
          * @param 
          * @return 
+         * @warning destructor will block utill timer-thread exit. the block-time depends on StartTimer()'s parameter(time).
          */
         ~yTimer() noexcept;
 
