@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2021-04-07 16:33:17
  * @LastEditors: Sky
- * @LastEditTime: 2021-04-09 17:10:53
+ * @LastEditTime: 2021-05-26 10:12:22
  * @Description: 
  */
 
@@ -20,7 +20,23 @@ timer_thread_loop_flag(false)
 
 yTimer::~yTimer() noexcept
 {
+    do//wait timer thread exit
+    {
+        StopTimer();
+#if defined(_WIN32) || defined(_WIN64)
 
+        ::Sleep(1);
+
+#elif defined(__linux__) || defined(__linux)
+
+        usleep(1000);
+    
+#elif defined(__unix__) || defined(__unix)
+
+    
+#endif //__unix__ || __unix     
+        
+    } while (TimerRunFlag());//last thread stop       
 }
 
 void yTimer::GetTime(uint8_t time_id) noexcept

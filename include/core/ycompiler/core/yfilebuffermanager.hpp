@@ -2,10 +2,12 @@
  * @Author: Sky
  * @Date: 2021-03-20 14:31:59
  * @LastEditors: Sky
- * @LastEditTime: 2021-03-20 15:56:45
+ * @LastEditTime: 2021-05-26 15:15:36
  * @Description: 
  */
 
+#ifndef __YLIB_CORE_YCOMPILER_CORE_YFILEBUFFERMANAGER_HPP__
+#define __YLIB_CORE_YCOMPILER_CORE_YFILEBUFFERMANAGER_HPP__
 
 #include <fstream>
 #include <cstdint>
@@ -18,7 +20,7 @@
 namespace yLib
 {
     
-    class yFileBufferManager MACRO_PUBLIC_INHERIT_YOBJECT
+    class __YLIB_EXPORT__ yFileBufferManager MACRO_PUBLIC_INHERIT_YOBJECT
     {
     private:
         /* data */
@@ -43,3 +45,6 @@ namespace yLib
     };
 
 } // namespace yLib
+
+
+#endif //__YLIB_CORE_YCOMPILER_CORE_YFILEBUFFERMANAGER_HPP__
