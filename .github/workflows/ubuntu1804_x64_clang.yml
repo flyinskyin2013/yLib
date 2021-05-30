@@ -45,4 +45,3 @@ jobs:
       working-directory: /home/runner/work/yLib/yLib/build
       run: |
         cd install/tests
-        ./scripts_for_tests.sh
