@@ -64,14 +64,34 @@ namespace yLib
         //call by ParseREStrToBaseRENodeList
         int8_t __process_base_re_node__(const std::string & regular_str, int & index, BaseRENode::BaseRENodeType & type);
         //parse regular's str to a list of RE-node.
-        int8_t ParseREStrToBaseRENodeList(const std::string & regular_str);
+        int8_t ParseREStrToFormatREStr(const std::string & regular_str);
         //for debug
-        void PrintBaseRENodeList(void);
+        void PrintFormatREStr(void);
+
+
+        //convert the format re-str to postfix re-str
+        int8_t ConvertFormatREStrToPostfixREStr(void);
+        //for debug
+        void PrintPostfixREStr(void);
+
+
+        //ConvertRPNRegularToNFA
+        //PrintNFA
+        //SimulateNFA
+
+        //BuildDFAByNFA
+        //PrintDFA
+        //SimulateDFA
+
+
 
 
     private:
-        //data field.
-        std::list<std::shared_ptr<BaseRENode>> re_node_list;
+        //format regular expression string ,data field.
+        std::list<std::shared_ptr<BaseRENode>> format_renode_list;
+
+        //postfix regular expression string ,data field.
+        std::list<std::shared_ptr<BaseRENode>> postfix_renode_list;
     };
     
     

@@ -11,6 +11,7 @@
 #include "utility/ylog/ylog.hpp"
 
 #include <stack>
+#include <cstdio>
 
 using namespace yLib;
 
@@ -194,7 +195,7 @@ int8_t yRegularEngine::__process_base_re_node__(const std::string & regular_str,
             }
  
 
-            re_node_list.push_back(_tmp_and_node); 
+            format_renode_list.push_back(_tmp_and_node); 
 
             type = BaseRENode::RANGE_VALUE_TYPE; 
             break;
@@ -203,7 +204,7 @@ int8_t yRegularEngine::__process_base_re_node__(const std::string & regular_str,
 
             std::shared_ptr<BaseRENode> _tmp_and_node = std::make_shared<BaseRENode>(BaseRENode::OR_PROP_TYPE);
 
-            re_node_list.push_back(_tmp_and_node);   
+            format_renode_list.push_back(_tmp_and_node);   
 
             type = BaseRENode::OR_PROP_TYPE; 
             break;
@@ -212,7 +213,7 @@ int8_t yRegularEngine::__process_base_re_node__(const std::string & regular_str,
 
             std::shared_ptr<BaseRENode> _tmp_and_node = std::make_shared<BaseRENode>(BaseRENode::ASTERISK_PROP_TYPE);
 
-            re_node_list.push_back(_tmp_and_node);   
+            format_renode_list.push_back(_tmp_and_node);   
 
             type = BaseRENode::ASTERISK_PROP_TYPE; 
             break;
@@ -221,7 +222,7 @@ int8_t yRegularEngine::__process_base_re_node__(const std::string & regular_str,
 
             std::shared_ptr<BaseRENode> _tmp_and_node = std::make_shared<BaseRENode>(BaseRENode::PLUS_SIGN_PROP_TYPE);
 
-            re_node_list.push_back(_tmp_and_node);  
+            format_renode_list.push_back(_tmp_and_node);  
 
             type = BaseRENode::PLUS_SIGN_PROP_TYPE;  
             break;
@@ -230,7 +231,7 @@ int8_t yRegularEngine::__process_base_re_node__(const std::string & regular_str,
 
             std::shared_ptr<BaseRENode> _tmp_and_node = std::make_shared<BaseRENode>(BaseRENode::QUESTION_MARK_PROP_TYPE);
 
-            re_node_list.push_back(_tmp_and_node);   
+            format_renode_list.push_back(_tmp_and_node);   
 
             type = BaseRENode::QUESTION_MARK_PROP_TYPE; 
             break;
@@ -250,7 +251,7 @@ int8_t yRegularEngine::__process_base_re_node__(const std::string & regular_str,
                 _tmp_and_node->escape_value = regular_str[index];
             }
             
-            re_node_list.push_back(_tmp_and_node);  
+            format_renode_list.push_back(_tmp_and_node);  
 
             type = BaseRENode::ESCAPE_TYPE; 
             break;
@@ -260,7 +261,7 @@ int8_t yRegularEngine::__process_base_re_node__(const std::string & regular_str,
             std::shared_ptr<BaseRENode> _tmp_and_node = std::make_shared<BaseRENode>(BaseRENode::NORMAL_VALUE_TYPE);
             _tmp_and_node-> = regular_str[index];
 
-            re_node_list.push_back(_tmp_and_node);   
+            format_renode_list.push_back(_tmp_and_node);   
 
             type = BaseRENode::NORMAL_VALUE_TYPE;
             break;
@@ -270,7 +271,7 @@ int8_t yRegularEngine::__process_base_re_node__(const std::string & regular_str,
     return 0;;
 }
 
-int8_t yRegularEngine::ParseREStrToBaseRENodeList(const std::string & regular_str){
+int8_t yRegularEngine::ParseREStrToFormatREStr(const std::string & regular_str){
 
     BaseRENode::BaseRENodeType _last_base_node_type = BaseRENode::NONE_TYPE;
 
@@ -287,7 +288,7 @@ int8_t yRegularEngine::ParseREStrToBaseRENodeList(const std::string & regular_st
             {
 
                 std::shared_ptr<BaseRENode> _tmp_and_node = std::make_shared<BaseRENode>(BaseRENode::AND_PROP_TYPE);
-                re_node_list.push_back(_tmp_and_node);     
+                format_renode_list.push_back(_tmp_and_node);     
             }
         }
 
@@ -300,7 +301,92 @@ int8_t yRegularEngine::ParseREStrToBaseRENodeList(const std::string & regular_st
     return 0;
 }
 
-void yRegularEngine::PrintBaseRENodeList(void){
+void yRegularEngine::PrintFormatREStr(void){
 
-    
+    printf("Attention: ',' is used to mark AND_PROP_TYPE. the '\\,' is real ','. \n");
+    for(auto _renode:format_renode_list){
+
+        switch (_renode->node_type)
+        {
+            case BaseRENode::RANGE_VALUE_TYPE:{
+
+                // []
+                printf("[");
+                for(auto _p:_renode->range_value_vec){
+
+                    if (_p.first == _p.second){
+
+                        printf("%c", _p.first);
+                    }
+                    else{
+
+                        printf("%c-%c", _p.first, _p.second);
+                    }
+                }
+                printf("]");
+                break;
+            }
+            case BaseRENode::OR_PROP_TYPE:{
+
+                // |
+                printf("|");
+                break;
+            }
+            case BaseRENode::ASTERISK_PROP_TYPE:{
+
+                // *
+                printf("*");
+                break;
+            }
+            case BaseRENode::PLUS_SIGN_PROP_TYPE:{
+
+                // +
+                printf("+");
+                break;
+            }
+            case BaseRENode::QUESTION_MARK_PROP_TYPE:{
+
+                // ?
+                printf("?");
+                break;
+            }
+            case BaseRENode::ESCAPE_TYPE:{
+
+                // '\'
+                printf("\\%c", (char)_renode->escape_value);
+                break;
+            }
+            case BaseRENode::AND_PROP_TYPE:{
+
+                printf(",");
+                break;
+            }
+            default:{//normal char
+
+                //BaseRENode::NORMAL_VALUE_TYPE
+                if ((char)_renode->normal_value == ','){
+
+                    printf("\\%c", (char)_renode->normal_value);
+                }
+                else{
+
+                    printf("%c", (char)_renode->normal_value);
+                }
+                
+                break;
+            }
+        }        
+    }
+    printf("\n");
+}
+
+int8_t yRegularEngine::ConvertFormatREStrToPostfixREStr(void)
+{
+
+    return 0;
+}
+
+void yRegularEngine::PrintPostfixREStr(void)
+{
+
 }
