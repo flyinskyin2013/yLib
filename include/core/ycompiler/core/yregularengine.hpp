@@ -20,6 +20,7 @@ namespace yLib
     class __YLIB_EXPORT__ yRegularEngine MACRO_PUBLIC_INHERIT_YOBJECT
     {
     public:
+        //BaseRENode
         class BaseRENode{
         public:
             enum BaseRENodeType:uint8_t{
@@ -55,6 +56,37 @@ namespace yLib
             bool not_range_value;//[^abc]
             std::vector<std::pair<char, char>> range_value_vec;
         };
+
+        //RENFANode
+        class RENFANode{
+            public:
+            const uint16_t EDGE_PROP_EPSILON = 256;
+            const uint16_t EDGE_PROP_EMPTY = 257;
+
+            public:
+            enum RENFANodeType:uint8_t{
+
+                NONE_TYPE = 0, //next_edge_vec.size() == 0
+                START_TYPE,    //next_edge_vec.size() == 1, next_edge_vec[0] EPSILON
+                END_TYPE,      //next_edge_vec.size() == 1, next_edge_vec[0] EPSILON
+                SINGLE_TYPE,   //next_edge_vec.size() == 1, next_edge_vec[0] edge-prop
+                MULTI_TYPE,     //next_edge_vec.size() == 1+, 
+            };
+
+            public:
+            RENFANode(void) = delete;
+            RENFANode(RENFANodeType type)
+            {
+                node_type = type;
+            }
+            ~RENFANode(){}
+
+            public:
+            //next RENFANode, next edge-prop
+            std::vector<std::pair<std::shared_ptr<RENFANode>, uint16_t>> next_edge_vec;
+
+            RENFANodeType node_type;
+        };
     public:
         yRegularEngine(/* args */);
         ~yRegularEngine();
@@ -70,14 +102,20 @@ namespace yLib
 
 
         //convert the format re-str to postfix re-str
+        //Shunting Yard Algorithm, author : Edsger Dijkstra
         int8_t ConvertFormatREStrToPostfixREStr(void);
         //for debug
         void PrintPostfixREStr(void);
 
 
         //ConvertRPNRegularToNFA
+        int8_t ConvertRPNRegularToNFA(void);
+
         //PrintNFA
+        void PrintNFA(void);
+
         //SimulateNFA
+        bool SimulateNFA(void);
 
         //BuildDFAByNFA
         //PrintDFA
@@ -92,6 +130,9 @@ namespace yLib
 
         //postfix regular expression string ,data field.
         std::list<std::shared_ptr<BaseRENode>> postfix_renode_list;
+
+        //nfa start_node
+        std::shared_ptr<RENFANode> nfa_start_node;
     };
     
     

@@ -16,20 +16,90 @@
 using namespace yLib;
 
 
-//////////////////////////////////////////////////
-//////////////////////////////////////////////////
-//////////yRegularEngine
-//////////////////////////////////////////////////
-//////////////////////////////////////////////////
 
-yRegularEngine::yRegularEngine(/* args */)
-MACRO_INIT_YOBJECT_PROPERTY(yLexicalAnalyzer)
+
+
+
+static void __print_re_basenode_list__(const std::list<std::shared_ptr<yRegularEngine::BaseRENode>> &list)
 {
+
+    printf("Attention: ',' is used to mark AND_PROP_TYPE. the '\\,' is real ','. \n");
+    for(auto _renode:list){
+
+        switch (_renode->node_type)
+        {
+            case yRegularEngine::BaseRENode::RANGE_VALUE_TYPE:{
+
+                // []
+                printf("[");
+                for(auto _p:_renode->range_value_vec){
+
+                    if (_p.first == _p.second){
+
+                        printf("%c", _p.first);
+                    }
+                    else{
+
+                        printf("%c-%c", _p.first, _p.second);
+                    }
+                }
+                printf("]");
+                break;
+            }
+            case yRegularEngine::BaseRENode::OR_PROP_TYPE:{
+
+                // |
+                printf("|");
+                break;
+            }
+            case yRegularEngine::BaseRENode::ASTERISK_PROP_TYPE:{
+
+                // *
+                printf("*");
+                break;
+            }
+            case yRegularEngine::BaseRENode::PLUS_SIGN_PROP_TYPE:{
+
+                // +
+                printf("+");
+                break;
+            }
+            case yRegularEngine::BaseRENode::QUESTION_MARK_PROP_TYPE:{
+
+                // ?
+                printf("?");
+                break;
+            }
+            case yRegularEngine::BaseRENode::ESCAPE_TYPE:{
+
+                // '\'
+                printf("\\%c", (char)_renode->escape_value);
+                break;
+            }
+            case yRegularEngine::BaseRENode::AND_PROP_TYPE:{
+
+                printf(",");
+                break;
+            }
+            default:{//normal char
+
+                //BaseRENode::NORMAL_VALUE_TYPE
+                if ((char)_renode->normal_value == ','){
+
+                    printf("\\%c", (char)_renode->normal_value);
+                }
+                else{
+
+                    printf("%c", (char)_renode->normal_value);
+                }
+                
+                break;
+            }
+        }        
+    }
+    printf("\n");
 }
 
-yRegularEngine::~yRegularEngine()
-{
-}
 static int8_t __parse_range_value_vec__(const std::string & regular_str, int & index, std::vector<std::pair<char, char>> & range_value_vec){
 
     //deal with range value
@@ -160,6 +230,22 @@ static int8_t __parse_range_value_vec__(const std::string & regular_str, int & i
         yLib::yLog::E("The RegularStr is invalid. we can't parse range-value.");
         return -1;
     }
+}
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+//////////yRegularEngine
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+yRegularEngine::yRegularEngine(/* args */)
+MACRO_INIT_YOBJECT_PROPERTY(yRegularEngine)
+{
+    nfa_start_node = std::make_shared<RENFANode>(RENFANode::START_TYPE);//create a start nfa node
+}
+
+yRegularEngine::~yRegularEngine()
+{
 }
 
 int8_t yRegularEngine::__process_base_re_node__(const std::string & regular_str, int & index, BaseRENode::BaseRENodeType & type){
@@ -303,90 +389,107 @@ int8_t yRegularEngine::ParseREStrToFormatREStr(const std::string & regular_str){
 
 void yRegularEngine::PrintFormatREStr(void){
 
-    printf("Attention: ',' is used to mark AND_PROP_TYPE. the '\\,' is real ','. \n");
-    for(auto _renode:format_renode_list){
-
-        switch (_renode->node_type)
-        {
-            case BaseRENode::RANGE_VALUE_TYPE:{
-
-                // []
-                printf("[");
-                for(auto _p:_renode->range_value_vec){
-
-                    if (_p.first == _p.second){
-
-                        printf("%c", _p.first);
-                    }
-                    else{
-
-                        printf("%c-%c", _p.first, _p.second);
-                    }
-                }
-                printf("]");
-                break;
-            }
-            case BaseRENode::OR_PROP_TYPE:{
-
-                // |
-                printf("|");
-                break;
-            }
-            case BaseRENode::ASTERISK_PROP_TYPE:{
-
-                // *
-                printf("*");
-                break;
-            }
-            case BaseRENode::PLUS_SIGN_PROP_TYPE:{
-
-                // +
-                printf("+");
-                break;
-            }
-            case BaseRENode::QUESTION_MARK_PROP_TYPE:{
-
-                // ?
-                printf("?");
-                break;
-            }
-            case BaseRENode::ESCAPE_TYPE:{
-
-                // '\'
-                printf("\\%c", (char)_renode->escape_value);
-                break;
-            }
-            case BaseRENode::AND_PROP_TYPE:{
-
-                printf(",");
-                break;
-            }
-            default:{//normal char
-
-                //BaseRENode::NORMAL_VALUE_TYPE
-                if ((char)_renode->normal_value == ','){
-
-                    printf("\\%c", (char)_renode->normal_value);
-                }
-                else{
-
-                    printf("%c", (char)_renode->normal_value);
-                }
-                
-                break;
-            }
-        }        
-    }
-    printf("\n");
+    __print_re_basenode_list__(format_renode_list);
 }
 
+static bool __is_relation_node__(const std::shared_ptr<BaseRENode> & node)
+{
+
+    if (node->node_type == BaseRENode::BaseRENodeType::AND_PROP_TYPE || \
+        node->node_type == BaseRENode::BaseRENodeType::OR_PROP_TYPE){
+
+            return true;
+    }
+    
+    return false;
+}
+
+// 操作符
+// 优先级 符号 运算顺序
+// 
+// 2 or 从左至右
+// 3 and  从左至右
+
+// 'and' > 'or' 
+static uint8_t __op_priority__(const std::shared_ptr<BaseRENode> & node)
+{
+    switch(node->node_type)    {
+
+        case BaseRENode::BaseRENodeType::AND_PROP_TYPE:{
+
+            return 3;
+            break;
+        }
+        case BaseRENode::BaseRENodeType::OR_PROP_TYPE:{
+
+            return 2;
+            break;
+        }
+        default:{
+
+            return 0;
+            break;
+        }
+    }
+    return 0;
+}
+
+//Shunting Yard Algorithm, author : Edsger Dijkstra
 int8_t yRegularEngine::ConvertFormatREStrToPostfixREStr(void)
 {
 
+    std::stack<std::shared_ptr<BaseRENode>> _operator_stack;
+    
+    for(auto _base_re_node:format_renode_list){
+
+        if (__is_relation_node__(_base_re_node)){//'and' or 'or' 
+
+            while(_operator_stack.size() != 0){
+
+                //cur op-prioriy is less than stack-top op-priority
+                if (__op_priority__(_base_re_node) < __op_priority__(_operator_stack.top())){
+
+                    postfix_renode_list.push_back(_operator_stack.top());
+                    _operator_stack.pop();
+                }
+                else{
+
+                    break;
+                }
+            }
+
+            _operator_stack.push(_base_re_node);
+        }
+        else{//other
+
+            postfix_renode_list.push_back(_base_re_node);
+        }
+    }
     return 0;
 }
 
 void yRegularEngine::PrintPostfixREStr(void)
 {
+    __print_re_basenode_list__(postfix_renode_list);
+}
 
+//ConvertRPNRegularToNFA
+int8_t yRegularEngine::ConvertRPNRegularToNFA(void)
+{
+
+    return 0;
+}
+
+//PrintNFA
+void yRegularEngine::PrintNFA(void)
+{
+
+
+}
+
+//SimulateNFA
+bool yRegularEngine::SimulateNFA(void)
+{
+
+    return true;
 }
