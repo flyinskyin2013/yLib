@@ -1,12 +1,14 @@
+#!/bin/bash
+
 ###
  # @Author: Sky
- # @Date: 2020-03-31 10:41:36
+ # @Date: 2021-04-09 14:22:29
  # @LastEditors: Sky
- # @LastEditTime: 2021-04-09 14:12:30
+ # @LastEditTime: 2021-08-20 14:42:54
  # @Description: 
- ###
-echo 'scripts for tests'
-echo 'test per unit ... ...'
+### 
+
+echo 'ylib-unit-tests start ... ...'
 
 EXECUTE_PREFIX=""
 
@@ -37,96 +39,80 @@ then
         exit -1
     fi
 fi
-#core
-${EXECUTE_PREFIX}./test_unit_yobject -d yes
-if [ $? -ne 0 ]
-then
-    echo 'test per unit error.'
-    exit -1
-fi
 
-${EXECUTE_PREFIX}./test_unit_yexception -d yes
-if [ $? -ne 0 ]
-then
-    echo 'test per unit error.'
-    exit -1
-fi
+# core group
+CORE_GROUP_MODULE_LIST=" \
+                        yobject \
+                        ycommon \
+                        yexception \
+                        yobject \
+                        "
+
+# ipc group
+IPC_GROUP_MODULE_LIST=" "
+
+# network group
+NETWORK_GROUP_MODULE_LIST=" \
+                            ytcpserver \
+                            ytcpclient \
+                            yudpserver \
+                            yudpclient \
+                            "
+
+# utility group
+UTILITY_GROUP_MODULE_LIST=" \
+                            yconfig \
+                            ycurl \
+                            yhttp \
+                            yjson \
+                            ylog \
+                            yshell \
+                            ytimer \
+                            yxml \
+                            "
+
+# basic_algorithm group
+BASIC_ALGORITHM_GROUP_MODULE_LIST=" \
+                                    ylinearlist \
+                                    ylinkedlist \
+                                    yqueue \
+                                    ystack \
+                                    "
+
+ALL_MODULE_LISTS=${CORE_GROUP_MODULE_LIST}${UTILITY_GROUP_MODULE_LIST}${BASIC_ALGORITHM_GROUP_MODULE_LIST}" all_in_one"
+
+for module_name in ${ALL_MODULE_LISTS}
+do
+    echo "module name "${module_name}
+    ${EXECUTE_PREFIX}./unit_test_${module_name} -d yes
+    if [ $? -ne 0 ]
+    then
+        echo 'Unit test failed. module-name:'${module_name}
+        exit -1
+    fi
+    
+    ${EXECUTE_PREFIX}./unit_test_${module_name}_s -d yes
+    if [ $? -ne 0 ]
+    then
+        echo 'Unit test failed. module-name:'${module_name}_s
+        exit -1
+    fi
+done
 
 
-${EXECUTE_PREFIX}./test_unit_ycommon -d yes
-if [ $? -ne 0 ]
-then
-    echo 'test per unit error.'
-    exit -1
-fi
 
+# #ipc
 
-${EXECUTE_PREFIX}./test_unit_ybasicvalue -d yes
-if [ $? -ne 0 ]
-then
-    echo 'test per unit error.'
-    exit -1
-fi
+# #network
+# #tcp 
+# sleep 2
+# ./test_unit_ytcpserver -d yes &
+# sleep 2
+# ./test_unit_ytcpclient -d yes
 
+# #udp
+# sleep 2
+# ./test_unit_yudpserver -d yes &
+# sleep 2
+# ./test_unit_yudpclient -d yes
 
-#ipc
-
-#network
-
-#utility
-# ./test_unit_yconfig -d yes
-# if [ $? -ne 0 ]
-# then
-#     echo 'test per unit error.'
-#     exit -1
-# fi
-
-${EXECUTE_PREFIX}./test_unit_yhttp -d yes
-if [ $? -ne 0 ]
-then
-    echo 'test per unit error.'
-    exit -1
-fi
-
-${EXECUTE_PREFIX}./test_unit_yjson -d yes
-if [ $? -ne 0 ]
-then
-    echo 'test per unit error.'
-    exit -1
-fi
-
-${EXECUTE_PREFIX}./test_unit_ylog -d yes
-if [ $? -ne 0 ]
-then
-    echo 'test per unit error.'
-    exit -1
-fi
-
-${EXECUTE_PREFIX}./test_unit_yshell -d yes
-if [ $? -ne 0 ]
-then
-    echo 'test per unit error.'
-    exit -1
-fi
-
-${EXECUTE_PREFIX}./test_unit_yxml -d yes
-if [ $? -ne 0 ]
-then
-    echo 'test per unit error.'
-    exit -1
-fi
-
-${EXECUTE_PREFIX}./test_unit_ytimer -d yes
-if [ $? -ne 0 ]
-then
-    echo 'test per unit error.'
-    exit -1
-fi
-
-# echo 'test all ... ...'
-# ./test_unit_all_in_one -d yes
-# if [ $? -ne 0 ]
-# then
-#     echo 'test all error.'
-#     exit -1
-# fi

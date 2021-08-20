@@ -3,7 +3,7 @@
  * @Author: Sky
  * @Date: 2020-03-19 10:44:05
  * @LastEditors: Sky
- * @LastEditTime: 2020-03-19 10:51:24
+ * @LastEditTime: 2021-08-20 16:33:26
  * @FilePath: \yLib\include\core\ylibdefs.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -43,45 +43,26 @@ namespace yLib{
 
 
 
-
-
-
-
-
-
-
-
     //define some useful macroes ----------------------------   end
 
-
-    // //c99 for variadic macros
-    // #define yLogD(...) \
+    // c99 for variadic macros
+    // #define example(...) \
     //     do{ \
     //         char msg_buf[1024]; \
     //         sprintf(msg_buf, __VA_ARGS__); \
-    //         std::cout<<std::string("LogDebug:>")+std::string(msg_buf)<<std::endl; \
-    //     }while(0)
-    // #define yLogW(...) \
-    //     do{ \
-    //         char msg_buf[1024]; \
-    //         sprintf(msg_buf, __VA_ARGS__); \
-    //         std::cout<<std::string("LogWarn:>")+std::string(msg_buf)<<std::endl; \
-    //     }while(0)
-    // #define yLogE(...) \
-    //     do{ \
-    //         char msg_buf[1024]; \
-    //         sprintf(msg_buf, __VA_ARGS__); \
-    //         std::cout<<std::string("LogError:>")+std::string(msg_buf)<<std::endl; \
-    //     }while(0)
-    // #define yLogI(...) \
-    //     do{ \
-    //         char msg_buf[1024]; \
-    //         sprintf(msg_buf, __VA_ARGS__); \
-    //         std::cout<<std::string("LogInfo:>")+std::string(msg_buf)<<std::endl; \
+    //         std::cout<<std::string(msg_buf)<<std::endl; \
     //     }while(0)
 
 
+    /** \def YLIB_STR
+        \brief Convert __S to string.
+    */
+    #define YLIB_STR(__S) YLIB_STR_CONVERT(__S)
 
+    /** \def YLIB_STR_CONVERT
+        \brief Convert __S to string.
+    */
+    #define YLIB_STR_CONVERT(__S) #__S
 }
 
 

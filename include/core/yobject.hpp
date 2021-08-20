@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-09-20 16:59:29
  * @LastEditors: Sky
- * @LastEditTime: 2020-11-30 14:44:38
+ * @LastEditTime: 2021-08-20 16:33:32
  * @Description: 
  */
 
@@ -12,7 +12,6 @@
 #include <string>
 
 #include "ydefs.hpp"
-#include "yversion.hpp"
 
 /**
  *  @namespace yLib

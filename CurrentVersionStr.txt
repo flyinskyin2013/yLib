@@ -1,9 +1,0 @@
-0
-0
-9
-
-
-#Notes
-First  Line: MAJOR
-Second Line: MINOR
-Third  Line: PATCH

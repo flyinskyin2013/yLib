@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-07-02 10:35:22
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-15 18:30:21
+ * @LastEditTime: 2021-08-19 10:12:22
  * @Description: 
  */
 
@@ -21,8 +21,10 @@
 
 @DECELARE_YLIB_BUILD_TIMESTAMP@
 @DECELARE_YLIB_BUILD_GIT_COMMIT_ID@
-@DECELARE_YLIB_BUILTIN_MODULE@
 
+@DECELARE_YLIB_BUILTIN_IPC_MODULE@
+@DECELARE_YLIB_BUILTIN_NETWORK_MODULE@
+@DECELARE_YLIB_BUILTIN_UTILITY_MODULE@
 
 //using namespace yLib;
 const std::string & yLib::GetyLibBuildType(void){
@@ -67,5 +69,5 @@ const std::string & yLib::GetyLibBuildGitCommitId(void){
 }
 const std::string & yLib::GetyLibBuildBuiltinModule(void){
 
-    return G_YLIB_BUILTIN_MODULE_DEFINE;
+    return G_YLIB_BUILTIN_IPC_MODULE_DEFINE + " " + G_YLIB_BUILTIN_NETWORK_MODULE_DEFINE + " " + G_YLIB_BUILTIN_UTILITY_MODULE_DEFINE;
 }
