@@ -3,12 +3,16 @@
  * @Author: Sky
  * @Date: 2020-03-19 16:32:06
  * @LastEditors: Sky
- * @LastEditTime: 2020-12-07 14:20:51
+ * @LastEditTime: 2021-08-27 16:38:50
  * @FilePath: \yLib\tests\ybasicvalue\ybasicvalue_tests.cpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
 #include "catch2/catch.hpp"
 #include "ylib.hpp"
+
+#include "test_common.hpp"
+
+DEFINE_TEST_CASE_FOR_CLASS_INFO(yValue)
 
 TEST_CASE( "Test yBasicValue constructor and convert apis" , "[yBasicValue_ConstructorAndConvertApis]" ){
 
@@ -16,6 +20,91 @@ TEST_CASE( "Test yBasicValue constructor and convert apis" , "[yBasicValue_Const
 
         yLib::yBasicValue _tmp_value;
         REQUIRE(_tmp_value.GetType() == yLib::yBasicValue::NONE_TYPE);
+    }
+
+    SECTION("test yValue(const yValue &value)") {
+
+        yLib::yBasicValue _tmp_value;
+        yLib::yBasicValue _tmp_value1(_tmp_value);
+        
+        REQUIRE(_tmp_value1.GetType() == yLib::yBasicValue::NONE_TYPE);
+    }
+
+    SECTION("test operator=(const yValue &value) ") {
+
+        yLib::yBasicValue _tmp_value;
+        yLib::yBasicValue _tmp_value1;
+
+        _tmp_value = _tmp_value;
+
+        REQUIRE(_tmp_value1.GetType() == yLib::yBasicValue::NONE_TYPE);
+    }
+
+    SECTION("test yValue(const yValue &&value) ") {
+
+        yLib::yBasicValue _tmp_value;
+        yLib::yBasicValue _tmp_value1(std::move(_tmp_value));
+
+        REQUIRE(_tmp_value1.GetType() == yLib::yBasicValue::NONE_TYPE);
+    }
+
+    SECTION("test operator=(const yValue &&value) ") {
+
+        yLib::yBasicValue _tmp_value;
+        yLib::yBasicValue _tmp_value1;
+        
+        _tmp_value1 = std::move(_tmp_value);
+
+
+        REQUIRE(_tmp_value1.GetType() == yLib::yBasicValue::NONE_TYPE);
+    }
+
+    SECTION("test yBasicValue(int8_t value_) ") {
+
+        yLib::yBasicValue _tmp_value((int8_t)-100);
+        REQUIRE(_tmp_value.GetType() == yLib::yBasicValue::INT8_TYPE);
+
+        REQUIRE(-100 == (int8_t)_tmp_value);
+    }
+
+    SECTION("test yBasicValue(uint8_t value_)") {
+
+        yLib::yBasicValue _tmp_value((uint8_t)100);
+        REQUIRE(_tmp_value.GetType() == yLib::yBasicValue::UINT8_TYPE);
+
+        REQUIRE(100 == (uint8_t)_tmp_value);
+    }
+
+    SECTION("test yBasicValue(int16_t value_) ") {
+
+        yLib::yBasicValue _tmp_value((int16_t)-10000);
+        REQUIRE(_tmp_value.GetType() == yLib::yBasicValue::INT16_TYPE);
+
+        REQUIRE(-10000 == (int16_t)_tmp_value);
+    }
+
+    SECTION("test yBasicValue(uint16_t value_)") {
+
+        yLib::yBasicValue _tmp_value((uint16_t)10000);
+        REQUIRE(_tmp_value.GetType() == yLib::yBasicValue::UINT16_TYPE);
+
+        REQUIRE(10000 == (uint16_t)_tmp_value);
+    }
+
+    SECTION("test yBasicValue(int32_t value_) ") {
+
+        yLib::yBasicValue _tmp_value((int32_t)-10000);
+        REQUIRE(_tmp_value.GetType() == yLib::yBasicValue::INT32_TYPE);
+
+        REQUIRE(-10000 == (int32_t)_tmp_value);
+    }
+
+    SECTION("test yBasicValue(uint32_t value_)") {
+
+        yLib::yBasicValue _tmp_value((uint32_t)10000);
+        REQUIRE(_tmp_value.GetType() == yLib::yBasicValue::UINT32_TYPE);
+
+        REQUIRE(10000 == (uint32_t)_tmp_value);
     }
 
     SECTION("test yBasicValue(int64_t value_) ") {
@@ -71,19 +160,43 @@ TEST_CASE( "Test yBasicValue constructor and convert apis" , "[yBasicValue_Const
         REQUIRE_THAT( _ss_tmp_str.c_str(), Catch::Equals ( "test yBasicValue by str" ));
     }
 
-    // SECTION("test yBasicValue(const char * value_) ") {
+    SECTION("test yValue(yValueType type, void * value)") {
 
-    //     const char * _tmp_test_c_str = "test yBasicValue by c_str";
-    //     yLib::yBasicValue _tmp_value(_tmp_test_c_str);
-    //     REQUIRE(_tmp_value.GetyBasicValueType() == yLib::yBasicValueType::STRING_YBASICVALUE_TYPE);
+        yLib::yBasicValue _tmp_value(yLib::yValue::NULL_TYPE, nullptr);
+        REQUIRE(_tmp_value.GetType() == yLib::yBasicValue::NULL_TYPE);
 
-    //     REQUIRE_THAT( (const char *)_tmp_value, Catch::Equals ( "test yBasicValue by c_str" ));
-    // }
+        REQUIRE(_tmp_value.GetSpecialValue() == nullptr);
+    }
+
 
     SECTION("test operator= function ") {
 
         yLib::yBasicValue _tmp_value;
-        
+
+        _tmp_value = (int8_t) -22;
+        REQUIRE(_tmp_value.GetType() == yLib::yBasicValue::INT8_TYPE);
+        REQUIRE(-22 == (int8_t)_tmp_value);
+
+        _tmp_value = (uint8_t) 22;
+        REQUIRE(_tmp_value.GetType() == yLib::yBasicValue::UINT8_TYPE);
+        REQUIRE(22 == (uint8_t)_tmp_value);
+
+        _tmp_value = (int16_t) -22222;
+        REQUIRE(_tmp_value.GetType() == yLib::yBasicValue::INT16_TYPE);
+        REQUIRE(-22222 == (int16_t)_tmp_value);
+
+        _tmp_value = (uint16_t) 22222;
+        REQUIRE(_tmp_value.GetType() == yLib::yBasicValue::UINT16_TYPE);
+        REQUIRE(22222 == (uint16_t)_tmp_value);  
+
+        _tmp_value = (int32_t) -22222;
+        REQUIRE(_tmp_value.GetType() == yLib::yBasicValue::INT32_TYPE);
+        REQUIRE(-22222 == (int32_t)_tmp_value);
+
+        _tmp_value = (uint32_t) 22222;
+        REQUIRE(_tmp_value.GetType() == yLib::yBasicValue::UINT32_TYPE);
+        REQUIRE(22222 == (uint32_t)_tmp_value);
+
         _tmp_value = (int64_t) -22222;
         REQUIRE(_tmp_value.GetType() == yLib::yBasicValue::INT64_TYPE);
         REQUIRE(-22222 == (int64_t)_tmp_value);
@@ -113,10 +226,6 @@ TEST_CASE( "Test yBasicValue constructor and convert apis" , "[yBasicValue_Const
         //std::string _ss_tmp_str1 = (std::string)_tmp_value; //Do not support this convert-type;
         REQUIRE_THAT( _ss_tmp_str.c_str(), Catch::Equals ( "test yBasicValue by c_str1" ));
 
-        // const char * _tmp_test_c_str = "test yBasicValue by c_str1";
-        // _tmp_value = _tmp_test_c_str;
-        // REQUIRE(_tmp_value.GetyBasicValueType() == yLib::yBasicValueType::STRING_YBASICVALUE_TYPE);
-        // REQUIRE_THAT( (const char *)_tmp_value, Catch::Equals ( "test yBasicValue by c_str1" ));
     }
 }
 

@@ -1,0 +1,4 @@
+c++filt _ZN4yLib10yExceptionD0Ev
+
+yLib::yException::~yException()
+

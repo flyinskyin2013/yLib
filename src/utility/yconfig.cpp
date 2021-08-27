@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:53
  * @LastEditors: Sky
- * @LastEditTime: 2021-01-07 16:25:26
+ * @LastEditTime: 2021-08-26 16:04:17
  * @Description: 
  */
 
@@ -264,42 +264,42 @@ int8_t yLib::yConfig::AddNode(const std::string & pos_, const std::string & name
 yConfigValue::yConfigValue() noexcept 
 :yValue()
 {
-    object_name = YLIB_STR(yConfigValue);
+
 }
 
 yConfigValue::yConfigValue(int32_t value_) noexcept
 :yValue(value_)
 {
-    object_name = YLIB_STR(yConfigValue);
+
 }
 
 yLib::yConfigValue::yConfigValue(bool value_) noexcept
 :yValue(value_)
 {
-    object_name = YLIB_STR(yConfigValue);
+
 }
 yLib::yConfigValue::yConfigValue(float value_) noexcept
 :yValue(value_)
 {
-    object_name = YLIB_STR(yConfigValue);
+
 }
 
 yLib::yConfigValue::yConfigValue(const std::string &value_) noexcept
 :yValue(value_)
 {
-    object_name = YLIB_STR(yConfigValue);
+
 }
 
 yLib::yConfigValue::yConfigValue(const char *value_) noexcept
 :yValue(value_)
 {
-    object_name = YLIB_STR(yConfigValue);
+
 }
 
 yLib::yConfigValue::yConfigValue(const yConfigValue &value_) noexcept
 :yBasicValue()
 {
-    object_name = YLIB_STR(yConfigValue);
+
     yLib::yBasicValue::CopyValueContainer(value_, *this);
 }
 
@@ -315,7 +315,7 @@ yLib::yConfigValue& yLib::yConfigValue::operator=(const yConfigValue & value_) n
 yLib::yConfigValue::yConfigValue(const yConfigValue &&value_) noexcept 
 :yBasicValue()
 {
-    object_name = YLIB_STR(yConfigValue);
+
     yLib::yBasicValue::CopyValueContainer(value_, *this);
 }
 yLib::yConfigValue& yLib::yConfigValue::operator=(const yConfigValue &&value_) noexcept

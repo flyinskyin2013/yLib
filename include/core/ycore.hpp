@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-07-14 16:43:40
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-14 18:33:02
+ * @LastEditTime: 2021-08-26 18:17:12
  * @Description: 
  */ 
 
@@ -15,6 +15,8 @@
     #include "ycommon.hpp"
     #include "ybasicvalue.hpp"
     #include "yexception.hpp"
+    #include "ylib_extra_infos.hpp"
+    #include "yobject.hpp"
 
     
     //in test
@@ -26,7 +28,8 @@
     #include "ycommon.hpp"
     #include "ybasicvalue.hpp"
     #include "yexception.hpp"
-
+    #include "ylib_extra_infos.hpp"
+    #include "yobject.hpp"
     
     //in test
     #include "yallocator.hpp"

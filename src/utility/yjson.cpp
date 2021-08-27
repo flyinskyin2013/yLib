@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-10-28 14:15:15
  * @LastEditors: Sky
- * @LastEditTime: 2020-12-10 15:13:24
+ * @LastEditTime: 2021-08-26 16:09:10
  * @Description: 
  */
 
@@ -235,8 +235,6 @@ is_special_obj(false),
 value_holder_map(nullptr)
 {
 
-    object_name = YLIB_STR(yJsonValue);
-
     cur_value_type = yValueType::NULL_TYPE;//repeat set val
 
     json_value = new Json::Value();
@@ -249,7 +247,6 @@ is_special_obj(false),
 value_holder_map(nullptr)
 {
 
-    object_name = YLIB_STR(yJsonValue);
 
     cur_value_type = yValueType::INT64_TYPE;
 
@@ -263,7 +260,6 @@ is_special_obj(false),
 value_holder_map(nullptr)
 {
 
-    object_name = YLIB_STR(yJsonValue);
 
     cur_value_type = yValueType::UINT64_TYPE;
 
@@ -277,7 +273,6 @@ json_value(nullptr),
 is_special_obj(false),
 value_holder_map(nullptr)
 {
-    object_name = YLIB_STR(yJsonValue);
 
     cur_value_type = yValueType::BOOL_TYPE;
 
@@ -291,8 +286,6 @@ is_special_obj(false),
 value_holder_map(nullptr)
 {
 
-    object_name = YLIB_STR(yJsonValue);
-
     cur_value_type = yValueType::DOUBLE_TYPE;
 
     json_value = new Json::Value(value_);
@@ -305,8 +298,6 @@ is_special_obj(false),
 value_holder_map(nullptr)
 {
 
-    object_name = YLIB_STR(yJsonValue);
-
     cur_value_type = yValueType::STRING_TYPE;
 
     json_value = new Json::Value(value_);
@@ -318,8 +309,6 @@ json_value(nullptr),
 is_special_obj(false),
 value_holder_map(nullptr)
 {
-
-    object_name = YLIB_STR(yJsonValue);
 
     cur_value_type = value_type_;
 
@@ -378,8 +367,6 @@ value_holder_map(nullptr)
 {
     CleanAllToDefault();//must be clean first,this op will modify type and value-container
 
-    object_name = YLIB_STR(yJsonValue);
-
     cur_value_type = value_.cur_value_type;
     is_special_obj = value_.is_special_obj;
 
@@ -431,8 +418,6 @@ is_special_obj(false),
 value_holder_map(nullptr)
 {
     CleanAllToDefault();//must be clean first,this op will modify type and value-container
-
-    object_name = YLIB_STR(yJsonValue);
 
     cur_value_type = value_.cur_value_type;
     is_special_obj = value_.is_special_obj;

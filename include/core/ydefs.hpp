@@ -3,7 +3,7 @@
  * @Author: Sky
  * @Date: 2020-03-19 10:44:05
  * @LastEditors: Sky
- * @LastEditTime: 2021-08-20 16:33:26
+ * @LastEditTime: 2021-08-27 11:07:14
  * @FilePath: \yLib\include\core\ylibdefs.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -63,7 +63,15 @@ namespace yLib{
         \brief Convert __S to string.
     */
     #define YLIB_STR_CONVERT(__S) #__S
-}
+
+
+    // #define YLIB_VERSION_MAJOR 0
+    // #define YLIB_VERSION_MINOR 0
+    // #define YLIB_VERSION_PATCH 7
+
+    // #define YLIB_VERSION YLIB_STR(YLIB_VERSION_MAJOR) "." YLIB_STR(YLIB_VERSION_MINOR) "." YLIB_STR(YLIB_VERSION_PATCH)
+
+    }
 
 
 

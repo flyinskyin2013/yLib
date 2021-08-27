@@ -4,15 +4,30 @@
  # @Author: Sky
  # @Date: 2021-04-09 14:22:29
  # @LastEditors: Sky
- # @LastEditTime: 2021-08-20 14:42:54
+ # @LastEditTime: 2021-08-27 16:04:15
  # @Description: 
 ### 
 
 echo 'ylib-unit-tests start ... ...'
 
 EXECUTE_PREFIX=""
+CODE_COVERAGE_MODE=0
 
-if [ $# -ge 1 ]
+function Usage()
+{
+    echo "Usage:"
+    echo "example:./scripts_for_tests.sh [qemu-gnueabi]/[CodeCoverage]"
+    echo "example:./scripts_for_tests.sh [qemu-gnueabihf]/[CodeCoverage]"
+    echo "example:./scripts_for_tests.sh [qemu-aarch64]/[CodeCoverage]"
+    exit -1
+}
+
+if [ $# -gt 1 ]
+then
+    Usage
+fi
+
+if [ $# -eq 1 ]
 then
     if [ $1 = "qemu-gnueabi" ]
     then
@@ -31,21 +46,27 @@ then
         EXECUTE_PREFIX="qemu-aarch64 -L /usr/aarch64-linux-gnu/ "
         echo "In qemu mode .. .. .., EXECUTE_PREFIX is "${EXECUTE_PREFIX}
 
-    
+    elif [ $1 = "CodeCoverage" ]
+    then
+
+        CODE_COVERAGE_MODE=1
+        echo "In Code Coverage Mode"
+
     else
-        echo "example:./scripts_for_tests.sh qemu-gnueabi"
-        echo "example:./scripts_for_tests.sh qemu-gnueabihf"
-        echo "example:./scripts_for_tests.sh qemu-aarch64"
-        exit -1
+        Usage
     fi
 fi
+
+
 
 # core group
 CORE_GROUP_MODULE_LIST=" \
                         yobject \
                         ycommon \
                         yexception \
-                        yobject \
+                        ybasicvalue \
+                        yallocator \
+                        ylib_extra_infos \
                         "
 
 # ipc group
@@ -91,11 +112,14 @@ do
         exit -1
     fi
     
-    ${EXECUTE_PREFIX}./unit_test_${module_name}_s -d yes
-    if [ $? -ne 0 ]
+    if [ ${CODE_COVERAGE_MODE} -eq 0 ]
     then
-        echo 'Unit test failed. module-name:'${module_name}_s
-        exit -1
+        ${EXECUTE_PREFIX}./unit_test_${module_name}_s -d yes
+        if [ $? -ne 0 ]
+        then
+            echo 'Unit test failed. module-name:'${module_name}_s
+            exit -1
+        fi
     fi
 done
 

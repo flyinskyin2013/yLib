@@ -43,39 +43,36 @@ INSTALL(FILES
 
 if(BUILD_MODULE_YMAIN)
 
-    #build program frame example
-    add_executable(test_ymain_s
-            ${CMAKE_CURRENT_SOURCE_DIR}/ProgramFrameExamples/ymain.cpp
-            ${CMAKE_CURRENT_SOURCE_DIR}/ProgramFrameExamples/ystart.cpp
-            )
-
-    add_executable(test_ymain
-            ${CMAKE_CURRENT_SOURCE_DIR}/ProgramFrameExamples/ymain.cpp
-            ${CMAKE_CURRENT_SOURCE_DIR}/ProgramFrameExamples/ystart.cpp
-            )
     # we verify shared-ylib in unit-tests
     if(BUILD_SHARED_YLIB)
-
+        add_executable(test_ymain
+                ${CMAKE_CURRENT_SOURCE_DIR}/ProgramFrameExamples/ymain.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/ProgramFrameExamples/ystart.cpp
+                )
         target_link_libraries(test_ymain ylib)
         add_dependencies(test_ymain ylib)
-
+        INSTALL(PROGRAMS 
+            ${CMAKE_CURRENT_BINARY_DIR}/test_ymain
+            DESTINATION examples/ProgramFrameExamples
+        )
     endif()
 
     if(BUILD_STATIC_YLIB)
-
+        #build program frame example
+        add_executable(test_ymain_s
+                ${CMAKE_CURRENT_SOURCE_DIR}/ProgramFrameExamples/ymain.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/ProgramFrameExamples/ystart.cpp
+                )
         target_link_libraries(test_ymain_s ylib_s -pthread)
         add_dependencies(test_ymain_s ylib_s)
-
+        INSTALL(PROGRAMS 
+            ${CMAKE_CURRENT_BINARY_DIR}/test_ymain_s
+            DESTINATION examples/ProgramFrameExamples
+        )
     endif()
       
-    INSTALL(PROGRAMS 
-        ${CMAKE_CURRENT_BINARY_DIR}/test_ymain
-        DESTINATION examples/ProgramFrameExamples
-    )
-    INSTALL(PROGRAMS 
-        ${CMAKE_CURRENT_BINARY_DIR}/test_ymain_s
-        DESTINATION examples/ProgramFrameExamples
-    )
+
+
 
 endif()
 

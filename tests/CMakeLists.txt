@@ -64,9 +64,7 @@ function(build_tests group_name_ sub_dir_name_ module_name_)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-rpath=../lib")
 
     set(unit_test_target_name "unit_test_${module_name}")
-    add_executable(${unit_test_target_name} ${SRC})  
-    add_executable(${unit_test_target_name}_s ${SRC})  
-
+    
     foreach(param ${ARGN})
 
         set(DEP_LIBS
@@ -76,47 +74,39 @@ function(build_tests group_name_ sub_dir_name_ module_name_)
 
     endforeach()
 
-    if(WIN32)
+    if(BUILD_SHARED_YLIB)
 
-        if(BUILD_SHARED_YLIB)
+        add_executable(${unit_test_target_name} ${SRC})  
+        target_link_libraries(${unit_test_target_name} ylib ${DEP_LIBS})
+        add_dependencies(${unit_test_target_name} ylib YLIB_TESTS_SHARED_MAIN)
 
-            target_link_libraries(${unit_test_target_name} ylib ${DEP_LIBS})
-            add_dependencies(${unit_test_target_name} ylib YLIB_TESTS_SHARED_MAIN)
-
-        endif()
-
-        # we verify static ylib in test_ymain
-        if(BUILD_STATIC_YLIB)
-
-            target_link_libraries(${unit_test_target_name}_s ylib_s ${DEP_LIBS})
-            add_dependencies(${unit_test_target_name}_s ylib_s YLIB_TESTS_SHARED_MAIN)
-
-        endif()
-
-    elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
-
-        if(BUILD_SHARED_YLIB)
-            target_link_libraries(${unit_test_target_name} ylib ${DEP_LIBS})
-            add_dependencies(${unit_test_target_name} ylib YLIB_TESTS_SHARED_MAIN)
-        endif()
-
-        if(BUILD_STATIC_YLIB)
-            target_link_libraries(${unit_test_target_name}_s ylib_s ${DEP_LIBS} -pthread)
-            add_dependencies(${unit_test_target_name}_s ylib_s YLIB_TESTS_SHARED_MAIN)
-        endif()
-
-    elseif(ANDROID)
-        
-    endif()       
-
-
-    INSTALL(PROGRAMS  
+        INSTALL(PROGRAMS  
             ${CMAKE_CURRENT_BINARY_DIR}/${unit_test_target_name} 
             DESTINATION tests/)
-            
-    INSTALL(PROGRAMS  
+    endif()
+
+    # we verify static ylib in test_ymain
+    if(BUILD_STATIC_YLIB)
+
+        if(WIN32)
+
+
+        elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
+
+            set(DEP_LIBS
+                ${DEP_LIBS}
+                -pthread)
+        endif()
+
+        add_executable(${unit_test_target_name}_s ${SRC}) 
+        target_link_libraries(${unit_test_target_name}_s ylib_s ${DEP_LIBS})
+        add_dependencies(${unit_test_target_name}_s ylib_s YLIB_TESTS_SHARED_MAIN)
+
+        INSTALL(PROGRAMS  
             ${CMAKE_CURRENT_BINARY_DIR}/${unit_test_target_name}_s 
             DESTINATION tests/)
+
+    endif()
 
     AppendBuiltTestList(${unit_test_target_name})
 endfunction()
@@ -248,12 +238,16 @@ build_tests(CORE yException yException)
 build_tests(CORE yCommon yCommon)
 
 build_tests(CORE yBasicValue yBasicValue)
+
+build_tests(CORE yLib_Extra_Infos yLib_Extra_Infos)
+
+build_tests(CORE yAllocator yAllocator)
 ##########################################################################
 
 #----------------------------------------------------------------------------------------
 
 ##########################################################################
-build_tests(all_in_one "" all_in_one)
+# build_tests(all_in_one "" all_in_one)
 ##########################################################################
 
 

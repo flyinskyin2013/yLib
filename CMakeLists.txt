@@ -89,6 +89,7 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
     endif()
 
+    
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
@@ -148,32 +149,8 @@ if(WIN32)
 
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
-    if(BUILD_ALL_MODULE)
-
-        # UtilityGroup
-        set(BUILD_MODULE_YCURL "ON")
-        set(BUILD_MODULE_YHTTP "ON")
-        set(BUILD_MODULE_YLOG "ON")
-        set(BUILD_MODULE_YSHELL "ON")
-        set(BUILD_MODULE_YXML "ON")
-        set(BUILD_MODULE_YCONFIG "ON")
-        set(BUILD_MODULE_YJSON "ON")
-
-        # IpcGroup
-        set(BUILD_MODULE_YSHAREDMEMORY "ON")
-
-        # NetworkGroup
-        set(BUILD_MODULE_YTCPSERVER "ON")
-        set(BUILD_MODULE_YTCPSOCKET "ON")
-        set(BUILD_MODULE_YUDPSERVER "ON")
-        set(BUILD_MODULE_YUDPSOCKET "ON")
-
-        #yLib Framework
-        set(BUILD_MODULE_YTEMP "ON")
-        set(BUILD_MODULE_YMAIN "ON")
-    endif()
-
 elseif(ANDROID)
+
 else()
     message(FATAL_ERROR "Don't support this system ${CMAKE_SYSTEM_NAME}.")    
 endif()

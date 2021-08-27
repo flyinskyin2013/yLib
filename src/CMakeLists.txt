@@ -8,7 +8,6 @@ set(SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/core/yobject.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/core/yexception.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/core/ybasicvalue.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/ysystemerrnohelper.cpp
 
     ${CMAKE_CURRENT_BINARY_DIR}/ylib_extra_infos.cpp
     )
@@ -266,7 +265,10 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
         add_library(ylib SHARED ${SRC})
         if(ENABLE_YLIB_COVERAGE)
 
-            target_compile_options(ylib -coverage -fprofile-arcs -ftest-coverage)
+            # -rdynamic for yException
+            target_compile_options(ylib PRIVATE -coverage -fprofile-arcs -ftest-coverage -rdynamic)
+            # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -coverage -fprofile-arcs -ftest-coverage")
+            # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -coverage -fprofile-arcs -ftest-coverage")
             target_link_libraries(ylib PRIVATE -coverage -lgcov libcurl.a libxml2.a liblog4cpp.a liblibconfig++.a libjsoncpp.a)
         
         else()
@@ -335,12 +337,17 @@ if(WIN32)
 
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
-    #for lib files
-    INSTALL(TARGETS  ylib ylib_s
-        #RUNTIME DESTINATION
-        LIBRARY DESTINATION lib 
-        ARCHIVE DESTINATION lib
-    )
+    if(BUILD_STATIC_YLIB)
+
+        #for lib files
+        INSTALL(TARGETS  ylib ylib_s
+            #RUNTIME DESTINATION
+            LIBRARY DESTINATION lib 
+            ARCHIVE DESTINATION lib
+        )
+
+    endif()
+
 
     INSTALL(TARGETS  ylib
         #RUNTIME DESTINATION
@@ -407,9 +414,13 @@ set(DECELARE_YLIB_BUILTIN_UTILITY_MODULE    "const static std::string G_YLIB_BUI
 configure_file(ylib_extra_infos.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/ylib_extra_infos.cpp @ONLY)
 #----------------------------------------------------------------------------------------
 
+if(BUILD_STATIC_YLIB)
+
 # 
 # clean ylib_s dep-lib-list for example and tests
 # get_target_property(VARMY ylib_s  INTERFACE_LINK_LIBRARIES)
 # message(${VARMY})
 set_target_properties(ylib_s PROPERTIES INTERFACE_LINK_LIBRARIES "")
 # 
+
+endif()

@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-05-22 10:00:54
  * @LastEditors: Sky
- * @LastEditTime: 2020-11-30 15:23:04
+ * @LastEditTime: 2021-08-27 11:18:24
  * @Description: 
  */
 
@@ -13,6 +13,9 @@
 
 #include <new>
 #include <cstddef>
+#include <typeinfo>
+
+
 
 namespace yLib{
 
@@ -25,7 +28,8 @@ namespace yLib{
      *  @brief This is a basic mem-allocator in yLib.
      */
     template<class T>
-    class yBasicAllocator MACRO_PUBLIC_INHERIT_YOBJECT
+    class yBasicAllocator:
+    YLIB_PUBLIC_INHERIT_YOBJECT
     {
     public:
         typedef T               value_type;
@@ -56,55 +60,59 @@ namespace yLib{
     public:
 
         /**
-         *  @fn      pointer allocate(size_type n, const void * hint=static_cast<const void*>(0))
+         *  @fn      pointer allocate(size_type n, const void * hint=static_cast<const void*>(0)) noexcept
          *  @brief   Allocate memory.
          *  @param   n the num of sizeof(T) will be allocted.
          *  @param   hint not use.
          *  @warning 
          *  @return Return a pointer that size is n*sizeof(T) bytes.
          */
-        pointer allocate(size_type n, const void * hint=static_cast<const void*>(0)){
+        pointer allocate(size_type n, const void * hint=static_cast<const void*>(0)) noexcept
+        {
             
             //malloc
-            return static_cast<pointer>(::operator new( (size_t)(sizeof(T) * n) ));
+            return static_cast<pointer>(::operator new((size_t)(sizeof(T) * n), std::nothrow));
         }
 
         /**
-         *  @fn      void deallocate(pointer p, size_type n)
+         *  @fn      void deallocate(pointer p, size_type n) noexcept
          *  @brief   free memory.
          *  @param   p the pointer will be freed.
          *  @param   n not use.
          *  @warning 
          *  @return none
          */
-        void deallocate(pointer p, size_type n) {
+        void deallocate(pointer p, size_type n) noexcept
+        {
 
             //free
             ::operator delete(p);
         }
 
         /**
-         *  @fn      void construct(pointer p, const_reference value)
+         *  @fn      void construct(pointer p, const_reference value) noexcept
          *  @brief   copy-construct a obj on exsited memory.
          *  @param   p the pointer will be constructed.
          *  @param   value the default val for constructed obj.
          *  @warning 
          *  @return none
          */
-        void construct(pointer p, const_reference value) {
+        void construct(pointer p, const_reference value) noexcept
+        {
 
             new ((void *)p) T(value);//inplace new
         }
 
         /**
-         *  @fn      void construct(pointer p, const_rreference value)
+         *  @fn      void construct(pointer p, const_rreference value) noexcept
          *  @brief   move-construct a obj on exsited memory.
          *  @param   p the pointer will be constructed.
          *  @param   value the default val for constructed obj.
          *  @warning 
          *  @return none
          */
-        void construct(pointer p, const_rreference value) {
+        void construct(pointer p, const_rreference value) noexcept
+        {
 
             new ((void *)p) T(value);
         }
@@ -116,24 +124,26 @@ namespace yLib{
          *  @warning 
          *  @return none
          */
-        void destroy(pointer p) {
+        void destroy(pointer p) noexcept
+        {
             
             p->~T();
         }
 
         /**
-         *  @fn      size_type max_size() const
+         *  @fn      size_type max_size() const noexcept
          *  @brief   calculate the max-num of T.
          *  @warning 
          *  @return the max-num of T.
          */
-        size_type max_size() const{
+        size_type max_size() const  noexcept
+        {
 
             return UINTMAX_MAX/sizeof(T);
         }
 
         /**
-         *  @fn      pointer address(reference x) const
+         *  @fn      pointer address(reference x) const noexcept
          *  @brief   calculate the addr of reference(x).
          *  @param   x the obj will be calculated.
          *  @warning 
@@ -141,24 +151,39 @@ namespace yLib{
          *  @retval 
          *  @bug 
          */
-        pointer address(reference x) const{
+        pointer address(reference x) const noexcept
+        {
 
             return (pointer)&x;
         }
 
         /**
-         *  @fn      const_pointer address(const_reference x) const
+         *  @fn      const_pointer address(const_reference x) const noexcept
          *  @brief   calculate the const addr of reference(x)..
          *  @param   x the obj will be calculated.
          *  @warning 
          *  @return the reference(x)'s const addr
          */
-        const_pointer address(const_reference x) const{
+        const_pointer address(const_reference x) const noexcept
+        {
 
             return (const_pointer)&x;
         }
 
+        YLIB_DECLARE_CLASSINFO_CONTENT(yBasicAllocator<T>);
     };
+
+    // abi::__cxa_demangle() convert mangle-str to readable-str for gnu-compiler
+    // #include <cxxabi.h>
+    
+    template<typename T>
+    yLib::yClassInfo<yLib::yBasicAllocator<T>> yLib::yBasicAllocator<T>::class_info( \
+                                                std::string("yBasicAllocator<"+std::string(typeid(T).name())+">"), \
+                                                [](){return std::unique_ptr<yLib::yBasicAllocator<T>>(new (std::nothrow) yBasicAllocator<T>());}); 
+
+
+    template<typename T>    
+    const yLib::yClassInfo<yLib::yBasicAllocator<T>> & yLib::yBasicAllocator<T>::GetClassInfo(void) noexcept {return class_info;} 
 
 }
 

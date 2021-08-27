@@ -3,30 +3,30 @@
  * @Author: Sky
  * @Date: 2020-03-18 17:22:49
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-01 20:04:49
+ * @LastEditTime: 2021-08-27 10:13:39
  * @FilePath: \yLib\tests\ycommon\ycommon_tests.cpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
 #include "catch2/catch.hpp"
 #include "ylib.hpp"
-#include <iostream>
+#include "test_common.hpp"
 
-TEST_CASE( "Test yCommon basic attributes" , "[yCommon_BasicAttributes]" ){
+DEFINE_TEST_CASE_FOR_CLASS_INFO(yCommon)
 
-    SECTION("test GetyLibVersion() ") {
+TEST_CASE( "Test yCommon apis" , "[yCommon_Apis]" ){
 
-        yLib::yCommon _common;
-        std::string _lib_ver = _common.GetyLibVersion();
+    SECTION("test some apis ") {
+#ifdef _WIN32
 
-        REQUIRE_THAT( _lib_ver, Catch::Equals ( std::string("V") + std::to_string(yLib::GetyLibBuildVersionMajor()) + "." + \
-        std::to_string(yLib::GetyLibBuildVersionMinor()) + "." + std::to_string(yLib::GetyLibBuildVersionPatch()) ));
-    }
 
-    SECTION("test GetyLibBuildInfo() ") {
+#elif __linux__ || __linux
+    
+        yLib::yCommon _com;
 
-        yLib::yCommon _common;
-        std::string _lib_build_info = _common.GetyLibBuildInfo();
+        REQUIRE_THAT(_com.ConvertErrnoToStr(EINVAL), Catch::Equals ("Invalid argument"));
 
-        std::cout << _lib_build_info <<std::endl;
+        std::cout<<_com.ConvertErrnoToStr(EINVAL)<<std::endl;
+
+#endif 
     }
 }

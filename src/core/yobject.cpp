@@ -2,12 +2,9 @@
  * @Author: Sky
  * @Date: 2019-09-20 16:59:48
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-14 18:39:13
+ * @LastEditTime: 2021-08-26 16:07:57
  * @Description: 
  */
 #include "core/yobject.hpp"
 
-yLib::yObject::yObject(std::string object_name_){
-
-    object_name = object_name_;
-}
+YLIB_IMPLEMENT_CLASSINFO_CONTENT(yObject)
