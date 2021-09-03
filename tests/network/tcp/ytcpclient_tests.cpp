@@ -2,11 +2,18 @@
  * @Author: Sky
  * @Date: 2020-09-14 11:14:49
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-16 11:51:48
+ * @LastEditTime: 2021-08-31 13:59:36
  * @Description: 
  */
 #include "catch2/catch.hpp"
 #include "ylib.hpp"
+
+#include "test_common.hpp"
+
+#include <iostream>
+
+
+DEFINE_TEST_CASE_FOR_CLASS_INFO(yTcpSocket)
 
 using namespace yLib;
 TEST_CASE( "Test yTcpServer apis" , "[yTcpServer_Apis]" ){
@@ -20,7 +27,7 @@ TEST_CASE( "Test yTcpServer apis" , "[yTcpServer_Apis]" ){
 
         yLib::yTcpSocket tcp_client0;
         yTcpSocket tcp_client1;
-        yTcpSocket tcp_client2(IPPROTO_TCP, false);
+        yTcpSocket tcp_client2(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
         char recv_msg_buff[100];
         uint64_t svr_ip;
@@ -55,10 +62,7 @@ TEST_CASE( "Test yTcpServer apis" , "[yTcpServer_Apis]" ){
 
         ::memset(recv_msg_buff, 0, sizeof(recv_msg_buff));
         
-        std::string _svr_write_msg = "tcpserver recv: " + std::string("I am client0");
-
-        REQUIRE( -2 == tcp_client2.read(recv_msg_buff, 100));
-        std::cout<<"client2: recv: "<<recv_msg_buff<<std::endl; 
+        std::string _svr_write_msg;
 //===================================================================
 
         memset(recv_msg_buff, 0, sizeof(recv_msg_buff));

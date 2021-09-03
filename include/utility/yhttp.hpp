@@ -3,7 +3,7 @@
  * @Author: Sky
  * @Date: 2020-03-18 15:42:22
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-14 18:27:49
+ * @LastEditTime: 2021-08-31 15:40:19
  * @FilePath: \yLib\include\core\yhttp.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -82,21 +82,22 @@ namespace yLib{
         yHttp() noexcept;
         ~yHttp() noexcept;
 
-        int8_t yHttpGet(const yHttpRequestParam &request_param_, yHttpResponseInfo & response_info_);
+        int8_t Get(const yHttpRequestParam &request_param_, yHttpResponseInfo & response_info_);
 
         
         //post application/x-www-form-urlencoded
-        int8_t yHttpPostDefault(const yHttpRequestParam &request_param_, yHttpResponseInfo & response_info_, std::vector<yHttpPostUrlencodedItem> & form_kv_vec_);
+        int8_t PostDefault(const yHttpRequestParam &request_param_, yHttpResponseInfo & response_info_, std::vector<yHttpPostUrlencodedItem> & form_kv_vec_);
         //post application/json
-        int8_t yHttpPostJson(const yHttpRequestParam &request_param_, yHttpResponseInfo & response_info_, std::string & json_str_);
+        int8_t PostJson(const yHttpRequestParam &request_param_, yHttpResponseInfo & response_info_, const std::string & json_str_);
         //post multipart/form-data
-        int8_t yHttpPostMultiPart(const yHttpRequestParam &request_param_, yHttpResponseInfo & response_info_, std::vector<yHttpPostMultiPartItem> & form_multi_part_vec_);
+        int8_t PostMultiPart(const yHttpRequestParam &request_param_, yHttpResponseInfo & response_info_, std::vector<yHttpPostMultiPartItem> & form_multi_part_vec_);
 
         protected:
         
         private:
         bool yhttp_is_init_ok = false;
 
+        YLIB_DECLARE_CLASSINFO_CONTENT(yHttp);
     };
 
 }

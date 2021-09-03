@@ -2,12 +2,20 @@
  * @Author: Sky
  * @Date: 2020-09-09 13:42:25
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-16 14:16:31
+ * @LastEditTime: 2021-08-31 14:01:02
  * @Description: 
  */
 
 #include "catch2/catch.hpp"
 #include "ylib.hpp"
+
+
+#include "test_common.hpp"
+
+#include <iostream>
+
+
+DEFINE_TEST_CASE_FOR_CLASS_INFO(yUdpSocket)
 
 using namespace yLib;
 TEST_CASE( "Test yUdpClient apis" , "[yUdpClient_Apis]" ){
@@ -16,7 +24,8 @@ TEST_CASE( "Test yUdpClient apis" , "[yUdpClient_Apis]" ){
         
         yUdpSocket udp_client0;
         yUdpSocket udp_client1;
-        yUdpSocket udp_client2;
+        yUdpSocket udp_client2(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+        yUdpSocket udp_client3(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 
         char recv_msg_buff[100];
         std::string svr_ip;
@@ -25,6 +34,9 @@ TEST_CASE( "Test yUdpClient apis" , "[yUdpClient_Apis]" ){
         REQUIRE(0 == udp_client0.bind("", 12345));
         REQUIRE(0 == udp_client1.bind("", 12346));
         //udp_client2 not bind, system automatically choose port.
+
+        // check bind failed.
+        REQUIRE(-1 == udp_client3.bind("", 12346));
 
         std::string msg0 = "I am client0";
         REQUIRE(msg0.length() == udp_client0.sendto(msg0.c_str(), msg0.length(), "127.0.0.1", 12355));

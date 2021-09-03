@@ -2,13 +2,13 @@
  * @Author: Sky
  * @Date: 2020-09-08 10:49:42
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-24 16:46:32
+ * @LastEditTime: 2021-08-31 13:58:24
  * @Description: 
  */
 #ifndef __YLIB_NETWORK_YTCP_SERVER_H__
 #define __YLIB_NETWORK_YTCP_SERVER_H__
 
-#include "yabstractsocketserver.h"
+#include "yabstractsocket.h"
 
 #include <utility>
 #include <string>
@@ -21,89 +21,82 @@
 
 namespace yLib{
 
-    typedef void (*OnClientConnectCB)(uint64_t client_fd_, const std::string &client_ip_, uint64_t client_port_);
-    typedef void (*OnClientDisconnectCB)(uint64_t client_fd_, const std::string &client_ip_, uint64_t client_port_);
+    typedef void (*OnClientConnectCB)(uint64_t client_fd, const std::string &client_ip, uint64_t client_port);
+    typedef void (*OnClientDisconnectCB)(uint64_t client_fd, const std::string &client_ip, uint64_t client_port);
 
-    class yTcpServer:public yAbstractSocketServer
+    class yTcpServer:public yAbstractSocket
     {
     private:
-        /* data */
-        typedef std::unordered_map<uint64_t, struct sockaddr_in> yTcpServerSocketMap;
-        std::unordered_map<uint64_t, struct sockaddr_in> client_info_map;
         std::unique_ptr<std::thread> epoll_thread_ptr;
 
-        std::vector<uint32_t> used_client_id_bitmap;
         /**
          * @description: 
          * @param {type} 
          * @return {type} 
          */
-        int64_t get_available_client_id(void);
-        
-        /**
-         * @description: 
-         * @param {type} 
-         * @return {type} 
-         */
-        bool set_available_client_id(uint64_t client_id_);
-
-        /**
-         * @description: 
-         * @param {type} 
-         * @return {type} 
-         */
-        void epoll_thread_context(OnClientConnectCB con_cb_, OnClientDisconnectCB discon_cb_);
+        void epoll_thread_context(OnClientConnectCB con_cb, OnClientDisconnectCB discon_cb) noexcept;
         bool epoll_thread_is_continue;
 
-    public:
-        yTcpServer(void);
-        yTcpServer(uint64_t max_client_num_, int socket_flags_ = 0, bool is_block_ = true);
-        ~yTcpServer();
+        bool is_listen_success = false;
 
-        /**
-         * @description: Check socket(), bind(), listen(), accept() and so on.
-         * @param {type} 
-         * @return {type} 
-        */
-        inline bool socket_is_ready(void);
-
-        /**
-         * @description: bind ip and port
-         * @param {type} 
-         * @return {type} 
-         */
-        int8_t bind(const std::string & ip_, int32_t port_);
-
-        /**
-         * @description: 
-         * @param {type} 
-         * @return {type} 
-         */
-        int8_t start_epoll_thread(OnClientConnectCB con_cb_, \
-            OnClientDisconnectCB discon_cb_, \
-            uint64_t max_listen_num = 5);
+        int max_listen_num = 0;
 
 
         /**
-         * @description: 
+         * @description: yTcpServer don't manage the client
          * @param {type} 
          * @return {type} 
          * =-1: a error occurred.
          * =-2: no data to read.The file descriptor fd refers to a socket and has been marked nonblocking (O_NONBLOCK)
-         * = 0: client maybe close.
+         * = 0: server maybe close.
          * > 0: read n bytes.
          */
-        int64_t read(void *buffer_, size_t count_, uint64_t client_fd_ = 0); 
-        
-        
+        int64_t read(void *buffer, size_t count) const noexcept override{return -1;}
+
         /**
-         * @description: 
+         * @description: yTcpServer don't manage the client
          * @param {type} 
          * @return {type}
          *  =-1: a error occurred.
          *  >=0: write n bytes.
          */
-        int64_t write(const void *buffer_, size_t count_, uint64_t client_fd_ = 0);
+        int64_t write(const void *buffer, size_t count) const noexcept override{return -1;}  
+
+    public:
+        yTcpServer(void) noexcept;
+        yTcpServer(int domain, int type, int protocol) noexcept;
+        ~yTcpServer() noexcept;
+
+        /**
+         * @description: Tcpserver don't need to connect(). we set the is_connect_success to true.
+         * @param {type} 
+         * @return {type} 
+         */
+        int8_t connect(const std::string & ip, int32_t port, int domain = AF_INET) noexcept override;
+
+        /**
+         * @description: clean all flag to default
+         */
+        void clean_to_default(void) noexcept override;        
+
+        /**
+         * @description: Check socket()/bind()/listen() and so on.
+         * @param {type} 
+         * @return {type} 
+         */
+        inline bool socket_is_ready(void) const noexcept override;
+
+
+        /**
+         * @description: 
+         * @param {type} 
+         * @return {type} 
+         */
+        int8_t start_epoll_thread(OnClientConnectCB con_cb, \
+            OnClientDisconnectCB discon_cb, \
+            uint64_t max_listen_num = 5) noexcept;
+
+        YLIB_DECLARE_CLASSINFO_CONTENT(yTcpServer);
     };
 
 }

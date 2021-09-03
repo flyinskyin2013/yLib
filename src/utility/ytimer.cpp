@@ -2,13 +2,16 @@
  * @Author: Sky
  * @Date: 2021-04-07 16:33:17
  * @LastEditors: Sky
- * @LastEditTime: 2021-05-26 10:12:22
+ * @LastEditTime: 2021-08-31 16:27:46
  * @Description: 
  */
 
 #include "utility/ytimer.hpp"
 
 using namespace yLib;
+
+YLIB_IMPLEMENT_CLASSINFO_CONTENT(yTimer)
+
 
 yTimer::yTimer(/* args */) noexcept
 MACRO_INIT_YOBJECT_PROPERTY(yTimer),

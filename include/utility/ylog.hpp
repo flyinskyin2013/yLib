@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:52
  * @LastEditors: Sky
- * @LastEditTime: 2021-04-07 16:24:50
+ * @LastEditTime: 2021-09-03 17:23:15
  * @Description: 
  */
 
@@ -14,6 +14,11 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include <atomic>
+#include <mutex>
+#include <thread>
+#include <queue>
+#include <fstream>
 
 #ifdef _WIN32
     #pragma warning(disable:4067) //warning C4067: 预处理器指令后有意外标记 - 应输入换行符
@@ -57,45 +62,28 @@ namespace log4cpp{
 
 namespace yLib{
 
-#ifdef _WIN32
-
-    #define LOG_FILE_AND_FUNCTION_INFO_STRING std::string("<<  FileName=") + std::string(__FILE__)+ \
-        std::string("  LineNum=") + std::to_string(__LINE__)+ \
-        std::string("  FuncName=") + std::string(__FUNCDNAME__)    
-
-#elif __linux__ || __linux
     // Those contain the signature of the function as well as its bare name
     //__FUNCDNAME__  vs
     //__PRETTY_FUNCTION__ gcc
 
-    /** \def LOG_FILE_AND_FUNCTION_INFO_STRING
-        \brief This macro will record file and func infos of current using postion.
-    */
-    #define LOG_FILE_AND_FUNCTION_INFO_STRING std::string("<<  FileName=") + std::string(__FILE__)+ \
-        std::string("  LineNum=") + std::to_string(__LINE__)+ \
-        std::string("  FuncName=") + std::string(__PRETTY_FUNCTION__)       
-
-#elif __unix__ || __unix
-
-    //TODO
-#endif //__unix__ || __unix
+    // __LINE__
+    // __FILE__
 
 
-    /** \def MSG_BUF_SIZE
-        \brief The max string buffer of yLog.
-    */
-    #define MSG_BUF_SIZE 4096 //4k ,linux-func-stack max size is 8MB
+
 
     //parity: debug < info < warn < error
-    //deprecated the follow macro  ---------  start --------------
-    //For new codes,you should do not use the fllow macro.
-    #define ENABLE_DEBUG_LOG_LEVEL 0x01
-    #define ENABLE_INFO_LOG_LEVEL 0x02
-    #define ENABLE_WARN_LOG_LEVEL 0x04
-    #define ENABLE_ERROR_LOG_LEVEL 0x08
-    #define ENABLE_ALL_LOG_LEVEL (ENABLE_DEBUG_LOG_LEVEL | ENABLE_INFO_LOG_LEVEL | ENABLE_WARN_LOG_LEVEL | ENABLE_ERROR_LOG_LEVEL)
-    #define DISABLE_ALL_LOG_LEVEL 0x00
-    //deprecated the  macro  ---------         end --------------
+
+    typedef enum __em_ylog_severity__:uint16_t{
+
+        LOG_ALL = 0,
+        LOG_TRACE,
+        LOG_DEBUG,
+        LOG_INFO,
+        LOG_WARN,
+        LOG_ERROR,
+        LOG_FATAL
+    } yLogSeverity;
 
 
     /** \enum yLogLevel
@@ -103,409 +91,449 @@ namespace yLib{
     */
     typedef enum __em_ylog_level__:uint16_t{
 
-        _DISABLE_ALL_LOG_LEVEL_ = 0x0000,
+        DISABLE_ALL_LOG_LEVEL = 0x0000,
 
-        _ENABLE_DEBUG_LOG_LEVEL_ = 0x0001,
-        _DISABLE_DEBUG_LOG_LEVEL_ = (uint16_t)~_ENABLE_DEBUG_LOG_LEVEL_,
+        ENABLE_DEBUG_LOG_LEVEL = 0x0001,
+        DISABLE_DEBUG_LOG_LEVEL = (uint16_t)~ENABLE_DEBUG_LOG_LEVEL,
 
-        _ENABLE_INFO_LOG_LEVEL_ = 0x0002,
-        _DISABLE_INFO_LOG_LEVEL_ = (uint16_t)~_ENABLE_INFO_LOG_LEVEL_,
+        ENABLE_INFO_LOG_LEVEL = 0x0002,
+        DISABLE_INFO_LOG_LEVEL = (uint16_t)~ENABLE_INFO_LOG_LEVEL,
 
-        _ENABLE_WARN_LOG_LEVEL_ = 0x0004,
-        _DISABLE_WARN_LOG_LEVEL_ = (uint16_t)~_ENABLE_WARN_LOG_LEVEL_,
+        ENABLE_WARN_LOG_LEVEL = 0x0004,
+        DISABLE_WARN_LOG_LEVEL = (uint16_t)~ENABLE_WARN_LOG_LEVEL,
 
-        _ENABLE_ERROR_LOG_LEVEL_ = 0x0008,
-        _DISABLE_ERROR_LOG_LEVEL_ = (uint16_t)~_ENABLE_ERROR_LOG_LEVEL_,
+        ENABLE_ERROR_LOG_LEVEL = 0x0008,
+        DISABLE_ERROR_LOG_LEVEL = (uint16_t)~ENABLE_ERROR_LOG_LEVEL,
 
-        _ENABLE_ALL_LOG_LEVEL_ = 0xFFFF,
+        ENABLE_ALL_LOG_LEVEL = 0xFFFF,
     } yLogLevel;
-
     /*
         idx------>
     */
 
-    /** \struct SubCategoryProperty
-        \brief the sub category property.
-    */
-    typedef struct __st_sub_category_property__
-    {
-        /* data */
-        log4cpp::Category * _ptr_sub_category = nullptr;
-        uint16_t _c_sub_log4cpp_log_level = yLogLevel::_ENABLE_ALL_LOG_LEVEL_;
-        uint16_t _c_sub_ylog_log_level = yLogLevel::_ENABLE_ALL_LOG_LEVEL_;
-
-    } SubCategoryProperty;
-    
-    /** \typedef SubCategoryProperty
-        \brief typedef std::unordered_map<std::string, SubCategoryProperty> to TypeSubCategoryMap
-    */
-    typedef std::unordered_map<std::string, SubCategoryProperty> TypeSubCategoryMap;
 
     /** \struct EnableyLogFileParam
         \brief the param of enabling log file.
     */
     typedef struct __st_enable_ylog_file_param__{
 
-        std::string cfg_file_path;
-
+        std::string file_base_name = "";
+        std::string file_dir = "";
         /**
-         *  @var    other_category_name_vec
-         *  @brief If this vector is empty, the yLog only have root-category. 
-         *  If we want to save log to different files, we can create other categories. 
-        */  
-        std::vector<std::string> other_category_name_vec;
+         *  @var    multi_log_file
+         *  @brief if true store multi-log-file by tag. default value is false. 
+         */  
+        bool multi_log_file = false;
+
+        bool flush_every_times = true;
+
+        // default 20MB
+        ssize_t log_file_max_size = 1024*1024*20;
+
+        uint32_t log_file_max_backup_num = 2;
+
+        // (ms)
+        uint32_t flush_timeout = 200;
     } EnableyLogFileParam;
+
+    struct yLogTagProperty{
+ 
+        uint16_t log_level = ENABLE_ALL_LOG_LEVEL;
+        static EnableyLogFileParam file_param;
+        bool is_log_to_file = false;
+        bool is_log_to_stdio = true;
+    };
+
+    class yLogMessageVoidify {
+    public:
+    yLogMessageVoidify() { }
+
+    // for (exp)?(void)0:yLogMessageVoidify()&(other-exp)
+    void operator&(std::ostream&) { }
+    };
+
+    #define YLIB_YLOGMESSAGE_MAX_LEN  1024*8
+    class __YLIB_EXPORT__ yLogMessage:
+    YLIB_PUBLIC_INHERIT_YOBJECT
+    {
+        public:
+        const static int max_message_len;//8k
+
+        public:
+        class yLogStreamBuf:public std::streambuf{
+            public:
+            yLogStreamBuf(char * buf, size_t len){
+                
+                // set new stream buf, the len of buf must be greater than 1.
+                setp(buf, buf + len - 1);
+            }
+            // overrite
+            int overflow (int c = EOF) override{
+
+                is_overflow = true;
+                return 0;
+            }
+
+            char *buf_base_ptr(void){return pbase();}
+            char *buf_cur_ptr(void){return pptr();}
+            char *buf_end_ptr(void){return epptr();}
+
+            bool is_overflow = false;
+        };
+        class yLogStream:public std::ostream{
+
+            public:
+            yLogStream(char * buf, size_t len)
+            :std::ostream(NULL), stream_buf(buf, len)
+            {
+                rdbuf(&stream_buf);
+            }
+            
+            
+            yLogStreamBuf stream_buf;
+        };
+        struct yLogMessageData{
+            yLogMessageData():log_stream(msg_buf, YLIB_YLOGMESSAGE_MAX_LEN + 1){}
+            char msg_buf[YLIB_YLOGMESSAGE_MAX_LEN + 1];
+            yLogStream log_stream;
+            yLib::yLogSeverity log_severity;
+            int file_line;
+            std::string file_name;
+            std::string log_tag;
+            struct ::timespec time_spec;
+            struct ::tm tm_time;      
+            int thread_id;
+
+            int log_prefix_len = 0;
+        };
+
+        std::ostream & stream(void) noexcept {return msg_data->log_stream;}
+        public:
+        yLogMessage(const yLogMessage &msg) = delete;
+        yLogMessage(const yLogMessage &&msg) = delete;
+        yLogMessage& operator=(const yLogMessage &msg) = delete;
+        yLogMessage& operator=(const yLogMessage &&msg) = delete;
+        yLogMessage(const std::string & log_tag, yLib::yLogSeverity log_severity, const std::string &file_name, int file_line, bool newline = true) noexcept;
+        ~yLogMessage() noexcept;
+        
+        private:
+        std::unique_ptr<yLogMessageData> msg_data;
+        bool is_add_newline = false;
+    };
+
+
+
+    class yLogFile{
+
+        public:
+        void write(const char* message, size_t message_len, bool flush, const std::string &tag);
+
+        yLogFile(std::shared_ptr<std::unordered_map<std::string, yLogTagProperty>> tag_prop_map);
+        yLogFile() = delete;
+        ~yLogFile();
+        private:
+        std::atomic<bool> write_thread_is_continue{false};
+        std::atomic<bool> is_flush{false};
+        std::atomic<bool> write_thread_is_ready{false};
+
+        std::unique_ptr<std::thread> write_thread_ptr = nullptr;
+
+        void write_thread_func(void);
+
+        std::shared_ptr<std::unordered_map<std::string, yLogTagProperty>> tag_prop_map = nullptr;
+
+        // pair<tag, msg>
+        std::queue<std::pair<std::string, std::string>> file_cache_queue;
+        std::mutex file_cache_queue_mtx;
+
+
+        bool create_log_file(void);
+        
+        std::unordered_map<std::string, std::pair<std::string,std::shared_ptr<std::ofstream>>> log_file_handle_map;
+
+        struct ::timespec old_time_spec;
+
+        void flush_log_file(void);
+    };
+
+
+
+    class yLogDestination{
+
+        public:
+        static yLogDestination* CreateInstance(std::shared_ptr<std::unordered_map<std::string, yLogTagProperty>> tag_prop_map) noexcept;
+        void LogToStdIO(yLib::yLogSeverity severity, const char* message, size_t message_len) noexcept;
+        void LogToFile(const char* message, size_t message_len, bool flush, const std::string &tag) noexcept;   
+
+        yLogFile log_file;     
+
+        protected:
+        yLogDestination(std::shared_ptr<std::unordered_map<std::string, yLogTagProperty>> tag_prop_map);
+
+        std::shared_ptr<std::unordered_map<std::string, yLogTagProperty>> tag_prop_map = nullptr;
+        static yLib::yLogDestination* instance;
+    };
 
     //yLog support thread-safety,defaultly.
     /**
      *  @class yLog
      *  @brief This is log-class based on log4cpp in yLib.
+     *  Ref:google glog
+     *      log4cpp
      */
     class __YLIB_EXPORT__ yLog MACRO_PUBLIC_INHERIT_YOBJECT{
 
-        public:
-            /**
-             *  @fn      yLog(const yLog & log) = delete
-             *  @brief   Copy constructor
-             *  @param   log exsited obj.
-             *  @warning This op is deleted.
-             *  @return 
-             */            
+        public:        
+            yLog() = delete;
+            ~yLog() = delete;
             yLog(const yLog & log) = delete;
-
-            /**
-             *  @fn      yLog & operator=(const yLog & log) = delete
-             *  @brief   Assignment constructor
-             *  @param   log exsited obj.
-             *  @warning This op is deleted.
-             *  @return The reference of yLog's object.
-             */
             yLog & operator=(const yLog & log) = delete;
-
-            /**
-             *  @fn      yLog(const yLog && log) = delete
-             *  @brief   Move constructor
-             *  @param   log exsited obj.
-             *  @warning This op is deleted.
-             *  @return 
-             */
             yLog(const yLog && log) = delete;
+            yLog & operator=(const yLog && log) = delete;
 
             /**
-             *  @fn      yLog && operator=(const yLog && log) = delete
-             *  @brief   Assignment constructor
-             *  @param   log exsited obj.
-             *  @warning This op is deleted.
-             *  @return The reference of yLog's object.
+             *  @fn      static void Init(const yLogTagProperty & tag_prop, const std::string &tag = "") noexcept
+             *  @brief   Init log tag param. If you want to set log-file-prop, must call it before any yLib::yLog's memeber and macro LOGXXX.
+             *  @param   tag_prop the tag param.
+             *  @param   tag log tag
+             * 
              */
-            yLog && operator=(const yLog && log) = delete;
-  
-            /**
-             *  @fn      static void EnableyLogFile(bool is_enable, const EnableyLogFileParam & param);
-             *  @brief   Enable or disable yLog to file.
-             *  @param   is_enable if enable yLog to file.
-             *  @param   param the param of yLog to file.
-             *  @warning None
-             *  @return  void
-             *  @exception None
-             */    
-            static void EnableyLogFile(bool is_enable, const EnableyLogFileParam & param);
+            static void Init(const yLogTagProperty & tag_prop, const std::string &tag = "") noexcept;
 
-
-            /**
-             *  @fn      static void SetLog4cpp(bool enable_log4cpp = false, std::string log_path = "log4cplus.properties")
-             *  @brief   Enable or disable log4cpp
-             *  @param   enable_log4cpp if enable log4cpp
-             *  @param   log_path log4cpp's cfg-file
-             *  @warning 
-             *  @return 
-             *  @exception throw a anonymous exception if the log4cpp's cfg-file is invalid.
-             */    
-			static void SetLog4cpp(bool enable_log4cpp = false, std::string log_path = "log4cplus.properties");
-
-            /**
-             *  @fn      static void SetLog4cppSubCategory(std::string category_name)
-             *  @brief   Create a sub-category for log4cpp.
-             *  @param   category_name the sub-category name
-             *  @warning 
-             *  @return 
-             *  @exception 
-             */    	
-            static void SetLog4cppSubCategory(std::string category_name);
-
-            //If you want to enable this feature,system must define _POSIX_SHARED_MEMORY_OBJECTS(getconf -a)
-            /**
-             *  @fn      static void SetProcessSafetyFeature(bool enable_feature)
-             *  @brief   If you want to enable this feature,system must define _POSIX_SHARED_MEMORY_OBJECTS(getconf -a)
-             *  @param   enable_feature enable or disable thread-satety.
-             *  @warning 
-             *  @return 
-             *  @exception 
-             */    	
-            static void SetProcessSafetyFeature(bool enable_feature);
-
-            /**
-             *  @fn      static void SetLog4cppLogLevel(uint16_t log_level)
-             *  @brief   set the log4cpp level
-             *  @param   log_level enable log-level.
-             *  @warning 
-             *  @return 
-             *  @exception 
-             */    	
-            static void SetLog4cppLogLevel(uint16_t log_level);
-
-            /**
-             *  @fn      static void SetLog4cppLogLevel(std::string &category_name, uint16_t log_level)
-             *  @brief   set the log4cpp level(parity: debug < info < warn < error)
-             *  @param   category_name the sub-category name
-             *  @param   log_level enable log-level.
-             *  @warning 
-             *  @return 
-             *  @exception 
-             */    	
-            static void SetLog4cppLogLevel(std::string &category_name, uint16_t log_level);
-            
-
-            /**
-             *  @fn      static void SetyLogLogLevel(uint16_t log_level)
-             *  @brief   set the ylog level
-             *  @param   log_level enable log-level.
-             *  @warning 
-             *  @return 
-             *  @exception 
-             */    	
-            static void SetyLogLogLevel(uint16_t log_level);
-
-            /**
-             *  @fn      static void SetyLogLogLevel(std::string &category_name, uint16_t log_level)
-             *  @brief   set the ylog level(parity: debug < info < warn < error)
-             *  @param   category_name the sub-category name
-             *  @param   log_level enable log-level.
-             *  @warning 
-             *  @return 
-             *  @exception 
-             */               
-            static void SetyLogLogLevel(std::string &category_name, uint16_t log_level);
-            
             /**
              *  @fn      static void D(const std::string fmt , ...)
              *  @brief   the debug log
              *  @param   fmt the format of info-string.
              */    	            
-            static void D(const std::string fmt , ...);
-
+            static void D(const std::string &fmt , ...) noexcept;
+            /**
+             *  @fn      static void D(const std::string &tag, const std::string &fmt , ...) noexcept
+             *  @brief   the debug log
+             *  @param   tag the sub-category name.
+             *  @param   fmt the format of info-string.
+             *  Note: remove const of tag, D("%s", "123") will not call D(const std::string &fmt , ...).
+             */    
+            static void D(const std::string &tag, const std::string &fmt , ...) noexcept;
+            /**
+             *  @fn      static void D(const char *fmt , const char * str) noexcept
+             *  @brief   the error log
+             *  @param   str the str of %s.
+             *  @param   fmt the format of info-string.
+             *  Note:
+             *  This overrite-func only can be used when D("", "")
+             */   
+            static void D(const char *fmt , const char * str) noexcept;
+            
             /**
              *  @fn      static void W(const std::string fmt , ...)
              *  @brief   the warn log
              *  @param   fmt the format of info-string.
              */    
-            static void W(const std::string fmt , ...);
+            static void W(const std::string &fmt , ...) noexcept;
+            /**
+             *  @fn      static void W(const std::string &tag, const std::string &fmt , ...) noexcept
+             *  @brief   the warn log
+             *  @param   tag the sub-category name.
+             *  @param   fmt the format of info-string.
+             * Note: remove const of tag, D("%s", "123") will not call D(const std::string &fmt , ...).
+             */   
+            static void W(const std::string &tag, const std::string &fmt , ...) noexcept;
+            /**
+             *  @fn      static void W(const char *fmt , const char * str) noexcept
+             *  @brief   the error log
+             *  @param   str the str of %s.
+             *  @param   fmt the format of info-string.
+             *  Note:
+             *  This overrite-func only can be used when W("", "")
+             */   
+            static void W(const char *fmt , const char * str) noexcept;
 
             /**
              *  @fn      static void I(const std::string fmt , ...)
              *  @brief   the info log
              *  @param   fmt the format of info-string.
              */    
-            static void I(const std::string fmt , ...);
+            static void I(const std::string &fmt , ...) noexcept;
+            /**
+             *  @fn      static void I(const std::string &tag, const std::string &fmt , ...) noexcept
+             *  @brief   the info log
+             *  @param   tag the sub-category name.
+             *  @param   fmt the format of info-string.
+             * Note: remove const of tag, D("%s", "123") will not call D(const std::string &fmt , ...).
+             */   
+            static void I(const std::string &tag, const std::string &fmt , ...) noexcept;
+            /**
+             *  @fn      static void I(const char *fmt , const char * str) noexcept
+             *  @brief   the error log
+             *  @param   str the str of %s.
+             *  @param   fmt the format of info-string.
+             *  Note:
+             *  This overrite-func only can be used when I("", "")
+             */   
+            static void I(const char *fmt , const char * str) noexcept; 
 
             /**
              *  @fn      static void E(const std::string fmt , ...)
              *  @brief   the error log
              *  @param   fmt the format of info-string.
              */    
-            static void E(const std::string fmt , ...);
-            
+            static void E(const std::string &fmt , ...) noexcept;
             /**
-             *  @fn      static void D(std::string &category_name, const std::string fmt , ...)
-             *  @brief   the debug log
-             *  @param   category_name the sub-category name.
-             *  @param   fmt the format of info-string.
-             */    
-            static void D(std::string &category_name, const std::string fmt , ...);
-
-            /**
-             *  @fn      static void W(std::string &category_name, const std::string fmt , ...)
-             *  @brief   the warn log
-             *  @param   category_name the sub-category name.
-             *  @param   fmt the format of info-string.
-             */   
-            static void W(std::string &category_name, const std::string fmt , ...);
-
-            /**
-             *  @fn      static void I(std::string &category_name, const std::string fmt , ...)
-             *  @brief   the info log
-             *  @param   category_name the sub-category name.
-             *  @param   fmt the format of info-string.
-             */   
-            static void I(std::string &category_name, const std::string fmt , ...);
-
-            /**
-             *  @fn      static void E(std::string &category_name, const std::string fmt , ...)
+             *  @fn      static void E(const std::string &tag, const std::string &fmt , ...) noexcept
              *  @brief   the error log
-             *  @param   category_name the sub-category name.
+             *  @param   tag the sub-category name.
              *  @param   fmt the format of info-string.
+             * 
              */   
-            static void E(std::string &category_name, const std::string fmt , ...);
+            static void E(const std::string &tag, const std::string &fmt , ...) noexcept;  
 
             /**
-             *  @fn      static void D(std::string &category_name, const std::string fmt , ...)
-             *  @brief   the debug log
-             *  @param   fmt the format of info-string.
-             */ 
-            static void D(const char * fmt , ...);
-
-            /**
-             *  @fn      static void W(std::string &category_name, const std::string fmt , ...)
-             *  @brief   the warn log
-             *  @param   fmt the format of info-string.
-             */ 
-            static void W(const char * fmt , ...);
-
-            /**
-             *  @fn      static void I(std::string &category_name, const std::string fmt , ...)
-             *  @brief   the info log
-             *  @param   fmt the format of info-string.
-             */ 
-            static void I(const char * fmt , ...);
-
-            /**
-             *  @fn      static void E(std::string &category_name, const std::string fmt , ...)
+             *  @fn      static void E(const char *fmt , const char * str) noexcept
              *  @brief   the error log
+             *  @param   str the str of %s.
              *  @param   fmt the format of info-string.
-             */ 
-            static void E(const char * fmt , ...);
-
-
-
-            /**
-             *  @fn      static void D(std::string &category_name, const char * fmt , ...)
-             *  @brief   the debug log
-             *  @param   category_name the sub-category name.
-             *  @param   fmt the format of info-string.
-             */               
-            static void D(std::string &category_name, const char * fmt , ...);
-
-            /**
-             *  @fn      static void W(std::string &category_name, const char * fmt , ...)
-             *  @brief   the warn log
-             *  @param   category_name the sub-category name.
-             *  @param   fmt the format of info-string.
+             *  Note:
+             *  This overrite only can be used, when E("", "")
              */   
-            static void W(std::string &category_name, const char * fmt , ...);
+            static void E(const char *fmt , const char * str) noexcept; 
 
-            /**
-             *  @fn      static void I(std::string &category_name, const char * fmt , ...)
-             *  @brief   the info log
-             *  @param   category_name the sub-category name.
-             *  @param   fmt the format of info-string.
-             */   
-            static void I(std::string &category_name, const char * fmt , ...);
-
-            /**
-             *  @fn      static void E(std::string &category_name, const char * fmt , ...)
-             *  @brief   the error log
-             *  @param   category_name the sub-category name.
-             *  @param   fmt the format of info-string.
-             */   
-            static void E(std::string &category_name, const char * fmt , ...);
         protected:
-        /**
-         *  @fn    yLog()
-         *  @brief Default constructor
-         *  @warning yLog is a static-class, we can not instance it
-         */
-        yLog() noexcept; // yLog is a static-class, we can not instance it
 
+        friend class yLib::yLogMessage;
+        static void Log(const std::string & tag, yLib::yLogSeverity severity, const std::string &msg);
         
-        /**
-         *  @fn    ~yObject()
-         *  @brief Default destructor
-         */
-        ~yLog() noexcept;
+        /** \def YLIB_YLOG_MSG_BUF_MAX_SIZE
+            \brief The max string buffer of yLog. default 8kb.
+        */
+        static uint32_t YLIB_YLOG_MSG_BUF_MAX_SIZE;
         private:
 
-
         /**
-         *  @fn      static void _ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg_list)
+         *  @fn      static void convert_fmt_to_str(uint16_t log_type, const char * fmt, va_list arg_list, std::string & category_name)
          *  @brief   the basic-implement of D I W E
          *  @param   log_type the sub-category name.
          *  @param   fmt the format of info-string.
          *  @param   arg_list the input arg-lists
+         *  @param   tag the sub-category name
+         *  @param   special_override_func_str this param only used for yLib::yLog::X(const char*, const char*)
          */   
-        static void _ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg_list);
-
-        /**
-         *  @fn      static void _ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg_list, std::string & category_name)
-         *  @brief   the basic-implement of D I W E
-         *  @param   log_type the sub-category name.
-         *  @param   fmt the format of info-string.
-         *  @param   arg_list the input arg-lists
-         *  @param   category_name the sub-category name
-         */   
-        static void _ylog_log_impl(uint16_t log_type, const char * fmt, va_list arg_list, std::string & category_name);
-
-        /**
-         *  @var    _c_ptr_msg_buf
-         *  @brief the buffer of the log-string
-         */        
-        static char _c_ptr_msg_buf[MSG_BUF_SIZE];
-
-        /**
-         *  @var    _ptr_log4_category_root
-         *  @brief the handle of log4cpp::Category
-         */        
-        static log4cpp::Category * _ptr_log4_category_root;
-
-        /**
-         *  @var    _log4cpp_sub_category_map
-         *  @brief the sub-category map
-         */       
-        static TypeSubCategoryMap _log4cpp_sub_category_map;
-
-
-        /**
-         *  @var    _b_enable_log4cpp
-         *  @brief if enable log4cpp
-         */  
-        static bool _b_enable_log4cpp;
-
+        static void convert_fmt_to_str(yLib::yLogSeverity log_type, const char * fmt, va_list arg_list, const std::string & tag, const char * special_override_func_str = nullptr);
         
-        /**
-         *  @var    _b_enable_feature_ps
-         *  @brief if enable process-safety.
-         */  
-        static bool _b_enable_feature_ps;
-        
+        static void ylog_log_impl(yLib::yLogSeverity log_type, const std::string & msg, const std::string &tag = "");
 
-        /**
-         *  @var    _c_log4cpp_log_level
-         *  @brief current log4cpp log-level.
-         */  
-        static uint16_t _c_log4cpp_log_level;
-        
-        /**
-         *  @var    _c_ylog_log_level
-         *  @brief current ylog log-level.
-         */  
-        static uint16_t _c_ylog_log_level;
+        static bool check_log_level(yLib::yLogSeverity log_type, const std::string &tag);
 
+        static void check_tag(const std::string & tag);
 
+        static std::shared_ptr<std::unordered_map<std::string, yLogTagProperty>> ylog_tag_prop_map;
 
-#ifdef _WIN32
+        static std::unique_ptr<char[]> ylog_msg_buf;
 
-        static HANDLE _thread_mutex_handle;
-        static bool _thread_mutex_is_init;
-        static void _init_thread_mutex(void);
+        static std::mutex ylog_msg_buf_mtx;
 
-#elif __linux__ || __linux
-
-        static pthread_mutex_t _thread_mutex;
-        static pthread_mutex_t _process_mutex;
-
-#elif __unix__ || __unix
-
-#endif //__unix__ || __unix
+        static std::unique_ptr<yLogDestination> ylog_destination;
     };
+
+    
+    #define LOG_COUNTER_VARNAME_CONCAT(base, line) base ## line
+    #define LOG_COUNTER_VARNAME(base, line) LOG_COUNTER_VARNAME_CONCAT(base, line)
+    #define LOG_COUNTER_VARNAME_REFERENCE LOG_COUNTER_VARNAME(__ylib_ylog_log_counter, __LINE__)
+    #define LOG_COUNTER_MOD_VARNAME_REFERENCE LOG_COUNTER_VARNAME(__ylib_ylog_log_counter_mod, __LINE__)
+
+    #define LOG(tag, severity) \
+            yLib::yLogMessage(std::string(#tag), severity, __FILE__, __LINE__).stream()
+
+    #define LOG_IF(tag, condition, severity) \
+            !(condition) ? (void) 0 : yLib::yLogMessageVoidify()&LOG(tag, severity) 
+
+    #define LOG_EVERY_N(tag, n, severity) \
+            static std::atomic<uint32_t> LOG_COUNTER_VARNAME_REFERENCE(0); \
+            static std::atomic<uint32_t> LOG_COUNTER_MOD_VARNAME_REFERENCE(0); \
+            LOG_COUNTER_VARNAME_REFERENCE++; \
+            if(++LOG_COUNTER_MOD_VARNAME_REFERENCE>(n)) LOG_COUNTER_MOD_VARNAME_REFERENCE-=(n); \
+            if(1 == LOG_COUNTER_MOD_VARNAME_REFERENCE) \
+                LOG(tag, severity)
+
+    #define LOG_IF_EVERY_N(tag, condition, n, severity) \
+            static std::atomic<uint32_t> LOG_COUNTER_VARNAME_REFERENCE(0); \
+            static std::atomic<uint32_t> LOG_COUNTER_MOD_VARNAME_REFERENCE(0); \
+            LOG_COUNTER_VARNAME_REFERENCE++; \
+            if(++LOG_COUNTER_MOD_VARNAME_REFERENCE>(n)) LOG_COUNTER_MOD_VARNAME_REFERENCE-=(n); \
+            if ( (condition)&&(1 == LOG_COUNTER_MOD_VARNAME_REFERENCE) ) \
+                LOG(tag, severity)
+            
+
+    #define LOG_FIRST_N(tag, n, severity) \
+            static std::atomic<uint32_t> LOG_COUNTER_VARNAME_REFERENCE(0); \
+            if(LOG_COUNTER_VARNAME_REFERENCE <= (n)) LOG_COUNTER_VARNAME_REFERENCE ++; \
+            if(LOG_COUNTER_VARNAME_REFERENCE <= (n)) \
+                LOG(tag, severity)
+
+
+            
+    // ERROR
+    #define LOGE(tag)                                                                    \
+        LOG(tag, yLib::yLogSeverity::LOG_ERROR)
+    
+    #define LOGE_IF(tag, condition)                                                      \
+        LOG_IF(tag, condition, yLib::yLogSeverity::LOG_ERROR)
+        
+    #define LOGE_IF_EVERY_N(tag, condition, n)                                             \
+        LOG_IF_EVERY_N(tag, condition, n, yLib::yLogSeverity::LOG_ERROR)
+
+    #define LOGE_EVERY_N(tag, n)                                                            \
+        LOG_EVERY_N(tag, n, yLib::yLogSeverity::LOG_ERROR)
+
+    #define LOGE_FIRST_N(tag, n)                                                            \
+        LOG_FIRST_N(tag, n, yLib::yLogSeverity::LOG_ERROR)
+
+    // WARN
+    #define LOGW(tag)                                                                    \
+        LOG(tag, yLib::yLogSeverity::LOG_WARN)
+    
+    #define LOGW_IF(tag, condition)                                                      \
+        LOG_IF(tag, condition, yLib::yLogSeverity::LOG_WARN)
+        
+    #define LOGW_IF_EVERY_N(tag, condition, n)                                             \
+        LOG_IF_EVERY_N(tag, condition, n, yLib::yLogSeverity::LOG_WARN)
+
+    #define LOGW_EVERY_N(tag, n)                                                            \
+        LOG_EVERY_N(tag, n, yLib::yLogSeverity::LOG_WARN)
+
+    #define LOGW_FIRST_N(tag, n)                                                            \
+        LOG_FIRST_N(tag, n, yLib::yLogSeverity::LOG_WARN)
+
+    // INFO
+    #define LOGI(tag)                                                                    \
+        LOG(tag, yLib::yLogSeverity::LOG_INFO)
+    
+    #define LOGI_IF(tag, condition)                                                      \
+        LOG_IF(tag, condition, yLib::yLogSeverity::LOG_INFO)
+        
+    #define LOGI_IF_EVERY_N(tag, condition, n)                                             \
+        LOG_IF_EVERY_N(tag, condition, n, yLib::yLogSeverity::LOG_INFO)
+
+    #define LOGI_EVERY_N(tag, n)                                                            \
+        LOG_EVERY_N(tag, n, yLib::yLogSeverity::LOG_INFO)
+
+    #define LOGI_FIRST_N(tag, n)                                                            \
+        LOG_FIRST_N(tag, n, yLib::yLogSeverity::LOG_INFO)
+
+    // DEBUG
+    #define LOGD(tag)                                                                    \
+        LOG(tag, yLib::yLogSeverity::LOG_DEBUG)
+    
+    #define LOGD_IF(tag, condition)                                                      \
+        LOG_IF(tag, condition, yLib::yLogSeverity::LOG_DEBUG)
+        
+    #define LOGD_IF_EVERY_N(tag, condition, n)                                             \
+        LOG_IF_EVERY_N(tag, condition, n, yLib::yLogSeverity::LOG_DEBUG)
+
+    #define LOGD_EVERY_N(tag, n)                                                            \
+        LOG_EVERY_N(tag, n, yLib::yLogSeverity::LOG_DEBUG)
+
+    #define LOGD_FIRST_N(tag, n)                                                            \
+        LOG_FIRST_N(tag, n, yLib::yLogSeverity::LOG_DEBUG)
 }
 
 

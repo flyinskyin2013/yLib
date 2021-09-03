@@ -3,7 +3,7 @@
  * @Author: Sky
  * @Date: 2020-03-18 15:42:09
  * @LastEditors: Sky
- * @LastEditTime: 2020-12-11 09:44:55
+ * @LastEditTime: 2021-08-31 16:13:17
  * @FilePath: \yLib\src\yhttp.cpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -20,6 +20,9 @@ extern "C"{
 #ifdef __cplusplus
 }
 #endif //__cplusplus
+
+
+YLIB_IMPLEMENT_CLASSINFO_CONTENT(yHttp)
 
 
 static void __little_endian_uint32_to_buf__(uint8_t * buf_,uint32_t len_){
@@ -294,7 +297,7 @@ static int8_t __yhttp_cleanup__(CURL * ptr_http_handle_, \
     return -1;
 }
 
-int8_t yLib::yHttp::yHttpGet(const yHttpRequestParam &request_param_, yHttpResponseInfo & response_info_){
+int8_t yLib::yHttp::Get(const yHttpRequestParam &request_param_, yHttpResponseInfo & response_info_){
 
     CURL * ptr_http_handle = NULL;
     struct curl_slist *http_headers = NULL;
@@ -352,7 +355,7 @@ int8_t yLib::yHttp::yHttpGet(const yHttpRequestParam &request_param_, yHttpRespo
 }
 
 //post application/x-www-form-urlencoded
-int8_t yLib::yHttp::yHttpPostDefault(const yHttpRequestParam &request_param_, yHttpResponseInfo & response_info_, std::vector<yHttpPostUrlencodedItem> & form_kv_vec_){
+int8_t yLib::yHttp::PostDefault(const yHttpRequestParam &request_param_, yHttpResponseInfo & response_info_, std::vector<yHttpPostUrlencodedItem> & form_kv_vec_){
 
     CURL * ptr_http_handle = NULL;
     struct curl_slist *http_headers = NULL;
@@ -431,7 +434,7 @@ int8_t yLib::yHttp::yHttpPostDefault(const yHttpRequestParam &request_param_, yH
     return 0;    
 }
 //post application/json
-int8_t yLib::yHttp::yHttpPostJson(const yHttpRequestParam &request_param_, yHttpResponseInfo & response_info_, std::string & json_str_){
+int8_t yLib::yHttp::PostJson(const yHttpRequestParam &request_param_, yHttpResponseInfo & response_info_, const std::string & json_str_){
 
     CURL * ptr_http_handle = NULL;
     struct curl_slist *http_headers = NULL;
@@ -505,7 +508,7 @@ int8_t yLib::yHttp::yHttpPostJson(const yHttpRequestParam &request_param_, yHttp
     return 0;    
 }
 //post multipart/form-data
-int8_t yLib::yHttp::yHttpPostMultiPart(const yHttpRequestParam &request_param_, yHttpResponseInfo & response_info_, std::vector<yHttpPostMultiPartItem> & form_multi_part_vec_){
+int8_t yLib::yHttp::PostMultiPart(const yHttpRequestParam &request_param_, yHttpResponseInfo & response_info_, std::vector<yHttpPostMultiPartItem> & form_multi_part_vec_){
 
     CURL * ptr_http_handle = NULL;
     struct curl_slist *http_headers = NULL;
@@ -561,6 +564,9 @@ int8_t yLib::yHttp::yHttpPostMultiPart(const yHttpRequestParam &request_param_, 
             if ( CURL_FORMADD_OK !=  _curl_form_add_code){//error deal
 
                 yLib::yLog::E("set http post muilt part data failed. error code %d, multipart idx %d", _curl_form_add_code, form_multi_part_vec_.end()-iter_);
+                curl_formfree(_http_post);
+                curl_slist_free_all(http_headers);
+                curl_easy_cleanup(ptr_http_handle);
                 return -1;
             }
         }
@@ -576,6 +582,9 @@ int8_t yLib::yHttp::yHttpPostMultiPart(const yHttpRequestParam &request_param_, 
             if ( CURL_FORMADD_OK !=  _curl_form_add_code){//error deal
 
                 yLib::yLog::E("set http post muilt part data failed. error code %d, multipart idx %d", _curl_form_add_code, form_multi_part_vec_.end()-iter_);
+                curl_formfree(_http_post);
+                curl_slist_free_all(http_headers);
+                curl_easy_cleanup(ptr_http_handle);
                 return -1;
             }
         }
@@ -589,6 +598,7 @@ int8_t yLib::yHttp::yHttpPostMultiPart(const yHttpRequestParam &request_param_, 
 
         curl_slist_free_all(http_headers);
         curl_easy_cleanup(ptr_http_handle);
+        curl_formfree(_http_post);
         yLib::yLog::E("set http multi post part failed.");
         return -1;
     }
@@ -596,7 +606,8 @@ int8_t yLib::yHttp::yHttpPostMultiPart(const yHttpRequestParam &request_param_, 
     //set response callback and buffer
     data_buffer_ptr_ = (uint8_t *)malloc(1024 * sizeof(uint8_t));
     if (0 > __yhttp_set_response_callback_buffer__(ptr_http_handle, &data_buffer_ptr_, 1024 * sizeof(uint8_t))){
-            
+        
+        curl_formfree(_http_post);
         __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
         return -1;
     }
@@ -604,7 +615,7 @@ int8_t yLib::yHttp::yHttpPostMultiPart(const yHttpRequestParam &request_param_, 
     //start http and process response
     if (0 > __yhttp_start_http_session__(ptr_http_handle))//start http failed.
     {
-            
+        curl_formfree(_http_post);
         __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
         return -1;
     }
@@ -612,11 +623,12 @@ int8_t yLib::yHttp::yHttpPostMultiPart(const yHttpRequestParam &request_param_, 
     {
         if (0 > __yhttp_process_http_response__(ptr_http_handle, data_buffer_ptr_, response_info_)){
             
+            curl_formfree(_http_post);
             __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
             return -1;
         }
     }
-
+    curl_formfree(_http_post);
     __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
     return 0;    
 }

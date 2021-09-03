@@ -4,7 +4,7 @@
  # @Author: Sky
  # @Date: 2021-04-09 14:22:29
  # @LastEditors: Sky
- # @LastEditTime: 2021-08-27 16:04:15
+ # @LastEditTime: 2021-09-03 17:20:07
  # @Description: 
 ### 
 
@@ -70,27 +70,31 @@ CORE_GROUP_MODULE_LIST=" \
                         "
 
 # ipc group
-IPC_GROUP_MODULE_LIST=" "
+IPC_GROUP_MODULE_LIST=" ysharedmemory_w \
+                        ysharedmemory_r "
 
 # network group
-NETWORK_GROUP_MODULE_LIST=" \
-                            ytcpserver \
-                            ytcpclient \
-                            yudpserver \
-                            yudpclient \
-                            "
+NETWORK_GROUP_MODULE_LIST=" "
 
-# utility group
+# utility group 
 UTILITY_GROUP_MODULE_LIST=" \
-                            yconfig \
-                            ycurl \
                             yhttp \
-                            yjson \
                             ylog \
+                            ylog_file_bakup \
+                            ylog_verify \
                             yshell \
                             ytimer \
-                            yxml \
                             "
+
+# UTILITY_GROUP_MODULE_LIST=" \
+#                             yconfig \
+#                             yhttp \
+#                             yjson \
+#                             ylog \
+#                             yshell \
+#                             ytimer \
+#                             yxml \
+#                             "
 
 # basic_algorithm group
 BASIC_ALGORITHM_GROUP_MODULE_LIST=" \
@@ -99,8 +103,31 @@ BASIC_ALGORITHM_GROUP_MODULE_LIST=" \
                                     yqueue \
                                     ystack \
                                     "
+                                    
+ALL_MODULE_LISTS=${CORE_GROUP_MODULE_LIST}${IPC_GROUP_MODULE_LIST}${UTILITY_GROUP_MODULE_LIST}${BASIC_ALGORITHM_GROUP_MODULE_LIST}" all_in_one"
 
-ALL_MODULE_LISTS=${CORE_GROUP_MODULE_LIST}${UTILITY_GROUP_MODULE_LIST}${BASIC_ALGORITHM_GROUP_MODULE_LIST}" all_in_one"
+
+
+# network group
+echo "module name ytcpserver/ytcpsocket"
+${EXECUTE_PREFIX}./unit_test_ytcpserver -s &
+sleep 2
+${EXECUTE_PREFIX}./unit_test_ytcpclient -s
+if [ $? -ne 0 ]
+then
+    echo 'Unit test failed. module-name:ytcpserver/ytcpsocket'
+    exit -1
+fi
+
+echo "module name yudpsocket"
+${EXECUTE_PREFIX}./unit_test_yudpserver -s &
+sleep 2
+${EXECUTE_PREFIX}./unit_test_yudpclient -s
+if [ $? -ne 0 ]
+then
+    echo 'Unit test failed. module-name:yudpsocket'
+    exit -1
+fi
 
 for module_name in ${ALL_MODULE_LISTS}
 do
@@ -124,6 +151,28 @@ do
 done
 
 
+# special tests
+
+# network group
+echo "module name ytcpserver/ytcpsocket"
+${EXECUTE_PREFIX}./unit_test_ytcpserver -s &
+sleep 2
+${EXECUTE_PREFIX}./unit_test_ytcpclient -s
+if [ $? -ne 0 ]
+then
+    echo 'Unit test failed. module-name:ytcpserver/ytcpsocket'
+    exit -1
+fi
+
+echo "module name yudpsocket"
+${EXECUTE_PREFIX}./unit_test_yudpserver -s &
+sleep 2
+${EXECUTE_PREFIX}./unit_test_yudpclient -s
+if [ $? -ne 0 ]
+then
+    echo 'Unit test failed. module-name:yudpsocket'
+    exit -1
+fi
 
 # #ipc
 

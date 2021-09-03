@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2021-04-07 16:29:46
  * @LastEditors: Sky
- * @LastEditTime: 2021-05-26 10:16:05
+ * @LastEditTime: 2021-08-31 16:28:11
  * @Description: 
  */
 #ifndef __YLIB_UTILITY_YTIMER_HPP__
@@ -122,6 +122,7 @@ namespace yLib
 
         void timer_thread_context(void* params);
 
+        YLIB_DECLARE_CLASSINFO_CONTENT(yTimer);
     };
 
 }

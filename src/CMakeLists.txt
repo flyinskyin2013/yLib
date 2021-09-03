@@ -51,12 +51,6 @@ endmacro()
 #----------------------------------------------------------------------------------------
 
 #----------------------------------------check utility group-----------------------------
-if(BUILD_MODULE_YCURL)
-
-    ylib_build(UTILITY YCURL)
-
-endif()
-
 
 if(BUILD_MODULE_YHTTP)
 
@@ -114,7 +108,6 @@ if(WIN32)
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
     ylib_build(NETWORK YABSTRACTSOCKET)
-    ylib_build(NETWORK YABSTRACTSOCKETSERVER)
 
 elseif(ANDROID)
     
@@ -132,14 +125,6 @@ if(BUILD_MODULE_YTCPSOCKET)
     ylib_build(NETWORK YTCPSOCKET)
 
 endif()
-
-
-if(BUILD_MODULE_YUDPSERVER)
-
-    ylib_build(NETWORK YUDPSERVER)
-
-endif()
-
 
 if(BUILD_MODULE_YUDPSOCKET)
 

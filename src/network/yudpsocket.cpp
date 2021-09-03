@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-09-08 10:27:33
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-16 14:15:13
+ * @LastEditTime: 2021-08-31 13:57:51
  * @Description: 
  */
 
@@ -12,88 +12,48 @@
 
 using namespace yLib;
 
-yUdpSocket::yUdpSocket(int socket_flags_, bool is_block_)
+YLIB_IMPLEMENT_CLASSINFO_CONTENT(yUdpSocket)
+
+yUdpSocket::yUdpSocket(int domain, int type, int protocol) noexcept
 {
-    socket_fd = -1;
-    is_bind_success = false;
-    if (is_block_){
 
-        if ( 0 > (socket_fd = ::socket(AF_INET, SOCK_DGRAM, socket_flags_)) ){
-
-            std::cout<<"yUdpSocket create socket failed. errno is "<< errno <<std::endl;
-        }
-    }
-    else{
-
-        if ( 0 > (socket_fd = ::socket(AF_INET, SOCK_DGRAM| SOCK_NONBLOCK, socket_flags_ )) ){
-
-            std::cout<<"yUdpSocket create socket failed. errno is "<< errno <<std::endl;
-        }
-    }
+    clean_to_default();
+    create_socket(domain, type, protocol);
 }
 
-yUdpSocket::yUdpSocket(){
+yUdpSocket::yUdpSocket() noexcept{
 
-    socket_fd = -1;
-    is_bind_success = false;
+    clean_to_default();
 
-    if ( 0 > (socket_fd = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) ){
-
-        std::cout<<"yUdpSocket create socket failed. errno is "<< errno <<std::endl;
-    }
-
+    create_socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 }
 
-yUdpSocket::~yUdpSocket()
+yUdpSocket::~yUdpSocket() noexcept
 {
-    if (socket_fd > 0)//close socket_fd
-        close(socket_fd);
-
-    socket_fd = -1;
-    is_bind_success = false;
+    clean_to_default();
 }
 
-inline bool yUdpSocket::socket_is_ready(void){
+void yUdpSocket::clean_to_default(void) noexcept {
 
-    return socket_is_valid();
-}
+    is_sockfd_valid = false;
 
-int8_t yUdpSocket::bind(const std::string & ip_, int32_t port_){
-
-    if (!socket_is_valid()){
-
-        std::cout<<"yUdpClient: socket is invalid. please check."<<std::endl;
-        return -1;
-    }
-
-	::memset(static_cast<void *>(&client_socket_addr), 0, sizeof(client_socket_addr));
-
-    // if (0 == ::inet_aton(ip_.c_str(), &client_socket_addr.sin_addr)){//invalid ip
-
-    //     std::cout<<"yUdpClient: Invalid ip_. please check."<<std::endl;
-    //     return -1;
-    // }
-    client_socket_addr.sin_addr.s_addr = 0;
-	client_socket_addr.sin_family = AF_INET;
-	client_socket_addr.sin_port = htons(port_);
-
-    if (0 > ::bind(socket_fd, reinterpret_cast<const struct sockaddr *>(&client_socket_addr), sizeof(client_socket_addr)) ){
-
-        is_bind_success = false;
-        std::cout<<"yUdpClient socket bind failed. errno is "<< errno <<std::endl;
-        return -1;
-    }
-
+    // In udp socket, the bind() can be called or ben't called. it's flexible.
+    // In yUdpSocket, we don't need to call connect
     is_bind_success = true;
 
-    return 0;
+    // In udp socket, the connect() can be called or ben't called. it's flexible.
+    // In yUdpSocket, we don't need to call connect
+    is_connect_success = true;
+
+    socket_fd = -1; 
+
 }
 
-int64_t yUdpSocket::sendto(const void * buffer_, uint64_t size_to_send_, std::string ip_, uint64_t port_, int flags_){
+int64_t yUdpSocket::sendto(const void * buffer_, uint64_t size_to_send_, std::string ip_, uint64_t port_, int flags_) noexcept{
 
     if (!socket_is_ready()){
 
-        std::cout<<"yUdpClient: socket is not ready. please check."<<std::endl;
+        std::cout<<"yUdpSocket: socket is not ready. please check."<<std::endl;
         return -1;
     }
 
@@ -103,7 +63,7 @@ int64_t yUdpSocket::sendto(const void * buffer_, uint64_t size_to_send_, std::st
     int64_t _binary_ip = 0;
     if (0 > (_binary_ip = translate_ip_to_binary(ip_))){//invalid ip
 
-        std::cout<<"yUdpClient: Invalid ip_. please check."<<std::endl;
+        std::cout<<"yUdpSocket: Invalid ip_. please check."<<std::endl;
         return -1;
     }
 
@@ -127,19 +87,19 @@ int64_t yUdpSocket::sendto(const void * buffer_, uint64_t size_to_send_, std::st
             */
             return 0;
         }        
-        std::cout<<"yUdpClient: send data failed. errno is "<<errno<<std::endl;
+        std::cout<<"yUdpSocket: send data failed. errno is "<<errno<<std::endl;
         return -1;
     }
 
     return _complete_send_len;
 }
 
-int64_t yUdpSocket::recvfrom(void * buffer_, uint64_t size_to_read_,  std::string &client_ip_, uint64_t &client_port_, int flags_){
+int64_t yUdpSocket::recvfrom(void * buffer_, uint64_t size_to_read_,  std::string &client_ip_, uint64_t &client_port_, int flags_) noexcept{
     
 
     if (!socket_is_ready()){
 
-        std::cout<<"yUdpClient: socket is not ready. please check."<<std::endl;
+        std::cout<<"yUdpSocket: socket is not ready. please check."<<std::endl;
         return -1;
     }
 
@@ -163,7 +123,7 @@ int64_t yUdpSocket::recvfrom(void * buffer_, uint64_t size_to_read_,  std::strin
             */
             return 0;
         }       
-        std::cout<<"yUdpClient: recvfrom failed. errno is "<< errno <<std::endl;
+        std::cout<<"yUdpSocket: recvfrom failed. errno is "<< errno <<std::endl;
         return -1;
     }
 

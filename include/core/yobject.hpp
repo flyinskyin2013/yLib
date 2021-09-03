@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-09-20 16:59:29
  * @LastEditors: Sky
- * @LastEditTime: 2021-08-27 10:44:51
+ * @LastEditTime: 2021-08-30 14:05:25
  * @Description: 
  */
 
@@ -29,6 +29,16 @@ namespace yLib
     {
         private:
         yStaticClass() = default;
+    };
+
+    /**
+     *  @class yNoDefaultConstructorClass
+     *  @brief This class and child-class don't have default constructor.
+     */
+    class yNoDefaultConstructorClass
+    {
+        private:
+        yNoDefaultConstructorClass() = default;
     };
     
     /**
@@ -137,6 +147,8 @@ namespace yLib
 #define YLIB_PUBLIC_INHERIT_YOBJECT public yLib::yObject
 
 #define YLIB_PUBLIC_INHERIT_YSTATICCLASS public yLib::yStaticClass
+
+#define YLIB_PUBLIC_INHERIT_YNODEFAULTCONSTRUCTORCLASS public yLib::yNoDefaultConstructorClass
 
 #define YLIB_PUBLIC_INHERIT_YNOTCOPYABLE public yLib::yNotCopyable
 

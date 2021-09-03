@@ -2,12 +2,19 @@
  * @Author: Sky
  * @Date: 2020-09-14 11:14:59
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-16 11:53:26
+ * @LastEditTime: 2021-08-31 13:52:58
  * @Description: 
  */
 
 #include "catch2/catch.hpp"
 #include "ylib.hpp"
+
+#include "test_common.hpp"
+
+#include <iostream>
+
+
+DEFINE_TEST_CASE_FOR_CLASS_INFO(yTcpServer)
 
 using namespace yLib;
 
@@ -41,6 +48,12 @@ TEST_CASE( "Test yTcpServer apis" , "[yTcpServer_Apis]" ){
 
         yTcpServer tcp_server;
 
+        // check yTcpServer(xxx,xxx,xxx)
+        yTcpServer tcp_server1(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+        
+        // check yTcpServer(xxx,xxx,xxx) fail-mode
+        yTcpServer tcp_server2(1, 2, 1999);
+
         char recv_msg_buff[100];
         uint64_t svr_ip;
         uint64_t svr_port;
@@ -48,6 +61,13 @@ TEST_CASE( "Test yTcpServer apis" , "[yTcpServer_Apis]" ){
         REQUIRE(0 == tcp_server.bind("127.0.0.1", 12356));
 
         REQUIRE(0 == tcp_server.start_epoll_thread(test_OnClientConnectCB, test_OnClientDisconnectCB));
+
+        // check connect do nothing
+        REQUIRE(tcp_server.connect("", 123) == 0);
+
+        // check tcpserver is ready
+        REQUIRE(tcp_server.socket_is_ready() == true);
+
         g_is_tcpserver_continue = true;
         while(g_is_tcpserver_continue){
 
@@ -69,39 +89,40 @@ TEST_CASE( "Test yTcpServer apis" , "[yTcpServer_Apis]" ){
                 ::memset(recv_msg_buff, 0, 100);
                 std::string recv_msg_str = "I am client0";
 
-                REQUIRE(recv_msg_str.length() == tcp_server.read(recv_msg_buff, 100, g_client_array[0]));
+                REQUIRE(recv_msg_str.length() == read(g_client_array[0], recv_msg_buff, 100));
                 std::string _msg = "tcpserver recv: " + std::string(recv_msg_buff);
                 yLib::yLog::I(_msg);
                 
                 REQUIRE_THAT( recv_msg_str, Catch::Equals ( recv_msg_buff ));//verify client0 write
 
-                REQUIRE(_msg.length() == tcp_server.write(_msg.c_str(), _msg.length(), g_client_array[0]));
+                REQUIRE(_msg.length() == write(g_client_array[0], _msg.c_str(), _msg.length()));
 
 //===================================================================
 
                 ::memset(recv_msg_buff, 0, 100);
                 recv_msg_str = "I am client1";
 
-                REQUIRE(recv_msg_str.length() == tcp_server.read(recv_msg_buff, 100, g_client_array[1]));
+                REQUIRE(recv_msg_str.length() == read(g_client_array[1], recv_msg_buff, 100));
                 _msg = "tcpserver recv: " + std::string(recv_msg_buff);
                 yLib::yLog::I(_msg);
                 
                 REQUIRE_THAT( recv_msg_str, Catch::Equals ( recv_msg_buff ));//verify client1 write
 
-                REQUIRE(_msg.length() == tcp_server.write(_msg.c_str(), _msg.length(), g_client_array[1]));
+                REQUIRE(_msg.length() == write(g_client_array[1], _msg.c_str(), _msg.length()));
 
 //===================================================================
 
                 ::memset(recv_msg_buff, 0, 100);
                 recv_msg_str = "I am client2";
                 
-                REQUIRE(recv_msg_str.length() == tcp_server.read(recv_msg_buff, 100, g_client_array[2]));
+                REQUIRE(recv_msg_str.length() == read(g_client_array[2], recv_msg_buff, 100));
                 _msg = "tcpserver recv: " + std::string(recv_msg_buff);
                 yLib::yLog::I(_msg);
 
                 REQUIRE_THAT( recv_msg_str, Catch::Equals ( recv_msg_buff ));//verify client2 write
 
-                REQUIRE(_msg.length() == tcp_server.write(_msg.c_str(), _msg.length(), g_client_array[2]));
+                REQUIRE(_msg.length() == write(g_client_array[2], _msg.c_str(), _msg.length()));
+                
                 break;
             }
             else{

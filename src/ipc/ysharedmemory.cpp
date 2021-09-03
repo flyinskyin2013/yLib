@@ -1,22 +1,27 @@
 ﻿#include "ipc/ysharedmemory.hpp"
 
+YLIB_IMPLEMENT_CLASSINFO_CONTENT_S(ySharedMemory)
+
+
 /**
- *  @fn   ySharedMemory(uint64_t mem_size_, const yShmParam & shm_param_)
+ *  @fn   ySharedMemory(uint64_t shm_size, const yShmParam & shm_param)
  *  @brief Override constructor
- *  @param mem_size_ the shm's size.
- *  @param shm_param_ the param of shm.
+ *  @param shm_size the shm's size.
+ *  @param shm_param the param of shm.
  */
-yLib::ySharedMemory::ySharedMemory(uint64_t mem_size_, const yShmParam & shm_param_ )
-MACRO_INIT_YOBJECT_PROPERTY(ySharedMemory)
+yLib::ySharedMemory::ySharedMemory(uint64_t shm_size, const yShmParam & shm_param, bool is_delete) noexcept
+:shm_ptr(nullptr),
+shm_is_init_ready(false),
+shm_is_attach_ready(false)
 {
 #ifdef _WIN32
 
 	//=============================================init shm===============================
 
 	shm_handle = NULL;
-	if ("" == shm_param_.mem_name){
+	if ("" == shm_param.shm_name){
 
-		yLib::yLog::E("The shm_param.mem_name is invalid, please init it on windows.");
+		yLib::yLog::E("The shm_param.shm_name is invalid, please init it on windows.");
 		shm_is_init_ready = false;
 		return ;
 	}
@@ -25,9 +30,9 @@ MACRO_INIT_YOBJECT_PROPERTY(ySharedMemory)
 			INVALID_HANDLE_VALUE, \
 			NULL, \
 			PAGE_READWRITE, \
-			(DWORD)((mem_size_ >> 32) & 0x00000000FFFFFFFF), \
-			(DWORD)((mem_size_) & 0x00000000FFFFFFFF), \
-			shm_param_.mem_name.c_str() \
+			(DWORD)((shm_size >> 32) & 0x00000000FFFFFFFF), \
+			(DWORD)((shm_size) & 0x00000000FFFFFFFF), \
+			shm_param.shm_name.c_str() \
 		);
 
 	if (NO_ERROR == GetLastError()) {//check last error
@@ -37,7 +42,7 @@ MACRO_INIT_YOBJECT_PROPERTY(ySharedMemory)
 	}
 	else if (ERROR_ALREADY_EXISTS == GetLastError()) {// shared memory is exist
 		
-		yLib::yLog::W("yLib::ySharedMemory: shared memory(name = %s ) is exist", shm_param_.mem_name.c_str());
+		yLib::yLog::W("yLib::ySharedMemory: shared memory(name = %s ) is exist", shm_param.shm_name.c_str());
 		shm_is_init_ready = true;
 		
 	}
@@ -46,7 +51,7 @@ MACRO_INIT_YOBJECT_PROPERTY(ySharedMemory)
 		HLOCAL LocalAddress = NULL;
 		FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
 			NULL, GetLastError(), 0, (PTSTR)&LocalAddress, 0, NULL);
-		yLib::yLog::E("yLib::ySharedMemory: create shared memory(name = %s ) failed. error info is %s", shm_param_.mem_name.c_str(), (char *)LocalAddress);
+		yLib::yLog::E("yLib::ySharedMemory: create shared memory(name = %s ) failed. error info is %s", shm_param.shm_name.c_str(), (char *)LocalAddress);
 		shm_is_init_ready = false;
 		return ;
 	}
@@ -79,28 +84,22 @@ MACRO_INIT_YOBJECT_PROPERTY(ySharedMemory)
 #elif __linux__ || __linux
 
 	//=============================================init shm===============================
-	cur_shm_id = 0;
+	shm_id = 0;
+	is_mark_delete = is_delete;
 
-	if (0 == shm_param_.mem_key){//check the user-special key
-
-		yLib::yLog::E("The shm_param.mem_key is invalid, please init it on linux.");
-		shm_is_init_ready = false;
-		return ;
-	}
-
-	if (0 >  (cur_shm_id = shmget(shm_param_.mem_key, mem_size_, IPC_CREAT | IPC_EXCL | 0666))) {
+	if (0 >  (shm_id = shmget(shm_param.shm_key, shm_size, IPC_CREAT | IPC_EXCL | 0666 | shm_param.shm_flag))) {
 
 		if (errno == EEXIST) {
 
-			if (0 > (cur_shm_id = shmget(shm_param_.mem_key, mem_size_, IPC_CREAT | 0666))) {
+			if (0 > (shm_id = shmget(shm_param.shm_key, shm_size, IPC_CREAT | 0666))) {
 
-				yLib::yLog::E("Re-attach shm failed, shm's key is %d", shm_param_.mem_key);
+				yLib::yLog::E("Re-attach shm failed, shm's key is %d", shm_param.shm_key);
 				shm_is_init_ready = false;
 				return ;
 			}
 			else {
 
-				yLib::yLog::W("shared-mem exist, shm's id is %d", cur_shm_id);
+				yLib::yLog::W("shared-mem exist, shm's id is %d", shm_id);
 			}
 
 		}
@@ -122,7 +121,7 @@ MACRO_INIT_YOBJECT_PROPERTY(ySharedMemory)
 		return ;
 	}
 
-	if ((void *)-1 == (shm_ptr = shmat(cur_shm_id, NULL, 0))) {
+	if ((void *)-1 == (shm_ptr = shmat(shm_id, NULL, 0))) {
 
 		perror("shmat failed:");
 		shm_is_attach_ready = false;
@@ -133,8 +132,8 @@ MACRO_INIT_YOBJECT_PROPERTY(ySharedMemory)
 
 #endif //_WIN32
 
-	shm_param = shm_param_;
-	shm_size = mem_size_;
+	this->shm_param = shm_param;
+	this->shm_size = shm_size;
 }
 
 /**
@@ -185,18 +184,23 @@ yLib::ySharedMemory::~ySharedMemory()
 
 		}
 
+		// https://docs.microsoft.com/en-us/previous-versions/aa914748(v=msdn.10)  TODO:To fully close a file-mapping object
+
 #elif __linux__ || __linux
 
-		shmget(shm_param.mem_key, shm_size, 0666);
-		if (ENOENT == errno){
+		if (is_mark_delete){
 
-			yLib::yLog::W("shared-mem is deleted, we don't need to delete it again.");
-		}
-		else if (0 > shmctl(cur_shm_id, IPC_RMID, NULL)) {
+			shmget(shm_param.shm_key, shm_size, 0666);
+			if (ENOENT == errno){
 
-			perror("shmctl failed");
-			yLib::yLog::E("destroy shm failed.");
-		
+				yLib::yLog::W("shared-mem is deleted, we don't need to delete it again.");
+			}
+			else if (0 > shmctl(shm_id, IPC_RMID, NULL)) {
+
+				perror("shmctl failed");
+				yLib::yLog::E("destroy shm failed.");
+			
+			}
 		}
 
 #endif //__linux__ || __linux

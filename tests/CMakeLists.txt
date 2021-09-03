@@ -135,6 +135,8 @@ endif()
 if(BUILD_MODULE_YLOG)
 
     build_tests(UTILITY yLog yLog)
+    build_tests(UTILITY yLog yLog_Verify)
+    build_tests(UTILITY yLog ylog_file_bakup)
 
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/utility/ylog/log4cplus.properties.example log4cplus.properties @ONLY)
 
@@ -218,15 +220,24 @@ if(BUILD_MODULE_YTCPSOCKET)
     build_tests(NETWORK TCP yTcpClient)
 endif()
 
-if(BUILD_MODULE_YUDPSERVER)
+if(BUILD_MODULE_YUDPSOCKET)
+    build_tests(NETWORK UDP yUdpClient)
     build_tests(NETWORK UDP yUdpServer)
 endif()
 
-if(BUILD_MODULE_YUDPSOCKET)
-    build_tests(NETWORK UDP yUdpClient)
-endif()
+##########################################################################
+#----------------------------------------------------------------------------------------
+
+#----------------------------------Unit Test For IPC Group------------------------------
+##########################################################################
+
+build_tests(IPC ySharedMemory ySharedMemory_R)
+build_tests(IPC ySharedMemory ySharedMemory_W)
 
 ##########################################################################
+#----------------------------------------------------------------------------------------
+
+
 #----------------------------------Unit Test For Core Group------------------------------
 
 ##########################################################################

@@ -3,7 +3,7 @@
  * @Author: Sky
  * @Date: 2019-11-29 11:35:54
  * @LastEditors: Sky
- * @LastEditTime: 2021-01-15 10:58:35
+ * @LastEditTime: 2021-08-30 13:50:25
  * @FilePath: \yLib\include\core\ysharedmemory.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -36,10 +36,14 @@
 extern "C" {
 #endif//__cplusplus
 
+// ftok
 #include <sys/types.h>
-#include <sys/shm.h>
-#include <stdint.h>
 #include <sys/ipc.h>
+
+// shmget
+#include <sys/shm.h>
+
+#include <stdint.h>
 #include <stdio.h>
 #include <errno.h>
 
@@ -63,63 +67,74 @@ namespace yLib {
 
     /**
      *  @class ySharedMemory
-     *  @brief This is a implementation of sharedmemory based on linux and windows. \n
-	 *  On linux: \n
-	 *  It based on shmget/shmat/shmdt/shmctl. \n
-	 *  On windows: \n
+     *  @brief This is a implementation of sharedmemory based on linux and windows. 
+	 *  On linux: 
+	 *  It based on shmget/shmat/shmdt/shmctl. 
+	 *  On windows: 
 	 *  It based on CreateFileMapping/MapViewOfFile/UnmapViewOfFile/CloseHandle.
      */
-	class __YLIB_EXPORT__ ySharedMemory MACRO_PUBLIC_INHERIT_YOBJECT
+	class __YLIB_EXPORT__ ySharedMemory:
+	YLIB_PUBLIC_INHERIT_YOBJECT
 	{
 	public:
 		typedef struct __yshmparam__{
 			__yshmparam__():
-			mem_key(0),
-			mem_flag(-1),
-			mem_name("")
+			shm_key(0),
+			shm_flag(0),
+			shm_name("")
 			{}
 			~__yshmparam__()
 			{
-				mem_key = 0;
-				mem_flag = -1;
+				shm_key = 0;
+				shm_flag = 0;
 			}
 
-			__yshmparam__(const __yshmparam__& param_){
+			__yshmparam__(const __yshmparam__& param){
 
-				mem_key = param_.mem_key;
-				mem_flag =  param_.mem_flag;
-				mem_name =  param_.mem_name;
+				shm_key = param.shm_key;
+				shm_flag =  param.shm_flag;
+				shm_name =  param.shm_name;
 			}
 
-			/** @var uint32_t mem_key
+			__yshmparam__ & operator=(const __yshmparam__ & param){
+
+				shm_key = param.shm_key;
+				shm_flag =  param.shm_flag;
+				shm_name =  param.shm_name;	
+				
+				return *this;			
+			}
+
+			/** @var key_t shm_key
             	@brief it's the shm key, it only used on linux, when we create a shm.
         	*/
-			uint32_t mem_key;
+			key_t shm_key;
 
-			/** @var int32_t mem_flag
+			/** @var int shm_flag
 				@brief it's the user-flag for shm. \n
 				On linux: \n
 				Defaultly, we used 0666, IPC_CREAT and IPC_EXCL, more details: @see shmget
 				On windows: \n
 				Defaultly, we used PAGE_READWRITE, more details: @see CreateFileMappingA
 			*/
-			int32_t mem_flag;
+			int shm_flag;
 
 			/** @var std::_STD_STRING_ mem_name
             	@brief it's the shm name, it only used on windows, when we create a shm.
         	*/
-			std::_STD_STRING_ mem_name;
+			std::_STD_STRING_ shm_name;
 		}yShmParam;
 	public:
 		ySharedMemory() = delete;
 
 	    /**
-         *  @fn   ySharedMemory(uint64_t mem_size_, const yShmParam & shm_param_)
+         *  @fn   ySharedMemory(uint64_t shm_size_, const yShmParam & shm_param_) noexcept
          *  @brief Override constructor. if the special shm is not created, we will create and attach it, otherwist we will attach it.
-         *  @param mem_size_ the shm's size.
-		 *  @param shm_param_ the param of shm.
+         *  @param shm_size the shm's size.
+		 *  @param shm_param the param of shm.
+		 *  @param is_delete mark the shm will be deleted by destructor
          */
-		ySharedMemory(uint64_t mem_size_, const yShmParam & shm_param_);
+		ySharedMemory(uint64_t shm_size, const yShmParam & shm_param, bool is_delete=false) noexcept;
 		
 		/**
          *  @fn    ~ySharedMemory()
@@ -128,12 +143,20 @@ namespace yLib {
 		~ySharedMemory();
 
 		/**
-         *  @fn    void * GetShmDataPtr(void)
+         *  @fn    void * GetShmDataPtr(void) noexcept
          *  @brief get the data-ptr of shm
 		 *  @return the data-ptr of shm
 		 *  @retval NULL shm is not ready, please re init it.
          */
-		void * GetShmDataPtr(void) const{return shm_ptr;}
+		void * GetShmDataPtr(void) const noexcept {return shm_ptr;}
+
+		/**
+         *  @fn    bool ShmIsReady(void) const noexcept
+         *  @brief get status of shm
+		 *  @return the status of shm
+		 *  @retval ok if the shm is ready.
+         */
+		bool ShmIsReady(void) const noexcept{return (shm_is_init_ready&&shm_is_attach_ready);}
 	private:
 		/** @var bool shm_is_init_ready
 			@brief the shm is init-ready.
@@ -144,6 +167,11 @@ namespace yLib {
 			@brief the shm is attach-ready.
 		*/
 		bool shm_is_attach_ready = false;
+
+		/** @var bool is_mark_delete
+			@brief mark the shm will be deleted by destructor
+		*/
+		bool is_mark_delete = false;
 
 		/** @var void * shm_ptr
 			@brief the data-ptr of shm.
@@ -166,9 +194,11 @@ namespace yLib {
 		/** @var int cur_shm_id
 			@brief the shm's id on linux.
 		*/
-		int cur_shm_id = 0;
+		int shm_id = 0;
 #endif //_WIN32
 
+
+		YLIB_DECLARE_CLASSINFO_CONTENT(ySharedMemory);
 	};
 
 }

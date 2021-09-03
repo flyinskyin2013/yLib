@@ -3,7 +3,7 @@
  * @Author: Sky
  * @Date: 2020-03-26 15:59:54
  * @LastEditors: Sky
- * @LastEditTime: 2020-03-31 17:53:13
+ * @LastEditTime: 2021-08-31 16:24:12
  * @FilePath: \yLib\tests\yshell\yshell_tests.cpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -11,29 +11,16 @@
 #include "ylib.hpp"
 
 
+#include "test_common.hpp"
+
+#include <iostream>
+
+
+DEFINE_TEST_CASE_FOR_CLASS_INFO(yShell)
+
 TEST_CASE( "Test yShell apis" , "[yShell_Apis]" ){
 
     yLib::yShell shell;
-
-    // SECTION("test RunShellCommandEx() basic function ") {
-
-    //     std::vector<std::string> cmd_vec;
-    //     std::vector<std::string> cmd_env_vec;
-    //     std::vector<std::string> cmd_result_vec;
-
-    //     cmd_vec.push_back("/bin/cat");
-    //     cmd_vec.push_back("cat");
-    //     cmd_vec.push_back("shell_test.txt");
-
-    //     REQUIRE(0 == shell.RunShellCommandEx(cmd_vec, cmd_env_vec, cmd_result_vec));
-    //     REQUIRE(5 == cmd_result_vec.size());
-    //     REQUIRE_THAT(cmd_result_vec[0].c_str(), Catch::Equals ( "shell line0" ));
-    //     REQUIRE_THAT(cmd_result_vec[1].c_str(), Catch::Equals ( "shell line1" ));
-    //     REQUIRE_THAT(cmd_result_vec[2].c_str(), Catch::Equals ( "shell line2" ));
-    //     REQUIRE_THAT(cmd_result_vec[3].c_str(), Catch::Equals ( "shell line3" ));
-    //     REQUIRE_THAT(cmd_result_vec[4].c_str(), Catch::Equals ( "shell line4" ));
-
-    // }
 
     SECTION("test RunShellCommandEx() advanced option") {
 
@@ -102,7 +89,7 @@ TEST_CASE( "Test yShell apis" , "[yShell_Apis]" ){
 
 
 
-    SECTION("test RunShellCommandEx() 10000 times") {
+    SECTION("test RunShellCommandEx() 100 times") {
 
         std::vector<std::string> cmd_vec;
         std::vector<std::string> cmd_env_vec;
@@ -111,18 +98,18 @@ TEST_CASE( "Test yShell apis" , "[yShell_Apis]" ){
         cmd_vec.push_back("/bin/echo");
         cmd_vec.push_back("echo");
         cmd_vec.push_back("-e");
-        cmd_vec.push_back("test 10000 times");
+        cmd_vec.push_back("test 100 times");
 
         cmd_env_vec.push_back("MY_VAR=my_env_var");
 
-        for (uint64_t ii = 0; ii < 10000; ii++){
+        for (uint64_t ii = 0; ii < 100; ii++){
 
             std::vector<std::string> empty_result;
             cmd_result_vec.swap(empty_result);
 
             REQUIRE(0 == shell.RunShellCommandEx(cmd_vec, cmd_env_vec, cmd_result_vec));
             REQUIRE(1 == cmd_result_vec.size());
-            REQUIRE_THAT(cmd_result_vec[0].c_str(), Catch::Equals ( "test 10000 times" ));
+            REQUIRE_THAT(cmd_result_vec[0].c_str(), Catch::Equals ( "test 100 times" ));
         }
 
     }

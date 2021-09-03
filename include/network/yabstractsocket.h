@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-09-08 10:26:28
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-16 16:38:21
+ * @LastEditTime: 2021-08-31 13:56:40
  * @Description: 
  */
 
@@ -14,58 +14,94 @@
 
 #include "core/yobject.hpp"
 
+
+#ifdef __cplusplus
+extern "C"{
+#endif //__cplusplus
+
+#include <sys/socket.h>
+#include <sys/types.h>          /* See NOTES */
+#include <netinet/in.h>
+#include <errno.h>
+
+#ifdef __cplusplus
+}
+#endif //__cplusplus
+
 namespace yLib{
     
-    class __YLIB_EXPORT__ yAbstractSocket MACRO_PUBLIC_INHERIT_YOBJECT
+    class __YLIB_EXPORT__ yAbstractSocket:
+    YLIB_PUBLIC_INHERIT_YOBJECT
     {
-    private:
-
     protected:
-        /* data */
-        yAbstractSocket(/* args */);
+        static std::string get_ip_from_binary(uint64_t ip) noexcept;
+        static uint64_t get_port_from_binary(uint64_t port) noexcept;
 
-        static std::string get_ip_from_binary(uint64_t ip_);
-        static uint64_t get_port_from_binary(uint64_t port_);
+        static int64_t translate_ip_to_binary(const std::string &ip) noexcept;
+        static uint64_t translate_port_to_binary(uint64_t port) noexcept;
 
-        static int64_t translate_ip_to_binary(const std::string &ip_);
-        static uint64_t translate_port_to_binary(uint64_t port_);
+        void create_socket(int domain, int type, int protocol) noexcept;
     public:
-        ~yAbstractSocket();
+
+        yAbstractSocket() noexcept;
+        virtual ~yAbstractSocket() noexcept;
 
         /**
-         * @description: 
+         * @description: Check socket()/bind()/connect() and so on.
          * @param {type} 
          * @return {type} 
          */
-        int64_t close(int64_t fd_);
-        /**
-         * @description: Check socket()
-         * @param {type} 
-         * @return {type} 
-         * http://isocpp.org/wiki/faq/inline-functions#inline-member-fns
-         * Inline funciton defines must put in header-file.
-         */
-        
-        inline bool socket_is_valid(void){return (0 > socket_fd)?false:true;}
-
-        /**
-         * @description: Check socket(), bind(), listen(), accept() and cd so on.
-         * @param {type} 
-         * @return {type} 
-         */
-        virtual inline bool socket_is_ready(void) = 0;
+        virtual inline bool socket_is_ready(void) const noexcept;
 
         /**
          * @description: tcp server & udp server
          * @param {type} 
          * @return {type} 
          */
-        virtual int8_t bind(const std::string & ip_, int32_t port_) = 0;
+        virtual int8_t bind(const std::string & ip, int32_t port, int domain = AF_INET) noexcept;
 
-        
+        /**
+         * @description: 
+         * @param {type} 
+         * @return {type} 
+         * =-1: a error occurred.
+         * =-2: no data to read.The file descriptor fd refers to a socket and has been marked nonblocking (O_NONBLOCK)
+         * = 0: server maybe close.
+         * > 0: read n bytes.
+         */
+        virtual int64_t read(void *buffer, size_t count) const noexcept;
+
+        /**
+         * @description: 
+         * @param {type} 
+         * @return {type}
+         *  =-1: a error occurred.
+         *  >=0: write n bytes.
+         */
+        virtual int64_t write(const void *buffer, size_t count) const noexcept;     
+
+        /**
+         * @description: clean all flag to default
+         */
+        virtual void clean_to_default(void) noexcept;
+
+        /**
+         * @description: 
+         * @param {type} 
+         * @return {type} 
+         */
+        virtual int8_t connect(const std::string & ip, int32_t port, int domain = AF_INET) noexcept;
+
     protected:
-        int64_t socket_fd;
-        bool is_bind_success;
+        int64_t socket_fd = -1;
+        bool is_bind_success = false;
+        bool is_sockfd_valid = false;
+        bool is_connect_success = false;
+
+        struct sockaddr_in local_socket_addr;//ipv4
+
+
+        YLIB_DECLARE_CLASSINFO_CONTENT(yAbstractSocket);
     };
 
 }

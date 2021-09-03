@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2018-10-23 11:13:37
  * @LastEditors: Sky
- * @LastEditTime: 2020-12-03 14:33:37
+ * @LastEditTime: 2021-08-31 16:22:28
  * @Description: 
  */
 
@@ -52,21 +52,6 @@ namespace yLib{
          *  @brief Default destructor
          */
         ~yShell();
-
-        
-        //Every param's length must be < 100
-        /**
-         *  @fn      int RunShellCommand(std::vector<std::string> & cmd)
-         *  @brief   run user's cmd 
-         *  @param   cmd we want to run.
-         *  
-         *  @return The status of run-cmd
-         *  @retval 0 run cmd ok.
-         *  @retval -1 run cmd error.
-         * 
-         *  @warning This op is deprecated.
-         */
-        __YLIB_DEPRECATED_ATTRIBUTE__ int RunShellCommand(std::vector<std::string> & cmd);
 
         
         /*
@@ -150,6 +135,8 @@ namespace yLib{
         char * result_read_buffer = nullptr;
         
         protected:
+
+        YLIB_DECLARE_CLASSINFO_CONTENT(yShell);
     };
 
 }

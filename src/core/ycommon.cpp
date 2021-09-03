@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2018-10-23 11:09:07
  * @LastEditors: Sky
- * @LastEditTime: 2021-08-27 10:09:02
+ * @LastEditTime: 2021-09-01 11:57:18
  * @Description: 
  */
 
@@ -14,6 +14,7 @@ extern "C"{
 #endif //__cplusplus
 
 #include <string.h>
+#include <time.h>
 
 #ifdef __cplusplus
 }

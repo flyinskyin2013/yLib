@@ -9,7 +9,6 @@ option(ENABLE_GNU_SANITIZER "enable gnu-sanitizer " ON)
 option(ENABLE_YLIB_COVERAGE "enable ylib code coverage " OFF)
 
 #yLib built-in module
-option(BUILD_MODULE_YCURL "Build module-ycurl(it insteads by yhttp) " ON)
 option(BUILD_MODULE_YHTTP "Build module-yhttp " ON)
 option(BUILD_MODULE_YLOG "Build module-ylog " ON)
 option(BUILD_MODULE_YSHELL "Build module-yshell " ON)
@@ -18,9 +17,8 @@ option(BUILD_MODULE_YCONFIG "Build module-yconfig " OFF)
 option(BUILD_MODULE_YJSON "Build module-yjson " OFF)
 option(BUILD_MODULE_YSHAREDMEMORY "Build module-ysharedmemory " ON)
 option(BUILD_MODULE_YTCPSERVER "Build module-ytcpserver " ON)
-option(BUILD_MODULE_YTCPCLIENT "Build module-ytcpclient " ON)
-option(BUILD_MODULE_YUDPSERVER "Build module-yudpserver " ON)
-option(BUILD_MODULE_YUDPCLIENT "Build module-yudpclient " ON)
+option(BUILD_MODULE_YTCPSOCKET "Build module-ytcpsocket " ON)
+option(BUILD_MODULE_YUDPSOCKET "Build module-yudpsocket " ON)
 
 # yLib groups
 option(BUILD_GROUP_IPC "Build group-ipc" ON)

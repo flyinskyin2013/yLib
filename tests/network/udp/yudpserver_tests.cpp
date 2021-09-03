@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-09-09 13:42:25
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-16 14:17:39
+ * @LastEditTime: 2021-08-30 18:03:17
  * @Description: 
  */
 #include "catch2/catch.hpp"
@@ -13,7 +13,7 @@ TEST_CASE( "Test yUdpServer apis" , "[yUdpServer_Apis]" ){
 
     SECTION("yUdpServer test") {
 
-        yUdpServer udp_server;
+        yUdpSocket udp_server;
         REQUIRE(0 == udp_server.bind("0.0.0.0", 12355));
 
         char read_buffer[100];

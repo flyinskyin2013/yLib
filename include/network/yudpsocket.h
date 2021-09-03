@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-09-08 10:27:22
  * @LastEditors: Sky
- * @LastEditTime: 2020-09-16 14:10:19
+ * @LastEditTime: 2021-08-31 13:58:48
  * @Description: 
  */
 #ifndef __YLIB_NETWORK_YUDP_SOCKET_H__
@@ -38,40 +38,31 @@ namespace yLib{
 
     class yUdpSocket : public yAbstractSocket
     {
-    private:
-        /* data */
-        struct sockaddr_in client_socket_addr;//ipv4
-
-    private:
-
-
     public:
-        yUdpSocket(void);
-        yUdpSocket(int socket_flags_, bool is_block_ = true);
-        ~yUdpSocket();
-
-        inline bool socket_is_ready(void);
+        yUdpSocket(void) noexcept;
+        yUdpSocket(int domain, int type, int protocol) noexcept;
+        ~yUdpSocket() noexcept;
 
         /**
-         * @description: bind a port for send
-         * @param {type} 
-         * @return {type} 
+         * @description: clean all flag to default
          */
-        int8_t bind(const std::string & ip_, int32_t port_);
+        void clean_to_default(void) noexcept override;   
 
         /**
          * @description: 
          * @param {type} 
          * @return {type} 
          */
-        int64_t sendto(const void * buffer_, uint64_t size_to_send_, std::string ip_, uint64_t port_,int flags_ = 0);
+        int64_t sendto(const void * buffer, uint64_t size_to_send, std::string ip, uint64_t port,int flags = 0) noexcept;
 
         /**
          * @description: 
          * @param {type} 
          * @return {type} 
          */
-        int64_t recvfrom(void * buffer_, uint64_t size_to_read_, std::string &client_ip_, uint64_t &client_port_, int flags_ = 0);
+        int64_t recvfrom(void * buffer, uint64_t size_to_read, std::string &client_ip, uint64_t &client_port, int flags = 0) noexcept;
+
+        YLIB_DECLARE_CLASSINFO_CONTENT(yUdpSocket);
     };
 
 

@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2018-10-23 11:07:58
  * @LastEditors: Sky
- * @LastEditTime: 2021-08-27 10:03:20
+ * @LastEditTime: 2021-09-01 11:57:22
  * @Description: 
  */
 
@@ -27,6 +27,7 @@ namespace yLib{
      *  @brief convert errno to str, it wrappers strerror_r() and FormatMessage().it's thread-safety.
      */
     std::string ConvertErrnoToStr(uint64_t err_num) noexcept;
+
 
     YLIB_DECLARE_CLASSINFO_CONTENT(yCommon);
     };
