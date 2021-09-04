@@ -1,8 +1,8 @@
 /*
  * @Author: Sky
  * @Date: 2020-05-22 10:00:54
- * @LastEditors: Sky
- * @LastEditTime: 2021-08-27 11:18:24
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-09-04 22:54:08
  * @Description: 
  */
 
@@ -28,7 +28,7 @@ namespace yLib{
      *  @brief This is a basic mem-allocator in yLib.
      */
     template<class T>
-    class yBasicAllocator:
+    class __YLIB_TEAMPLATE_FUNC_EXPORT__ yBasicAllocator:
     YLIB_PUBLIC_INHERIT_YOBJECT
     {
     public:
@@ -58,6 +58,10 @@ namespace yLib{
 
     
     public:
+        //For msvc
+        //error C2512: 'std::unique_ptr<yLib::yBasicAllocator<T>,std::default_delete<yLib::yBasicAllocator<T>>>': no appropriate default constructor available
+        // yBasicAllocator<T>();
+        // ~yBasicAllocator<T>();
 
         /**
          *  @fn      pointer allocate(size_type n, const void * hint=static_cast<const void*>(0)) noexcept
@@ -173,19 +177,36 @@ namespace yLib{
         YLIB_DECLARE_CLASSINFO_CONTENT(yBasicAllocator<T>);
     };
 
+}
+
+    // template<typename T>   
+    // yLib::yBasicAllocator<T>::yBasicAllocator<T>(){}
+
+    // template<typename T>   
+    // yLib::yBasicAllocator<T>::~yBasicAllocator<T>(){}
+
     // abi::__cxa_demangle() convert mangle-str to readable-str for gnu-compiler
     // #include <cxxabi.h>
+#ifdef _WIN32
+
+    template<typename T>
+    yLib::yClassInfo<yLib::yBasicAllocator<T>> yLib::yBasicAllocator<T>::class_info( \
+                                                std::string("yBasicAllocator<"+std::string(typeid(T).name())+">"), \
+                                                nullptr); 
+
+#elif __linux__ || __linux
     
     template<typename T>
     yLib::yClassInfo<yLib::yBasicAllocator<T>> yLib::yBasicAllocator<T>::class_info( \
                                                 std::string("yBasicAllocator<"+std::string(typeid(T).name())+">"), \
                                                 [](){return std::unique_ptr<yLib::yBasicAllocator<T>>(new (std::nothrow) yBasicAllocator<T>());}); 
 
+#endif 
 
-    template<typename T>    
-    const yLib::yClassInfo<yLib::yBasicAllocator<T>> & yLib::yBasicAllocator<T>::GetClassInfo(void) noexcept {return class_info;} 
+    
 
-}
 
+    template<typename T>   
+    const yLib::yClassInfo<yLib::yBasicAllocator<T>> & yLib::yBasicAllocator<T>::yLibGetClassInfo(void) noexcept {return class_info;} 
 
 #endif //__YLIB_CORE_YALLOCATOR_HPP__

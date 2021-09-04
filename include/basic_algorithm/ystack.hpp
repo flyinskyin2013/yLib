@@ -1,8 +1,8 @@
 /*
  * @Author: Sky
  * @Date: 2020-07-01 15:13:23
- * @LastEditors: Sky
- * @LastEditTime: 2020-09-04 17:36:09
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-09-04 21:46:43
  * @Description: 
  */ 
 
@@ -191,6 +191,8 @@ namespace yLib{
             stack_head = _tmp_head;
 
             capacity = new_cap_;
+
+            return capacity;
         }
     };
 }

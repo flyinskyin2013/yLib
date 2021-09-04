@@ -1,8 +1,8 @@
 ### 
 # @Author: Sky
  # @Date: 2019-10-28 17:35:17
- # @LastEditors: Sky
- # @LastEditTime: 2020-12-22 17:53:46
+ # @LastEditors: Please set LastEditors
+ # @LastEditTime: 2021-09-04 16:33:50
  # @Description: 
  ###
 #!/bin/bash
@@ -22,8 +22,8 @@ DEF_CMAKE_CXX_COMPILER=""
 
 function clean(){
 
-	echo "clean curl-7.55.1/ libxml2-2.7.1/ log4cpp/ curl-7.55.1/ libconfig-1.7.2/ jsoncpp-1.8.4/ ... ..."
-	rm -rf curl-7.55.1/ libxml2-2.7.1/ log4cpp/ curl-7.55.1/  libconfig-1.7.2/ libxml2-2.9.9/ jsoncpp-1.8.4/
+	echo "clean curl-7.55.1/ libxml2-2.7.1/ curl-7.55.1/ libconfig-1.7.2/ jsoncpp-1.8.4/ ... ..."
+	rm -rf curl-7.55.1/ libxml2-2.7.1/  curl-7.55.1/  libconfig-1.7.2/ libxml2-2.9.9/ jsoncpp-1.8.4/
 
 	echo "clean build_out/ ... ..."
 	rm -rf build_out/
@@ -37,7 +37,6 @@ function init_lib(){
 	#tar -xvf libxml2-2.7.1.tar.gz
 	tar -xzf  libxml2-2.9.9.tar.gz
 	tar -xzf libconfig-1.7.2.tar.gz
-	tar -xzf log4cpp-1.1.3.tar.gz
 	tar -xzf jsoncpp_1.8.4.tar.gz
 
 }
@@ -216,83 +215,6 @@ function build_libconfig(){
 }
 
 
-function build_liblog4cpp(){
-
-	echo -e "\033[1;32;40m building liblog4cpp start ...  \033[0m"
-
-	cd log4cpp
-
-	if [  ! -d 'build' ]
-	then
-		echo -e "\033[0;33;40m create dir --- > build ...  \033[0m"
-		mkdir build
-	fi
-
-	if [  ! -d '_install' ]
-	then
-		echo -e "\033[0;33;40m create dir --- > _install ...  \033[0m"
-		mkdir _install
-	fi
-
-	
-	echo "update scripts of config.guess and config.sub for tx2-board " 
-	cp ../config.guess ./config/
-	cp ../config.sub ./config/
-
-
-
-	if [ ${Default_Arch} = "x86" ] || [ ${Default_Arch} = "x86_64" ]
-	then
-
-		if [ ${Default_Arch} = "x86" ]
-		then
-			mv tests/Makefile.in tests/Makefile.in.bak
-			touch tests/Makefile.in
-		fi
-
-		./configure --prefix=${third_part_root_dir}/build_out  CFLAGS="${SELF_C_FLAGS}" CPPFLAGS="${SELF_CXX_FLAGS}" --enable-shared=no --disable-remote-syslog --disable-smtp 
-		
-		if [ $? -ne -0 ]
-		then 
-		
-			exit 1
-		fi
-
-		if [ ${Default_Arch} = "x86" ]
-		then
-			
-			echo "all:" > tests/Makefile
-		fi
-
-	else
-
-		# in cross compile mode
-
-		mv tests/Makefile.in tests/Makefile.in.bak
-		touch tests/Makefile.in
-
-
-		./configure --prefix=${third_part_root_dir}/build_out  CFLAGS="${SELF_C_FLAGS}" CPPFLAGS="${SELF_CXX_FLAGS}" --enable-shared=no --disable-remote-syslog --disable-smtp --host="${CONFIGURE_HOST}"  CC="${CONFIGURE_CC}" CXX="${CONFIGURE_CXX}"
-		
-		if [ $? -ne -0 ]
-		then 
-		
-			exit 1
-		fi
-
-		echo "all:" > tests/Makefile
-
-	fi
-
-
-	make -j8
-
-	make install
-
-	echo -e "\033[1;32;40m building liblog4cpp end ...  \033[0m"
-}
-
-
 function build_libjsoncpp(){
 
 	echo -e "\033[1;32;40m building libjsoncpp start ...  \033[0m"
@@ -376,16 +298,7 @@ function make_lib(){
 		echo "build libconfig failed."
 		exit 1
 	fi
-
-
-
-	cd ${third_part_root_dir}
-	build_liblog4cpp
-	if [ $? -ne 0 ]
-	then
-		echo "build log4cpp failed."
-		exit 1
-	fi
+	
 
 	cd ${third_part_root_dir}
 	build_libjsoncpp

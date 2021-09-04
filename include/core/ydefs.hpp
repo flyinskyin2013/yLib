@@ -2,8 +2,8 @@
  * @Description: 
  * @Author: Sky
  * @Date: 2020-03-19 10:44:05
- * @LastEditors: Sky
- * @LastEditTime: 2021-08-27 11:07:14
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-09-04 22:56:11
  * @FilePath: \yLib\include\core\ylibdefs.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -25,7 +25,16 @@ namespace yLib{
 
     #ifdef _WIN32
 
-        #define __YLIB_EXPORT__ __declspec(dllexport)
+        #define BUILD_YLIB_WITH_EXPORT
+        #ifdef BUILD_YLIB_WITH_EXPORT
+            #define __YLIB_EXPORT__ __declspec(dllexport)
+        #else
+            #define __YLIB_EXPORT__ __declspec(dllimport)
+        #endif //BUILD_YLIB_WITH_EXPORT
+        
+        #define __YLIB_TEAMPLATE_CLASS_EXPORT__ __declspec(dllexport)
+        #define __YLIB_TEAMPLATE_FUNC_EXPORT__ __declspec(dllexport)
+
         #define __YLIB_IMPORT__ __declspec(dllimport)
 
         #define __YLIB_DEPRECATED_ATTRIBUTE__ __declspec(deprecated)
@@ -34,6 +43,8 @@ namespace yLib{
 
         #define __YLIB_EXPORT__
         #define __YLIB_IMPORT__
+        #define __YLIB_TEAMPLATE_CLASS_EXPORT__
+        #define __YLIB_TEAMPLATE_FUNC_EXPORT__
 
         #define __YLIB_DEPRECATED_ATTRIBUTE__ __attribute__((deprecated))
         #define __YLIB_DEPRECATED_ATTRIBUTE_WITH_MSG__(msg) __attribute__((deprecated))

@@ -1,11 +1,12 @@
 /*
  * @Author: Sky
  * @Date: 2019-07-04 11:28:53
- * @LastEditors: Sky
- * @LastEditTime: 2021-09-03 16:47:59
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-09-04 15:39:12
  * @Description: 
  */
 
+#include "core/ycommon.hpp"
 #include "utility/ylog.hpp"
 
 #include <iomanip>
@@ -15,10 +16,17 @@
 extern "C" {
 #endif//__cplusplus
 
-#include <unistd.h>
-#include <sys/syscall.h>   /* For SYS_xxx definitions */
-#include <time.h>
 
+    #include <time.h>
+    #ifdef _WIN32
+
+    #elif __linux__ || __linux
+
+        #include <unistd.h>
+        #include <sys/syscall.h>   /* For SYS_xxx definitions */
+
+    #elif __unix__ || __unix
+    #endif //__unix__ || __unix
 
 #ifdef __cplusplus
 }
@@ -36,21 +44,6 @@ const static char * g_log_severity_str[] = {
     "FATAL"
 };
 
-static int  GetThreadId() {
-
-#if defined(linux) || defined(__linux) || defined(__linux__)
-
-    return syscall(__NR_gettid);
-
-#elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-
-  return GetCurrentThreadId();
-
-#else
-    return -1;
-#endif  // OS_LINUX
-
-}
 
 yLib::yLogMessage::yLogMessage(const std::string & log_tag, yLib::yLogSeverity log_severity, const std::string &file_name, int file_line, bool newline) noexcept
 :is_add_newline(newline)
@@ -63,9 +56,9 @@ yLib::yLogMessage::yLogMessage(const std::string & log_tag, yLib::yLogSeverity l
     msg_data->log_stream.fill(0);
 
     // save info
-    clock_gettime(CLOCK_REALTIME, &msg_data->time_spec);
-    localtime_r(&msg_data->time_spec.tv_sec, &msg_data->tm_time);
-    msg_data->thread_id = GetThreadId();
+    yLib::yCommon::GetUtcTimeAndLocalTime(msg_data->time_spec, msg_data->tm_time);
+
+    msg_data->thread_id = yLib::yCommon::GetCurrentThreadId();
     msg_data->log_tag = log_tag;
     msg_data->log_severity = log_severity;
     msg_data->file_name = file_name;
@@ -104,7 +97,7 @@ yLib::yLogMessage::yLogMessage(const std::string & log_tag, yLib::yLogSeverity l
     msg_data->log_stream<<']' \
                         <<' ';
 
-    msg_data->log_prefix_len = msg_data->log_stream.stream_buf.buf_cur_ptr() - msg_data->log_stream.stream_buf.buf_base_ptr();
+    msg_data->log_prefix_len = (int)(msg_data->log_stream.stream_buf.buf_cur_ptr() - msg_data->log_stream.stream_buf.buf_base_ptr());
 }
 
 yLib::yLogMessage::~yLogMessage(){
@@ -193,39 +186,44 @@ static const char* GetAnsiColorCode(LogColor color) {
 }
 #endif  // OS_WINDOWS
 
+static void ColoredWriteToStderr(const char* message, size_t len, LogColor color){
+
+    // Avoid using cerr from this module since we may get called during
+    // exit code, and cerr may be partially or fully destroyed by then.
+    if (COLOR_DEFAULT == color) {
+        fwrite(message, len, 1, stderr);
+        return;
+    }
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+    const HANDLE stderr_handle = GetStdHandle(STD_ERROR_HANDLE);
+
+    // Gets the current text color.
+    CONSOLE_SCREEN_BUFFER_INFO buffer_info;
+    GetConsoleScreenBufferInfo(stderr_handle, &buffer_info);
+    const WORD old_color_attrs = buffer_info.wAttributes;
+
+    // We need to flush the stream buffers into the console before each
+    // SetConsoleTextAttribute call lest it affect the text that is already
+    // printed but has not yet reached the console.
+    fflush(stderr);
+    SetConsoleTextAttribute(stderr_handle,
+                            GetColorAttribute(color) | FOREGROUND_INTENSITY);
+    fwrite(message, len, 1, stderr);
+    fflush(stderr);
+    // Restores the text color.
+    SetConsoleTextAttribute(stderr_handle, old_color_attrs);
+#else
+    fprintf(stderr, "\033[0;3%sm", GetAnsiColorCode(color));
+    fwrite(message, len, 1, stderr);
+    fprintf(stderr, "\033[m");  // Resets the terminal to default.
+#endif  // OS_WINDOWS
+}
+
 static void ColoredWriteToStderr(yLib::yLogSeverity severity,
                                  const char* message, size_t len) {
   const LogColor color = SeverityToColor(severity);
 
-  // Avoid using cerr from this module since we may get called during
-  // exit code, and cerr may be partially or fully destroyed by then.
-  if (COLOR_DEFAULT == color) {
-    fwrite(message, len, 1, stderr);
-    return;
-  }
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-  const HANDLE stderr_handle = GetStdHandle(STD_ERROR_HANDLE);
 
-  // Gets the current text color.
-  CONSOLE_SCREEN_BUFFER_INFO buffer_info;
-  GetConsoleScreenBufferInfo(stderr_handle, &buffer_info);
-  const WORD old_color_attrs = buffer_info.wAttributes;
-
-  // We need to flush the stream buffers into the console before each
-  // SetConsoleTextAttribute call lest it affect the text that is already
-  // printed but has not yet reached the console.
-  fflush(stderr);
-  SetConsoleTextAttribute(stderr_handle,
-                          GetColorAttribute(color) | FOREGROUND_INTENSITY);
-  fwrite(message, len, 1, stderr);
-  fflush(stderr);
-  // Restores the text color.
-  SetConsoleTextAttribute(stderr_handle, old_color_attrs);
-#else
-  fprintf(stderr, "\033[0;3%sm", GetAnsiColorCode(color));
-  fwrite(message, len, 1, stderr);
-  fprintf(stderr, "\033[m");  // Resets the terminal to default.
-#endif  // OS_WINDOWS
 }
 /*this code copy and modified from https://github.com/google/glog/blob/master/src/logging.cc end*/
 /************************************************************************************************/
@@ -312,7 +310,13 @@ bool yLib::yLogFile::create_log_file(void){
     if (_file_base_name == "")
         _file_base_name = "LogFile";
 
+//access()'s declare is different  bettwen windows and linux
+#ifdef _WIN32
+    if (yLib::yCommon::CheckFileExist(_file_dir.c_str())){
+#elif __linux__ || __linux
     if (-1 == access(_file_dir.c_str(), F_OK)){
+#elif __unix__ || __unix
+#endif //__unix__ || __unix
         
         std::string _err_msg = "file dir(" + _file_dir +  ") don't exist.\n";
         ColoredWriteToStderr(yLib::LOG_ERROR, _err_msg.c_str(), _err_msg.length());
@@ -368,8 +372,11 @@ bool yLib::yLogFile::create_log_file(void){
 void yLib::yLogFile::write_thread_func(void){
 
     //set timeout point
-    clock_gettime(CLOCK_REALTIME, &old_time_spec);
-
+    {
+        // clock_gettime(CLOCK_REALTIME, &old_time_spec);  clock_gettime is not supported on windows
+        struct ::tm _tmp_tm_time;
+        yLib::yCommon::GetUtcTimeAndLocalTime(old_time_spec, _tmp_tm_time);
+    }
     // create log-file
     if(!create_log_file()){
 
@@ -393,8 +400,15 @@ void yLib::yLogFile::write_thread_func(void){
         {
             std::string _the_oldest_bak_file_name = this->log_file_handle_map[tag].first \
                                                 + ".bak" + std::to_string(yLib::yLogTagProperty::file_param.log_file_max_backup_num);
-            if (-1 != access(_the_oldest_bak_file_name.c_str(), F_OK)){ //if this file exist, we remove it
-                
+
+        //access()'s declare is different  bettwen windows and linux
+        #ifdef _WIN32
+            if (yLib::yCommon::CheckFileExist(_the_oldest_bak_file_name.c_str())){
+        #elif __linux__ || __linux
+            if (-1 != access(_the_oldest_bak_file_name.c_str(), F_OK)){ //if this file exist, we remove it. 
+        #elif __unix__ || __unix
+        #endif //__unix__ || __unix
+
                 if (0 > remove(_the_oldest_bak_file_name.c_str())){
                     
                     std::string _err_msg_str = "remove this oldest-log-bak-file("+_the_oldest_bak_file_name+")failed.";
@@ -412,8 +426,14 @@ void yLib::yLogFile::write_thread_func(void){
             std::string _the_new_log_file_name = this->log_file_handle_map[tag].first \
                                             + ".bak" + std::to_string(_i);
 
-            if (-1 != access(_the_old_log_file_name.c_str(), F_OK)){ //if this file exist, we remove it
-            
+            //access()'s declare is different  bettwen windows and linux
+            #ifdef _WIN32
+                if (yLib::yCommon::CheckFileExist(_the_old_log_file_name.c_str())){
+            #elif __linux__ || __linux
+                if (-1 != access(_the_old_log_file_name.c_str(), F_OK)){ //if this file exist, we remove it. 
+            #elif __unix__ || __unix
+            #endif //__unix__ || __unix
+
                 if (0 > rename(_the_old_log_file_name.c_str(), _the_new_log_file_name.c_str())){
 
                     std::string _err_msg_str = "rename this olde-log-bak-file("+_the_old_log_file_name+")failed.";
@@ -458,9 +478,13 @@ void yLib::yLogFile::write_thread_func(void){
 
         struct ::timespec _new_time_spec;
 
-        clock_gettime(CLOCK_REALTIME, &_new_time_spec);
+        {
+            // clock_gettime(CLOCK_REALTIME, &old_time_spec);  clock_gettime is not supported on windows
+            struct ::tm _tmp_tm_time;
+            yLib::yCommon::GetUtcTimeAndLocalTime(_new_time_spec, _tmp_tm_time);
+        }
 
-        double _diff_time = (_new_time_spec.tv_sec - this->old_time_spec.tv_sec)*1000;
+        double _diff_time = (_new_time_spec.tv_sec - this->old_time_spec.tv_sec)*1000.f;
         _diff_time += (_new_time_spec.tv_nsec - this->old_time_spec.tv_nsec)*0.000001;
 
         if (_diff_time > yLib::yLogTagProperty::file_param.flush_timeout){
@@ -628,7 +652,7 @@ void yLib::yLog::convert_fmt_to_str(yLib::yLogSeverity log_type, const char * fm
         _n_printed_num = snprintf(ylog_msg_buf.get(), YLIB_YLOG_MSG_BUF_MAX_SIZE, fmt, special_override_func_str);
 
     //std::cout<<"_n_printed_num " << _n_printed_num<<std::endl;
-    if ( YLIB_YLOG_MSG_BUF_MAX_SIZE <= _n_printed_num ){
+    if ( (int)YLIB_YLOG_MSG_BUF_MAX_SIZE <= _n_printed_num ){
 
         //W("Size of input-string may be greater than MSG_BUF_SIZE:%d, input-string will be truncated by size of MSG_BUF_SIZE", MSG_BUF_SIZE - 1); //bug 
         std::cout<<"yLog(): Size: "<< _n_printed_num <<" of input-string may be greater than MSG_BUF_SIZE: " << YLIB_YLOG_MSG_BUF_MAX_SIZE<<", input-string will be truncated by size of MSG_BUF_SIZE"<<std::endl;
@@ -643,7 +667,22 @@ void yLib::yLog::convert_fmt_to_str(yLib::yLogSeverity log_type, const char * fm
     
 }
 
+/*
+    You cannot use references with va_start according to C++ Standard 18.7/3:
 
+    The restrictions that ISO C places on the second parameter to the va_start() macro in header are different in this International Standard. 
+    The parameter parmN is the identifier of the rightmost parameter in the variable parameter list of the function definition (the one just before the ...). 
+    If the parameter parmN is declared with a function, array, or reference type, 
+    or with a type that is not compatible with the type that results when passing an argument for which there is no parameter, the behavior is undefined.
+
+    Error C2338: va_start argument must not have reference type and must not be parenthesized
+
+    _CRT_NO_VA_START_VALIDATION can't disable it.
+*/
+#ifdef _WIN32
+    #undef va_start
+    #define va_start(arg, paramN) __crt_va_start_a(arg, paramN)
+#endif //
 //log info 
 void yLib::yLog::I(const std::string &fmt, ...) noexcept{
     

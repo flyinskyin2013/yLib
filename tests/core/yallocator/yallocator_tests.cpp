@@ -1,8 +1,8 @@
 /*
  * @Author: Sky
  * @Date: 2021-08-27 10:29:04
- * @LastEditors: Sky
- * @LastEditTime: 2021-08-27 11:24:17
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-09-04 20:56:12
  * @Description: 
  */
 
@@ -39,7 +39,7 @@ TEST_CASE( "Test yBasicAllocator apis" , "[yBasicAllocator_Apis]" ){
         yLib::yObject * _obj = reinterpret_cast<yLib::yObject *>(_mem_pool.get());
         _alloctor.construct(_obj, yLib::yObject());
 
-        REQUIRE_THAT( _obj->GetClassInfo().class_name, Catch::Equals("yObject"));
+        REQUIRE_THAT( _obj->yLibGetClassInfo().class_name, Catch::Equals("yObject"));
 
         _alloctor.destroy(_obj);
 

@@ -12,7 +12,12 @@
 extern "C"{
 #endif //__cplusplus
 
+#ifdef _WIN32
+    //SymGetSymFromAddr64，SymGetLineFromAddr64
+#elif __linux__ || __linux
 #include <execinfo.h>
+#endif
+
 #include <stdlib.h>
 
 #ifdef __cplusplus

@@ -1,8 +1,8 @@
 /*
  * @Author: Sky
  * @Date: 2019-09-20 16:59:29
- * @LastEditors: Sky
- * @LastEditTime: 2021-08-30 14:05:25
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-09-04 22:53:59
  * @Description: 
  */
 
@@ -25,7 +25,7 @@ namespace yLib
      *  @class yNotCopyable
      *  @brief This class and child-class can't construct, they are static class.
      */
-    class yStaticClass
+    class __YLIB_EXPORT__ yStaticClass
     {
         private:
         yStaticClass() = default;
@@ -35,7 +35,7 @@ namespace yLib
      *  @class yNoDefaultConstructorClass
      *  @brief This class and child-class don't have default constructor.
      */
-    class yNoDefaultConstructorClass
+    class __YLIB_EXPORT__ yNoDefaultConstructorClass
     {
         private:
         yNoDefaultConstructorClass() = default;
@@ -45,7 +45,7 @@ namespace yLib
      *  @class yNotCopyable
      *  @brief This class and child-class can't copy.
      */
-    class yNotCopyable
+    class __YLIB_EXPORT__ yNotCopyable
     {
         public:
         yNotCopyable() = default;
@@ -62,7 +62,7 @@ namespace yLib
      *  @class yNotMoveable
      *  @brief This class and child-class can't move.
      */
-    class yNotMoveable
+    class __YLIB_EXPORT__ yNotMoveable
     {
         public:
         yNotMoveable() = default;
@@ -79,7 +79,7 @@ namespace yLib
      *  @class yNotCopyableAndMoveable
      *  @brief This class and child-class can't copy and move.
      */
-    class yNotCopyableAndMoveable:public yNotCopyable, public yNotMoveable
+    class __YLIB_EXPORT__ yNotCopyableAndMoveable:public yNotCopyable, public yNotMoveable
     {};
 
     /**
@@ -87,7 +87,7 @@ namespace yLib
      *  @brief This class store some class-info for reflex in the future.
      */
     template<typename T>
-    class yClassInfo
+    class __YLIB_TEAMPLATE_CLASS_EXPORT__ yClassInfo
     {
         public:
         yClassInfo() = delete;
@@ -97,30 +97,32 @@ namespace yLib
         std::function<std::unique_ptr<T>()> default_creator_method;
     };
 
+
     template<typename T>
     yClassInfo<T>::yClassInfo(const std::string & cls_name, const std::function<std::unique_ptr<T>()> & default_creator) noexcept
     :class_name(cls_name), default_creator_method(default_creator)
     {}
 
+    //GetClassInfo is conflicted with GetClassInfo() on window
     #define YLIB_DECLARE_CLASSINFO_CONTENT(class_name) \
         private: \
         static yClassInfo<class_name> class_info; \
         public: \
-        static const yClassInfo<class_name> & GetClassInfo(void) noexcept
+        static const yClassInfo<class_name> & yLibGetClassInfo(void) noexcept
 
     #define YLIB_IMPLEMENT_CLASSINFO_CONTENT(class_name) \
         yLib::yClassInfo<yLib::class_name> yLib::class_name::class_info( \
                                                 std::string(#class_name), \
                                                 [](){return std::unique_ptr<yLib::class_name>(new (std::nothrow) class_name());}); \
         \
-        const yLib::yClassInfo<yLib::class_name> & yLib::class_name::GetClassInfo(void) noexcept {return class_info;} 
+        __YLIB_TEAMPLATE_FUNC_EXPORT__ const yLib::yClassInfo<yLib::class_name> & yLib::class_name::yLibGetClassInfo(void) noexcept {return class_info;} 
 
     #define YLIB_IMPLEMENT_CLASSINFO_CONTENT_S(class_name) \
         yLib::yClassInfo<yLib::class_name> yLib::class_name::class_info( \
                                                 std::string(#class_name), \
                                                 nullptr); \
         \
-        const yLib::yClassInfo<yLib::class_name> & yLib::class_name::GetClassInfo(void) noexcept {return class_info;} 
+        __YLIB_TEAMPLATE_FUNC_EXPORT__ const yLib::yClassInfo<yLib::class_name> & yLib::class_name::yLibGetClassInfo(void) noexcept {return class_info;} 
  
     /**
      *  @class yObject

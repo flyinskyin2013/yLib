@@ -178,30 +178,42 @@ if(WIN32)
 
         add_library(ylib_s STATIC ${SRC})
 
+        if(CMAKE_BUILD_TYPE MATCHES "Debug")
+
+            target_link_libraries( ylib_s PRIVATE jsoncppD.lib libconfig++D.lib libcurlD.lib  ws2_32 Shlwapi)
+            add_custom_command(TARGET ylib_s POST_BUILD
+                COMMAND lib.exe /out:ylib_s_new.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/jsoncppD.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libconfig++D.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libcurlD.lib ${CMAKE_CURRENT_BINARY_DIR}/Debug/ylib_s.lib
+                COMMAND ${CMAKE_COMMAND} -E rename ylib_s_new.lib ${CMAKE_CURRENT_BINARY_DIR}/Debug/ylib_s.lib
+                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/
+            )
+        elseif (CMAKE_BUILD_TYPE MATCHES "Release")
+
+            target_link_libraries( ylib_s PRIVATE jsoncpp.lib libconfig++.lib libcurl.lib  ws2_32 Shlwapi)
+            add_custom_command(TARGET ylib_s POST_BUILD
+                COMMAND lib.exe /out:ylib_s_new.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/jsoncpp.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libconfig++.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libcurl.lib ${CMAKE_CURRENT_BINARY_DIR}/Release/ylib_s.lib
+                COMMAND ${CMAKE_COMMAND} -E rename ylib_s_new.lib ${CMAKE_CURRENT_BINARY_DIR}/Release/ylib_s.lib
+                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/
+            )
+        endif()
+
+        set_target_properties(ylib_s PROPERTIES COMPILE_DEFINITIONS BUILD_YLIB_WITH_EXPORT)
     endif()
 
     if(BUILD_SHARED_YLIB)
 
         add_library(ylib SHARED ${SRC})
+        if(CMAKE_BUILD_TYPE MATCHES "Debug")
 
+            target_link_libraries( ylib PRIVATE jsoncppD.lib libconfig++D.lib libcurlD.lib  ws2_32 Shlwapi)
+
+        elseif (CMAKE_BUILD_TYPE MATCHES "Release")
+
+            target_link_libraries( ylib PRIVATE jsoncpp.lib libconfig++.lib libcurl.lib  ws2_32 Shlwapi)
+
+        endif()
+        set_target_properties(ylib PROPERTIES COMPILE_DEFINITIONS BUILD_YLIB_WITH_EXPORT)
     endif()
 
-    if(CMAKE_BUILD_TYPE MATCHES "Debug")
-
-        target_link_libraries( ylib_s PRIVATE log4cppD.lib jsoncppD.lib libconfig++D.lib  ws2_32 Shlwapi)
-        target_link_libraries( ylib PRIVATE log4cppD.lib jsoncppD.lib libconfig++D.lib  ws2_32 Shlwapi)
-
-    elseif (CMAKE_BUILD_TYPE MATCHES "Release")
-
-        target_link_libraries( ylib_s PRIVATE log4cpp.lib jsoncpp.lib libconfig++.lib  ws2_32 Shlwapi)
-        target_link_libraries( ylib PRIVATE log4cpp.lib jsoncpp.lib libconfig++.lib  ws2_32 Shlwapi)
-
-    endif()
-
-    # add_custom_command(TARGET ylib_s POST_BUILD
-    #                         COMMAND lib.exe /out:ylib_s_new.lib log4cppD.lib jsoncppD.lib libconfig++D.lib
-    #                         COMMAND ${CMAKE_COMMAND} -E rename A.lib B.lib
-    #                         )
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
     if(BUILD_STATIC_YLIB)
@@ -211,7 +223,6 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
                                     PRIVATE 
                                     libcurl.a
                                     libxml2.a 
-                                    liblog4cpp.a 
                                     liblibconfig++.a 
                                     libjsoncpp.a)
 
@@ -232,7 +243,6 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
                             POST_BUILD
                             COMMAND ar -x ${PROJECT_SOURCE_DIR}/lib/linux/${BUILD_YLIB_ARCH}/libcurl.a
                             COMMAND ar -x ${PROJECT_SOURCE_DIR}/lib/linux/${BUILD_YLIB_ARCH}/libxml2.a
-                            COMMAND ar -x ${PROJECT_SOURCE_DIR}/lib/linux/${BUILD_YLIB_ARCH}/liblog4cpp.a
                             COMMAND ar -x ${PROJECT_SOURCE_DIR}/lib/linux/${BUILD_YLIB_ARCH}/liblibconfig++.a
                             COMMAND ar -x ${PROJECT_SOURCE_DIR}/lib/linux/${BUILD_YLIB_ARCH}/libjsoncpp.a
                             COMMAND ar -x ${CMAKE_CURRENT_BINARY_DIR}/libylib_s.a
@@ -254,12 +264,12 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
             target_compile_options(ylib PRIVATE -coverage -fprofile-arcs -ftest-coverage -rdynamic)
             # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -coverage -fprofile-arcs -ftest-coverage")
             # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -coverage -fprofile-arcs -ftest-coverage")
-            target_link_libraries(ylib PRIVATE -coverage -lgcov libcurl.a libxml2.a liblog4cpp.a liblibconfig++.a libjsoncpp.a)
+            target_link_libraries(ylib PRIVATE -coverage -lgcov libcurl.a libxml2.a liblibconfig++.a libjsoncpp.a)
         
         else()
 
             target_link_libraries(ylib
-                            PRIVATE libcurl.a libxml2.a liblog4cpp.a liblibconfig++.a libjsoncpp.a)
+                            PRIVATE libcurl.a libxml2.a liblibconfig++.a libjsoncpp.a)
         endif()
 
         set_target_properties(ylib PROPERTIES VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}" SOVERSION ${PROJECT_VERSION_MAJOR})

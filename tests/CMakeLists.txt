@@ -137,15 +137,6 @@ if(BUILD_MODULE_YLOG)
     build_tests(UTILITY yLog yLog)
     build_tests(UTILITY yLog yLog_Verify)
     build_tests(UTILITY yLog ylog_file_bakup)
-
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/utility/ylog/log4cplus.properties.example log4cplus.properties @ONLY)
-
-    INSTALL(FILES
-
-        ${CMAKE_CURRENT_BINARY_DIR}/log4cplus.properties
-        DESTINATION 
-        tests
-    )
 endif()
 
 ##########################################################################

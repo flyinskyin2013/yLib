@@ -125,16 +125,6 @@ call:self_print I "Build dependence complete."
         wget -O jsoncpp_1.8.4.tar.gz https://github.com/open-source-parsers/jsoncpp/archive/1.8.4.tar.gz
     )
 
-    if exist log4cpp-1.1.3.tar.gz (
-        REM check md5
-		REM md5sum -c log4cpp-1.1.3.md5
-        call:self_print I "check md5 for log4cpp-1.1.3.tar.gz"
-    )^
-    else (
-
-        wget -O log4cpp-1.1.3.tar.gz https://sourceforge.net/projects/log4cpp/files/log4cpp-1.1.x%20%28new%29/log4cpp-1.1/log4cpp-1.1.3.tar.gz/download
-    )
-
 	call:self_print I "Download complete."
 @goto:eof
 

@@ -2,8 +2,8 @@
  * @Description: 
  * @Author: Sky
  * @Date: 2019-11-29 11:35:54
- * @LastEditors: Sky
- * @LastEditTime: 2021-08-30 13:50:25
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-09-04 15:01:41
  * @FilePath: \yLib\include\core\ysharedmemory.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -80,8 +80,7 @@ namespace yLib {
 		typedef struct __yshmparam__{
 			__yshmparam__():
 			shm_key(0),
-			shm_flag(0),
-			shm_name("")
+			shm_flag(0)
 			{}
 			~__yshmparam__()
 			{
@@ -107,8 +106,9 @@ namespace yLib {
 
 			/** @var key_t shm_key
             	@brief it's the shm key, it only used on linux, when we create a shm.
+				key_t's defination is #define key_t int.key_t is only support on linux.
         	*/
-			key_t shm_key;
+			int shm_key;
 
 			/** @var int shm_flag
 				@brief it's the user-flag for shm. \n

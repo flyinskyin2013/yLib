@@ -2,8 +2,8 @@
  * @Description: 
  * @Author: Sky
  * @Date: 2020-03-18 15:42:22
- * @LastEditors: Sky
- * @LastEditTime: 2021-08-31 15:40:19
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-09-04 21:42:23
  * @FilePath: \yLib\include\core\yhttp.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -76,7 +76,7 @@ namespace yLib{
     }yHttpPostUrlencodedItem;  
 
 
-    class yHttp MACRO_PUBLIC_INHERIT_YOBJECT {
+    class __YLIB_EXPORT__ yHttp MACRO_PUBLIC_INHERIT_YOBJECT {
 
         public:
         yHttp() noexcept;

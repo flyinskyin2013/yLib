@@ -126,13 +126,12 @@ endif()
 if(WIN32)
 
     # UtilityGroup
-    set(BUILD_MODULE_YCURL "OFF")
-    set(BUILD_MODULE_YHTTP "OFF")
+    set(BUILD_MODULE_YHTTP "ON")
     set(BUILD_MODULE_YLOG "ON")
     set(BUILD_MODULE_YSHELL "OFF")
     set(BUILD_MODULE_YXML "OFF")
-    set(BUILD_MODULE_YCONFIG  "ON")
-    set(BUILD_MODULE_YJSON  "ON")
+    set(BUILD_MODULE_YCONFIG  "OFF")
+    set(BUILD_MODULE_YJSON  "OFF")
 
     # IpcGroup
     set(BUILD_MODULE_YSHAREDMEMORY "ON")
@@ -184,9 +183,11 @@ if(BUILD_EXAMPLE)
     add_subdirectory(examples)
 endif()
 
+
 if(BUILD_UNIT_TEST)
     add_subdirectory(tests)
 endif()
+
 
 # infomation summary
 MESSAGE("----------------------------------------------------------------")

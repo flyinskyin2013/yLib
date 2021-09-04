@@ -89,13 +89,6 @@ function check_download_third_part(){
 		wget -O jsoncpp_1.8.4.tar.gz https://github.com/open-source-parsers/jsoncpp/archive/1.8.4.tar.gz
 	fi
 
-	if [ -f log4cpp-1.1.3.tar.gz ];
-	then
-		md5sum -c log4cpp-1.1.3.md5
-	else
-		wget -O log4cpp-1.1.3.tar.gz https://sourceforge.net/projects/log4cpp/files/log4cpp-1.1.x%20%28new%29/log4cpp-1.1/log4cpp-1.1.3.tar.gz/download
-	fi
-
 	self_print I "Download complete."
 
 }

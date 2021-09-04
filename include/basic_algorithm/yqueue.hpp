@@ -1,8 +1,8 @@
 /*
  * @Author: Sky
  * @Date: 2020-07-01 15:13:29
- * @LastEditors: Sky
- * @LastEditTime: 2020-09-16 15:12:00
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-09-04 21:47:14
  * @Description: 
  */ 
 #ifndef __BASIC_ALGORITHM_YQUEUE_HPP__
@@ -273,6 +273,7 @@ namespace yLib{
             }
             
             capacity = new_cap_;
+            return capacity;
         }
     };
 }

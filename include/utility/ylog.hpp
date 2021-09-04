@@ -1,8 +1,8 @@
 /*
  * @Author: Sky
  * @Date: 2019-07-04 11:28:52
- * @LastEditors: Sky
- * @LastEditTime: 2021-09-03 17:23:15
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-09-04 21:48:14
  * @Description: 
  */
 
@@ -20,44 +20,36 @@
 #include <queue>
 #include <fstream>
 
-#ifdef _WIN32
-    #pragma warning(disable:4067) //warning C4067: 预处理器指令后有意外标记 - 应输入换行符
-    #pragma warning(disable:4251) //warning C4251: xxxxx需要有dll接口由xxxx的客户端使用
-#endif //_WIN32
 
-#ifdef _WIN32
 
-#include <windows.h>
-
-#elif __linux__ || __linux
-
+// c header
 #ifdef __cplusplus
 extern "C" {
 #endif//__cplusplus
 
-#include <string.h>
-#include <stdarg.h>
-#include <unistd.h>
-#include <pthread.h>
+    #include <stdarg.h>
+    #include <string.h>
+    #include <stddef.h>
+    #include <stdint.h>
+
+    #ifdef _WIN32
+
+        #include <windows.h>
+
+    #elif __linux__ || __linux
+
+        #include <unistd.h>
+        #include <pthread.h>
+
+    #elif __unix__ || __unix
+    #endif //__unix__ || __unix
 
 #ifdef __cplusplus
 }
 #endif//__cplusplus
 
-
-#elif __unix__ || __unix
-
-#endif //__unix__ || __unix
-
-
+// 
 #include "core/yobject.hpp"
-
-
-
-namespace log4cpp{
-
-    class Category;
-}
 
 
 namespace yLib{
@@ -72,7 +64,7 @@ namespace yLib{
 
 
 
-    //parity: debug < info < warn < error
+    //parity: all < trace < debug < info < warn < error < fatal
 
     typedef enum __em_ylog_severity__:uint16_t{
 
@@ -115,7 +107,7 @@ namespace yLib{
     /** \struct EnableyLogFileParam
         \brief the param of enabling log file.
     */
-    typedef struct __st_enable_ylog_file_param__{
+    typedef struct __YLIB_EXPORT__ __st_enable_ylog_file_param__{
 
         std::string file_base_name = "";
         std::string file_dir = "";
@@ -127,8 +119,8 @@ namespace yLib{
 
         bool flush_every_times = true;
 
-        // default 20MB
-        ssize_t log_file_max_size = 1024*1024*20;
+        // default 20MB 1024*1024*20 = 20971520
+        uint64_t log_file_max_size = 20971520;
 
         uint32_t log_file_max_backup_num = 2;
 
@@ -136,7 +128,7 @@ namespace yLib{
         uint32_t flush_timeout = 200;
     } EnableyLogFileParam;
 
-    struct yLogTagProperty{
+    struct __YLIB_EXPORT__ yLogTagProperty{
  
         uint16_t log_level = ENABLE_ALL_LOG_LEVEL;
         static EnableyLogFileParam file_param;
@@ -277,9 +269,9 @@ namespace yLib{
     //yLog support thread-safety,defaultly.
     /**
      *  @class yLog
-     *  @brief This is log-class based on log4cpp in yLib.
-     *  Ref:google glog
-     *      log4cpp
+     *  @brief This is log-class in yLib.
+     *  Ref:google glog/log4cpp
+     *      
      */
     class __YLIB_EXPORT__ yLog MACRO_PUBLIC_INHERIT_YOBJECT{
 
