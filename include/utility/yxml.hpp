@@ -1,8 +1,8 @@
 /*
  * @Author: Sky
  * @Date: 2019-09-20 16:50:06
- * @LastEditors: Sky
- * @LastEditTime: 2020-07-14 18:26:00
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-09-05 16:21:50
  * @Description: 
  */
 #ifndef __YLIB_UTILIY_YXML_HPP__
@@ -27,21 +27,6 @@ typedef xmlDoc * xmlDocPtr;
 #include "core/ycommon.hpp"
 namespace yLib{
 
-    //deprecated this class , as it is not completed.
-    class __YLIB_DEPRECATED_ATTRIBUTE__ yXML MACRO_PUBLIC_INHERIT_YOBJECT{
-
-        public:
-        yXML();
-        ~yXML();
-        int yXml_Read(std::string & xml_path);
-        int yXml_Set_Val(std::string &node_name, std::string &node_prop_name, std::string &node_prop_val, std::string & child_node_name, std::string &child_node_val);
-        int yXml_Get_Val(std::string &node_name, std::string &node_prop_name, std::string &node_prop_val, std::string & child_node_name, std::string &child_node_val) const;
-        int yXml_Write(std::string & xml_path);
-        protected:
-        private:
-        xmlDocPtr _xmlfile_pdoc_;
-    };
-
     typedef struct __yxml_opts_ex__{
         
         std::string parent_node_name = "";
@@ -51,7 +36,7 @@ namespace yLib{
         int32_t jump_times = -233333;//magic num
     } yXmlOptsEx;
 
-    class yXml MACRO_PUBLIC_INHERIT_YOBJECT{
+    class __YLIB_CLASS_DECLSPEC__ yXml MACRO_PUBLIC_INHERIT_YOBJECT{
 
         public:
         yXml();

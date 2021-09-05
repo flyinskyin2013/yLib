@@ -1,8 +1,8 @@
 /*
  * @Author: Sky
  * @Date: 2021-09-03 15:19:05
- * @LastEditors: Sky
- * @LastEditTime: 2021-09-03 17:55:00
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-09-05 13:18:17
  * @Description: 
  */
 #include "catch2/catch.hpp"
@@ -40,10 +40,17 @@ TEST_CASE( "Test yLog log-size" , "[yLog_LogSize]" ){
         _logfile1.close();
         _logfile2.close();
 
-
+        #ifdef _WIN32
+        REQUIRE(_logfile0_size == 66328);
+        REQUIRE(_logfile1_size == 32898);
+        REQUIRE(_logfile2_size == 32902);//CRLF
+        #elif __linux__ || __linux
         REQUIRE(_logfile0_size == 66308);
         REQUIRE(_logfile1_size == 32892);
-        REQUIRE(_logfile2_size == 32892 + 4);
+        REQUIRE(_logfile2_size == 32892 + 4);//LF
+        #elif __unix__ || __unix
+        #endif //__unix__ || __unix
+
     }
 
 

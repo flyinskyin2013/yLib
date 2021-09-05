@@ -164,6 +164,8 @@ call:self_print I "Build dependence complete."
 
 	cd %ROOT_DIR%/include/third_part/%Default_Platform%/
 	cp libconfig.h libconfig.h++ libconfig.hh libconfig/
+    mv libxml2/libxml/ libxml
+    rm -r libxml2
 
 	REM cd ${ROOT_DIR}
 	call:self_print I "Copy complete."

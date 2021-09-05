@@ -14,14 +14,20 @@ For Windows
     Open vs2015/vs2017/vs2019 native cmd
     >>%comspec% /k "D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86 or amd64
 
+    Open powershell on windows10, download third_part
+    >>cd yLib\third_part
+    >>..\download_third_part.ps1
+
+    If I don't specially note that, the default shell is native-cmd.
+
 2. For third_part resources.
     >>cd yLib
     >>build_deps.bat vs2015 x86_64
 
-5. For yLib.
+3. For yLib.
     >>mkdir build_vs2015_x64 
     >>cd build_vs2015_x64 
-    >>cmake -T v140,host=x64 -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=%cd%/install -DBUILD_YLIB_ARCH=x86_64 -DBUILD_YLIB_WITH_EXPORT=1 ..
+    >>cmake -T v140,host=x64 -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=%cd%/install -DBUILD_YLIB_ARCH=x86_64 ..
     >>cmake --build . --config Release --target install
 
 For Linux:

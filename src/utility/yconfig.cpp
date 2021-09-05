@@ -1,8 +1,8 @@
 /*
  * @Author: Sky
  * @Date: 2019-07-04 11:28:53
- * @LastEditors: Sky
- * @LastEditTime: 2021-08-26 16:04:17
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-09-05 14:51:38
  * @Description: 
  */
 
@@ -14,7 +14,7 @@ using namespace yLib;
 #define CONVERT_POINTER_TO_LIBCONFIG_CONFIG_INSTANCE(pointer)\
     static_cast<libconfig::Config *>(config_instance)
 
-static yLib::yConfigValue g_yconfig_value_default_obj;
+static yLib::yConfigValue g_yconfig_valuedefault_obj;
 
 yLib::yConfig::yConfig() 
 MACRO_INIT_YOBJECT_PROPERTY(yConfig), 
@@ -129,7 +129,7 @@ yLib::yConfigValue yLib::yConfig::GetValue(const std::string &node_path_) {
 }
 
 
-int8_t yLib::yConfig::SetValue(const std::string &node_path_, const yConfigValue &value_){
+int8_t yLib::yConfig::SetValue(const std::string &node_path_, const yConfigValue &value){
 
     if ( !CONVERT_POINTER_TO_LIBCONFIG_CONFIG_INSTANCE(config_instance)->exists(node_path_.c_str()) ){//node_path not found
         
@@ -140,26 +140,26 @@ int8_t yLib::yConfig::SetValue(const std::string &node_path_, const yConfigValue
     libconfig::Setting & _root = CONVERT_POINTER_TO_LIBCONFIG_CONFIG_INSTANCE(config_instance)->getRoot();
     libconfig::Setting & _setting_value = _root.lookup(node_path_.c_str());
 
-    switch(value_.cur_value_type){
+    switch(value.cur_value_type){
 
         case yLib::yValue::INT32_TYPE:{
 
-            _setting_value = (int32_t)value_;
+            _setting_value = (int32_t)value;
             break;
         }
         case yLib::yValue::BOOL_TYPE:{
             
-            _setting_value = (bool)value_;
+            _setting_value = (bool)value;
             break;
         }
         case yLib::yValue::FLOAT_TYPE:{
 
-            _setting_value = (float)value_;
+            _setting_value = (float)value;
             break;
         }
         case yLib::yValue::STRING_TYPE:{
 
-            _setting_value = (std::string)value_;
+            _setting_value = (std::string)value;
             break;
         }
         default :{
@@ -175,7 +175,7 @@ int8_t yLib::yConfig::SetValue(const std::string &node_path_, const yConfigValue
 }
 
 
-int8_t yLib::yConfig::AddNode(const std::string & pos_, const std::string & name_, yValue::yValueType type_, const yConfigValue &value_){
+int8_t yLib::yConfig::AddNode(const std::string & pos_, const std::string & name_, yValue::yValueType type_, const yConfigValue &value){
 
     libconfig::Setting & _root = CONVERT_POINTER_TO_LIBCONFIG_CONFIG_INSTANCE(config_instance)->getRoot();
 
@@ -185,22 +185,22 @@ int8_t yLib::yConfig::AddNode(const std::string & pos_, const std::string & name
 
             case yLib::yValue::INT32_TYPE:{
 
-                _root.add(name_.c_str(), libconfig::Setting::Type::TypeInt) = (int32_t)value_;
+                _root.add(name_.c_str(), libconfig::Setting::Type::TypeInt) = (int32_t)value;
                 break;
             }
             case yLib::yValue::BOOL_TYPE:{
 
-                _root.add(name_.c_str(), libconfig::Setting::Type::TypeBoolean) = (bool)value_;
+                _root.add(name_.c_str(), libconfig::Setting::Type::TypeBoolean) = (bool)value;
                 break;
             }
             case yLib::yValue::FLOAT_TYPE:{
 
-                _root.add(name_.c_str(), libconfig::Setting::Type::TypeFloat) = (float)value_;
+                _root.add(name_.c_str(), libconfig::Setting::Type::TypeFloat) = (float)value;
                 break;
             }
             case yLib::yValue::STRING_TYPE:{
                 
-                _root.add(name_.c_str(), libconfig::Setting::Type::TypeString) = (std::string)value_;
+                _root.add(name_.c_str(), libconfig::Setting::Type::TypeString) = (std::string)value;
                 break;
             }
             case yLib::yValue::GROUP_TYPE:{
@@ -223,22 +223,22 @@ int8_t yLib::yConfig::AddNode(const std::string & pos_, const std::string & name
 
             case yLib::yValue::INT32_TYPE:{
 
-                _lookup_node.add(name_.c_str(), libconfig::Setting::Type::TypeInt) = (int32_t)value_;//
+                _lookup_node.add(name_.c_str(), libconfig::Setting::Type::TypeInt) = (int32_t)value;//
                 break;
             }
             case yLib::yValue::BOOL_TYPE:{
 
-                _lookup_node.add(name_.c_str(), libconfig::Setting::Type::TypeBoolean) = (bool)value_;
+                _lookup_node.add(name_.c_str(), libconfig::Setting::Type::TypeBoolean) = (bool)value;
                 break;
             }
             case yLib::yValue::FLOAT_TYPE:{
 
-                _lookup_node.add(name_.c_str(), libconfig::Setting::Type::TypeFloat) = (float)value_;
+                _lookup_node.add(name_.c_str(), libconfig::Setting::Type::TypeFloat) = (float)value;
                 break;
             }
             case yLib::yValue::STRING_TYPE:{
                 
-                _lookup_node.add(name_.c_str(), libconfig::Setting::Type::TypeString) = (std::string)value_;
+                _lookup_node.add(name_.c_str(), libconfig::Setting::Type::TypeString) = (std::string)value;
                 break;
             }
             case yLib::yValue::GROUP_TYPE:{
@@ -261,100 +261,96 @@ int8_t yLib::yConfig::AddNode(const std::string & pos_, const std::string & name
 //////////////////////////////////////////////////
 ///////////////////yConfigValue
 //////////////////////////////////////////////////
-yConfigValue::yConfigValue() noexcept 
-:yValue()
+
+
+yConfigValue::yConfigValue(int32_t value) noexcept
+:yValue(value)
 {
 
 }
 
-yConfigValue::yConfigValue(int32_t value_) noexcept
-:yValue(value_)
+yLib::yConfigValue::yConfigValue(bool value) noexcept
+:yValue(value)
+{
+
+}
+yLib::yConfigValue::yConfigValue(float value) noexcept
+:yValue(value)
 {
 
 }
 
-yLib::yConfigValue::yConfigValue(bool value_) noexcept
-:yValue(value_)
-{
-
-}
-yLib::yConfigValue::yConfigValue(float value_) noexcept
-:yValue(value_)
+yLib::yConfigValue::yConfigValue(const std::string &value) noexcept
+:yValue(value)
 {
 
 }
 
-yLib::yConfigValue::yConfigValue(const std::string &value_) noexcept
-:yValue(value_)
+yLib::yConfigValue::yConfigValue(const char *value) noexcept
+:yValue(value)
 {
 
 }
 
-yLib::yConfigValue::yConfigValue(const char *value_) noexcept
-:yValue(value_)
-{
-
-}
-
-yLib::yConfigValue::yConfigValue(const yConfigValue &value_) noexcept
+yLib::yConfigValue::yConfigValue(const yConfigValue &value) noexcept
 :yBasicValue()
 {
 
-    yLib::yBasicValue::CopyValueContainer(value_, *this);
+    yLib::yBasicValue::CopyValueContainer(value, *this);
 }
 
 
-yLib::yConfigValue& yLib::yConfigValue::operator=(const yConfigValue & value_) noexcept
+yLib::yConfigValue& yLib::yConfigValue::operator=(const yConfigValue & value) noexcept
 {
     this->CleanAllToDefault();
-    yLib::yBasicValue::CopyValueContainer(value_, *this);
+    yLib::yBasicValue::CopyValueContainer(value, *this);
 
     return *this;
 }
 
-yLib::yConfigValue::yConfigValue(const yConfigValue &&value_) noexcept 
+yLib::yConfigValue::yConfigValue(const yConfigValue &&value) noexcept 
 :yBasicValue()
 {
 
-    yLib::yBasicValue::CopyValueContainer(value_, *this);
+    yLib::yBasicValue::CopyValueContainer(value, *this);
 }
-yLib::yConfigValue& yLib::yConfigValue::operator=(const yConfigValue &&value_) noexcept
+yLib::yConfigValue& yLib::yConfigValue::operator=(const yConfigValue &&value) noexcept
 {
     
     this->CleanAllToDefault();
-    yLib::yBasicValue::CopyValueContainer(value_, *this);
+    yLib::yBasicValue::CopyValueContainer(value, *this);
 
     return *this;
 }
 
-yLib::yConfigValue & yLib::yConfigValue::operator=(int32_t value_){
+yLib::yConfigValue & yLib::yConfigValue::operator=(int32_t value)noexcept{
 
     this->CleanAllToDefault();
-    yLib::yBasicValue::CopyValueContainer(yValue(value_), *this);
+    yLib::yBasicValue::CopyValueContainer(yValue(value), *this);
     return (*this);
 }
 
-yLib::yConfigValue & yLib::yConfigValue::operator=(bool value_){
+yLib::yConfigValue & yLib::yConfigValue::operator=(bool value)noexcept{
 
     this->CleanAllToDefault();
-    yLib::yBasicValue::CopyValueContainer(yValue(value_), *this);
+    yLib::yBasicValue::CopyValueContainer(yValue(value), *this);
     return (*this);
 }
-yLib::yConfigValue & yLib::yConfigValue::operator=(float value_){
+yLib::yConfigValue & yLib::yConfigValue::operator=(float value)noexcept{
 
     this->CleanAllToDefault();
-    yLib::yBasicValue::CopyValueContainer(yValue(value_), *this);
+    yLib::yBasicValue::CopyValueContainer(yValue(value), *this);
     return (*this);
 }
-yLib::yConfigValue & yLib::yConfigValue::operator=(const std::string &value_){
+yLib::yConfigValue & yLib::yConfigValue::operator=(const std::string &value)noexcept{
 
-    return operator=(value_.c_str());
+    return operator=(value.c_str());
 }
 
-yLib::yConfigValue & yLib::yConfigValue::operator=(const char *value_){
+yLib::yConfigValue & yLib::yConfigValue::operator=(const char *value)noexcept{
 
     this->CleanAllToDefault();
-    yLib::yBasicValue::CopyValueContainer(yValue(value_), *this);
+    yLib::yBasicValue::CopyValueContainer(yValue(value), *this);
     return (*this);
 }
 
@@ -363,9 +359,9 @@ yLib::yConfigValue & yLib::yConfigValue::operator=(const char *value_){
  * @brief convert yConfigValue to uint32_t
  * @return return a uint32_t's val from obj.
  */
-yLib::yConfigValue::operator uint32_t() const
+yLib::yConfigValue::operator uint32_t() const noexcept
 {
-    return value_containter.uint32_val;
+    return value_containter.int64_val;
 }
 
 /**
@@ -373,7 +369,7 @@ yLib::yConfigValue::operator uint32_t() const
  * @brief convert yConfigValue to bool
  * @return return a bool's val from obj.
  */
-yLib::yConfigValue::operator bool() const
+yLib::yConfigValue::operator bool() const noexcept
 {
     return value_containter.bool_val;
 }
@@ -384,7 +380,7 @@ yLib::yConfigValue::operator bool() const
  * @brief convert yConfigValue to float
  * @return return a float's val from obj.
  */
-yLib::yConfigValue::operator float() const
+yLib::yConfigValue::operator float() const noexcept
 {
 
     return value_containter.float_val;
@@ -396,7 +392,7 @@ yLib::yConfigValue::operator float() const
  * @brief convert yConfigValue to std::string
  * @return return a std::string's val from obj.
  */
-yLib::yConfigValue::operator std::string() const
+yLib::yConfigValue::operator std::string() const noexcept
 {
 
     return value_containter.string_val;

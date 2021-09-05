@@ -20,7 +20,7 @@ namespace yLib{
      *  @class yException
      *  @brief This is base-class of the all exception in yLib.
      */    
-    class __YLIB_EXPORT__ yException:
+    class __YLIB_CLASS_DECLSPEC__ yException:
     YLIB_PUBLIC_INHERIT_YOBJECT,
     public std::exception
     {

@@ -24,7 +24,7 @@ namespace yLib{
      *  @class yJson
      *  @brief This is a tool to parse the json file.
      */
-    class __YLIB_EXPORT__ yJson  MACRO_PUBLIC_INHERIT_YOBJECT
+    class __YLIB_CLASS_DECLSPEC__ yJson  MACRO_PUBLIC_INHERIT_YOBJECT
     {
     private:
         /* data */
@@ -121,7 +121,7 @@ namespace yLib{
      *  @class yJsonValue
      *  @brief This is the yJson's value-container, it inherits from yValue.
      */
-    class __YLIB_EXPORT__ yJsonValue  :public yBasicValue
+    class __YLIB_CLASS_DECLSPEC__ yJsonValue  :public yBasicValue
     {
     public:
         friend class yJson;

@@ -1,8 +1,8 @@
 /*
  * @Author: Sky
  * @Date: 2021-08-30 10:30:51
- * @LastEditors: Sky
- * @LastEditTime: 2021-08-30 11:56:08
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-09-05 10:05:56
  * @Description: 
  */
 
@@ -22,8 +22,11 @@ TEST_CASE( "Test ySharedMemory_R apis" , "[ySharedMemory_R_Apis]" ){
 
         yLib::ySharedMemory::yShmParam _shm_param;
 
+        #ifdef _WIN32
+        _shm_param.shm_name = CONVERT_STR_TO_YLIB_STD_STRING(TestSHM);
+        #elif __linux__ || __linux
         _shm_param.shm_key = 0x123456;
-        
+        #endif 
         yLib::ySharedMemory _shm(30, _shm_param, true);
 
         const char * const _test_str = "Hello ySharedMemory";

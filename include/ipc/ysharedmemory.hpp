@@ -73,7 +73,7 @@ namespace yLib {
 	 *  On windows: 
 	 *  It based on CreateFileMapping/MapViewOfFile/UnmapViewOfFile/CloseHandle.
      */
-	class __YLIB_EXPORT__ ySharedMemory:
+	class __YLIB_CLASS_DECLSPEC__ ySharedMemory:
 	YLIB_PUBLIC_INHERIT_YOBJECT
 	{
 	public:

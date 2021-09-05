@@ -1,8 +1,8 @@
 /*
  * @Author: Sky
  * @Date: 2021-09-03 16:26:29
- * @LastEditors: Sky
- * @LastEditTime: 2021-09-03 17:28:07
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-09-05 13:20:04
  * @Description: 
  */
 
@@ -11,11 +11,6 @@
 
 #include <string>
 #include <iostream>
-
-int _the_log_file_len0_case1 = 0;
-int _the_log_file_len0_case2 = 0;
-int _the_log_file_len1 = 0;
-int _the_log_file_len2 = 0;
 
 
 TEST_CASE( "Test yLog for backup-log-file" , "[yLog_backup-log-file]" ){
@@ -48,5 +43,9 @@ TEST_CASE( "Test yLog for backup-log-file" , "[yLog_backup-log-file]" ){
 
         LOGE()<<"88888888888";//yLogBackupTest.log.bak5, rm "22222"
 
+#ifdef _WIN32
+        //avoid log-thread break by other thread
+        Sleep(1000 * 2);
+#endif //_WIN32
     }
 }

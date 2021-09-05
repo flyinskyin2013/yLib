@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:53
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-09-04 15:39:12
+ * @LastEditTime: 2021-09-05 12:41:58
  * @Description: 
  */
 
@@ -82,9 +82,9 @@ yLib::yLogMessage::yLogMessage(const std::string & log_tag, yLib::yLogSeverity l
                         <<':' \
                         << std::setw(2) << msg_data->tm_time.tm_sec \
                         <<'.' \
-                        <<std::setfill(' ') \
                         <<std::setw(6) << (int)(msg_data->time_spec.tv_nsec*0.001) \
                         <<' ' \
+                        <<std::setfill(' ') \
                         << std::setw(9) << msg_data->thread_id \
                         <<' ';
 
@@ -221,9 +221,8 @@ static void ColoredWriteToStderr(const char* message, size_t len, LogColor color
 
 static void ColoredWriteToStderr(yLib::yLogSeverity severity,
                                  const char* message, size_t len) {
-  const LogColor color = SeverityToColor(severity);
-
-
+      const LogColor color = SeverityToColor(severity);
+      ColoredWriteToStderr(message, len, color);
 }
 /*this code copy and modified from https://github.com/google/glog/blob/master/src/logging.cc end*/
 /************************************************************************************************/
@@ -268,11 +267,19 @@ yLib::yLogFile::~yLogFile(){
 
 void yLib::yLogFile::write(const char* message, size_t message_len, bool flush, const std::string &tag){
 
+    static int _wait_write_thread_timeout_count = 0;
     is_flush.store(flush);
 
     while(!write_thread_is_ready.load()){//write-log-thread is not ready, waiting ... ...
 
         std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        _wait_write_thread_timeout_count++;
+        if (_wait_write_thread_timeout_count > 200) {//write-log-thread 1s, timeout
+               
+            std::string _err_msg = "yLogFile(): wait write-thread for 1s, It's timeout.\n";
+            ColoredWriteToStderr(yLib::LOG_ERROR, _err_msg.c_str(), _err_msg.length());
+            return;
+        }
     }
 
     if (write_thread_is_continue.load()){
@@ -304,7 +311,12 @@ bool yLib::yLogFile::create_log_file(void){
     } 
     else{
 
+#ifdef _WIN32
+        _file_dir = ".\\";
+#elif __linux__ || __linux
         _file_dir = "./";
+#else 
+#endif
     }
 
     if (_file_base_name == "")
@@ -707,7 +719,7 @@ void yLib::yLog::I(const std::string &tag, const std::string &fmt, ...) noexcept
 
 void yLib::yLog::I(const char *fmt , const char * str) noexcept{
 
-    va_list arg ;
+    va_list arg = nullptr;
     convert_fmt_to_str(LOG_INFO, fmt, arg, "", str);
 }
 
@@ -735,7 +747,7 @@ void yLib::yLog::D(const std::string &tag, const std::string &fmt , ...) noexcep
 }
 void yLib::yLog::D(const char *fmt , const char * str) noexcept{
 
-    va_list arg ;
+    va_list arg = nullptr;
     convert_fmt_to_str(LOG_DEBUG, fmt, arg, "", str);
 }
 
@@ -762,7 +774,7 @@ void yLib::yLog::W(const std::string &tag, const std::string &fmt , ...) noexcep
 }
 void yLib::yLog::W(const char *fmt , const char * str) noexcept{
 
-    va_list arg ;
+    va_list arg = nullptr;
     convert_fmt_to_str(LOG_WARN, fmt, arg, "", str);
 }
 
@@ -789,7 +801,7 @@ void yLib::yLog::E(const std::string &tag, const std::string &fmt , ...) noexcep
 }
 void yLib::yLog::E(const char *fmt , const char * str) noexcept{
 
-    va_list arg ;
+    va_list arg = nullptr;
     convert_fmt_to_str(LOG_ERROR, fmt, arg, "", str);
 }
 

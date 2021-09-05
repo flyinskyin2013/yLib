@@ -3,7 +3,7 @@
  * @Author: Sky
  * @Date: 2020-03-19 10:44:05
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-09-04 22:56:11
+ * @LastEditTime: 2021-09-05 10:26:29
  * @FilePath: \yLib\include\core\ylibdefs.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -25,11 +25,10 @@ namespace yLib{
 
     #ifdef _WIN32
 
-        #define BUILD_YLIB_WITH_EXPORT
         #ifdef BUILD_YLIB_WITH_EXPORT
-            #define __YLIB_EXPORT__ __declspec(dllexport)
+            #define __YLIB_CLASS_DECLSPEC__ __declspec(dllexport)
         #else
-            #define __YLIB_EXPORT__ __declspec(dllimport)
+            #define __YLIB_CLASS_DECLSPEC__ __declspec(dllimport)
         #endif //BUILD_YLIB_WITH_EXPORT
         
         #define __YLIB_TEAMPLATE_CLASS_EXPORT__ __declspec(dllexport)
@@ -39,9 +38,10 @@ namespace yLib{
 
         #define __YLIB_DEPRECATED_ATTRIBUTE__ __declspec(deprecated)
         #define __YLIB_DEPRECATED_ATTRIBUTE_WITH_MSG__(msg) __declspec(deprecated(msg))
+        
     #elif __linux__ || __linux
 
-        #define __YLIB_EXPORT__
+        #define __YLIB_CLASS_DECLSPEC__
         #define __YLIB_IMPORT__
         #define __YLIB_TEAMPLATE_CLASS_EXPORT__
         #define __YLIB_TEAMPLATE_FUNC_EXPORT__
@@ -52,7 +52,22 @@ namespace yLib{
 
     #endif //__unix__ || __unix
 
+#define YLIB_STD_STRING std::string
+#define CONVERT_STR_TO_YLIB_STD_STRING(str) \
+    #str
+#ifdef _WIN32
 
+    #ifdef UNICODE
+
+        #undef YLIB_STD_STRING
+        #undef CONVERT_STR_TO_YLIB_STD_STRING
+
+        #define YLIB_STD_STRING std::wstring
+        #define CONVERT_STR_TO_YLIB_STD_STRING(str) \
+            L#str
+    #endif //UNICODE
+
+#endif //_WIN32
 
     //define some useful macroes ----------------------------   end
 

@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2018-10-23 11:09:07
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-09-04 15:50:36
+ * @LastEditTime: 2021-09-05 12:00:14
  * @Description: 
  */
 
@@ -76,7 +76,7 @@ int yLib::yCommon::GetCurrentThreadId() noexcept{
 
 #elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 
-  return GetCurrentThreadId();
+  return ::GetCurrentThreadId();
 
 #else
     return -1;
@@ -116,9 +116,9 @@ void yLib::yCommon::GetUtcTimeAndLocalTime(struct ::timespec &time_spec, struct 
         //A file time is a 64-bit value that represents the number of 100-nanosecond intervals that 
         //    have elapsed since 12:00 A.M. January 1, 1601 Coordinated Universal Time (UTC). 
         //    The system records file times when applications create, access, and write to files.
-        FILETIME _the_utc_filetime;
-        SYSTEMTIME _the_utc_systime;
-        LARGE_INTEGER _the_utctime_var;
+        static FILETIME _the_utc_filetime;
+        static SYSTEMTIME _the_utc_systime;
+        static LARGE_INTEGER _the_utctime_var;
 
         FILETIME _the_cur_filetime;
         // SYSTEMTIME _the_cur_systime;
@@ -179,14 +179,22 @@ bool  yLib::yCommon::CheckFileExist(const char * full_name) noexcept
 {
 
 #ifdef _WIN32
-    if (0 != _access(full_name, 0))//io.h
-        return false;
-    return true;
+    //if (0 != _access(full_name, 0))//io.h
+    //    return false;
+    //return true;
+    WIN32_FIND_DATA _fd;
+    HANDLE _file_handle = FindFirstFile(full_name, &_fd);
+    
+    //_fd.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY
+    BOOL _exsit = (_file_handle != INVALID_HANDLE_VALUE) ? TRUE : FALSE;
+    FindClose(_file_handle);
+    return _exsit;
+
 #elif __linux__ || __linux
 
     if (-1 == access(full_name, F_OK)){
         
-        std::string _err_msg = "CheckFileExist(): file(" + full_name +  ") is not exist.\n";
+        std::string _err_msg = std::string("CheckFileExist(): file(") + full_name +  ") is not exist.\n";
         std::cout<<_err_msg<<std::endl;
         return false;
     }

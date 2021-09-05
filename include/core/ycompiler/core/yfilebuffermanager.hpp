@@ -20,7 +20,7 @@
 namespace yLib
 {
     
-    class __YLIB_EXPORT__ yFileBufferManager MACRO_PUBLIC_INHERIT_YOBJECT
+    class __YLIB_CLASS_DECLSPEC__ yFileBufferManager MACRO_PUBLIC_INHERIT_YOBJECT
     {
     private:
         /* data */

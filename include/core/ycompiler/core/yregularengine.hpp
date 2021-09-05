@@ -17,7 +17,7 @@
 
 namespace yLib
 {
-    class __YLIB_EXPORT__ yRegularEngine MACRO_PUBLIC_INHERIT_YOBJECT
+    class __YLIB_CLASS_DECLSPEC__ yRegularEngine MACRO_PUBLIC_INHERIT_YOBJECT
     {
     public:
         //BaseRENode

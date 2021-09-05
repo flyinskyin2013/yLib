@@ -80,9 +80,10 @@ function(build_tests group_name_ sub_dir_name_ module_name_)
         target_link_libraries(${unit_test_target_name} ylib ${DEP_LIBS})
         add_dependencies(${unit_test_target_name} ylib YLIB_TESTS_SHARED_MAIN)
 
-        INSTALL(PROGRAMS  
-            ${CMAKE_CURRENT_BINARY_DIR}/${unit_test_target_name} 
-            DESTINATION tests/)
+        INSTALL(TARGETS  ${unit_test_target_name}
+            RUNTIME DESTINATION tests 
+        )
+            
     endif()
 
     # we verify static ylib in test_ymain
@@ -102,10 +103,9 @@ function(build_tests group_name_ sub_dir_name_ module_name_)
         target_link_libraries(${unit_test_target_name}_s ylib_s ${DEP_LIBS})
         add_dependencies(${unit_test_target_name}_s ylib_s YLIB_TESTS_SHARED_MAIN)
 
-        INSTALL(PROGRAMS  
-            ${CMAKE_CURRENT_BINARY_DIR}/${unit_test_target_name}_s 
-            DESTINATION tests/)
-
+        INSTALL(TARGETS  ${unit_test_target_name}_s
+            RUNTIME DESTINATION tests 
+        )
     endif()
 
     AppendBuiltTestList(${unit_test_target_name})
@@ -192,9 +192,7 @@ if(BUILD_MODULE_YXML)
 endif()
 
 if(BUILD_MODULE_YHTTP)
-
     build_tests(UTILITY yHttp yHttp)
-
 endif()
 ##########################################################################
 

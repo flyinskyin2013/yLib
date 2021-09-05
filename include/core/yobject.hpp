@@ -25,7 +25,7 @@ namespace yLib
      *  @class yNotCopyable
      *  @brief This class and child-class can't construct, they are static class.
      */
-    class __YLIB_EXPORT__ yStaticClass
+    class __YLIB_CLASS_DECLSPEC__ yStaticClass
     {
         private:
         yStaticClass() = default;
@@ -35,7 +35,7 @@ namespace yLib
      *  @class yNoDefaultConstructorClass
      *  @brief This class and child-class don't have default constructor.
      */
-    class __YLIB_EXPORT__ yNoDefaultConstructorClass
+    class __YLIB_CLASS_DECLSPEC__ yNoDefaultConstructorClass
     {
         private:
         yNoDefaultConstructorClass() = default;
@@ -45,7 +45,7 @@ namespace yLib
      *  @class yNotCopyable
      *  @brief This class and child-class can't copy.
      */
-    class __YLIB_EXPORT__ yNotCopyable
+    class __YLIB_CLASS_DECLSPEC__ yNotCopyable
     {
         public:
         yNotCopyable() = default;
@@ -62,7 +62,7 @@ namespace yLib
      *  @class yNotMoveable
      *  @brief This class and child-class can't move.
      */
-    class __YLIB_EXPORT__ yNotMoveable
+    class __YLIB_CLASS_DECLSPEC__ yNotMoveable
     {
         public:
         yNotMoveable() = default;
@@ -79,7 +79,7 @@ namespace yLib
      *  @class yNotCopyableAndMoveable
      *  @brief This class and child-class can't copy and move.
      */
-    class __YLIB_EXPORT__ yNotCopyableAndMoveable:public yNotCopyable, public yNotMoveable
+    class __YLIB_CLASS_DECLSPEC__ yNotCopyableAndMoveable:public yNotCopyable, public yNotMoveable
     {};
 
     /**
@@ -128,7 +128,7 @@ namespace yLib
      *  @class yObject
      *  @brief This is base-class of the all class in yLib.
      */
-    class __YLIB_EXPORT__ yObject
+    class __YLIB_CLASS_DECLSPEC__ yObject
     {
     public:
 

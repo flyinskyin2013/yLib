@@ -1,8 +1,8 @@
 /*
  * @Author: Sky
  * @Date: 2019-07-04 11:28:52
- * @LastEditors: Sky
- * @LastEditTime: 2020-12-10 16:55:59
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-09-05 14:47:13
  * @Description: 
  */
 
@@ -21,151 +21,137 @@ namespace yLib{
      *  @class yConfigValue
      *  @brief This is the yConfig's value-container, it inherits from yValue.
      */
-    class __YLIB_EXPORT__ yConfigValue : public yBasicValue{
+    class __YLIB_CLASS_DECLSPEC__ yConfigValue : public yBasicValue{
         protected:
 
         public:
-        /**
-         * @fn  yConfigValue() noexcept
-         * @brief default constructor
-         * @param 
-         * @return 
-         */
-        yConfigValue() noexcept ;
-
-        /**
-         * @fn  ~yConfigValue() noexcept
-         * @brief default destructor
-         * @param 
-         * @return 
-         */
-        ~yConfigValue() noexcept {}
+        yConfigValue() noexcept {}
 
         //other constructor
         /**
-         * @fn  explicit yConfigValue(int32_t value_) noexcept
+         * @fn  explicit yConfigValue(int32_t value) noexcept
          * @brief override constructor
-         * @param value_ the initial val.
+         * @param value the initial val.
          * @return 
          */
-        explicit yConfigValue(int32_t value_) noexcept;
+        explicit yConfigValue(int32_t value) noexcept;
 
         /**
-         * @fn  explicit yConfigValue(bool value_) noexcept
+         * @fn  explicit yConfigValue(bool value) noexcept
          * @brief override constructor
-         * @param value_ the initial val.
+         * @param value the initial val.
          * @return 
          */
-        explicit yConfigValue(bool value_) noexcept;
+        explicit yConfigValue(bool value) noexcept;
 
         /**
-         * @fn  explicit yConfigValue(float value_) noexcept
+         * @fn  explicit yConfigValue(float value) noexcept
          * @brief override constructor
-         * @param value_ the initial val.
+         * @param value the initial val.
          * @return 
          */
-        explicit yConfigValue(float value_) noexcept;
+        explicit yConfigValue(float value) noexcept;
 
         /**
-         * @fn  explicit yConfigValue(const std::string &value_) noexcept
+         * @fn  explicit yConfigValue(const std::string &value) noexcept
          * @brief override constructor
-         * @param value_ the initial val.
+         * @param value the initial val.
          * @return 
          */
-        explicit yConfigValue(const std::string &value_) noexcept;
+        explicit yConfigValue(const std::string &value) noexcept;
         
         /**
-         * @fn  explicit yConfigValue(const char *value_) noexcept
+         * @fn  explicit yConfigValue(const char *value) noexcept
          * @brief override constructor
-         * @param value_ the initial val.
+         * @param value the initial val.
          * @return 
          */
-        explicit yConfigValue(const char *value_) noexcept;
+        explicit yConfigValue(const char *value) noexcept;
 
 
         /**
-         * @fn  yConfigValue(const yConfigValue &value_)
+         * @fn  yConfigValue(const yConfigValue &value)
          * @brief copy constructor
-         * @param value_ a exsited obj
+         * @param value a exsited obj
          * @return 
          */
-        yConfigValue(const yConfigValue &value_) noexcept;
+        yConfigValue(const yConfigValue &value) noexcept;
         /**
-         * @fn  yConfigValue & operator=(const yConfigValue &value_) noexcept
+         * @fn  yConfigValue & operator=(const yConfigValue &value) noexcept
          * @brief assignment constructor
-         * @param value_ a exsited obj
+         * @param value a exsited obj
          * @return the obj's reference of yConfigValue
          */
-        yConfigValue & operator=(const yConfigValue &value_) noexcept;
+        yConfigValue & operator=(const yConfigValue &value) noexcept;
 
         /**
-         * @fn  yConfigValue(const yConfigValue &&value_) noexcept
+         * @fn  yConfigValue(const yConfigValue &&value) noexcept
          * @brief move constructor
-         * @param value_ a exsited obj
+         * @param value a exsited obj
          * @return 
          */
-        yConfigValue(const yConfigValue &&value_) noexcept;
+        yConfigValue(const yConfigValue &&value) noexcept;
         /**
-         * @fn  yConfigValue & operator=(const yConfigValue &&value_) noexcept
+         * @fn  yConfigValue & operator=(const yConfigValue &&value) noexcept
          * @brief assignment constructor
-         * @param value_ a exsited obj
+         * @param value a exsited obj
          * @return the obj's reference of yConfigValue
          */
-        yConfigValue & operator=(const yConfigValue &&value_) noexcept;
+        yConfigValue & operator=(const yConfigValue &&value) noexcept;
         
         /**
          * @fn  yConfigValue & operator=(int32_t value_)
          * @brief convert int32_t to exsited obj of yConfigValue
-         * @param value_ int32_t value.
+         * @param value int32_t value.
          * @return return obj of yConfigValue
          */    
-        yConfigValue & operator=(int32_t value_);
+        yConfigValue & operator=(int32_t value) noexcept;
 
         /**
-         * @fn  yConfigValue & operator=(bool value_)
+         * @fn  yConfigValue & operator=(bool value)
          * @brief convert bool to exsited obj of yConfigValue
-         * @param value_ bool value.
+         * @param value bool value.
          * @return return obj of yConfigValue
          */    
-        yConfigValue & operator=(bool value_);
+        yConfigValue & operator=(bool value) noexcept;
 
         /**
-         * @fn  yConfigValue & operator=(float value_)
+         * @fn  yConfigValue & operator=(float value)
          * @brief convert float to exsited obj of yConfigValue
-         * @param value_ bool value.
+         * @param value bool value.
          * @return return obj of yConfigValue
          */    
-        yConfigValue & operator=(float value_);
+        yConfigValue & operator=(float value) noexcept;
 
         /**
-         * @fn  yConfigValue & operator=(const std::string & value_)
+         * @fn  yConfigValue & operator=(const std::string & value)
          * @brief convert std::string & to exsited obj of yConfigValue
-         * @param value_ std::string value.
+         * @param value std::string value.
          * @return return obj of yConfigValue
          */    
-        yConfigValue & operator=(const std::string &value_);
+        yConfigValue & operator=(const std::string &value) noexcept;
 
         /**
-         * @fn  yConfigValue & operator=(const char *value_)
+         * @fn  yConfigValue & operator=(const char *value)
          * @brief convert char * to exsited obj of yConfigValue
-         * @param value_ std::string value.
+         * @param value std::string value.
          * @return return obj of yConfigValue
          */    
-        yConfigValue & operator=(const char *value_);
+        yConfigValue & operator=(const char *value) noexcept;
             
         /**
          * @fn  operator uint32_t() const
          * @brief convert yConfigValue to uint32_t
          * @return return a uint32_t's val from obj.
          */
-        operator uint32_t() const;
+        operator uint32_t() const noexcept override;
 
         /**
          * @fn  operator bool() const
          * @brief convert yConfigValue to bool
          * @return return a bool's val from obj.
          */
-        operator bool() const;
+        operator bool() const noexcept override;
 
 
         /**
@@ -173,7 +159,7 @@ namespace yLib{
          * @brief convert yConfigValue to float
          * @return return a float's val from obj.
          */
-        operator float() const;
+        operator float() const noexcept override;
 
 
         /**
@@ -181,7 +167,7 @@ namespace yLib{
          * @brief convert yConfigValue to std::string
          * @return return a std::string's val from obj.
          */
-        operator std::string() const;
+        operator std::string() const noexcept override;
 
         friend class yConfig;
 
@@ -193,118 +179,104 @@ namespace yLib{
      *  @class yConfig
      *  @brief This is a tool to parse a cfg-file that is like c.
      */
-    class __YLIB_EXPORT__ yConfig MACRO_PUBLIC_INHERIT_YOBJECT{
+    class __YLIB_CLASS_DECLSPEC__ yConfig MACRO_PUBLIC_INHERIT_YOBJECT{
         public:
-        /**
-         * @fn  yConfigValue() noexcept
-         * @brief default constructor
-         * @param 
-         * @return 
-         */
         yConfig();
-
-        /**
-         * @fn  ~yConfigValue() noexcept
-         * @brief default destructor
-         * @param 
-         * @return 
-         */
         ~yConfig();
-        
         /**
-         * @fn  yConfig(const yConfig &config_) = delete;
+         * @fn  yConfig(const yConfig &config) = delete;
          * @brief copy constructor
-         * @param config_ a exsited obj
+         * @param config a exsited obj
          * @return 
          * @warning this op is disable.
          */
-        yConfig(const yConfig &config_) = delete;
+        yConfig(const yConfig &config) = delete;
         /**
          * @fn  yConfig & operator=(const yConfig &config_) = delete
          * @brief assignment func
-         * @param config_ a exsited obj
+         * @param config a exsited obj
          * @return the obj of yConfig
          * @warning this op is disable.
          */
-        yConfig & operator=(const yConfig &config_) = delete;
+        yConfig & operator=(const yConfig &config) = delete;
 
 
         /**
          * @fn yConfig(const yConfig &&config_) = delete
          * @brief move constructor
-         * @param config_ a exsited obj
+         * @param config a exsited obj
          * @return 
          * @warning this op is disable.
          */
-        yConfig(const yConfig &&config_) = delete;
+        yConfig(const yConfig &&config) = delete;
         /**
-         * @fn  yConfig & operator=(const yConfig &&config_) = delete
+         * @fn  yConfig & operator=(const yConfig &&config) = delete
          * @brief assignment func
-         * @param config_ a exsited obj
+         * @param config a exsited obj
          * @return the obj of yConfig
          * @warning this op is disable.
          */
-        yConfig & operator=(const yConfig &&config_) = delete;
+        yConfig & operator=(const yConfig &&config) = delete;
 
         /**
-         * @fn  int8_t ReadFile(const std::string & file_path_)
+         * @fn  int8_t ReadFile(const std::string & file_path)
          * @brief read cfg-file from disk.
-         * @param file_path_ the path of cfg-file 
+         * @param file_path the path of cfg-file 
          * @return the op status
          * @retval 0 ok.
          * @retval -1 error.
          * @warning 
          */
-        int8_t ReadFile(const std::string & file_path_);
+        int8_t ReadFile(const std::string & file_path);
 
         /**
-         * @fn  int8_t WriteFile(const std::string & file_path_)
+         * @fn  int8_t WriteFile(const std::string & file_path)
          * @brief write cfg-file to disk.
-         * @param file_path_ the path of cfg-file 
+         * @param file_path the path of cfg-file 
          * @return the status of op.
          * @retval 0 ok.
          * @retval -1 error.
          * @warning 
          */
-        int8_t WriteFile(const std::string & file_path_);
+        int8_t WriteFile(const std::string & file_path);
 
         /**
-         * @fn  yConfigValue GetValue(const std::string &node_path_)
+         * @fn  yConfigValue GetValue(const std::string &node_path)
          * @brief get value by node-path.
-         * @param node_path_ the path of node.
+         * @param node_path the path of node.
          * @return the value of node-path.
          * @warning 
          */        
-        yConfigValue GetValue(const std::string &node_path_);
+        yConfigValue GetValue(const std::string &node_path);
         
         //set value interface
         /**
-         * @fn  int SetValue(const std::string &node_path_, const yConfigValue & value_)
+         * @fn  int SetValue(const std::string &node_path, const yConfigValue & value)
          * @brief get value by node-path.
-         * @param node_path_ the path of node.
-         * @param value_ the value to set.
+         * @param node_path the path of node.
+         * @param value the value to set.
          * @return the status of op.
          * @retval 0 ok.
          * @retval -1 error.
          * @warning 
          */        
-        int8_t SetValue(const std::string &node_path_, const yConfigValue & value_);
+        int8_t SetValue(const std::string &node_path, const yConfigValue & value);
 
         //add node interface
         //if add_node_pos == '.', we will add node to root
         /**
-         * @fn  int SetValue(const std::string &node_path_, const yConfigValue & value_)
+         * @fn  int SetValue(const std::string &node_path_, const yConfigValue & value)
          * @brief get value by node-path.
-         * @param pos_ the position of node.
-         * @param name_ the name of node.
-         * @param type_ the type of value.we only support int32_t/bool/float/std::string/group.
-         * @param value_ the value to set.
+         * @param pos the position of node.
+         * @param name the name of node.
+         * @param type the type of value.we only support int32_t/bool/float/std::string/group.
+         * @param value the value to set.
          * @return the status of op.
          * @retval 0 ok.
          * @retval -1 error.
          * @warning if pos_ == '.' or "", we will add node to root
          */      
-        int8_t AddNode(const std::string & pos_, const std::string & name_, yValue::yValueType type_, const yConfigValue &value_ = yConfigValue());
+        int8_t AddNode(const std::string & pos, const std::string & name, yValue::yValueType type, const yConfigValue &value = yConfigValue());
 
         private:
         void * config_instance;

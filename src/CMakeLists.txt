@@ -180,23 +180,26 @@ if(WIN32)
 
         if(CMAKE_BUILD_TYPE MATCHES "Debug")
 
-            target_link_libraries( ylib_s PRIVATE jsoncppD.lib libconfig++D.lib libcurlD.lib  ws2_32 Shlwapi)
+            target_link_libraries( ylib_s PRIVATE jsoncppD.lib libconfig++D.lib libcurlD.lib libxml2D_a.lib  ws2_32 Shlwapi)
             add_custom_command(TARGET ylib_s POST_BUILD
-                COMMAND lib.exe /out:ylib_s_new.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/jsoncppD.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libconfig++D.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libcurlD.lib ${CMAKE_CURRENT_BINARY_DIR}/Debug/ylib_s.lib
+                COMMAND lib.exe /out:ylib_s_new.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/jsoncppD.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libconfig++D.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libcurlD.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libxml2D_a.lib ${CMAKE_CURRENT_BINARY_DIR}/Debug/ylib_s.lib
                 COMMAND ${CMAKE_COMMAND} -E rename ylib_s_new.lib ${CMAKE_CURRENT_BINARY_DIR}/Debug/ylib_s.lib
                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/
             )
         elseif (CMAKE_BUILD_TYPE MATCHES "Release")
 
-            target_link_libraries( ylib_s PRIVATE jsoncpp.lib libconfig++.lib libcurl.lib  ws2_32 Shlwapi)
+            target_link_libraries( ylib_s PRIVATE jsoncpp.lib libconfig++.lib libcurl.lib libxml2_a.lib ws2_32 Shlwapi)
             add_custom_command(TARGET ylib_s POST_BUILD
-                COMMAND lib.exe /out:ylib_s_new.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/jsoncpp.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libconfig++.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libcurl.lib ${CMAKE_CURRENT_BINARY_DIR}/Release/ylib_s.lib
+                COMMAND lib.exe /out:ylib_s_new.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/jsoncpp.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libconfig++.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libcurl.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libxml2_a.lib ${CMAKE_CURRENT_BINARY_DIR}/Release/ylib_s.lib
                 COMMAND ${CMAKE_COMMAND} -E rename ylib_s_new.lib ${CMAKE_CURRENT_BINARY_DIR}/Release/ylib_s.lib
                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/
             )
         endif()
-
-        set_target_properties(ylib_s PROPERTIES COMPILE_DEFINITIONS BUILD_YLIB_WITH_EXPORT)
+        
+        set_target_properties(ylib_s PROPERTIES COMPILE_DEFINITIONS "CURL_STATICLIB;BUILD_YLIB_WITH_EXPORT")
+        # set_target_properties(ylib_s PROPERTIES COMPILE_DEFINITIONS CURL_STATICLIB)
+        # set_target_properties(ylib_s PROPERTIES COMPILE_DEFINITIONS BUILD_YLIB_WITH_EXPORT)
+        
     endif()
 
     if(BUILD_SHARED_YLIB)
@@ -204,14 +207,16 @@ if(WIN32)
         add_library(ylib SHARED ${SRC})
         if(CMAKE_BUILD_TYPE MATCHES "Debug")
 
-            target_link_libraries( ylib PRIVATE jsoncppD.lib libconfig++D.lib libcurlD.lib  ws2_32 Shlwapi)
+            target_link_libraries( ylib PRIVATE jsoncppD.lib libconfig++D.lib libcurlD.lib libxml2D_a.lib  ws2_32 Shlwapi)
 
         elseif (CMAKE_BUILD_TYPE MATCHES "Release")
 
-            target_link_libraries( ylib PRIVATE jsoncpp.lib libconfig++.lib libcurl.lib  ws2_32 Shlwapi)
+            target_link_libraries( ylib PRIVATE jsoncpp.lib libconfig++.lib libcurl.lib libxml2_a.lib ws2_32 Shlwapi)
 
         endif()
-        set_target_properties(ylib PROPERTIES COMPILE_DEFINITIONS BUILD_YLIB_WITH_EXPORT)
+        set_target_properties(ylib PROPERTIES COMPILE_DEFINITIONS "CURL_STATICLIB;BUILD_YLIB_WITH_EXPORT")
+        # set_target_properties(ylib PROPERTIES COMPILE_DEFINITIONS CURL_STATICLIB)
+        # set_target_properties(ylib PROPERTIES COMPILE_DEFINITIONS BUILD_YLIB_WITH_EXPORT)
     endif()
 
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")

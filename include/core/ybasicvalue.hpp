@@ -25,7 +25,7 @@ namespace yLib{
      *  It supports int8_t/uint8_t/int16_t/uint16_t/int32_t/uint32_t/int64_t/uint64_t/ 
      *              float/double/bool/std::string/object_val/array_val/group_val/null_val/ptr_val 
      */
-    class __YLIB_EXPORT__ yValue:
+    class __YLIB_CLASS_DECLSPEC__ yValue:
     YLIB_PUBLIC_INHERIT_YOBJECT
     {
         public:

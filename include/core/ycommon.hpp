@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2018-10-23 11:07:58
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-09-04 15:48:41
+ * @LastEditTime: 2021-09-05 09:51:25
  * @Description: 
  */
 
@@ -15,13 +15,7 @@
 #include "yobject.hpp"
 
 
-#define YLIB_STD_STRING std::string
 
-#ifdef _WIN32
-    #ifdef UNICODE
-        #define YLIB_STD_STRING std::wstring
-    #endif //UNICODE
-#endif //_WIN32
 
 
 
@@ -31,7 +25,7 @@ namespace yLib{
      *  @class yCommon
      *  @brief This is common-class in yLib.
      */
-    class __YLIB_EXPORT__ yCommon:
+    class __YLIB_CLASS_DECLSPEC__ yCommon:
     YLIB_PUBLIC_INHERIT_YOBJECT
     {
     public:

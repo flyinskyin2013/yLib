@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-07-01 15:13:23
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-09-04 21:46:43
+ * @LastEditTime: 2021-09-05 10:35:45
  * @Description: 
  */ 
 
@@ -92,6 +92,7 @@ namespace yLib{
             _alloc.construct(stack_head + cur_size, lval_);
 
             cur_size ++;
+            return 0;
         }
 
         /**
@@ -107,6 +108,7 @@ namespace yLib{
             Alloc _alloc;
             _alloc.construct(stack_head + cur_size, rval_);
             cur_size ++;
+            return 0;
         }
 
         /**
@@ -148,6 +150,7 @@ namespace yLib{
             Alloc _alloc;
             _alloc.destroy(stack_head + cur_size - 1);
             cur_size --;
+            return 0;
         }
 
         /**

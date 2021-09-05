@@ -19,7 +19,7 @@ shm_is_attach_ready(false)
 	//=============================================init shm===============================
 
 	shm_handle = NULL;
-	if ("" == shm_param.shm_name){
+	if (CONVERT_STR_TO_YLIB_STD_STRING("") == shm_param.shm_name){
 
 		yLib::yLog::E("The shm_param.shm_name is invalid, please init it on windows.");
 		shm_is_init_ready = false;

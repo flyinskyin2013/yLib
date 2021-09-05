@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-07-01 15:13:29
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-09-04 21:47:14
+ * @LastEditTime: 2021-09-05 10:36:20
  * @Description: 
  */ 
 #ifndef __BASIC_ALGORITHM_YQUEUE_HPP__
@@ -125,6 +125,8 @@ namespace yLib{
                 end_pos ++;
                 
             cur_size ++;
+
+            return 0;
         }
 
         /**
@@ -145,6 +147,7 @@ namespace yLib{
             else
                 end_pos ++;
             cur_size ++;
+            return 0;
         }
 
         /**
@@ -191,6 +194,7 @@ namespace yLib{
             else
                 begin_pos ++;
             cur_size --;
+            return 0;
         }
 
         /**

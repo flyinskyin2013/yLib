@@ -2,8 +2,8 @@
  * @Description: 
  * @Author: Sky
  * @Date: 2020-01-07 13:45:41
- * @LastEditors: Sky
- * @LastEditTime: 2021-09-03 17:54:02
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-09-05 13:15:52
  * @FilePath: \yLib\tests\test_yLog\test_ylog.cpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -65,7 +65,12 @@ TEST_CASE( "Test yLog for standard I/O" , "[yLog_IO]" ){
         yLib::yLog::D("%c%c%c\n", '1', '2', '6');
         
         // msg-len
-        _the_log_file_len0_case1 += 4*7;
+        #ifdef _WIN32
+        _the_log_file_len0_case1 += (3 + 2)*7;//CRLF
+        #elif __linux__ || __linux
+        _the_log_file_len0_case1 += (3 + 1)*7;//LF
+        #elif __unix__ || __unix
+        #endif //__unix__ || __unix
 
         // the log-header-len
         _the_log_file_len0_case1 += 47*7;
@@ -80,8 +85,12 @@ TEST_CASE( "Test yLog for standard I/O" , "[yLog_IO]" ){
         LOGD() <<test_str;
         
         // get buf overflow, the buf[1024*8 - 1] == '\n'
-        _the_log_file_len0_case1 += 4*(1024*8);
-
+        #ifdef _WIN32
+        _the_log_file_len0_case1 += 4*(1024*8 + 1);//CRLF
+        #elif __linux__ || __linux
+        _the_log_file_len0_case1 += 4*(1024*8);//LF
+        #elif __unix__ || __unix
+        #endif //__unix__ || __unix
 
         test_str += '\n';
         yLib::yLog::I("", test_str);
@@ -90,8 +99,12 @@ TEST_CASE( "Test yLog for standard I/O" , "[yLog_IO]" ){
         yLib::yLog::D("", test_str);
 
         // get buf overflow, the buf[1024*8 - 1] == '\n'
-        _the_log_file_len0_case1 += 4*(1024*8);
-
+        #ifdef _WIN32
+        _the_log_file_len0_case1 += 4*(1024*8 + 1);//CRLF
+        #elif __linux__ || __linux
+        _the_log_file_len0_case1 += 4*(1024*8);//LF
+        #elif __unix__ || __unix
+        #endif //__unix__ || __unix
 
         std::cout<<"_the_log_file_len0_case1="<<_the_log_file_len0_case1<<std::endl;
     }
@@ -112,7 +125,12 @@ TEST_CASE( "Test yLog for multi-file" , "[yLog_multi-file]" ){
         yLib::yLog::D(category_name0, "%c%c%c\n", '1', '3', '0');
 
         // msg-len
-        _the_log_file_len1 += 4*2;
+        #ifdef _WIN32
+        _the_log_file_len1 += (3 + 2)*2;//CRLF
+        #elif __linux__ || __linux
+        _the_log_file_len1 += (3 + 1)*2;//LF
+        #elif __unix__ || __unix
+        #endif //__unix__ || __unix
 
         // the log-header-len, tag-size + '\n' + base-msg-header
         _the_log_file_len1 += (47 + category_name0.length() + 1) *2;
@@ -123,7 +141,12 @@ TEST_CASE( "Test yLog for multi-file" , "[yLog_multi-file]" ){
         // E(const char *, const char *)
         yLib::yLog::D(category_name1, "%c%c%c\n", '1', '3', '0');
         // msg-len
-        _the_log_file_len2 += 4*2;
+        #ifdef _WIN32
+        _the_log_file_len2 += (3 + 2)*2;//CRLF
+        #elif __linux__ || __linux
+        _the_log_file_len2 += (3 + 1)*2;//LF
+        #elif __unix__ || __unix
+        #endif //__unix__ || __unix
 
         // the log-header-len, tag-size + '\n' + base-msg-header
         _the_log_file_len2 += (47 + category_name1.length() + 1) *2;
@@ -140,29 +163,49 @@ TEST_CASE( "Test yLog for multi-file" , "[yLog_multi-file]" ){
         LOGE(test_ylog0) <<test_str;
         LOGD(test_ylog0) <<test_str;
 
-        _the_log_file_len1 += 2*(1024*8);
+        #ifdef _WIN32
+        _the_log_file_len1 += 2*(1024*8 + 1);//CRLF
+        #elif __linux__ || __linux
+        _the_log_file_len1 += 2*(1024*8);//LF
+        #elif __unix__ || __unix
+        #endif //__unix__ || __unix
 
         LOGI(test_ylog123) <<test_str; //auto newline 
         LOGW(test_ylog123) <<test_str;
         LOGE(test_ylog123) <<test_str;
         LOGD(test_ylog123) <<test_str;
         
-        _the_log_file_len2 += 2*(1024*8);
+        #ifdef _WIN32
+        _the_log_file_len2 += 2*(1024*8 + 1);//CRLF
+        #elif __linux__ || __linux
+        _the_log_file_len2 += 2*(1024*8);//LF
+        #elif __unix__ || __unix
+        #endif //__unix__ || __unix
 
         test_str += '\n';
         yLib::yLog::I(category_name0, test_str);
         yLib::yLog::W(category_name0, test_str);
         yLib::yLog::E(category_name0, test_str);
         yLib::yLog::D(category_name0, test_str);
-        _the_log_file_len1 += 2*(1024*8);
 
+        #ifdef _WIN32
+        _the_log_file_len1 += 2*(1024*8 + 1);//CRLF
+        #elif __linux__ || __linux
+        _the_log_file_len1 += 2*(1024*8);//LF
+        #elif __unix__ || __unix
+        #endif //__unix__ || __unix
 
         yLib::yLog::I(category_name1, test_str);
         yLib::yLog::W(category_name1, test_str);
         yLib::yLog::E(category_name1, test_str);
         yLib::yLog::D(category_name1, test_str);
-        _the_log_file_len2 += 2*(1024*8);
 
+        #ifdef _WIN32
+        _the_log_file_len2 += 2*(1024*8 + 1);//CRLF
+        #elif __linux__ || __linux
+        _the_log_file_len2 += 2*(1024*8);//LF
+        #elif __unix__ || __unix
+        #endif //__unix__ || __unix
     }
 
     // 
@@ -186,7 +229,13 @@ TEST_CASE( "Test yLog for multi-file" , "[yLog_multi-file]" ){
     LOGD_FIRST_N(YLOGE_FIRST_N, 2)<<"my YLOGE_FIRST_N  first 2times.";
 
     // msg-len
-    _the_log_file_len0_case2 += 8 + 16 + 36 + 29 + 32;
+    #ifdef _WIN32
+    _the_log_file_len0_case2 += 8 + 16 + 36 + 29 + 32 + 5;//CRLF
+    #elif __linux__ || __linux
+    _the_log_file_len0_case2 += 8 + 16 + 36 + 29 + 32;//LF
+    #elif __unix__ || __unix
+    #endif //__unix__ || __unix
+    
 
     // the log-header-len
     _the_log_file_len0_case2 += (47 + 6) + (47 + 9) + (47 + 17) + (47 + 13) + (47 + 14);

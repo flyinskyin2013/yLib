@@ -129,9 +129,9 @@ if(WIN32)
     set(BUILD_MODULE_YHTTP "ON")
     set(BUILD_MODULE_YLOG "ON")
     set(BUILD_MODULE_YSHELL "OFF")
-    set(BUILD_MODULE_YXML "OFF")
-    set(BUILD_MODULE_YCONFIG  "OFF")
-    set(BUILD_MODULE_YJSON  "OFF")
+    set(BUILD_MODULE_YXML "ON")
+    set(BUILD_MODULE_YCONFIG  "ON")
+    set(BUILD_MODULE_YJSON  "ON")
 
     # IpcGroup
     set(BUILD_MODULE_YSHAREDMEMORY "ON")
@@ -145,6 +145,10 @@ if(WIN32)
     #yLib Framework
     set(BUILD_MODULE_YTEMP "ON")
     set(BUILD_MODULE_YMAIN "OFF")
+
+    # static and shared can't build at same time.
+    set(BUILD_SHARED_YLIB ON)
+    set(BUILD_STATIC_YLIB OFF)
 
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 

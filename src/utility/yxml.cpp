@@ -1,8 +1,8 @@
 /*
  * @Author: Sky
  * @Date: 2018-10-23 11:09:25
- * @LastEditors: Sky
- * @LastEditTime: 2020-12-11 09:59:07
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-09-05 16:22:23
  * @Description: 
  */
 
@@ -379,107 +379,6 @@ static int8_t __yXml_Tree_Traversal_Add__(xmlNodePtr ptr_node, \
 	}
 
 
-}
-
-
-
-
-
-yLib::yXML::yXML() MACRO_INIT_YOBJECT_PROPERTY(yXML) {
-
-
-}
-
-yLib::yXML::~yXML(){
-
-	if ( nullptr != _xmlfile_pdoc_ ){
-
-		xmlFreeDoc(_xmlfile_pdoc_);
-		xmlCleanupParser();
-		xmlMemoryDump();
-	}
-}
-
-int yLib::yXML::yXml_Read(std::string & xml_path){
-
-    /*
-	* this initialize the library and check potential ABI mismatches
-	* between the version it was compiled for and the actual shared
-	* library used.
-	*/
-	LIBXML_TEST_VERSION
-
-	/*****************打开xml文档********************/
-
-	xmlKeepBlanksDefault(0) ;//libxml2 global variable . 保证格式正确
-	xmlIndentTreeOutput = 1 ;// indent .with \n 
-
-	_xmlfile_pdoc_ = xmlReadFile(xml_path.c_str(), "UTF-8", XML_PARSE_NOBLANKS | XML_PARSE_RECOVER);//libxml只能解析UTF-8格式数据
-
-	if (_xmlfile_pdoc_ == NULL)
-	{
-
-		yLib::yLog::E("error:can't open file!\n");
-		return -1;
-	}
-
-	/*****************释放资源********************/
-	//xmlSaveFile("avr_parameter.xml", pdoc);
-	//xmlSaveFileEnc();
-	// xmlSaveFormatFileEnc(_xmlfile_path.c_str(), pdoc, "UTF-8", 1);
-    return 0;
-}
-
-
-int yLib::yXML::yXml_Set_Val(std::string &node_name, std::string &node_prop_name, std::string &node_prop_val, std::string & child_node_name, std::string & child_node_val)  {
-
-	xmlNodePtr _proot = NULL, _pcur = NULL;
-	/*****************获取xml文档对象的根节对象********************/
-	_proot = xmlDocGetRootElement(_xmlfile_pdoc_);
-	
-	if (_proot == NULL)
-	{
-		yLib::yLog::E("UpdateXmlValue(): get xml root node failed.");
-		return -1;
-	}
-
-	int8_t set_ret = 0;
-
-	__yXml_Tree_Traversal_Update__(_proot, child_node_name, child_node_val, node_prop_name, node_prop_val, set_ret);
-
-	if (1 == set_ret)
-    	return 0;
-	else 
-		return -1;
-}
-
-int yLib::yXML::yXml_Get_Val(std::string &node_name, std::string &node_prop_name, std::string &node_prop_val, std::string & child_node_name, std::string & child_node_val) const {
-
-	xmlNodePtr _proot = NULL, _pcur = NULL;
-	/*****************获取xml文档对象的根节对象********************/
-	_proot = xmlDocGetRootElement(_xmlfile_pdoc_);
-	
-	if (_proot == NULL)
-	{
-		yLib::yLog::E("GetXmlValue(): get xml root node failed.");
-		return -1;
-	}
-
-	int8_t set_ret = 0;
-
-	__yXml_Tree_Traversal_Get__(_proot, child_node_name, child_node_val, node_prop_name, node_prop_val, set_ret);
-
-	if (1 == set_ret)
-    	return 0;
-	else 
-		return -1;
-    return 0;
-}
-
-int yLib::yXML::yXml_Write(std::string & xml_path){
-
-    xmlSaveFormatFileEnc(xml_path.c_str(), _xmlfile_pdoc_, "UTF-8", 1);
-    return 0;
 }
 
 

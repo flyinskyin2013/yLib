@@ -107,7 +107,7 @@ namespace yLib{
     /** \struct EnableyLogFileParam
         \brief the param of enabling log file.
     */
-    typedef struct __YLIB_EXPORT__ __st_enable_ylog_file_param__{
+    typedef struct __YLIB_CLASS_DECLSPEC__ __st_enable_ylog_file_param__{
 
         std::string file_base_name = "";
         std::string file_dir = "";
@@ -128,7 +128,7 @@ namespace yLib{
         uint32_t flush_timeout = 200;
     } EnableyLogFileParam;
 
-    struct __YLIB_EXPORT__ yLogTagProperty{
+    struct __YLIB_CLASS_DECLSPEC__ yLogTagProperty{
  
         uint16_t log_level = ENABLE_ALL_LOG_LEVEL;
         static EnableyLogFileParam file_param;
@@ -145,7 +145,7 @@ namespace yLib{
     };
 
     #define YLIB_YLOGMESSAGE_MAX_LEN  1024*8
-    class __YLIB_EXPORT__ yLogMessage:
+    class __YLIB_CLASS_DECLSPEC__ yLogMessage:
     YLIB_PUBLIC_INHERIT_YOBJECT
     {
         public:
@@ -273,7 +273,7 @@ namespace yLib{
      *  Ref:google glog/log4cpp
      *      
      */
-    class __YLIB_EXPORT__ yLog MACRO_PUBLIC_INHERIT_YOBJECT{
+    class __YLIB_CLASS_DECLSPEC__ yLog MACRO_PUBLIC_INHERIT_YOBJECT{
 
         public:        
             yLog() = delete;

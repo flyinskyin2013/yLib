@@ -2,8 +2,8 @@
  * @Description: 
  * @Author: Sky
  * @Date: 2020-03-26 15:59:28
- * @LastEditors: Sky
- * @LastEditTime: 2021-08-31 13:24:19
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-09-05 10:07:11
  * @FilePath: \yLib\tests\ysharedmemory\ysharedmemory_tests.cpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -26,15 +26,25 @@ TEST_CASE( "Test ySharedMemory_W apis" , "[ySharedMemory_W_Apis]" ){
 
         yLib::ySharedMemory::yShmParam _shm_param;
 
+        #ifdef _WIN32
+        _shm_param.shm_name = CONVERT_STR_TO_YLIB_STD_STRING(TestSHM);
+        #elif __linux__ || __linux
         _shm_param.shm_key = -1;
         _shm_param.shm_flag = ~IPC_CREAT;
+        #endif 
+
         
         // ENOENT No segment exists for the given key, and IPC_CREAT was not specified.
         yLib::ySharedMemory _shm(30, _shm_param);
 
-        _shm_param.shm_flag = 0;
 
+        #ifdef _WIN32
+        _shm_param.shm_name = CONVERT_STR_TO_YLIB_STD_STRING(TestSHM);
+        #elif __linux__ || __linux
+        _shm_param.shm_flag = 0;
         _shm_param.shm_key = 0x654321;
+        #endif 
+
         yLib::ySharedMemory _shm1(30, _shm_param);
 
         // EINVAL A segment for the given key exists, but size is greater than the size of that segment.

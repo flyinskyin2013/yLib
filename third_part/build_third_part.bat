@@ -89,6 +89,9 @@ goto:eof
 
     @mkdir build_out
 
+    @echo extract libxml2 ... ...
+    @tar -xzf libxml2-2.9.9.tar.gz
+
     @echo extract libcurl ... ...
     @tar -xzf curl-7.55.1.tar.gz
 
@@ -102,6 +105,9 @@ goto:eof
 :make
 
 call:build_libcurl
+
+@REM libxml2 must build after any other-lib, because it needs build_out/include and build_out/lib
+call:build_libxml299
 call:build_jsoncpp
 call:build_libconfig
 
@@ -110,6 +116,9 @@ call:self_print I "Build dependence complete."
 @goto:eof
 
 :clean
+    
+    @echo remove libxml2-2.9.9 ... ...
+    @rm -rf libxml2-2.9.9
 
     @echo remove curl-7.55.1 ... ...
     @rm -rf curl-7.55.1
@@ -135,6 +144,15 @@ call:self_print I "Build dependence complete."
 
 @goto:eof
 
+:build_libxml299
+
+    @echo building libxml2-2.9.9 ... ...
+    @cd %THIRD_PART_ROOT_PATH%/libxml2-2.9.9/win32
+
+    @cscript configure.js compiler=msvc  incdir=%THIRD_PART_ROOT_PATH%\build_out\include libdir=%THIRD_PART_ROOT_PATH%\build_out\lib static=yes iconv=no
+    @nmake /f Makefile.msvc 
+    @nmake /f Makefile.msvc install 
+@goto:eof
 
 :build_jsoncpp
 

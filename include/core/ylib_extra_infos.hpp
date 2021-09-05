@@ -18,7 +18,7 @@ namespace yLib{
      *  @class yLibExtraInfos
      *  @brief this is a static class, it can get some information for yLib.
      */
-    class __YLIB_EXPORT__ yLibExtraInfos:
+    class __YLIB_CLASS_DECLSPEC__ yLibExtraInfos:
     YLIB_PUBLIC_INHERIT_YOBJECT,
     YLIB_PUBLIC_INHERIT_YNOTCOPYABLEANDMOVEABLE,
     YLIB_PUBLIC_INHERIT_YSTATICCLASS

@@ -29,7 +29,7 @@ namespace yLib
      *  @brief This is class to calculate the time that is between time0 and time1.
      *  Besides, it can be as a timer to call a function regularly.
      */
-    class __YLIB_EXPORT__ yTimer MACRO_PUBLIC_INHERIT_YOBJECT
+    class __YLIB_CLASS_DECLSPEC__ yTimer MACRO_PUBLIC_INHERIT_YOBJECT
     {
     private:
         /* data */

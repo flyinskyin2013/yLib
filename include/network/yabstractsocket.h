@@ -30,7 +30,7 @@ extern "C"{
 
 namespace yLib{
     
-    class __YLIB_EXPORT__ yAbstractSocket:
+    class __YLIB_CLASS_DECLSPEC__ yAbstractSocket:
     YLIB_PUBLIC_INHERIT_YOBJECT
     {
     protected:

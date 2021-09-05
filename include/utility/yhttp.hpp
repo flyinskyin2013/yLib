@@ -76,7 +76,7 @@ namespace yLib{
     }yHttpPostUrlencodedItem;  
 
 
-    class __YLIB_EXPORT__ yHttp MACRO_PUBLIC_INHERIT_YOBJECT {
+    class __YLIB_CLASS_DECLSPEC__ yHttp MACRO_PUBLIC_INHERIT_YOBJECT {
 
         public:
         yHttp() noexcept;
