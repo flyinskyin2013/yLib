@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:52
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-09-04 21:48:14
+ * @LastEditTime: 2021-09-12 10:28:35
  * @Description: 
  */
 
@@ -99,10 +99,6 @@ namespace yLib{
 
         ENABLE_ALL_LOG_LEVEL = 0xFFFF,
     } yLogLevel;
-    /*
-        idx------>
-    */
-
 
     /** \struct EnableyLogFileParam
         \brief the param of enabling log file.
@@ -213,8 +209,6 @@ namespace yLib{
         bool is_add_newline = false;
     };
 
-
-
     class yLogFile{
 
         public:
@@ -265,6 +259,7 @@ namespace yLib{
         std::shared_ptr<std::unordered_map<std::string, yLogTagProperty>> tag_prop_map = nullptr;
         static yLib::yLogDestination* instance;
     };
+
 
     //yLog support thread-safety,defaultly.
     /**
