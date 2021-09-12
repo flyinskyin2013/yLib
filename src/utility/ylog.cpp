@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-07-04 11:28:53
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-09-12 10:28:27
+ * @LastEditTime: 2021-09-12 12:42:02
  * @Description: 
  */
 
@@ -721,7 +721,19 @@ void yLib::yLog::I(const std::string &tag, const std::string &fmt, ...) noexcept
 
 void yLib::yLog::I(const char *fmt , const char * str) noexcept{
 
+#ifdef _WIN32
+
     va_list arg = nullptr;
+
+#elif __linux__ || __linux
+
+    va_list arg;
+
+#elif __unix__ || __unix
+
+#endif //__unix__ || __unix
+    
+
     convert_fmt_to_str(LOG_INFO, fmt, arg, "", str);
 }
 
@@ -749,7 +761,17 @@ void yLib::yLog::D(const std::string &tag, const std::string &fmt , ...) noexcep
 }
 void yLib::yLog::D(const char *fmt , const char * str) noexcept{
 
+#ifdef _WIN32
+
     va_list arg = nullptr;
+
+#elif __linux__ || __linux
+
+    va_list arg;
+
+#elif __unix__ || __unix
+
+#endif //__unix__ || __unix
     convert_fmt_to_str(LOG_DEBUG, fmt, arg, "", str);
 }
 
@@ -776,7 +798,17 @@ void yLib::yLog::W(const std::string &tag, const std::string &fmt , ...) noexcep
 }
 void yLib::yLog::W(const char *fmt , const char * str) noexcept{
 
+#ifdef _WIN32
+
     va_list arg = nullptr;
+
+#elif __linux__ || __linux
+
+    va_list arg;
+
+#elif __unix__ || __unix
+
+#endif //__unix__ || __unix
     convert_fmt_to_str(LOG_WARN, fmt, arg, "", str);
 }
 
@@ -803,7 +835,17 @@ void yLib::yLog::E(const std::string &tag, const std::string &fmt , ...) noexcep
 }
 void yLib::yLog::E(const char *fmt , const char * str) noexcept{
 
+#ifdef _WIN32
+
     va_list arg = nullptr;
+
+#elif __linux__ || __linux
+
+    va_list arg;
+
+#elif __unix__ || __unix
+
+#endif //__unix__ || __unix
     convert_fmt_to_str(LOG_ERROR, fmt, arg, "", str);
 }
 

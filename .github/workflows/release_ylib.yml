@@ -306,6 +306,11 @@ jobs:
     - name: checkout my rep
       uses: actions/checkout@v2
 
+    - name: Configure build for x86
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: amd64_x86      
+
     - name: set env and init
       env:
         THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
@@ -354,6 +359,11 @@ jobs:
     - name: checkout my rep
       uses: actions/checkout@v2
 
+    - name: Configure build for amd64
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: amd64
+        
     - name: set env and init
       env:
         THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
@@ -401,6 +411,12 @@ jobs:
     steps:
     - name: checkout my rep
       uses: actions/checkout@v2
+
+    - name: Configure build for x86
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: amd64_x86
+
 
     - name: set env and init
       env:
@@ -450,6 +466,11 @@ jobs:
     - name: checkout my rep
       uses: actions/checkout@v2
 
+    - name: Configure build for amd64
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: amd64
+
     - name: set env and init
       env:
         THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
@@ -496,6 +517,11 @@ jobs:
     steps:
     - name: checkout my rep
       uses: actions/checkout@v2
+
+    - name: Configure build for x86
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: amd64_x86      
 
     - name: set env and init
       env:
@@ -544,6 +570,11 @@ jobs:
     steps:
     - name: checkout my rep
       uses: actions/checkout@v2
+
+    - name: Configure build for amd64
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: amd64
 
     - name: set env and init
       env:

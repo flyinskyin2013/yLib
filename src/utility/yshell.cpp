@@ -1,57 +1,42 @@
 /*
  * @Author: Sky
  * @Date: 2019-04-23 17:18:50
- * @LastEditors: Sky
- * @LastEditTime: 2021-08-31 16:22:43
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-09-12 16:32:27
  * @Description: 
  */
 
 #include "utility/yshell.hpp"
 
 #include <cstring>
+#include <iostream>
 
 YLIB_IMPLEMENT_CLASSINFO_CONTENT(yShell)
 
-yLib::yShell::yShell() MACRO_INIT_YOBJECT_PROPERTY(yShell){
 
-    parse_cmd_array = new char * [cmd_vec_size + 1];
-    parse_cmd_env_array = new char * [cmd_env_vec_size + 1];
-    result_read_buffer = new char [_result_line_buf_size + 1];
+#ifdef __linux__ || __linux
+static int8_t __execute_impl_linux(const std::vector<YLIB_STD_STRING> & cmd, const std::vector<YLIB_STD_STRING> & args, const std::vector<YLIB_STD_STRING> &env, std::vector<YLIB_STD_STRING> & result) noexcept{
 
-    memset(parse_cmd_array, 0, cmd_vec_size + 1);
-    memset(parse_cmd_env_array, 0, cmd_env_vec_size + 1);
-    memset(result_read_buffer, 0, _result_line_buf_size + 1);
-}
+    YLIB_STD_CHAR ** parse_cmd_array = new YLIB_STD_CHAR [cmd.size() + args.size() + 1];
+    parse_cmd_array[cmd.size() + args.size()] = nullptr;    
 
-yLib::yShell::~yShell(){
+    for(int _i = 0; _i < cmd.size(); _i++){
 
-    delete []parse_cmd_array;
-    delete []parse_cmd_env_array;
-    delete []result_read_buffer;
-}
-
-#define SHELL_CMDANDPARAM_MAX_NUM 9
-#define Y_SHELL_LOC_CMD_LEN SHELL_CMDANDPARAM_MAX_NUM + 1
-#define Y_SHELL_ARGV_LEN Y_SHELL_LOC_CMD_LEN
-
-int8_t yLib::yShell::RunShellCommandEx(std::vector<std::string> & cmd_, std::vector<std::string> &cmd_env_, std::vector<std::string> & cmd_result_){
-
-    if (cmd_.size() > cmd_vec_size || cmd_env_.size() > cmd_env_vec_size){
-
-        yLib::yLog::E("input cmd_'s size or cmd_env_' size is not valid.");
-        return -1;//
+        parse_cmd_array[_i] = cmd[_i].c_str();
     }
 
-    for (auto _iter = cmd_.begin(); _iter != cmd_.end(); _iter ++){
+    for(int _i = 0; _i < args.size(); _i++){
 
-        parse_cmd_array[_iter - cmd_.begin()] = (char *)_iter->c_str();
+        parse_cmd_array[_i + cmd.size()] = args[_i].c_str();
     }
-    parse_cmd_array[cmd_.size()] = NULL;
 
 
-    for (auto _iter = cmd_env_.begin(); _iter != cmd_env_.end(); _iter ++){
+    YLIB_STD_CHAR ** parse_cmd_env_array = new YLIB_STD_CHAR [env.size() + 1];
+    parse_cmd_env_array[env.size()] = nullptr;    
 
-        parse_cmd_env_array[_iter - cmd_env_.begin()] = (char *)_iter->c_str();
+    for(int _i = 0; _i < env.size(); _i++){
+
+        parse_cmd_env_array[_i] = env[_i].c_str();
     }
     parse_cmd_env_array[cmd_env_.size()] = NULL;
 
@@ -91,8 +76,8 @@ int8_t yLib::yShell::RunShellCommandEx(std::vector<std::string> & cmd_, std::vec
                 FILE * _ret_read_stream = fdopen(_pipe_fd[0], "r");
                 while ( 1 ){
                     
-                    memset(result_read_buffer, 0, _result_line_buf_size + 1);
-                    if ( NULL == fgets(result_read_buffer, _result_line_buf_size, _ret_read_stream) ){
+                    memset(result_read_buffer, 0, result_line_buf_size + 1);
+                    if ( NULL == fgets(result_read_buffer, result_line_buf_size, _ret_read_stream) ){
 
                         break;//have no charactor or error
                     }
@@ -124,8 +109,8 @@ int8_t yLib::yShell::RunShellCommandEx(std::vector<std::string> & cmd_, std::vec
                 FILE * _ret_read_stream = fdopen(_pipe_fd[0], "r");
                 while ( 1 ){
                     
-                    memset(result_read_buffer, 0, _result_line_buf_size + 1);
-                    if ( NULL == fgets(result_read_buffer, _result_line_buf_size, _ret_read_stream) ){
+                    memset(result_read_buffer, 0, result_line_buf_size + 1);
+                    if ( NULL == fgets(result_read_buffer, result_line_buf_size, _ret_read_stream) ){
 
                         break;//have no charactor or error
                     }
@@ -187,23 +172,137 @@ int8_t yLib::yShell::RunShellCommandEx(std::vector<std::string> & cmd_, std::vec
 
     return 0;
 }
+#endif //__linux__ || __linux
 
 
-void yLib::yShell::ReconfigyShellBuffer(uint64_t cmd_vec_size_, uint64_t cmd_env_vec_size_, uint64_t _result_line_buf_size_){
+#ifdef _WIN32
+static int8_t __execute_impl_windows(const std::vector<YLIB_STD_STRING> & cmd, const std::vector<YLIB_STD_STRING> & args, const std::vector<YLIB_STD_STRING> &env, std::vector<YLIB_STD_STRING> & result) noexcept{
 
-    cmd_env_vec_size = cmd_env_vec_size_;
-    cmd_vec_size = cmd_vec_size_;
-    _result_line_buf_size = _result_line_buf_size_;
+    //https://docs.microsoft.com/zh-cn/previous-versions/windows/desktop/legacy/aa379560(v=vs.85)
+    SECURITY_ATTRIBUTES _sa;
+    _sa.bInheritHandle = TRUE;
+    _sa.lpSecurityDescriptor = NULL; 
+    _sa.nLength = sizeof(SECURITY_ATTRIBUTES); 
 
-    delete []parse_cmd_array;
-    delete []parse_cmd_env_array;
-    delete []result_read_buffer;
+    HANDLE _pipe_rd_handle;
+    HANDLE _pipe_wr_handle;
 
-    parse_cmd_array = new char * [cmd_vec_size + 1];
-    parse_cmd_env_array = new char * [cmd_env_vec_size + 1];
-    result_read_buffer = new char [_result_line_buf_size + 1];
+    if (!CreatePipe( &_pipe_rd_handle, &_pipe_rd_handle, &_sa, 8*1024)){
 
-    memset(parse_cmd_array, NULL, cmd_vec_size + 1);
-    memset(parse_cmd_env_array, NULL, cmd_env_vec_size + 1);
-    memset(result_read_buffer, 0, _result_line_buf_size + 1);
+        std::cout<<CONVERT_STR_TO_YLIB_STD_STRING(CreatePipe(): )<<GetLastError()<<std::endl;
+        return -1;
+    }
+
+
+	STARTUPINFO _startup_info;
+	::memset(&_startup_info, 0 ,sizeof(_startup_info));
+    _startup_info.hStdOutput = _pipe_rd_handle;
+    _startup_info.hStdError = _pipe_rd_handle;
+
+	_startup_info.cb = sizeof(_startup_info);
+ 
+	PROCESS_INFORMATION _process_info;
+	::memset(&_process_info, 0 ,sizeof(_process_info));
+ 
+    //parse cmd
+    YLIB_STD_CHAR * _cmd_parsed_buf = new YLIB_STD_CHAR [cmd.size()*256 + 1];
+    ::memset(_cmd_parsed_buf, 0, sizeof(YLIB_STD_CHAR)*(cmd.size()*256+1));
+
+    int _cmd_parsed_buf_id = 0;
+    for(int _i = 0; _i < cmd.size(); _i++){
+
+        ::memcpy(_cmd_parsed_buf + _cmd_parsed_buf_id, cmd[_i].c_str(), sizeof(YLIB_STD_CHAR)*cmd[_i].length());
+        _cmd_parsed_buf_id += sizeof(YLIB_STD_CHAR)*cmd[_i].length();
+        _cmd_parsed_buf[_cmd_parsed_buf_id] = ' ';
+        _cmd_parsed_buf_id++;
+    }
+
+
+    //parse args
+    YLIB_STD_CHAR * _args_parsed_buf = new YLIB_STD_CHAR [args.size()*256 + 1];
+    ::memset(_args_parsed_buf, 0, sizeof(YLIB_STD_CHAR)*(args.size()*256+1));
+
+    int _args_parsed_buf_id = 0;
+    for(int _i = 0; _i < args.size(); _i++){
+
+        ::memcpy(_args_parsed_buf+_args_parsed_buf_id, args[_i].c_str(), sizeof(YLIB_STD_CHAR)*args[_i].length());
+        _args_parsed_buf_id += sizeof(YLIB_STD_CHAR)*args[_i].length();
+        _args_parsed_buf[_args_parsed_buf_id] = ' ';
+        _args_parsed_buf_id++;
+    }
+
+    //parse env
+    const YLIB_STD_CHAR ** _env_parsed_buf = nullptr;
+    if (env.size() > 1){
+
+        const YLIB_STD_CHAR ** _env_parsed_buf = new const YLIB_STD_CHAR * [env.size() + 1];
+        _env_parsed_buf[env.size()] = nullptr;
+
+        int _env_parsed_buf_id = 0;
+        for(int _i = 0; _i < env.size(); _i++){
+
+            _env_parsed_buf[_i] = env[_i].c_str();
+        }
+    }
+
+
+    if (!::CreateProcess(_cmd_parsed_buf, _args_parsed_buf, NULL, NULL, false, CREATE_NEW_CONSOLE, _env_parsed_buf, NULL, &_startup_info, &_process_info)){
+
+        std::cout<<CONVERT_STR_TO_YLIB_STD_STRING(CreateProcess(): )<<GetLastError()<<std::endl;
+        return -1;        
+    }
+
+
+    // Wait until child process exits.
+    WaitForSingleObject( _process_info.hProcess, INFINITE );
+
+    //get process stdout
+    YLIB_STD_CHAR _get_char;
+    DWORD _byte_read_num = 0;
+    YLIB_STD_STRING _get_tmp_str;
+    while(ReadFile(_pipe_rd_handle, &_get_char, 1, &_byte_read_num, NULL)){
+
+        if (1 !=_byte_read_num){
+            std::cout<<CONVERT_STR_TO_YLIB_STD_STRING(ReadFile(): )<<GetLastError()<<std::endl;
+            break;
+        }
+
+        _get_tmp_str += _get_char;
+
+        if (_get_char == CONVERT_CHAR_TO_YLIB_STD_CHAR('\n')){
+
+            result.push_back(_get_tmp_str);
+            _get_tmp_str = CONVERT_STR_TO_YLIB_STD_STRING("");
+        }
+    }
+
+    // Close process and thread handles. 
+    CloseHandle( _process_info.hProcess );
+    CloseHandle( _process_info.hThread );
+
+    CloseHandle( _pipe_rd_handle );
+    CloseHandle( _pipe_wr_handle );
+
+
+    delete [] _cmd_parsed_buf;
+    delete [] _args_parsed_buf;
+    delete [] _env_parsed_buf;
+
+    return 0;
 }
+#endif //_WIN32
+
+int8_t yLib::yShell::Execute(const std::vector<YLIB_STD_STRING> & cmd, const std::vector<YLIB_STD_STRING> & args, const std::vector<YLIB_STD_STRING> &env, std::vector<YLIB_STD_STRING> & result) noexcept{
+
+    #ifdef _WIN32
+
+    return __execute_impl_windows(cmd, args, env, result);
+    #elif __linux__ || __linux
+
+    return __execute_impl_linux(cmd, args, env, result);
+    #elif __unix__ || __unix
+
+    return -1;
+    #endif //__unix__ || __unix
+}
+

@@ -3,7 +3,7 @@
  * @Author: Sky
  * @Date: 2020-03-19 10:44:05
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-09-05 10:26:29
+ * @LastEditTime: 2021-09-12 12:02:07
  * @FilePath: \yLib\include\core\ylibdefs.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -52,15 +52,25 @@ namespace yLib{
 
     #endif //__unix__ || __unix
 
+#define YLIB_STD_CHAR char
+#define CONVERT_CHAR_TO_YLIB_STD_CHAR(chr) \
+    chr
+
 #define YLIB_STD_STRING std::string
 #define CONVERT_STR_TO_YLIB_STD_STRING(str) \
     #str
+
 #ifdef _WIN32
 
     #ifdef UNICODE
 
+        #define YLIB_STD_CHAR 
         #undef YLIB_STD_STRING
         #undef CONVERT_STR_TO_YLIB_STD_STRING
+
+        #define YLIB_STD_CHAR wchar_t
+        #define CONVERT_CHAR_TO_YLIB_STD_CHAR(chr) \
+            Lchr
 
         #define YLIB_STD_STRING std::wstring
         #define CONVERT_STR_TO_YLIB_STD_STRING(str) \

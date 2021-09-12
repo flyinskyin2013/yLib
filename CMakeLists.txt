@@ -128,7 +128,7 @@ if(WIN32)
     # UtilityGroup
     set(BUILD_MODULE_YHTTP "ON")
     set(BUILD_MODULE_YLOG "ON")
-    set(BUILD_MODULE_YSHELL "OFF")
+    set(BUILD_MODULE_YSHELL "ON")
     set(BUILD_MODULE_YXML "ON")
     set(BUILD_MODULE_YCONFIG  "ON")
     set(BUILD_MODULE_YJSON  "ON")

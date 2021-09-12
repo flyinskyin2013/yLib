@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-07-14 18:11:07
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-09-05 15:54:54
+ * @LastEditTime: 2021-09-12 12:16:40
  * @Description: 
  */ 
 #ifndef __YLIB_UTILITY_YUTILITY_HPP__
@@ -16,6 +16,7 @@
         #include "yconfig.hpp"
         #include "yxml.hpp"
         #include "ytimer.hpp"
+        #include "yshell.hpp"
 
     #elif defined(__linux__) || defined(__linux)
         

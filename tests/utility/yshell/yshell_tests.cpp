@@ -2,12 +2,15 @@
  * @Description: 
  * @Author: Sky
  * @Date: 2020-03-26 15:59:54
- * @LastEditors: Sky
- * @LastEditTime: 2021-08-31 16:24:12
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-09-12 16:22:04
  * @FilePath: \yLib\tests\yshell\yshell_tests.cpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
 #include "catch2/catch.hpp"
+
+// #define UNICODE
+
 #include "ylib.hpp"
 
 
@@ -22,94 +25,98 @@ TEST_CASE( "Test yShell apis" , "[yShell_Apis]" ){
 
     yLib::yShell shell;
 
-    SECTION("test RunShellCommandEx() advanced option") {
+    SECTION("test Execute() advanced option") {
 
-        std::vector<std::string> cmd_vec;
-        std::vector<std::string> cmd_env_vec;
-        std::vector<std::string> cmd_result_vec;
+        std::vector<YLIB_STD_STRING> cmd_vec;
+        std::vector<YLIB_STD_STRING> arg_vec;
+        std::vector<YLIB_STD_STRING> cmd_env_vec;
+        std::vector<YLIB_STD_STRING> cmd_result_vec;
 
-        cmd_vec.push_back("/usr/bin/env");
-        cmd_vec.push_back("env");
+        #ifdef __linux__ || __linux
+        cmd_vec.push_back(CONVERT_STR_TO_YLIB_STD_STRING(/usr/bin/env));
+        #endif //__linux__ || __linux
 
-        cmd_env_vec.push_back("MY_VAR=my_env_var");
+        cmd_vec.push_back(CONVERT_STR_TO_YLIB_STD_STRING(env));
 
-        REQUIRE(0 == shell.RunShellCommandEx(cmd_vec, cmd_env_vec, cmd_result_vec));
+        cmd_env_vec.push_back(CONVERT_STR_TO_YLIB_STD_STRING("MY_VAR=my_env_var"));
+
+        REQUIRE(0 == (int)shell.Execute(cmd_vec, arg_vec, cmd_env_vec, cmd_result_vec));
         REQUIRE(1 == cmd_result_vec.size());
+
+        #ifdef __linux__ || __linux
         REQUIRE_THAT(cmd_result_vec[0].c_str(), Catch::Equals ( "MY_VAR=my_env_var" ));
+        #endif //__linux__ || __linux
     }
 
     SECTION("test ReconfigyShellBuffer()") {
 
-        std::vector<std::string> cmd_vec;
-        std::vector<std::string> cmd_env_vec;
-        std::vector<std::string> cmd_result_vec;
+        std::vector<YLIB_STD_STRING> cmd_vec;
+        std::vector<YLIB_STD_STRING> arg_vec;
+        std::vector<YLIB_STD_STRING> cmd_env_vec;
+        std::vector<YLIB_STD_STRING> cmd_result_vec;
         auto _construct_test_str = [](){
 
-            std::string tmp_str;
+            YLIB_STD_STRING tmp_str;
             for (int i = 0; i < 50; i++){
 
-                tmp_str += "abcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcde";
+                tmp_str += CONVERT_STR_TO_YLIB_STD_STRING(abcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcde);
             }
             return tmp_str;//2500 charactors
         };
 
-        std::string _test_str =  _construct_test_str();
+        YLIB_STD_STRING _test_str =  _construct_test_str();
 
+        #ifdef __linux__ || __linux
         cmd_vec.push_back("/bin/echo");
-        cmd_vec.push_back("echo");
-        cmd_vec.push_back("-e");
-        cmd_vec.push_back(_test_str);
+        #endif //__linux__ || __linux
 
-        REQUIRE(0 == shell.RunShellCommandEx(cmd_vec, cmd_env_vec, cmd_result_vec));
-        REQUIRE(3 == cmd_result_vec.size());
-        REQUIRE(1023 == cmd_result_vec[0].length());
-        REQUIRE(1023 == cmd_result_vec[1].length());
-        REQUIRE(454 == cmd_result_vec[2].length());////only echo will add ' '
-
-
-        shell.ReconfigyShellBuffer(20, 20, 3072);
-
-        std::vector<std::string> cmd_empty;
-        std::vector<std::string> cmd_env_empty;
-        std::vector<std::string> cmd_result_empty;
-        cmd_vec.swap(cmd_empty);
-        cmd_env_vec.swap(cmd_env_empty);
-        cmd_result_vec.swap(cmd_result_empty);
-
-
-        cmd_vec.push_back("/bin/echo");
-        cmd_vec.push_back("echo");
-        cmd_vec.push_back(_test_str);
-
-        REQUIRE(0 == shell.RunShellCommandEx(cmd_vec, cmd_env_vec, cmd_result_vec));
-        REQUIRE(1 == cmd_result_vec.size());
-        REQUIRE(2500 == cmd_result_vec[0].length());//only echo will add ' '
+        cmd_vec.push_back(CONVERT_STR_TO_YLIB_STD_STRING(echo));
         
+        #ifdef __linux__ || __linux
+        cmd_vec.push_back("-e");
+        #endif //__linux__ || __linux
+        
+        cmd_vec.push_back(_test_str);
+
+        REQUIRE(0 == (int)shell.Execute(cmd_vec, arg_vec, cmd_env_vec, cmd_result_vec));
+        REQUIRE(1 == cmd_result_vec.size());
+        REQUIRE(2500 == cmd_result_vec[0].length());
     }
 
 
 
     SECTION("test RunShellCommandEx() 100 times") {
 
-        std::vector<std::string> cmd_vec;
-        std::vector<std::string> cmd_env_vec;
-        std::vector<std::string> cmd_result_vec;
+        std::vector<YLIB_STD_STRING> cmd_vec;
+        std::vector<YLIB_STD_STRING> arg_vec;
+        std::vector<YLIB_STD_STRING> cmd_env_vec;
+        std::vector<YLIB_STD_STRING> cmd_result_vec;
 
+        #ifdef __linux__ || __linux
         cmd_vec.push_back("/bin/echo");
-        cmd_vec.push_back("echo");
-        cmd_vec.push_back("-e");
-        cmd_vec.push_back("test 100 times");
+        #endif //__linux__ || __linux
 
-        cmd_env_vec.push_back("MY_VAR=my_env_var");
+        cmd_vec.push_back(CONVERT_STR_TO_YLIB_STD_STRING("echo"));
+        
+        #ifdef __linux__ || __linux
+        cmd_vec.push_back("-e");
+        #endif //__linux__ || __linux
+
+        cmd_vec.push_back(CONVERT_STR_TO_YLIB_STD_STRING("test 100 times"));
+
+        cmd_env_vec.push_back(CONVERT_STR_TO_YLIB_STD_STRING("MY_VAR=my_env_var"));
 
         for (uint64_t ii = 0; ii < 100; ii++){
 
-            std::vector<std::string> empty_result;
+            std::vector<YLIB_STD_STRING> empty_result;
             cmd_result_vec.swap(empty_result);
 
-            REQUIRE(0 == shell.RunShellCommandEx(cmd_vec, cmd_env_vec, cmd_result_vec));
+            REQUIRE(0 == (int)shell.Execute(cmd_vec, arg_vec, cmd_env_vec, cmd_result_vec));
             REQUIRE(1 == cmd_result_vec.size());
+
+            #ifdef __linux__ || __linux
             REQUIRE_THAT(cmd_result_vec[0].c_str(), Catch::Equals ( "test 100 times" ));
+            #endif //__linux__ || __linux
         }
 
     }
