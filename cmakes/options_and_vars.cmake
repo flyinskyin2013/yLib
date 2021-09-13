@@ -5,7 +5,8 @@ option(BUILD_STATIC_YLIB "Build static yLib " ON)
 option(BUILD_SHARED_YLIB "Build shared yLib " ON)
 
 #yLib build flags
-option(ENABLE_GNU_SANITIZER "enable gnu-sanitizer " ON)
+#only used for utest
+option(ENABLE_GNU_SANITIZER "enable gnu-sanitizer " OFF)
 option(ENABLE_YLIB_COVERAGE "enable ylib code coverage " OFF)
 
 #yLib built-in module

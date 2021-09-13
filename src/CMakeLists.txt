@@ -263,6 +263,7 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
     if(BUILD_SHARED_YLIB)
 
         add_library(ylib SHARED ${SRC})
+        target_compile_options(ylib PRIVATE -fPIC)
         if(ENABLE_YLIB_COVERAGE)
 
             # -rdynamic for yException
@@ -278,6 +279,13 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
         endif()
 
         set_target_properties(ylib PROPERTIES VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}" SOVERSION ${PROJECT_VERSION_MAJOR})
+
+        # strip lib
+        add_custom_command(TARGET ylib
+            POST_BUILD
+            COMMAND strip libylib.so
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/
+        )
     endif()
 
 elseif(ANDROID)

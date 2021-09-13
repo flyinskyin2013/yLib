@@ -1,7 +1,6 @@
 Summary:
 yLib is mixed-programing basing on c and c++,it only provides c++'s interface to be used.
 
-
 Coding And Programing Conventions:
 
 1 Name for class : yXXXXX

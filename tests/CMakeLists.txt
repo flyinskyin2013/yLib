@@ -22,6 +22,10 @@ link_directories(${CMAKE_CURRENT_BINARY_DIR}/../src/)
 #set(CMAKE_SKIP_INSTALL_RPATH TRUE)
 
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-rpath=../lib")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-rpath=../lib")
+
+
 #----------------------------------------------------------------------------------------
 
 #Optimize compile-speed, we set a shared-target
@@ -60,9 +64,6 @@ function(build_tests group_name_ sub_dir_name_ module_name_)
 
     endif()
 
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-rpath=../lib")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-rpath=../lib")
-
     set(unit_test_target_name "unit_test_${module_name}")
     
     foreach(param ${ARGN})
@@ -75,7 +76,15 @@ function(build_tests group_name_ sub_dir_name_ module_name_)
     endforeach()
 
     if(BUILD_SHARED_YLIB)
+        if(WIN32)
 
+
+        elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
+
+            set(DEP_LIBS
+                ${DEP_LIBS}
+                -pthread)
+        endif()
         add_executable(${unit_test_target_name} ${SRC})  
         target_link_libraries(${unit_test_target_name} ylib ${DEP_LIBS})
         add_dependencies(${unit_test_target_name} ylib YLIB_TESTS_SHARED_MAIN)

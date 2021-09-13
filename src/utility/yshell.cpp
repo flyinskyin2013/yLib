@@ -1,8 +1,8 @@
 /*
  * @Author: Sky
  * @Date: 2019-04-23 17:18:50
- * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-09-12 16:32:27
+ * @LastEditors: Sky
+ * @LastEditTime: 2021-09-13 14:59:29
  * @Description: 
  */
 
@@ -17,29 +17,32 @@ YLIB_IMPLEMENT_CLASSINFO_CONTENT(yShell)
 #ifdef __linux__ || __linux
 static int8_t __execute_impl_linux(const std::vector<YLIB_STD_STRING> & cmd, const std::vector<YLIB_STD_STRING> & args, const std::vector<YLIB_STD_STRING> &env, std::vector<YLIB_STD_STRING> & result) noexcept{
 
-    YLIB_STD_CHAR ** parse_cmd_array = new YLIB_STD_CHAR [cmd.size() + args.size() + 1];
+    YLIB_STD_CHAR ** parse_cmd_array = new YLIB_STD_CHAR * [cmd.size() + args.size() + 1];
     parse_cmd_array[cmd.size() + args.size()] = nullptr;    
 
     for(int _i = 0; _i < cmd.size(); _i++){
 
-        parse_cmd_array[_i] = cmd[_i].c_str();
+        parse_cmd_array[_i] = const_cast<char *>(cmd[_i].c_str());
     }
 
     for(int _i = 0; _i < args.size(); _i++){
 
-        parse_cmd_array[_i + cmd.size()] = args[_i].c_str();
+        parse_cmd_array[_i + cmd.size()] = const_cast<char *>(args[_i].c_str());
     }
 
 
-    YLIB_STD_CHAR ** parse_cmd_env_array = new YLIB_STD_CHAR [env.size() + 1];
+    YLIB_STD_CHAR ** parse_cmd_env_array = new YLIB_STD_CHAR * [env.size() + 1];
     parse_cmd_env_array[env.size()] = nullptr;    
 
     for(int _i = 0; _i < env.size(); _i++){
 
-        parse_cmd_env_array[_i] = env[_i].c_str();
+        parse_cmd_env_array[_i] = const_cast<char *>(env[_i].c_str());
     }
-    parse_cmd_env_array[cmd_env_.size()] = NULL;
+    parse_cmd_env_array[env.size()] = NULL;
 
+
+    uint64_t result_line_buf_size = 4096;
+    char * result_read_buffer = new (std::nothrow) char [4096];
 
     //we can call popen , but it can't set env.so we use uname execv and uname-pipe
     int _pipe_fd[2] = {-1, -1};
@@ -74,7 +77,7 @@ static int8_t __execute_impl_linux(const std::vector<YLIB_STD_STRING> & cmd, con
                 yLib::yLog::E("WEXITSTATUS is not 0, WEXITSTATUS is %d .", WEXITSTATUS(status));
 
                 FILE * _ret_read_stream = fdopen(_pipe_fd[0], "r");
-                while ( 1 ){
+                while ( 1 && nullptr != result_read_buffer){
                     
                     memset(result_read_buffer, 0, result_line_buf_size + 1);
                     if ( NULL == fgets(result_read_buffer, result_line_buf_size, _ret_read_stream) ){
@@ -88,10 +91,10 @@ static int8_t __execute_impl_linux(const std::vector<YLIB_STD_STRING> & cmd, con
                         if ('\n' == result_read_buffer[_read_line_num - 1]){
 
                             result_read_buffer[_read_line_num - 1] = 0x00;//get rid of '\n'
-                            cmd_result_.push_back(result_read_buffer);//push per line to result vec
+                            result.push_back(result_read_buffer);//push per line to result vec
                         }
                         else
-                            cmd_result_.push_back(result_read_buffer);//push per line to result vec
+                            result.push_back(result_read_buffer);//push per line to result vec
 
 
                         yLib::yLog::E("ErrorInfo is %s", result_read_buffer);
@@ -107,7 +110,7 @@ static int8_t __execute_impl_linux(const std::vector<YLIB_STD_STRING> & cmd, con
             else{//command-run is ready
 
                 FILE * _ret_read_stream = fdopen(_pipe_fd[0], "r");
-                while ( 1 ){
+                while ( 1 && nullptr != result_read_buffer){
                     
                     memset(result_read_buffer, 0, result_line_buf_size + 1);
                     if ( NULL == fgets(result_read_buffer, result_line_buf_size, _ret_read_stream) ){
@@ -121,10 +124,10 @@ static int8_t __execute_impl_linux(const std::vector<YLIB_STD_STRING> & cmd, con
                         if ('\n' == result_read_buffer[_read_line_num - 1]){
 
                             result_read_buffer[_read_line_num - 1] = 0x00;//get rid of '\n'
-                            cmd_result_.push_back(result_read_buffer);//push per line to result vec
+                            result.push_back(result_read_buffer);//push per line to result vec
                         }
                         else
-                            cmd_result_.push_back(result_read_buffer);//push per line to result vec
+                            result.push_back(result_read_buffer);//push per line to result vec
                     }
                 }
 
@@ -140,6 +143,7 @@ static int8_t __execute_impl_linux(const std::vector<YLIB_STD_STRING> & cmd, con
             //close(_pipe_fd[1]);
             return -1;
         }
+
     }
     else{//pid == 0
 
@@ -170,6 +174,9 @@ static int8_t __execute_impl_linux(const std::vector<YLIB_STD_STRING> & cmd, con
 
     }
 
+    if (nullptr != result_read_buffer) delete [] result_read_buffer;
+    if (nullptr != parse_cmd_array) delete [] parse_cmd_array;
+    if (nullptr != parse_cmd_env_array) delete [] parse_cmd_env_array;
     return 0;
 }
 #endif //__linux__ || __linux

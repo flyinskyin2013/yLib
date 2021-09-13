@@ -21,7 +21,8 @@ link_directories(${CMAKE_CURRENT_BINARY_DIR}/../src/)
 
 #set(CMAKE_SKIP_RPATH TRUE)
 #set(CMAKE_SKIP_INSTALL_RPATH TRUE)
-
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-rpath=../lib")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-rpath=../lib")
 #----------------------------------------------------------------------------------------
 
 
@@ -49,8 +50,9 @@ if(BUILD_MODULE_YMAIN)
                 ${CMAKE_CURRENT_SOURCE_DIR}/ProgramFrameExamples/ymain.cpp
                 ${CMAKE_CURRENT_SOURCE_DIR}/ProgramFrameExamples/ystart.cpp
                 )
-        target_link_libraries(test_ymain ylib)
+        target_link_libraries(test_ymain ylib -pthread)
         add_dependencies(test_ymain ylib)
+
         INSTALL(PROGRAMS 
             ${CMAKE_CURRENT_BINARY_DIR}/test_ymain
             DESTINATION examples/ProgramFrameExamples
