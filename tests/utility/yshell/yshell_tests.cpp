@@ -2,8 +2,8 @@
  * @Description: 
  * @Author: Sky
  * @Date: 2020-03-26 15:59:54
- * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-09-12 16:22:04
+ * @LastEditors: Sky
+ * @LastEditTime: 2021-09-18 14:56:40
  * @FilePath: \yLib\tests\yshell\yshell_tests.cpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -38,7 +38,7 @@ TEST_CASE( "Test yShell apis" , "[yShell_Apis]" ){
 
         cmd_vec.push_back(CONVERT_STR_TO_YLIB_STD_STRING(env));
 
-        cmd_env_vec.push_back(CONVERT_STR_TO_YLIB_STD_STRING("MY_VAR=my_env_var"));
+        cmd_env_vec.push_back(CONVERT_STR_TO_YLIB_STD_STRING(MY_VAR=my_env_var));
 
         REQUIRE(0 == (int)shell.Execute(cmd_vec, arg_vec, cmd_env_vec, cmd_result_vec));
         REQUIRE(1 == cmd_result_vec.size());
@@ -96,15 +96,15 @@ TEST_CASE( "Test yShell apis" , "[yShell_Apis]" ){
         cmd_vec.push_back("/bin/echo");
         #endif //__linux__ || __linux
 
-        cmd_vec.push_back(CONVERT_STR_TO_YLIB_STD_STRING("echo"));
+        cmd_vec.push_back(CONVERT_STR_TO_YLIB_STD_STRING(echo));
         
         #ifdef __linux__ || __linux
         cmd_vec.push_back("-e");
         #endif //__linux__ || __linux
 
-        cmd_vec.push_back(CONVERT_STR_TO_YLIB_STD_STRING("test 100 times"));
+        cmd_vec.push_back(CONVERT_STR_TO_YLIB_STD_STRING(test 100 times));
 
-        cmd_env_vec.push_back(CONVERT_STR_TO_YLIB_STD_STRING("MY_VAR=my_env_var"));
+        cmd_env_vec.push_back(CONVERT_STR_TO_YLIB_STD_STRING(MY_VAR=my_env_var));
 
         for (uint64_t ii = 0; ii < 100; ii++){
 

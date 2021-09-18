@@ -4,7 +4,7 @@
  # @Author: Sky
  # @Date: 2021-08-27 11:25:20
  # @LastEditors: Sky
- # @LastEditTime: 2021-08-31 11:54:26
+ # @LastEditTime: 2021-09-18 14:57:26
  # @Description: 
 ### 
 
@@ -34,6 +34,11 @@ make -j2
 make install
 
 cd install/tests
+# clean old log-txt
+rm ./yLogBackupTest*
+rm ./LogFile*
+
+
 ./scripts_for_tests.sh CodeCoverage
 
 cd ${WORK_DIR}

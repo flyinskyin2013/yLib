@@ -9,6 +9,8 @@ set(SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/core/yexception.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/core/ybasicvalue.cpp
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/ylib_c.cpp
+
     ${CMAKE_CURRENT_BINARY_DIR}/ylib_extra_infos.cpp
     )
 
@@ -348,7 +350,7 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
     if(BUILD_STATIC_YLIB)
 
         #for lib files
-        INSTALL(TARGETS  ylib ylib_s
+        INSTALL(TARGETS  ylib_s
             #RUNTIME DESTINATION
             LIBRARY DESTINATION lib 
             ARCHIVE DESTINATION lib
@@ -356,6 +358,16 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
     endif()
 
+    if(BUILD_SHARED_YLIB)
+
+        #for lib files
+        INSTALL(TARGETS  ylib
+            #RUNTIME DESTINATION
+            LIBRARY DESTINATION lib 
+            ARCHIVE DESTINATION lib
+        )
+
+    endif()
 
     INSTALL(TARGETS  ylib
         #RUNTIME DESTINATION

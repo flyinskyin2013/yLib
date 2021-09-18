@@ -37,3 +37,7 @@ third_part/libxml2-2.7.1.tar.gz
 third_part/libxml2-2.9.9.tar.gz
 third_part/LIBXML2.7.1.tar.gz
 
+
+#ignore java jna*
+java/jna-*
+

@@ -7,4 +7,4 @@
  # @Description: 
 ### 
 
-c++ -O3 -Wall -shared -std=c++11 -fPIC $(python3 -m pybind11 --includes) ylib.cpp -o yLib$(python3-config --extension-suffix) -I$(python3-config --includes) -I../include
+g++ -O3 -Wall -shared -std=c++11 -fPIC $(python3 -m pybind11 --includes) ylib.cpp -o yLib$(python3-config --extension-suffix) -I$(python3-config --includes) -I../include -L ../build_gcc_x64/src -lylib -Wl,-rpath=../build_gcc_x64/src

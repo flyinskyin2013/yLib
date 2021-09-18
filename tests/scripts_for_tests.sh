@@ -4,7 +4,7 @@
  # @Author: Sky
  # @Date: 2021-04-09 14:22:29
  # @LastEditors: Sky
- # @LastEditTime: 2021-09-03 17:20:07
+ # @LastEditTime: 2021-09-18 14:48:52
  # @Description: 
 ### 
 
@@ -77,24 +77,28 @@ IPC_GROUP_MODULE_LIST=" ysharedmemory_w \
 NETWORK_GROUP_MODULE_LIST=" "
 
 # utility group 
-UTILITY_GROUP_MODULE_LIST=" \
-                            yhttp \
-                            ylog \
-                            ylog_file_bakup \
-                            ylog_verify \
-                            yshell \
-                            ytimer \
-                            "
 
 # UTILITY_GROUP_MODULE_LIST=" \
 #                             yconfig \
 #                             yhttp \
 #                             yjson \
 #                             ylog \
+#                             ylog_file_bakup \
+#                             ylog_verify \
 #                             yshell \
 #                             ytimer \
 #                             yxml \
 #                             "
+UTILITY_GROUP_MODULE_LIST=" \
+                            yhttp \
+                            yjson \
+                            ylog \
+                            ylog_file_bakup \
+                            ylog_verify \
+                            yshell \
+                            ytimer \
+                            yxml \
+                            "
 
 # basic_algorithm group
 BASIC_ALGORITHM_GROUP_MODULE_LIST=" \
@@ -154,25 +158,25 @@ done
 # special tests
 
 # network group
-echo "module name ytcpserver/ytcpsocket"
-${EXECUTE_PREFIX}./unit_test_ytcpserver -s &
-sleep 2
-${EXECUTE_PREFIX}./unit_test_ytcpclient -s
-if [ $? -ne 0 ]
-then
-    echo 'Unit test failed. module-name:ytcpserver/ytcpsocket'
-    exit -1
-fi
+# echo "module name ytcpserver/ytcpsocket"
+# ${EXECUTE_PREFIX}./unit_test_ytcpserver -s &
+# sleep 2
+# ${EXECUTE_PREFIX}./unit_test_ytcpclient -s
+# if [ $? -ne 0 ]
+# then
+#     echo 'Unit test failed. module-name:ytcpserver/ytcpsocket'
+#     exit -1
+# fi
 
-echo "module name yudpsocket"
-${EXECUTE_PREFIX}./unit_test_yudpserver -s &
-sleep 2
-${EXECUTE_PREFIX}./unit_test_yudpclient -s
-if [ $? -ne 0 ]
-then
-    echo 'Unit test failed. module-name:yudpsocket'
-    exit -1
-fi
+# echo "module name yudpsocket"
+# ${EXECUTE_PREFIX}./unit_test_yudpserver -s &
+# sleep 2
+# ${EXECUTE_PREFIX}./unit_test_yudpclient -s
+# if [ $? -ne 0 ]
+# then
+#     echo 'Unit test failed. module-name:yudpsocket'
+#     exit -1
+# fi
 
 # #ipc
 
