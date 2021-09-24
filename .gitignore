@@ -1,3 +1,9 @@
+#ignore python byte-code
+*.pyc
+
+#ignore java byte-code
+*.class
+
 #ignore vscode dir
 .vscode/
 

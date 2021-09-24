@@ -1,8 +1,8 @@
 /*
  * @Author: Sky
  * @Date: 2019-07-04 11:28:52
- * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-09-12 10:28:35
+ * @LastEditors: Sky
+ * @LastEditTime: 2021-09-24 14:43:45
  * @Description: 
  */
 
@@ -384,6 +384,20 @@ namespace yLib{
              */   
             static void E(const char *fmt , const char * str) noexcept; 
 
+
+            //It only used by ylib-c-api
+            /**
+             *  @fn      static void convert_fmt_to_str(uint16_t log_type, const char * fmt, va_list arg_list, std::string & category_name)
+             *  @brief   the basic-implement of D I W E
+             *  @param   log_type the sub-category name.
+             *  @param   fmt the format of info-string.
+             *  @param   arg_list the input arg-lists
+             *  @param   tag the sub-category name
+             *  @param   special_override_func_str this param only used for yLib::yLog::X(const char*, const char*)
+             */   
+            static void convert_fmt_to_str(yLib::yLogSeverity log_type, const char * fmt, va_list arg_list, const std::string & tag, const char * special_override_func_str = nullptr);
+
+
         protected:
 
         friend class yLib::yLogMessage;
@@ -395,17 +409,6 @@ namespace yLib{
         static uint32_t YLIB_YLOG_MSG_BUF_MAX_SIZE;
         private:
 
-        /**
-         *  @fn      static void convert_fmt_to_str(uint16_t log_type, const char * fmt, va_list arg_list, std::string & category_name)
-         *  @brief   the basic-implement of D I W E
-         *  @param   log_type the sub-category name.
-         *  @param   fmt the format of info-string.
-         *  @param   arg_list the input arg-lists
-         *  @param   tag the sub-category name
-         *  @param   special_override_func_str this param only used for yLib::yLog::X(const char*, const char*)
-         */   
-        static void convert_fmt_to_str(yLib::yLogSeverity log_type, const char * fmt, va_list arg_list, const std::string & tag, const char * special_override_func_str = nullptr);
-        
         static void ylog_log_impl(yLib::yLogSeverity log_type, const std::string & msg, const std::string &tag = "");
 
         static bool check_log_level(yLib::yLogSeverity log_type, const std::string &tag);

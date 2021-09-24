@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2021-09-13 16:29:50
  * @LastEditors: Sky
- * @LastEditTime: 2021-09-18 11:06:49
+ * @LastEditTime: 2021-09-24 17:48:48
  * @Description: 
  */
 
@@ -10,58 +10,56 @@
 // pip3 install pybind11
 #include "pybind11/pybind11.h"
 
-
 #include "ylib.hpp"
 
 namespace py = pybind11;
 
-
 class yLogPyWrapper{
 
     public:
-    static void I(const std::string &fmt , py::args args) noexcept;
+    static void I(const std::string &fmt, py::args args) noexcept;
+    static void I(const std::string &tag, const std::string &fmt, py::args args) noexcept{}
+
+    static void W(const std::string &fmt, py::args args) noexcept{}
+    static void W(const std::string &tag, const std::string &fmt, py::args args) noexcept{}
+
+    static void D(const std::string &fmt, py::args args) noexcept{}
+    static void D(const std::string &tag, const std::string &fmt, py::args args) noexcept{}
+
+    static void E(const std::string &fmt, py::args args) noexcept{}
+    static void E(const std::string &tag, const std::string &fmt, py::args args) noexcept{}
 };
 
-void yLogPyWrapper::I(const std::string &fmt , py::args args) noexcept{
+void yLogPyWrapper::I(const std::string &fmt, py::args args) noexcept{
 
-    
-    yLib::yLog::I(fmt, args[0]);
+    ssize_t _args_num = args.size();
+    for (int _i = 0; _i < _args_num; _i++){
+
+    }
+    yLib::yLog::I("test yLogPyWrapper::I");
 }
 
 
-void test(int a, ...){}
 PYBIND11_MODULE(yLib, m) {
 
-    py::class_<yLib::yClassInfo<yLib::yObject>>(m, "yObjectClassInfo")
+    //define module
+    py::module sub_core_m = m.def_submodule("core");
+    py::module sub_ipc_m = m.def_submodule("ipc");
+    py::module sub_network_m = m.def_submodule("network");
+    py::module sub_utility_m = m.def_submodule("utility");
+
+    py::class_<yLib::yClassInfo<yLib::yObject>>(sub_core_m, "yObjectClassInfo")
     .def_readwrite("class_name", &yLib::yClassInfo<yLib::yObject>::class_name);
 
-    py::class_<yLib::yObject>(m, "yObject")
+    py::class_<yLib::yObject>(sub_core_m, "yObject")
     .def(py::init<>())
     .def_static("yLibGetClassInfo", static_cast<const yLib::yClassInfo<yLib::yObject>&(*)()>(&yLib::yObject::yLibGetClassInfo), "yLib::yObject::yLibGetClassInfo(void)");
     
-    // py::class_<yLib::yClassInfo<yLib::yLog>>(m, "yLogClassInfo")
-    // .def_readwrite("class_name", &yLib::yClassInfo<yLib::yLog>::class_name);
 
-    py::class_<yLib::yLog, std::unique_ptr<yLib::yLog, py::nodelete>>(m, "yLog");
-    // .def_static("I", static_cast<void (*)(const std::string &, ...)noexcept>(&yLib::yLog::I), "yLib::yLog::I(const std::string &fmt , ...)");
-    // .def_static("I", static_cast<void (*)(const std::string &, const std::string & , ...)>(&yLib::yLog::I), "yLib::yLog::I(const std::string &tag, const std::string &fmt , ...)")
-    // .def_static("I", static_cast<void (*)(const char * , const char * )>(&yLib::yLog::I), "yLib::yLog::I(const char *fmt , const char * str)")
-    
-    // .def_static("D", static_cast<void (*)(const std::string &, ...)>(&yLib::yLog::D), "yLib::yLog::D(const std::string &fmt , ...)")
-    // .def_static("D", static_cast<void (*)(const std::string &, const std::string & , ...)>(&yLib::yLog::D), "yLib::yLog::D(const std::string &tag, const std::string &fmt , ...)")
-    // .def_static("D", static_cast<void (*)(const char * , const char * )>(&yLib::yLog::D), "yLib::yLog::D(const char *fmt , const char * str)")
-    
-    // .def_static("W", static_cast<void (*)(const std::string &, ...)>(&yLib::yLog::W), "yLib::yLog::W(const std::string &fmt , ...)")
-    // .def_static("W", static_cast<void (*)(const std::string &, const std::string & , ...)>(&yLib::yLog::W), "yLib::yLog::W(const std::string &tag, const std::string &fmt , ...)")
-    // .def_static("W", static_cast<void (*)(const char * , const char * )>(&yLib::yLog::W), "yLib::yLog::W(const char *fmt , const char * str)")
-    
-    // .def_static("E", static_cast<void (*)(const std::string &, ...)>(&yLib::yLog::E), "yLib::yLog::E(const std::string &fmt , ...)")
-    // .def_static("E", static_cast<void (*)(const std::string &, const std::string & , ...)>(&yLib::yLog::E), "yLib::yLog::E(const std::string &tag, const std::string &fmt , ...)")
-    // .def_static("E", static_cast<void (*)(const char * , const char * )>(&yLib::yLog::E), "yLib::yLog::E(const char *fmt , const char * str)");
+    py::class_<yLib::yLog, std::unique_ptr<yLib::yLog, py::nodelete>>(sub_utility_m, "yLog")
+    .def_static("I", static_cast<void (*)(const std::string &, py::args)noexcept>(&yLogPyWrapper::I), "yLib::yLog::I(const std::string &fmt , py::args args)")
+    .def_static("I", static_cast<void (*)(const std::string &, const std::string & , py::args)>(&yLogPyWrapper::I), "yLib::yLog::I(const std::string &tag, const std::string &fmt , py::args args)");
 
 
     m.doc() = "yLib collects , collates and verifies some useful knowledges in my daily-work."; // optional module docstring
-
-    // m.def("test", static_cast<void (*)(int, ...)>(&test), "");
-    // m.def("test", &test, "A function which adds two numbers");
 }
