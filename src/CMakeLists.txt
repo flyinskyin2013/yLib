@@ -285,7 +285,7 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
         # strip lib
         add_custom_command(TARGET ylib
             POST_BUILD
-            COMMAND strip libylib.so
+            COMMAND ${STRIP} libylib.so
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/
         )
     endif()

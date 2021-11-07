@@ -22,6 +22,7 @@ SET ( CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY )
 #add_definitions(-D)
 set(CMAKE_C_COMPILER "aarch64-linux-gnu-gcc")
 set(CMAKE_CXX_COMPILER "aarch64-linux-gnu-g++")
+set(STRIP "aarch64-linux-gnu-strip" CACHE INTERNAL "strip command" FORCE)
 
 set(CMAKE_C_FLAGS " -march=armv8-a")
 set(CMAKE_CXX_FLAGS " -march=armv8-a")

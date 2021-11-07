@@ -3,8 +3,8 @@
 ###
  # @Author: Sky
  # @Date: 2021-04-09 14:22:29
- # @LastEditors: Sky
- # @LastEditTime: 2021-09-18 14:48:52
+ # @LastEditors: Please set LastEditors
+ # @LastEditTime: 2021-11-07 19:58:38
  # @Description: 
 ### 
 
@@ -70,8 +70,9 @@ CORE_GROUP_MODULE_LIST=" \
                         "
 
 # ipc group
-IPC_GROUP_MODULE_LIST=" ysharedmemory_w \
-                        ysharedmemory_r "
+# IPC_GROUP_MODULE_LIST=" ysharedmemory_w \
+#                         ysharedmemory_r "
+IPC_GROUP_MODULE_LIST=" "
 
 # network group
 NETWORK_GROUP_MODULE_LIST=" "

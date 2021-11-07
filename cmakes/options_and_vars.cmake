@@ -53,4 +53,8 @@ set(NETWORK_MODULE_LIST "" CACHE INTERNAL "network module list" FORCE)
 set(UTILITY_MODULE_LIST "" CACHE INTERNAL "utility module list" FORCE)
 
 set(BUILTIN_TEST_LIST "" CACHE INTERNAL "build test list" FORCE)
+
+if(NOT DEFINED STRIP)
+    set(STRIP "strip" CACHE INTERNAL "strip command" FORCE)
+endif()
 #----------------------------------------------------------------------------------------

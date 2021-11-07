@@ -23,6 +23,7 @@ SET ( CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY )
 
 set(CMAKE_C_COMPILER "arm-linux-gnueabihf-gcc")
 set(CMAKE_CXX_COMPILER "arm-linux-gnueabihf-g++")
+set(STRIP "arm-linux-gnueabihf-strip" CACHE INTERNAL "strip command" FORCE)
 
 set(CMAKE_C_FLAGS " -march=armv7-a -mfloat-abi=hard -mfpu=neon")
 set(CMAKE_CXX_FLAGS " -march=armv7-a -mfloat-abi=hard -mfpu=neon")
