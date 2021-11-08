@@ -2,11 +2,12 @@
  * @Author: Sky
  * @Date: 2020-09-14 11:14:59
  * @LastEditors: Sky
- * @LastEditTime: 2021-08-31 13:52:58
+ * @LastEditTime: 2021-11-09 17:07:31
  * @Description: 
  */
 
 #include "catch2/catch.hpp"
+#define YLIB_ENABLE_UNIT_TEST
 #include "ylib.hpp"
 
 #include "test_common.hpp"
@@ -47,6 +48,9 @@ TEST_CASE( "Test yTcpServer apis" , "[yTcpServer_Apis]" ){
     SECTION("yTcpServer test") {
 
         yTcpServer tcp_server;
+
+        REQUIRE(-1 == tcp_server.read(nullptr, 0));
+        REQUIRE(-1 == tcp_server.write(nullptr, 0));
 
         // check yTcpServer(xxx,xxx,xxx)
         yTcpServer tcp_server1(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -123,6 +127,10 @@ TEST_CASE( "Test yTcpServer apis" , "[yTcpServer_Apis]" ){
 
                 REQUIRE(_msg.length() == write(g_client_array[2], _msg.c_str(), _msg.length()));
                 
+                sleep(10);//sleep for client close tcp-socket
+                for(int _i = 0; _i < 3; _i++)
+                    ::close(g_client_array[_i]);
+                    
                 break;
             }
             else{
@@ -130,6 +138,8 @@ TEST_CASE( "Test yTcpServer apis" , "[yTcpServer_Apis]" ){
                 sleep(1);
             }
         }
+
+
     }
     
 }

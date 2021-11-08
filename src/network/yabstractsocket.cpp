@@ -44,7 +44,7 @@ yLib::yAbstractSocket::~yAbstractSocket() noexcept
 }
 
 
-bool yLib::yAbstractSocket::socket_is_ready(void) const noexcept{
+inline bool yLib::yAbstractSocket::socket_is_ready(void) const noexcept{
 
     return (is_sockfd_valid && is_bind_success && is_connect_success);
 }
@@ -271,7 +271,7 @@ void yLib::yAbstractSocket::create_socket(int domain, int type, int protocol) no
     
     if ( 0 > (socket_fd = ::socket(domain, type, protocol)) ){
 
-        yLib::yLog::E("yAbstractSocket create socket failed. errno is %d", errno);
+        yLib::yLog::E("yAbstractSocket create socket failed. errno is %d\n", errno);
         is_sockfd_valid = false;
 
         return;

@@ -16,12 +16,6 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 YLIB_IMPLEMENT_CLASSINFO_CONTENT_S(ySharedMemory)
 
 
-/**
- *  @fn   ySharedMemory(uint64_t shm_size, const yShmParam & shm_param)
- *  @brief Override constructor
- *  @param shm_size the shm's size.
- *  @param shm_param the param of shm.
- */
 yLib::ySharedMemory::ySharedMemory(uint64_t shm_size, const yShmParam & shm_param, bool is_delete) noexcept
 :shm_ptr(nullptr),
 shm_is_init_ready(false),
@@ -34,7 +28,7 @@ shm_is_attach_ready(false)
 	shm_handle = NULL;
 	if (CONVERT_STR_TO_YLIB_STD_STRING("") == shm_param.shm_name){
 
-		yLib::yLog::E("The shm_param.shm_name is invalid, please init it on windows.");
+		yLib::yLog::E("The shm_param.shm_name is invalid, please init it on windows.\n");
 		shm_is_init_ready = false;
 		return ;
 	}
@@ -55,7 +49,7 @@ shm_is_attach_ready(false)
 	}
 	else if (ERROR_ALREADY_EXISTS == GetLastError()) {// shared memory is exist
 		
-		yLib::yLog::W("yLib::ySharedMemory: shared memory(name = %s ) is exist", shm_param.shm_name.c_str());
+		yLib::yLog::W("yLib::ySharedMemory: shared memory(name = %s ) is exist\n", shm_param.shm_name.c_str());
 		shm_is_init_ready = true;
 		
 	}
@@ -64,7 +58,7 @@ shm_is_attach_ready(false)
 		HLOCAL LocalAddress = NULL;
 		FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
 			NULL, GetLastError(), 0, (PTSTR)&LocalAddress, 0, NULL);
-		yLib::yLog::E("yLib::ySharedMemory: create shared memory(name = %s ) failed. error info is %s", shm_param.shm_name.c_str(), (char *)LocalAddress);
+		yLib::yLog::E("yLib::ySharedMemory: create shared memory(name = %s ) failed. error info is %s\n", shm_param.shm_name.c_str(), (char *)LocalAddress);
 		shm_is_init_ready = false;
 		return ;
 	}
@@ -89,7 +83,7 @@ shm_is_attach_ready(false)
 		HLOCAL LocalAddress = NULL;
 		FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
 			NULL, GetLastError(), 0, (PTSTR)&LocalAddress, 0, NULL);
-		yLib::yLog::E("yLib::ySharedMemory::AttacheSharedMemory(): attach shared memory failed, error info is %s", (char *)LocalAddress);
+		yLib::yLog::E("yLib::ySharedMemory::AttacheSharedMemory(): attach shared memory failed, error info is %s\n", (char *)LocalAddress);
 		shm_is_attach_ready = false;
 		return ;
 	}
@@ -99,26 +93,34 @@ shm_is_attach_ready(false)
 	//=============================================init shm===============================
 	shm_id = 0;
 	is_mark_delete = is_delete;
+	int _shm_flag = 0;
+	if (0 == shm_param.shm_flag)//default flags
+		_shm_flag = IPC_CREAT | IPC_EXCL | 0666;
+	else 
+		_shm_flag = shm_param.shm_flag;
 
-	if (0 >  (shm_id = shmget(shm_param.shm_key, shm_size, IPC_CREAT | IPC_EXCL | 0666 | shm_param.shm_flag))) {
+	if (0 >  (shm_id = shmget(shm_param.shm_key, shm_size, _shm_flag))) {
 
 		if (errno == EEXIST) {
 
-			if (0 > (shm_id = shmget(shm_param.shm_key, shm_size, IPC_CREAT | 0666))) {
+			if (0 == shm_param.shm_flag) 
+				_shm_flag = _shm_flag & (~IPC_EXCL); //clean default flag for IPC_EXCL
 
-				yLib::yLog::E("Re-attach shm failed, shm's key is %d", shm_param.shm_key);
+			if (0 > (shm_id = shmget(shm_param.shm_key, shm_size, _shm_flag))) {
+
+				yLib::yLog::E("Re-attach shm failed, shm's key is 0x%x, errno is %d\n", shm_param.shm_key, errno);
 				shm_is_init_ready = false;
 				return ;
 			}
 			else {
 
-				yLib::yLog::W("shared-mem exist, shm's id is %d", shm_id);
+				yLib::yLog::W("shared-mem exist, shm's id is %d\n", shm_id);
 			}
 
 		}
 		else {
 
-			perror("shmget failed:");
+			yLib::yLog::E("create shm failed, shm's key is 0x%x, errno is %d\n", shm_param.shm_key, errno);
 			shm_is_init_ready = false;
 			return ;
 		}
@@ -130,7 +132,7 @@ shm_is_attach_ready(false)
 
 	if (!shm_is_init_ready) {
 
-		yLib::yLog::E("shm is not ready.");
+		yLib::yLog::E("shm is not ready.\n");
 		return ;
 	}
 
@@ -166,7 +168,7 @@ yLib::ySharedMemory::~ySharedMemory()
 			HLOCAL LocalAddress = NULL;
 			FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
 				NULL, GetLastError(), 0, (PTSTR)&LocalAddress, 0, NULL);
-			yLib::yLog::E("yLib::ySharedMemory::DetacheSharedMemory(): detache shared memory is failed. error info is %s", (char *)LocalAddress);
+			yLib::yLog::E("yLib::ySharedMemory::DetacheSharedMemory(): detache shared memory is failed. error info is %s\n", (char *)LocalAddress);
 		}
 
 		
@@ -191,7 +193,7 @@ yLib::ySharedMemory::~ySharedMemory()
 				HLOCAL LocalAddress = NULL;
 			FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
 				NULL, GetLastError(), 0, (PTSTR)&LocalAddress, 0, NULL);
-			yLib::yLog::E("yLib::ySharedMemory::DestroySharedMemory(): destory shared memory is failed. error info is %s", (char *)LocalAddress);
+			yLib::yLog::E("yLib::ySharedMemory::DestroySharedMemory(): destory shared memory is failed. error info is %s\n", (char *)LocalAddress);
 		}
 		else {
 
@@ -206,7 +208,7 @@ yLib::ySharedMemory::~ySharedMemory()
 			shmget(shm_param.shm_key, shm_size, 0666);
 			if (ENOENT == errno){
 
-				yLib::yLog::W("shared-mem is deleted, we don't need to delete it again.");
+				yLib::yLog::W("shared-mem is deleted, we don't need to delete it again.\n");
 			}
 			else if (0 > shmctl(shm_id, IPC_RMID, NULL)) {
 

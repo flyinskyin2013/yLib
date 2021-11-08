@@ -11,6 +11,8 @@ Redistribution and use in source and binary forms, with or without modification,
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
+
 /*
  * @Author: Sky
  * @Date: 2020-09-08 10:50:08
@@ -19,6 +21,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  * @Description: 
  */
 #include "network/ytcpserver.h"
+
+#include "core/ylog.hpp"
 
 #ifdef __cplusplus
 extern "C"{
@@ -54,7 +58,7 @@ yTcpServer::yTcpServer(/* args */) noexcept
 
     create_socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-    epoll_thread_is_continue = false;
+    epoll_thread_is_continue.store(false);
 }
 
 yTcpServer::yTcpServer(int domain, int type, int protocol) noexcept
@@ -64,14 +68,22 @@ yTcpServer::yTcpServer(int domain, int type, int protocol) noexcept
 
     create_socket(domain, type, protocol);
 
-    epoll_thread_is_continue = false;
+    epoll_thread_is_continue.store(false);
 }
 
 yTcpServer::~yTcpServer()
 {
+    // avoid: after we set epoll_thread_is_continue to false and join it, the epoll_thread_context set epoll_thread_is_continue to true.
+    while(1){
 
-    epoll_thread_is_continue = false;
-
+        epoll_thread_is_continue.store(false);
+        if (false == epoll_thread_is_continue.load())
+            break;
+        else
+            // sleep 5ms for wait write_thread_func is ready
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    }
+    
     if (nullptr != epoll_thread_ptr)
         if (epoll_thread_ptr->joinable())
             epoll_thread_ptr->join();
@@ -109,7 +121,7 @@ void yTcpServer::epoll_thread_context(OnClientConnectCB con_cb, OnClientDisconne
     */
     if (0 > (_epoll_fd = ::epoll_create(1))) {
         
-        std::cout<<"yTcpServer: server call epoll_create() failed, error num is" << errno<<std::endl;
+        LOGE("yTcpServer")<<"yTcpServer: server call epoll_create() failed, error num is " << errno;
         return ;
     }
 
@@ -124,13 +136,13 @@ void yTcpServer::epoll_thread_context(OnClientConnectCB con_cb, OnClientDisconne
     //reg server_sockfd to epoll
     if (0 > ::epoll_ctl(_epoll_fd, EPOLL_CTL_ADD, socket_fd, &_tmp_reg_event)) {
 
-        std::cout<<"yTcpServer: server call epoll_ctl() failed, error num is" << errno<<std::endl;
+        LOGE("yTcpServer")<<"yTcpServer: server call epoll_ctl() failed, error num is" << errno;
         return ;
     }
 
     int64_t _epoll_wait_ret = 0;
 
-    epoll_thread_is_continue = true;
+    epoll_thread_is_continue.store(true);
     while (epoll_thread_is_continue)
     {
         /*
@@ -142,7 +154,7 @@ void yTcpServer::epoll_thread_context(OnClientConnectCB con_cb, OnClientDisconne
         _epoll_wait_ret = ::epoll_wait(_epoll_fd, _ret_events_array, max_listen_num + 1, 500);
         if (0 > _epoll_wait_ret){//
 
-            std::cout<<"yTcpServer: server call epoll_wait() failed, error num is" << errno<<std::endl;
+            LOGE("yTcpServer")<<"yTcpServer: server call epoll_wait() failed, error num is" << errno;
             break;
         }
         else if (0 == _epoll_wait_ret){//time out
@@ -235,7 +247,7 @@ void yTcpServer::epoll_thread_context(OnClientConnectCB con_cb, OnClientDisconne
    
                         }
                         
-                        std::cout<<"yTcpServer: server call accept() failed, error num is" << errno<<std::endl;
+                        LOGE("yTcpServer")<<"yTcpServer: server call accept() failed, error num is" << errno;
                     }
                     else{
 
@@ -264,6 +276,19 @@ void yTcpServer::epoll_thread_context(OnClientConnectCB con_cb, OnClientDisconne
         }
     }
     
+
+    //remove this socket from epoll
+    _tmp_reg_event.data.fd = socket_fd;
+    _tmp_reg_event.events = EPOLLERR | EPOLLHUP | EPOLLRDHUP | EPOLLIN;
+
+    int _ret_val = 0;
+    if (0 > (_ret_val = epoll_ctl(_epoll_fd, EPOLL_CTL_DEL, socket_fd, &_tmp_reg_event))) {
+
+        yLib::yLog::E("call epoll_ctl() failed, error num is :%d\n", errno);
+        perror("call epoll_ctl()");
+    }
+
+    ::close(_epoll_fd);
 }
 
 /**
@@ -273,26 +298,24 @@ void yTcpServer::epoll_thread_context(OnClientConnectCB con_cb, OnClientDisconne
  */
 int8_t yTcpServer::start_epoll_thread(OnClientConnectCB con_cb, OnClientDisconnectCB discon_cb, uint64_t max_listen_num) noexcept
 {
-    if (epoll_thread_is_continue)
+    if (epoll_thread_is_continue.load())
         return 1;
-
-    epoll_thread_is_continue = true;
 
     if (!is_sockfd_valid){
 
-        std::cout<<"yTcpServer: socket is invalid. please check."<<std::endl;
+        LOGE("yTcpServer")<<"yTcpServer: socket is invalid. please check.";
         return -1;
     }
 
     if (!is_bind_success){
 
-        std::cout<<"yTcpServer: bind is invalid. please check."<<std::endl;
+        LOGE("yTcpServer")<<"yTcpServer: bind is invalid. please check.";
         return -1;
     }
 
     if ( 0 > ::listen(socket_fd, max_listen_num) ){
 
-        std::cout<<"yTcpServer listen failed. errno is "<< errno <<std::endl;
+        LOGE("yTcpServer")<<"yTcpServer listen failed. errno is "<< errno;
         is_listen_success = false;
         return -1;
     }

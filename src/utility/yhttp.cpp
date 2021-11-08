@@ -11,6 +11,8 @@ Redistribution and use in source and binary forms, with or without modification,
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
+
 /*
  * @Description: 
  * @Author: Sky
@@ -22,7 +24,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  */
 
 #include "utility/yhttp.hpp"
-#include "utility/ylog.hpp"
+#include "core/ylog.hpp"
 
 #ifdef __cplusplus
 extern "C"{
@@ -107,11 +109,11 @@ static size_t write_callback(char *buffer_, size_t size_, size_t nmemb_, void *u
 }
 
 
-static int ProgressCallback(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow)  
-{  
+// static int ProgressCallback(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow)  
+// {  
 
-    return 0;  
-}  
+//     return 0;  
+// }  
 
 
 yLib::yHttp::yHttp() noexcept MACRO_INIT_YOBJECT_PROPERTY(yHttp) {
@@ -327,23 +329,20 @@ int8_t yLib::yHttp::Get(const yHttpRequestParam &request_param_, yHttpResponseIn
     if (request_param_.http_header_vec.size() > 0)
         if (0 > __yhttp_parse_set_http_header__(ptr_http_handle, request_param_, http_headers)){
 
-            __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
-            return -1;
+            goto ERROR_PROCESS_LABEL;
         }
 
     //fill http url
     if (0 > __yhttp_parse_set_http_url__(ptr_http_handle, request_param_)){
             
-        __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
-        return -1;
+        goto ERROR_PROCESS_LABEL;
     }
 
     //set response callback and buffer
     data_buffer_ptr_ = (uint8_t *)malloc(1024 * sizeof(uint8_t));
     if (0 > __yhttp_set_response_callback_buffer__(ptr_http_handle, &data_buffer_ptr_, 1024 * sizeof(uint8_t))){
             
-        __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
-        return -1;
+        goto ERROR_PROCESS_LABEL;
     }
 
 
@@ -351,20 +350,22 @@ int8_t yLib::yHttp::Get(const yHttpRequestParam &request_param_, yHttpResponseIn
     if (0 > __yhttp_start_http_session__(ptr_http_handle))//start http failed.
     {
             
-        __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
-        return -1;
+        goto ERROR_PROCESS_LABEL;
     }
     else//start http ok
     {
         if (0 > __yhttp_process_http_response__(ptr_http_handle, data_buffer_ptr_, response_info_)){
             
-            __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
-            return -1;
+            goto ERROR_PROCESS_LABEL;
         }
     }
 
     __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
     return 0;
+
+ERROR_PROCESS_LABEL:
+    __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
+    return -1;
 }
 
 //post application/x-www-form-urlencoded
@@ -373,6 +374,7 @@ int8_t yLib::yHttp::PostDefault(const yHttpRequestParam &request_param_, yHttpRe
     CURL * ptr_http_handle = NULL;
     struct curl_slist *http_headers = NULL;
     uint8_t *data_buffer_ptr_ = NULL;
+    std::string _form_kv_str = "";
 
     if (0 > __yhttp_check_protocol_type__(request_param_))
         return -1;
@@ -385,27 +387,23 @@ int8_t yLib::yHttp::PostDefault(const yHttpRequestParam &request_param_, yHttpRe
     if (request_param_.http_header_vec.size() > 0)
         if (0 > __yhttp_parse_set_http_header__(ptr_http_handle, request_param_, http_headers)){
 
-            __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
-            return -1;
+            goto ERROR_PROCESS_LABEL;
         }
 
     //fill http url
     if (0 > __yhttp_parse_set_http_url__(ptr_http_handle, request_param_)){
             
-        __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
-        return -1;
+        goto ERROR_PROCESS_LABEL;
     }
 
     //set this session method is post
     if ( CURLE_OK != curl_easy_setopt(ptr_http_handle, CURLOPT_POST, 1) ){
 
-        curl_slist_free_all(http_headers);
-        curl_easy_cleanup(ptr_http_handle);
         yLib::yLog::E("set http method type(post) failed.");
-        return -1;
+        goto ERROR_PROCESS_LABEL;
     }
 
-    std::string _form_kv_str = "";
+    
     for (auto iter_ = form_kv_vec_.begin(); iter_ != form_kv_vec_.end(); iter_ ++){
 
         _form_kv_str += iter_->key + "=" + iter_->value + "&";
@@ -413,38 +411,38 @@ int8_t yLib::yHttp::PostDefault(const yHttpRequestParam &request_param_, yHttpRe
     _form_kv_str = _form_kv_str.substr(0, _form_kv_str.length() - 1);
     if ( CURLE_OK != curl_easy_setopt(ptr_http_handle, CURLOPT_POSTFIELDS, _form_kv_str.c_str()) ){
 
-        curl_slist_free_all(http_headers);
-        curl_easy_cleanup(ptr_http_handle);
         yLib::yLog::E("set http post json failed.");
-        return -1;
+        goto ERROR_PROCESS_LABEL;
     }
 
     //set response callback and buffer
     data_buffer_ptr_ = (uint8_t *)malloc(1024 * sizeof(uint8_t));
     if (0 > __yhttp_set_response_callback_buffer__(ptr_http_handle, &data_buffer_ptr_, 1024 * sizeof(uint8_t))){
             
-        __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
-        return -1;
+        goto ERROR_PROCESS_LABEL;
     }
 
     //start http and process response
     if (0 > __yhttp_start_http_session__(ptr_http_handle))//start http failed.
     {
             
-        __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
-        return -1;
+        goto ERROR_PROCESS_LABEL;
     }
     else//start http ok
     {
         if (0 > __yhttp_process_http_response__(ptr_http_handle, data_buffer_ptr_, response_info_)){
             
-            __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
-            return -1;
+            goto ERROR_PROCESS_LABEL;
         }
     }
 
     __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
     return 0;    
+
+
+ERROR_PROCESS_LABEL:
+    __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
+    return -1;
 }
 //post application/json
 int8_t yLib::yHttp::PostJson(const yHttpRequestParam &request_param_, yHttpResponseInfo & response_info_, const std::string & json_str_){
@@ -464,61 +462,56 @@ int8_t yLib::yHttp::PostJson(const yHttpRequestParam &request_param_, yHttpRespo
     if (request_param_.http_header_vec.size() > 0)
         if (0 > __yhttp_parse_set_http_header__(ptr_http_handle, request_param_, http_headers)){
 
-            __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
-            return -1;
+            goto ERROR_PROCESS_LABEL;
         }
 
     //fill http url
     if (0 > __yhttp_parse_set_http_url__(ptr_http_handle, request_param_)){
             
-        __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
-        return -1;
+            goto ERROR_PROCESS_LABEL;
     }
 
     //set this session method is post
     if ( CURLE_OK != curl_easy_setopt(ptr_http_handle, CURLOPT_POST, 1) ){
 
-        curl_slist_free_all(http_headers);
-        curl_easy_cleanup(ptr_http_handle);
         yLib::yLog::E("set http method type(post) failed.");
-        return -1;
+        goto ERROR_PROCESS_LABEL;
     }
 
     
     if ( CURLE_OK != curl_easy_setopt(ptr_http_handle, CURLOPT_POSTFIELDS, json_str_.c_str()) ){
 
-        curl_slist_free_all(http_headers);
-        curl_easy_cleanup(ptr_http_handle);
         yLib::yLog::E("set http post json failed.");
-        return -1;
+        goto ERROR_PROCESS_LABEL;
     }
 
     //set response callback and buffer
     data_buffer_ptr_ = (uint8_t *)malloc(1024 * sizeof(uint8_t));
     if (0 > __yhttp_set_response_callback_buffer__(ptr_http_handle, &data_buffer_ptr_, 1024 * sizeof(uint8_t))){
             
-        __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
-        return -1;
+        goto ERROR_PROCESS_LABEL;
     }
 
     //start http and process response
     if (0 > __yhttp_start_http_session__(ptr_http_handle))//start http failed.
     {
             
-        __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
-        return -1;
+        goto ERROR_PROCESS_LABEL;
     }
     else//start http ok
     {
         if (0 > __yhttp_process_http_response__(ptr_http_handle, data_buffer_ptr_, response_info_)){
             
-            __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
-            return -1;
+            goto ERROR_PROCESS_LABEL;
         }
     }
 
     __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
     return 0;    
+
+ERROR_PROCESS_LABEL:
+    __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
+    return -1;
 }
 //post multipart/form-data
 int8_t yLib::yHttp::PostMultiPart(const yHttpRequestParam &request_param_, yHttpResponseInfo & response_info_, std::vector<yHttpPostMultiPartItem> & form_multi_part_vec_){
@@ -526,6 +519,8 @@ int8_t yLib::yHttp::PostMultiPart(const yHttpRequestParam &request_param_, yHttp
     CURL * ptr_http_handle = NULL;
     struct curl_slist *http_headers = NULL;
     uint8_t *data_buffer_ptr_ = NULL;
+    struct curl_httppost * _http_post = 0;
+    struct curl_httppost * _last_post = 0;
 
     if (0 > __yhttp_check_protocol_type__(request_param_))
         return -1;
@@ -538,29 +533,22 @@ int8_t yLib::yHttp::PostMultiPart(const yHttpRequestParam &request_param_, yHttp
     if (request_param_.http_header_vec.size() > 0)
         if (0 > __yhttp_parse_set_http_header__(ptr_http_handle, request_param_, http_headers)){
 
-            __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
-            return -1;
+            goto ERROR_PROCESS_LABEL;
         }
 
     //fill http url
     if (0 > __yhttp_parse_set_http_url__(ptr_http_handle, request_param_)){
             
-        __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
-        return -1;
+            goto ERROR_PROCESS_LABEL;
     }
 
     //set this session method is post
     if ( CURLE_OK != curl_easy_setopt(ptr_http_handle, CURLOPT_POST, 1) ){
 
-        curl_slist_free_all(http_headers);
-        curl_easy_cleanup(ptr_http_handle);
         yLib::yLog::E("set http method type(post) failed.");
-        return -1;
+        goto ERROR_PROCESS_LABEL;
     }
 
-
-    struct curl_httppost * _http_post = 0;
-    struct curl_httppost * _last_post = 0;
 
     for(auto iter_ = form_multi_part_vec_.begin(); iter_ != form_multi_part_vec_.end(); iter_++){
 
@@ -577,10 +565,7 @@ int8_t yLib::yHttp::PostMultiPart(const yHttpRequestParam &request_param_, yHttp
             if ( CURL_FORMADD_OK !=  _curl_form_add_code){//error deal
 
                 yLib::yLog::E("set http post muilt part data failed. error code %d, multipart idx %d", _curl_form_add_code, form_multi_part_vec_.end()-iter_);
-                curl_formfree(_http_post);
-                curl_slist_free_all(http_headers);
-                curl_easy_cleanup(ptr_http_handle);
-                return -1;
+                goto ERROR_PROCESS_LABEL1;
             }
         }
         else{//normal multi part
@@ -595,10 +580,7 @@ int8_t yLib::yHttp::PostMultiPart(const yHttpRequestParam &request_param_, yHttp
             if ( CURL_FORMADD_OK !=  _curl_form_add_code){//error deal
 
                 yLib::yLog::E("set http post muilt part data failed. error code %d, multipart idx %d", _curl_form_add_code, form_multi_part_vec_.end()-iter_);
-                curl_formfree(_http_post);
-                curl_slist_free_all(http_headers);
-                curl_easy_cleanup(ptr_http_handle);
-                return -1;
+                goto ERROR_PROCESS_LABEL1;
             }
         }
 
@@ -609,39 +591,40 @@ int8_t yLib::yHttp::PostMultiPart(const yHttpRequestParam &request_param_, yHttp
     
     if ( CURLE_OK != curl_easy_setopt(ptr_http_handle, CURLOPT_HTTPPOST, _http_post) ){
 
-        curl_slist_free_all(http_headers);
-        curl_easy_cleanup(ptr_http_handle);
-        curl_formfree(_http_post);
         yLib::yLog::E("set http multi post part failed.");
-        return -1;
+        goto ERROR_PROCESS_LABEL1;
     }
 
     //set response callback and buffer
     data_buffer_ptr_ = (uint8_t *)malloc(1024 * sizeof(uint8_t));
     if (0 > __yhttp_set_response_callback_buffer__(ptr_http_handle, &data_buffer_ptr_, 1024 * sizeof(uint8_t))){
         
-        curl_formfree(_http_post);
-        __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
-        return -1;
+        goto ERROR_PROCESS_LABEL1;
     }
 
     //start http and process response
     if (0 > __yhttp_start_http_session__(ptr_http_handle))//start http failed.
     {
-        curl_formfree(_http_post);
-        __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
-        return -1;
+        goto ERROR_PROCESS_LABEL1;
     }
     else//start http ok
     {
         if (0 > __yhttp_process_http_response__(ptr_http_handle, data_buffer_ptr_, response_info_)){
             
-            curl_formfree(_http_post);
-            __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
-            return -1;
+            goto ERROR_PROCESS_LABEL1;
         }
     }
+    
     curl_formfree(_http_post);
     __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
     return 0;    
+
+ERROR_PROCESS_LABEL:
+    __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
+    return -1;
+
+ERROR_PROCESS_LABEL1:
+    curl_formfree(_http_post);
+    __yhttp_cleanup__(ptr_http_handle, http_headers, data_buffer_ptr_);
+    return -1;
 }

@@ -365,8 +365,9 @@ static int8_t __yXml_Tree_Traversal_Add__(xmlNodePtr ptr_node, \
 				}
 				else{
 					
-					xmlNewChild(ptr_node, NULL,BAD_CAST(node_name.c_str()), BAD_CAST(node_val_.c_str()));
-					xmlNewProp(ptr_node, BAD_CAST(node_prop_name.c_str()), BAD_CAST(node_prop_val.c_str()));
+					xmlNodePtr _cur_node_ptr = xmlNewChild(ptr_node, NULL,BAD_CAST(node_name.c_str()), BAD_CAST(node_val_.c_str()));
+					if ("" != node_prop_name)
+						xmlNewProp(_cur_node_ptr, BAD_CAST(node_prop_name.c_str()), BAD_CAST(node_prop_val.c_str()));
 				}
 				set_val_suc_ = 1;
 				//child_node_val = (char*)XML_GET_CONTENT(pcur_children->xmlChildrenNode);

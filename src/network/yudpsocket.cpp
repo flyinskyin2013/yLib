@@ -66,7 +66,7 @@ int64_t yUdpSocket::sendto(const void * buffer_, uint64_t size_to_send_, std::st
 
     if (!socket_is_ready()){
 
-        std::cout<<"yUdpSocket: socket is not ready. please check."<<std::endl;
+        LOGE("yUdpSocket")<<"yUdpSocket: socket is not ready. please check.";
         return -1;
     }
 
@@ -76,7 +76,7 @@ int64_t yUdpSocket::sendto(const void * buffer_, uint64_t size_to_send_, std::st
     int64_t _binary_ip = 0;
     if (0 > (_binary_ip = translate_ip_to_binary(ip_))){//invalid ip
 
-        std::cout<<"yUdpSocket: Invalid ip_. please check."<<std::endl;
+        LOGE("yUdpSocket")<<"yUdpSocket: Invalid ip_. please check.";
         return -1;
     }
 
@@ -100,7 +100,7 @@ int64_t yUdpSocket::sendto(const void * buffer_, uint64_t size_to_send_, std::st
             */
             return 0;
         }        
-        std::cout<<"yUdpSocket: send data failed. errno is "<<errno<<std::endl;
+        LOGE("yUdpSocket")<<"yUdpSocket: send data failed. errno is "<<errno;
         return -1;
     }
 
@@ -112,7 +112,7 @@ int64_t yUdpSocket::recvfrom(void * buffer_, uint64_t size_to_read_,  std::strin
 
     if (!socket_is_ready()){
 
-        std::cout<<"yUdpSocket: socket is not ready. please check."<<std::endl;
+        LOGE("yUdpSocket")<<"yUdpSocket: socket is not ready. please check.";
         return -1;
     }
 
@@ -136,7 +136,7 @@ int64_t yUdpSocket::recvfrom(void * buffer_, uint64_t size_to_read_,  std::strin
             */
             return 0;
         }       
-        std::cout<<"yUdpSocket: recvfrom failed. errno is "<< errno <<std::endl;
+        LOGE("yUdpSocket")<<"yUdpSocket: recvfrom failed. errno is "<< errno;
         return -1;
     }
 

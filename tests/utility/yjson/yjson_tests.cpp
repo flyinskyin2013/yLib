@@ -3,7 +3,7 @@
  * @Author: Sky
  * @Date: 2020-03-24 16:49:36
  * @LastEditors: Sky
- * @LastEditTime: 2020-12-09 16:11:40
+ * @LastEditTime: 2021-11-10 11:30:08
  * @FilePath: \yLib\tests\yjson\yjson_tests.cpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -20,8 +20,35 @@ TEST_CASE( "Test yJson apis" , "[yJson_Apis]" ){
         yLib::yJson _json;
         
         REQUIRE(0 == _json.ReadFile("test.json"));
+
+        // code coverage improve
+        char _tmp_buf[1024];
+        REQUIRE(0 == _json.WriteMemory((int8_t *)_tmp_buf, 1024));
+        
+        // code coverage improve
+        std::string _key_str = "node_int";
+        yLib::yJsonValue _got_json_value = _json.GetRootObject();
+        REQUIRE(yLib::yJsonValue::INT64_TYPE == _got_json_value[_key_str].GetType());
+        REQUIRE(64 == (int64_t)_got_json_value[_key_str]);
     }
 
+    SECTION("test yJsonValue ctor ") {
+
+        yLib::yJsonValue _val_int64(int64_t(1));
+        yLib::yJsonValue _val_uint64(uint64_t(2));
+        uint64_t _val_test = (uint64_t)_val_uint64;
+        
+        yLib::yJsonValue _val_bool(false);
+        yLib::yJsonValue _val_double(double(3.f));
+        yLib::yJsonValue _val_string(std::string("4"));
+        _val_string = std::string("5");
+        yLib::yJsonValue _val_obj(yLib::yJsonValue::yValueType::OBJECT_TYPE);
+
+        // invalid type
+        yLib::yJsonValue _val_obj1(yLib::yJsonValue::yValueType::INT8_TYPE);
+        _val_obj1 = _val_uint64;
+
+    }
 
     SECTION("yJsonReadMemory(const int8_t * mem_addr, uint64_t mem_size) ") {
 

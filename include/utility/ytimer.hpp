@@ -23,7 +23,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 
 #include "core/ycommon.hpp"
-#include "utility/ylog.hpp"
+#include "core/ylog.hpp"
 
 
 #include <chrono>

@@ -3,7 +3,7 @@
  * @Author: Sky
  * @Date: 2020-03-26 15:58:29
  * @LastEditors: Sky
- * @LastEditTime: 2021-08-31 16:17:01
+ * @LastEditTime: 2021-11-10 11:26:07
  * @FilePath: \yLib\tests\yhttp\yhttp_tests.cpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -32,12 +32,21 @@ TEST_CASE( "Test yHttp apis" , "[yHttp_Apis]" ){
         yLib::yHttpRequestParam req_post;
         yLib::yHttpResponseInfo res_post;
 
-
+        req_p.protocol_type = "http";
+        req_p.port = 80;
+        req_p.host = "www.baidu.com";
+        req_p.path = "/get";
+        REQUIRE(0 == http_get.Get(req_p, res_p));
         
         req_p.protocol_type = "http";
         req_p.port = 80;
         req_p.host = "httpbin.org";
         req_p.path = "/get";
+        req_p.http_header_vec.push_back("Accept-Encoding: gzip, deflate, br, ABC");
+        yLib::yHttpRequestParam::__yhttp_request_query_kv__ _kv;
+        _kv.key = "test_key";
+        _kv.value = "test_value";
+        req_p.query_kv_vec.push_back(_kv);
 
         REQUIRE(0 == http_get.Get(req_p, res_p));
 

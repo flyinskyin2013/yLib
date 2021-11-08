@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-05-28 14:24:31
  * @LastEditors: Sky
- * @LastEditTime: 2020-07-22 18:39:55
+ * @LastEditTime: 2021-11-11 11:42:12
  * @Description: 
  */
 
@@ -151,7 +151,15 @@ TEST_CASE( "Test yLinearList" , "[yLinearList_Apis]" ){
 
         REQUIRE(sq_list0.sq_get_size() == 5);
         //5*8 = 40  
+        #if defined(__x86_64__)
+        /* 64 bit detected */
         REQUIRE(sq_list0.sq_get_capacity() == 64);
+        #endif
+        #if defined(__i386__)
+        /* 32 bit x86 detected */
+        REQUIRE(sq_list0.sq_get_capacity() == 32);
+        #endif
+        
     }
     
     SECTION("test sq_delete class-data-type") {
@@ -199,7 +207,15 @@ TEST_CASE( "Test yLinearList" , "[yLinearList_Apis]" ){
 
         REQUIRE(sq_list0.sq_get_size() == 994);
         //994*8
+        
+        #if defined(__x86_64__)
+        /* 64 bit detected */
         REQUIRE(sq_list0.sq_get_capacity() == 8192);
+        #endif
+        #if defined(__i386__)
+        /* 32 bit x86 detected */
+        REQUIRE(sq_list0.sq_get_capacity() == 4096);
+        #endif
     }
 
 
@@ -244,7 +260,15 @@ TEST_CASE( "Test yLinearList" , "[yLinearList_Apis]" ){
         }
         REQUIRE(sq_list3.sq_get_size() == 1700);
         //1700*8  <  2^14
+        
+        #if defined(__x86_64__)
+        /* 64 bit detected */
         REQUIRE(sq_list3.sq_get_capacity() == 16384);
+        #endif
+        #if defined(__i386__)
+        /* 32 bit x86 detected */
+        REQUIRE(sq_list3.sq_get_capacity() == 8192);
+        #endif
     }
 
 }

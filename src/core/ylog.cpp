@@ -11,6 +11,9 @@ Redistribution and use in source and binary forms, with or without modification,
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
+
+
 /*
  * @Author: Sky
  * @Date: 2019-07-04 11:28:53
@@ -20,7 +23,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  */
 
 #include "core/ycommon.hpp"
-#include "utility/ylog.hpp"
+#include "core/ylog.hpp"
 
 #include <iomanip>
 #include <assert.h>
@@ -267,7 +270,19 @@ yLib::yLogFile::yLogFile(std::shared_ptr<std::unordered_map<std::string, yLogTag
 }
 yLib::yLogFile::~yLogFile(){
 
-    write_thread_is_continue.store(false);
+    // 2021/11/7, if the yLogFile is fast create and delete, it maybe create bug: 
+    // after we set write_thread_is_continue to false and join it, the write_thread_func set write_thread_is_continue to true.
+    while(1){
+
+        write_thread_is_continue.store(false);
+
+        if (true == write_thread_is_ready.load())
+            break;
+        else
+            // sleep 5ms for wait write_thread_func is ready
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    }
+    
     if (write_thread_ptr != nullptr)
         if (write_thread_ptr->joinable())
             write_thread_ptr->join();

@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-09-09 13:42:25
  * @LastEditors: Sky
- * @LastEditTime: 2021-08-31 14:01:02
+ * @LastEditTime: 2021-11-09 14:26:12
  * @Description: 
  */
 
@@ -16,6 +16,16 @@
 
 
 DEFINE_TEST_CASE_FOR_CLASS_INFO(yUdpSocket)
+
+DEFINE_TEST_CASE_FOR_CLASS_INFO(yAbstractSocket)
+// TEST_CASE( "Test yAbstractSocket apis" , "[yAbstractSocket_Apis]" ){
+
+//     SECTION("yAbstractSocket test") {
+//         yLib::yAbstractSocket _ab_socket;
+//     }
+
+// }
+
 
 using namespace yLib;
 TEST_CASE( "Test yUdpClient apis" , "[yUdpClient_Apis]" ){

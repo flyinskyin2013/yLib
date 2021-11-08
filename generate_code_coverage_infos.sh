@@ -4,7 +4,7 @@
  # @Author: Sky
  # @Date: 2021-08-27 11:25:20
  # @LastEditors: Sky
- # @LastEditTime: 2021-09-18 14:57:26
+ # @LastEditTime: 2021-11-09 17:14:30
  # @Description: 
 ### 
 
@@ -46,4 +46,5 @@ cd ${WORK_DIR}
 lcov -d ./src -c -o lcov.info 
 lcov -r lcov.info '/usr/*' -o lcov.info 
 lcov -r lcov.info '*include/third_part*' -o lcov.info 
+lcov -r lcov.info '*yconfig*' -o lcov.info 
 genhtml -o cover_report --legend --title "lcov"  --prefix=./ lcov.info 

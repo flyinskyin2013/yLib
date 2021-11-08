@@ -11,6 +11,8 @@ Redistribution and use in source and binary forms, with or without modification,
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
+
 /*
  * @Author: Sky
  * @Date: 2019-04-23 17:18:50
@@ -20,6 +22,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  */
 
 #include "utility/yshell.hpp"
+#include "core/ylog.hpp"
 
 #include <cstring>
 #include <iostream>
@@ -27,7 +30,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 YLIB_IMPLEMENT_CLASSINFO_CONTENT(yShell)
 
 
-#ifdef __linux__ || __linux
+#if __linux__ || __linux
 static int8_t __execute_impl_linux(const std::vector<YLIB_STD_STRING> & cmd, const std::vector<YLIB_STD_STRING> & args, const std::vector<YLIB_STD_STRING> &env, std::vector<YLIB_STD_STRING> & result) noexcept{
 
     YLIB_STD_CHAR ** parse_cmd_array = new YLIB_STD_CHAR * [cmd.size() + args.size() + 1];
@@ -209,7 +212,7 @@ static int8_t __execute_impl_windows(const std::vector<YLIB_STD_STRING> & cmd, c
 
     if (!CreatePipe( &_pipe_rd_handle, &_pipe_rd_handle, &_sa, 8*1024)){
 
-        std::cout<<CONVERT_STR_TO_YLIB_STD_STRING(CreatePipe(): )<<GetLastError()<<std::endl;
+        LOGE("yShell")<<CONVERT_STR_TO_YLIB_STD_STRING(CreatePipe(): )<<GetLastError();
         return -1;
     }
 
@@ -268,7 +271,7 @@ static int8_t __execute_impl_windows(const std::vector<YLIB_STD_STRING> & cmd, c
 
     if (!::CreateProcess(_cmd_parsed_buf, _args_parsed_buf, NULL, NULL, false, CREATE_NEW_CONSOLE, _env_parsed_buf, NULL, &_startup_info, &_process_info)){
 
-        std::cout<<CONVERT_STR_TO_YLIB_STD_STRING(CreateProcess(): )<<GetLastError()<<std::endl;
+        LOGE("yShell")<<CONVERT_STR_TO_YLIB_STD_STRING(CreateProcess(): )<<GetLastError();
         return -1;        
     }
 
@@ -283,7 +286,7 @@ static int8_t __execute_impl_windows(const std::vector<YLIB_STD_STRING> & cmd, c
     while(ReadFile(_pipe_rd_handle, &_get_char, 1, &_byte_read_num, NULL)){
 
         if (1 !=_byte_read_num){
-            std::cout<<CONVERT_STR_TO_YLIB_STD_STRING(ReadFile(): )<<GetLastError()<<std::endl;
+            LOGE("yShell")<<CONVERT_STR_TO_YLIB_STD_STRING(ReadFile(): )<<GetLastError();
             break;
         }
 

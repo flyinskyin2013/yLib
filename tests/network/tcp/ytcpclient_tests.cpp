@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-09-14 11:14:49
  * @LastEditors: Sky
- * @LastEditTime: 2021-08-31 13:59:36
+ * @LastEditTime: 2021-11-10 17:25:50
  * @Description: 
  */
 #include "catch2/catch.hpp"
@@ -28,13 +28,15 @@ TEST_CASE( "Test yTcpServer apis" , "[yTcpServer_Apis]" ){
         yLib::yTcpSocket tcp_client0;
         yTcpSocket tcp_client1;
         yTcpSocket tcp_client2(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
+        yTcpSocket tcp_client3(AF_INET, SOCK_STREAM, IPPROTO_TCP|SOCK_NONBLOCK);
+        tcp_client3.connect("127.0.0.1", 12388);
+        
         char recv_msg_buff[100];
         uint64_t svr_ip;
         uint64_t svr_port;
 
-        REQUIRE(0 == tcp_client0.bind("", 12345));
-        REQUIRE(0 == tcp_client1.bind("", 12346));
+        REQUIRE(0 == (int)tcp_client0.bind("", 12345));
+        REQUIRE(0 == (int)tcp_client1.bind("", 12346));
         //tcp_client2 not bind, system automatically choose port.
 
         if (0 > tcp_client0.connect("127.0.0.1", 12356) ){

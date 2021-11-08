@@ -141,15 +141,7 @@ endif()
 
 ##########################################################################
 
-##########################################################################
-if(BUILD_MODULE_YLOG)
 
-    build_tests(UTILITY yLog yLog)
-    build_tests(UTILITY yLog yLog_Verify)
-    build_tests(UTILITY yLog ylog_file_bakup)
-endif()
-
-##########################################################################
 
 ##########################################################################
 if(BUILD_MODULE_YCONFIG)
@@ -252,12 +244,19 @@ build_tests(CORE yBasicValue yBasicValue)
 build_tests(CORE yLib_Extra_Infos yLib_Extra_Infos)
 
 build_tests(CORE yAllocator yAllocator)
+
+# for yLog
+build_tests(CORE yLog yLog)
+build_tests(CORE yLog yLog_Verify)
+build_tests(CORE yLog ylog_file_bakup)
+build_tests(CORE yLog ylog_capi)
+
 ##########################################################################
 
 #----------------------------------------------------------------------------------------
 
 ##########################################################################
-# build_tests(all_in_one "" all_in_one)
+build_tests(all_in_one "" all_in_one)
 ##########################################################################
 
 

@@ -2,8 +2,8 @@
  * @Description: 
  * @Author: Sky
  * @Date: 2020-03-26 15:59:28
- * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-09-05 10:07:11
+ * @LastEditors: Sky
+ * @LastEditTime: 2021-11-08 14:09:17
  * @FilePath: \yLib\tests\ysharedmemory\ysharedmemory_tests.cpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
@@ -22,8 +22,6 @@ TEST_CASE( "Test ySharedMemory_W apis" , "[ySharedMemory_W_Apis]" ){
 
     SECTION("test other apis ") {
         
-        yLib::ySharedMemory::__yshmparam__ _shm_param_for_test;
-
         yLib::ySharedMemory::yShmParam _shm_param;
 
         #ifdef _WIN32

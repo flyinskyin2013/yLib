@@ -57,7 +57,12 @@ namespace yLib{
     public:
 
         yAbstractSocket() noexcept;
-        virtual ~yAbstractSocket() noexcept;
+
+        ~yAbstractSocket() noexcept;
+
+        // notice: can't give a pointer obj-sub-class of yAbstractSocket to pointer yAbstractSocket
+        // Deleting an object through pointer to base invokes undefined behavior unless the destructor in the base class is virtual
+        // virtual ~yAbstractSocket() noexcept;
 
         /**
          * @description: Check socket()/bind()/connect() and so on.

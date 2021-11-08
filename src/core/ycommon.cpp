@@ -11,6 +11,8 @@ Redistribution and use in source and binary forms, with or without modification,
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
+
 /*
  * @Author: Sky
  * @Date: 2018-10-23 11:09:07
@@ -20,6 +22,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  */
 
 #include "core/ycommon.hpp" 
+#include "core/ylog.hpp"
+
 YLIB_IMPLEMENT_CLASSINFO_CONTENT(yCommon)
 
 #include <iostream>
@@ -154,7 +158,7 @@ void yLib::yCommon::GetUtcTimeAndLocalTime(struct ::timespec &time_spec, struct 
             // https://docs.microsoft.com/en-us/windows/win32/api/timezoneapi/nf-timezoneapi-systemtimetofiletime
             if (!SystemTimeToFileTime(&_the_utc_systime, &_the_utc_filetime)){
 
-                std::cout<<"yLibGetSystemLocalTime(): It's failed to convert systime to filetime .Failed Info = "<<yLib::yCommon::ConvertErrnoToStr(GetLastError())<<std::endl;
+                LOGE("yCommon")<<"yLibGetSystemLocalTime(): It's failed to convert systime to filetime .Failed Info = "<<yLib::yCommon::ConvertErrnoToStr(GetLastError());
                 return ;
             }
 
@@ -207,8 +211,8 @@ bool  yLib::yCommon::CheckFileExist(const char * full_name) noexcept
 
     if (-1 == access(full_name, F_OK)){
         
-        std::string _err_msg = std::string("CheckFileExist(): file(") + full_name +  ") is not exist.\n";
-        std::cout<<_err_msg<<std::endl;
+        std::string _err_msg = std::string("CheckFileExist(): file(") + full_name +  ") is not exist.";
+        LOGE("yCommon")<<_err_msg;
         return false;
     }
     return true;

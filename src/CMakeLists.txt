@@ -8,6 +8,7 @@ set(SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/core/yobject.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/core/yexception.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/core/ybasicvalue.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/ylog.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/ylib_c.cpp
 
@@ -59,13 +60,6 @@ if(BUILD_MODULE_YHTTP)
     ylib_build(UTILITY YHTTP)
 
 endif()
-
-if(BUILD_MODULE_YLOG)
-
-    ylib_build(UTILITY YLOG)
-
-endif()
-
 
 if(BUILD_MODULE_YSHELL)
 
@@ -283,11 +277,13 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
         set_target_properties(ylib PROPERTIES VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}" SOVERSION ${PROJECT_VERSION_MAJOR})
 
         # strip lib
-        add_custom_command(TARGET ylib
-            POST_BUILD
-            COMMAND ${STRIP} libylib.so
-            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/
-        )
+        if(CMAKE_BUILD_TYPE MATCHES "Release")
+            add_custom_command(TARGET ylib
+                POST_BUILD
+                COMMAND ${STRIP} libylib.so
+                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/
+            )
+        endif()
     endif()
 
 elseif(ANDROID)

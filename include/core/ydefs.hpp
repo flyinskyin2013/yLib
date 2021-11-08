@@ -38,6 +38,7 @@ namespace yLib{
 
     #ifdef _WIN32
 
+        #define __YLIB_EXPORT_DECLSPEC__ __declspec(dllexport)
         #ifdef BUILD_YLIB_WITH_EXPORT
             #define __YLIB_CLASS_DECLSPEC__ __declspec(dllexport)
         #else
@@ -54,6 +55,7 @@ namespace yLib{
         
     #elif __linux__ || __linux
 
+        #define __YLIB_EXPORT_DECLSPEC__
         #define __YLIB_CLASS_DECLSPEC__
         #define __YLIB_IMPORT__
         #define __YLIB_TEAMPLATE_CLASS_EXPORT__
@@ -120,6 +122,9 @@ namespace yLib{
 
     // #define YLIB_VERSION YLIB_STR(YLIB_VERSION_MAJOR) "." YLIB_STR(YLIB_VERSION_MINOR) "." YLIB_STR(YLIB_VERSION_PATCH)
 
+
+    // YLIB_ENABLE_UNIT_TEST control some specail unit-test
+    // YLIB_CODECOVERAGE_SKIP_CODE control code-coverage skip some code
     }
 
 

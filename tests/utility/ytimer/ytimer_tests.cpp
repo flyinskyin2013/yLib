@@ -2,13 +2,17 @@
  * @Author: Sky
  * @Date: 2021-04-07 17:45:00
  * @LastEditors: Sky
- * @LastEditTime: 2021-04-09 17:23:51
+ * @LastEditTime: 2021-11-10 09:44:18
  * @Description: 
  */
 #include "catch2/catch.hpp"
 #include "ylib.hpp"
 
 #include <iostream>
+
+#include "test_common.hpp"
+DEFINE_TEST_CASE_FOR_CLASS_INFO(yTimer)
+
 
 static void test_ytimer_callback(void * param)
 {

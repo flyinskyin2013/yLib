@@ -11,6 +11,8 @@ Redistribution and use in source and binary forms, with or without modification,
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
+
 /*
  * @Author: Sky
  * @Date: 2020-09-08 10:49:42
@@ -29,6 +31,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include <thread>
 #include <unordered_map>
 #include <vector>
+#include <atomic>
 
 #include <cstring>
 
@@ -48,13 +51,15 @@ namespace yLib{
          * @return {type} 
          */
         void epoll_thread_context(OnClientConnectCB con_cb, OnClientDisconnectCB discon_cb) noexcept;
-        bool epoll_thread_is_continue;
+        std::atomic<bool> epoll_thread_is_continue{false};
 
         bool is_listen_success = false;
 
         int max_listen_num = 0;
 
-
+#ifdef YLIB_ENABLE_UNIT_TEST
+        public:
+#endif //YLIB_ENABLE_UNIT_TEST
         /**
          * @description: yTcpServer don't manage the client
          * @param {type} 

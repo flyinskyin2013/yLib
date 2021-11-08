@@ -30,7 +30,26 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 /********************************yLog c api********************************************/
 /********************************yLog c api********************************************/
 //yLog c api
-YLIB_C_API void ylib_ylog_i(const char * fmt, ...){
+YLIB_C_API __YLIB_EXPORT_DECLSPEC__ void ylib_ylog_init(const yLogTagPropertyC * tag_prop, const char * tag){
+
+    yLib::yLogTagProperty _prop;
+    _prop.is_log_to_file = tag_prop->is_log_to_file;
+    _prop.is_log_to_stdio = tag_prop->is_log_to_stdio;
+    _prop.log_level = tag_prop->log_level;
+
+    _prop.file_param.file_base_name = tag_prop->file_base_name;
+    _prop.file_param.file_dir = tag_prop->file_dir;
+    _prop.file_param.flush_every_times = tag_prop->flush_every_times;
+    _prop.file_param.flush_timeout = tag_prop->flush_timeout;
+    _prop.file_param.log_file_max_backup_num = tag_prop->log_file_max_backup_num;
+    _prop.file_param.log_file_max_size = tag_prop->log_file_max_size;
+    _prop.file_param.multi_log_file = tag_prop->multi_log_file;
+
+    std::string _tag = tag;
+    yLib::yLog::Init(_prop, tag);
+
+}
+YLIB_C_API __YLIB_EXPORT_DECLSPEC__ void ylib_ylog_i(const char * fmt, ...){
 
     va_list _arg ;
 
@@ -41,7 +60,7 @@ YLIB_C_API void ylib_ylog_i(const char * fmt, ...){
     va_end(_arg);
 }
 
-YLIB_C_API void ylib_ylog_i_tag(const char * tag, const char * fmt, ...){
+YLIB_C_API __YLIB_EXPORT_DECLSPEC__ void ylib_ylog_i_tag(const char * tag, const char * fmt, ...){
 
     va_list _arg ;
 
@@ -52,7 +71,7 @@ YLIB_C_API void ylib_ylog_i_tag(const char * tag, const char * fmt, ...){
     va_end(_arg);
 }
 
-YLIB_C_API void ylib_ylog_w(const char * fmt, ...){
+YLIB_C_API __YLIB_EXPORT_DECLSPEC__ void ylib_ylog_w(const char * fmt, ...){
 
     va_list _arg ;
 
@@ -63,7 +82,7 @@ YLIB_C_API void ylib_ylog_w(const char * fmt, ...){
     va_end(_arg);
 }
 
-YLIB_C_API void ylib_ylog_w_tag(const char * tag, const char * fmt, ...){
+YLIB_C_API __YLIB_EXPORT_DECLSPEC__ void ylib_ylog_w_tag(const char * tag, const char * fmt, ...){
 
     va_list _arg ;
 
@@ -74,7 +93,7 @@ YLIB_C_API void ylib_ylog_w_tag(const char * tag, const char * fmt, ...){
     va_end(_arg);
 }
 
-YLIB_C_API void ylib_ylog_d(const char * fmt, ...){
+YLIB_C_API __YLIB_EXPORT_DECLSPEC__ void ylib_ylog_d(const char * fmt, ...){
 
     va_list _arg ;
 
@@ -85,7 +104,7 @@ YLIB_C_API void ylib_ylog_d(const char * fmt, ...){
     va_end(_arg);
 }
 
-YLIB_C_API void ylib_ylog_d_tag(const char * tag, const char * fmt, ...){
+YLIB_C_API __YLIB_EXPORT_DECLSPEC__ void ylib_ylog_d_tag(const char * tag, const char * fmt, ...){
 
     va_list _arg ;
 
@@ -95,7 +114,7 @@ YLIB_C_API void ylib_ylog_d_tag(const char * tag, const char * fmt, ...){
 
     va_end(_arg);
 }
-YLIB_C_API void ylib_ylog_e(const char * fmt, ...){
+YLIB_C_API __YLIB_EXPORT_DECLSPEC__ void ylib_ylog_e(const char * fmt, ...){
 
     va_list _arg ;
 
@@ -105,7 +124,7 @@ YLIB_C_API void ylib_ylog_e(const char * fmt, ...){
 
     va_end(_arg);
 }
-YLIB_C_API void ylib_ylog_e_tag(const char * tag, const char * fmt, ...){
+YLIB_C_API __YLIB_EXPORT_DECLSPEC__ void ylib_ylog_e_tag(const char * tag, const char * fmt, ...){
 
     va_list _arg ;
 

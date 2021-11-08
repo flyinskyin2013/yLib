@@ -25,7 +25,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include <string>
 #include <vector>
 
-#include "utility/ylog.hpp"
+#include "core/ylog.hpp"
 
 #include "core/ycompiler/core/yfilebuffermanager.hpp"
 

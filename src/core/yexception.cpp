@@ -86,6 +86,7 @@ inline void yLib::yException::get_stack_trace_info(void) noexcept
     // -rdynamic put all symbols to .dynsym section
     // char **backtrace_symbols(void *const *buffer, int size);
 
+    // mangle/demangle(c++filt)
     void * _buf[max_stack_item_num];
     char ** _stack_infos;
 
