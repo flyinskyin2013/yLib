@@ -50,7 +50,7 @@ jobs:
         cd build
 
         ../configure --prefix=`pwd`/install --target-list=aarch64-linux-user --disable-system
-        make -j2
+        make -j`nproc`
         make install
         cp -r aarch64-linux-user/qemu-aarch64 $GITHUB_WORKSPACE/qemu-install
 
@@ -72,7 +72,7 @@ jobs:
       working-directory: /home/runner/work/yLib/yLib/build
       run: |
         cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_aarch64_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=aarch64 ..
-        make
+        make -j`nproc`
         make install
 
     # - name: test ylib

@@ -37,55 +37,6 @@ jobs:
         name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source.zip
 
-  # ubuntu_16_04:
-  #   needs: [prepare_release]
-  #   runs-on: ubuntu-16.04
-  #   steps:
-  #   - name: checkout my rep
-  #     uses: actions/checkout@v2
-
-  #   - name: set env and init
-  #     env:
-  #       THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
-  #     run: |
-  #       echo $GITHUB_WORKSPACE
-  #       ls $GITHUB_WORKSPACE
-  #       cd $GITHUB_WORKSPACE
-  #       chmod +x build_deps.sh
-  #       mkdir -p build
-        
-  #     working-directory: /home/runner/work/yLib/yLib
-
-  #   - name: build third part
-  #     env:
-  #       THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
-  #     run: |
-  #       cd $GITHUB_WORKSPACE
-  #       ./build_deps.sh All
-
-  #     working-directory: /home/runner/work/yLib/yLib
-
-  #   - name: build ylib
-  #     working-directory: /home/runner/work/yLib/yLib/build
-  #     run: |
-  #       cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_x64_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 -DENABLE_GNU_SANITIZER=OFF ..
-  #       make
-  #       make install
-
-  #   - name: package
-  #     run: |
-  #       cd build/install
-  #       rm examples/ -rf
-  #       rm tests/ -rf
-  #       rm -f /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-ubuntu_16_04.zip
-  #       zip -9 -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-ubuntu_16_04.zip .
-
-  #   - name: upload-zip
-  #     uses: actions/upload-artifact@v2
-  #     with:
-  #       name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-ubuntu_16_04
-  #       path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-ubuntu_16_04.zip      
-
   ubuntu_18_04:
     needs: [prepare_release]
     runs-on: ubuntu-18.04
@@ -118,7 +69,7 @@ jobs:
       working-directory: /home/runner/work/yLib/yLib/build
       run: |
         cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_x64_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 -DENABLE_GNU_SANITIZER=OFF ..
-        make
+        make -j`nproc`
         make install
 
     - name: package
@@ -173,7 +124,7 @@ jobs:
       working-directory: /home/runner/work/yLib/yLib/build
       run: |
         cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_armgnueabi_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=armeabi -DENABLE_GNU_SANITIZER=OFF ..
-        make
+        make -j`nproc`
         make install
 
     - name: package
@@ -227,7 +178,7 @@ jobs:
       working-directory: /home/runner/work/yLib/yLib/build
       run: |
         cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_armgnueabihf_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=armeabihf -DENABLE_GNU_SANITIZER=OFF ..
-        make
+        make -j`nproc`
         make install
 
     - name: package
@@ -282,7 +233,7 @@ jobs:
       working-directory: /home/runner/work/yLib/yLib/build
       run: |
         cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_aarch64_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=aarch64 -DENABLE_GNU_SANITIZER=OFF ..
-        make
+        make -j`nproc`
         make install
 
     - name: package
@@ -646,16 +597,6 @@ jobs:
         asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source.zip
         asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source.zip
         asset_content_type: application/zip
-
-    # - name: upload-ubuntu_16_04
-    #   uses: actions/upload-release-asset@v1
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   with:
-    #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-    #     asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-ubuntu_16_04/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-ubuntu_16_04.zip
-    #     asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-ubuntu_16_04.zip
-    #     asset_content_type: application/zip
 
     - name: upload-ubuntu_18_04
       uses: actions/upload-release-asset@v1

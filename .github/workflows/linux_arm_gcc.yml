@@ -50,7 +50,7 @@ jobs:
         mkdir build
         cd build
         ../configure --prefix=`pwd`/install --target-list=arm-linux-user --disable-system
-        make -j2
+        make -j`nproc`
         make install
         chmod +x qemu-arm
         cp qemu-arm $GITHUB_WORKSPACE/qemu-install
@@ -75,7 +75,7 @@ jobs:
       working-directory: /home/runner/work/yLib/yLib/build
       run: |
         cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_armgnueabi_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=armeabi ..
-        make
+        make -j`nproc`
         make install
 
     - name: test ylib
@@ -131,7 +131,7 @@ jobs:
         mkdir build
         cd build
         ../configure --prefix=`pwd`/install --target-list=arm-linux-user --disable-system
-        make -j2
+        make -j`nproc`
         make install
         chmod +x qemu-arm
         cp qemu-arm $GITHUB_WORKSPACE/qemu-install
@@ -155,7 +155,7 @@ jobs:
       working-directory: /home/runner/work/yLib/yLib/build
       run: |
         cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_armgnueabihf_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=armeabihf ..
-        make
+        make -j`nproc`
         make install
 
     - name: test ylib

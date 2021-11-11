@@ -1,0 +1,52 @@
+name: code_coverage_report
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  generate_code_coverage:
+    name: generate_code_coverage on x86_64(last_ubuntu) platefrom using gcc
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout my rep
+      uses: actions/checkout@v2
+
+    - name: install lcov
+      run: sudo apt-get install lcov -y
+
+    - name: set env and init
+      env:
+        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+      run: |
+        echo $GITHUB_WORKSPACE
+        ls $GITHUB_WORKSPACE
+        cd $GITHUB_WORKSPACE
+        chmod +x build_deps.sh
+        chmod +x generate_code_coverage_infos.sh
+        mkdir -p build_codecoverage
+        
+      working-directory: /home/runner/work/yLib/yLib
+
+    - name: build third part
+      env:
+        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+      run: |
+        cd $GITHUB_WORKSPACE
+        ./build_deps.sh All
+
+      working-directory: /home/runner/work/yLib/yLib
+
+    - name: generate_codecoverage_info
+      working-directory: /home/runner/work/yLib/yLib/
+      run: |
+        cd $GITHUB_WORKSPACE
+        ./generate_code_coverage_infos.sh
+
+    - name: upload_codecoverage
+      uses: codecov/codecov-action@v2.1.0
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: build_codecoverage/lcov.info

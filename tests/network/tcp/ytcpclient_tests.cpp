@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2020-09-14 11:14:49
  * @LastEditors: Sky
- * @LastEditTime: 2021-11-10 17:25:50
+ * @LastEditTime: 2021-11-11 14:32:12
  * @Description: 
  */
 #include "catch2/catch.hpp"
@@ -22,9 +22,7 @@ TEST_CASE( "Test yTcpServer apis" , "[yTcpServer_Apis]" ){
 
         struct sigaction sa;
         sa.sa_handler = SIG_IGN;
-        sigaction( SIGPIPE, &sa, 0);
-        
-
+        sigaction( SIGPIPE, &sa, 0);  
         yLib::yTcpSocket tcp_client0;
         yTcpSocket tcp_client1;
         yTcpSocket tcp_client2(AF_INET, SOCK_STREAM, IPPROTO_TCP);

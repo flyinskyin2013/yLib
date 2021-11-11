@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-10-21 13:51:28
  * @LastEditors: Sky
- * @LastEditTime: 2021-11-10 09:25:10
+ * @LastEditTime: 2021-11-11 15:33:13
  * @Description: 
  -->
 ## yLib
@@ -11,7 +11,7 @@
 [![codecov](https://codecov.io/gh/flyinskyin2013/yLib/branch/master/graph/badge.svg?token=CIOCB761NA)](https://codecov.io/gh/flyinskyin2013/yLib)
 [![Build Status](https://www.travis-ci.org/flyinskyin2013/yLib.svg?branch=master)](https://www.travis-ci.org/flyinskyin2013/yLib)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/flyinskyin2013/yLib)
-![GitHub all releases](https://img.shields.io/github/downloads/flyinskyin2013/yLib/total)
+![LGTM Grade](https://img.shields.io/lgtm/grade/cpp/github/flyinskyin2013/yLib)
 [![License](https://img.shields.io/badge/license-BSD--3--Clause-green.svg)](License.txt) 
 
 yLib 学习、收集、整理和验证在我日常工作中一些有用的知识。
@@ -29,15 +29,9 @@ yLib BuildMatrix(GithubAction) <br>
 
 | Platefrom | Compiler | CPU(32bits)  | CPU (64bits) |
 | :---: | :---: | :---: | :---: |
-| Ubuntu2004 | GCC 9.x | [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/linux_x86_gcc)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x86_gcc) |  [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/linux_x64_gcc)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x64_gcc) |  
-| Ubuntu2004 | Clang 10.x | [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/linux_x86_clang)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x86_clang) |  [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/linux_x64_clang)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x64_clang) |  
-| Ubuntu2004 | ARM GCC 9.x | [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/linux_arm_gcc)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_arm_gcc) |  [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/linux_aarch64_gcc)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_aarch64_gcc) |  
-| Ubuntu1804 | GCC 7.x | [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/linux_x86_gcc)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x86_gcc) |  [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/linux_x64_gcc)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x64_gcc) |  
-| Ubuntu1804 | Clang 6.x | [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/linux_x86_clang)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x86_clang) |  [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/linux_x64_clang)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x64_clang) |  
-| Ubuntu1804 | ARM GCC 7.x | [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/linux_arm_gcc)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_arm_gcc) |  [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/linux_aarch64_gcc)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_aarch64_gcc) | 
-| Ubuntu1604 | GCC 5.x | [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/ubuntu1604_x86_gcc)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Aubuntu1604_x86_gcc) |  [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/ubuntu1604_x64_gcc)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Aubuntu1604_x64_gcc) |  
-| Ubuntu1604 | Clang 3.x | [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/ubuntu1604_x86_clang)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Aubuntu1604_x86_clang) |  [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/ubuntu1604_x64_clang)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Aubuntu1604_x64_clang) |  
-| Ubuntu1604 | ARM GCC 5.x | [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/ubuntu1604_arm_gcc)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Aubuntu1604_arm_gcc) |  [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/ubuntu1604_aarch64_gcc)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Aubuntu1604_aarch64_gcc) |  
+| Linux | GCC 9.x/7.x | [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/linux_x86_gcc)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x86_gcc) |  [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/linux_x64_gcc)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x64_gcc) |  
+| Linux | Clang 10.x/6.x | [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/linux_x86_clang)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x86_clang) |  [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/linux_x64_clang)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x64_clang) |  
+| Linux | ARM GCC 9.x/7.x | [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/linux_arm_gcc)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_arm_gcc) |  [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/linux_aarch64_gcc)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_aarch64_gcc) |  
 | Windows | VS2015 | [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/windows_x86_vs2015)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x86_vs2015) |  [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/windows_x64_vs2015)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x64_vs2015) |  
 | Windows | VS2017 | [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/windows_x86_vs2017)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x86_vs2017) |  [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/windows_x64_vs2017)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x64_vs2017) |  
 | Windows | VS2019 | [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/windows_x86_vs2019)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x86_vs2019) |  [![Build Status](https://img.shields.io/github/workflow/status/flyinskyin2013/yLib/windows_x64_vs2019)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x64_vs2019) |  

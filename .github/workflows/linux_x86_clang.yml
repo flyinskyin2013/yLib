@@ -46,7 +46,7 @@ jobs:
         CXX: clang++
       run: |
         cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_x64_clang_m32.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86 ..
-        make
+        make -j`nproc`
         make install
 
     - name: test ylib
