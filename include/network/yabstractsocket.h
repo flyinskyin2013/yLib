@@ -58,18 +58,18 @@ namespace yLib{
 
         yAbstractSocket() noexcept;
 
-        ~yAbstractSocket() noexcept;
+        // ~yAbstractSocket() noexcept;
 
         // notice: can't give a pointer obj-sub-class of yAbstractSocket to pointer yAbstractSocket
         // Deleting an object through pointer to base invokes undefined behavior unless the destructor in the base class is virtual
-        // virtual ~yAbstractSocket() noexcept;
+        virtual ~yAbstractSocket() noexcept;
 
         /**
          * @description: Check socket()/bind()/connect() and so on.
          * @param {type} 
          * @return {type} 
          */
-        virtual inline bool socket_is_ready(void) const noexcept;
+        virtual bool socket_is_ready(void) const noexcept;
 
         /**
          * @description: tcp server & udp server

@@ -118,6 +118,8 @@ namespace yLib{
         ~yLinearList(){
 
             Alloc _alloc;
+            for(int _i = 0; _i < sq_size; _i++)
+                _alloc.destroy( ((T*)sq_data_head) + _i);
             _alloc.deallocate((T *)sq_data_head, sq_capacity);
         }
         
@@ -134,9 +136,6 @@ namespace yLib{
          */
         int8_t sq_insert(size_t pos_, T & value_){
             
-            if (pos_ < 0 )
-                return -1;
-
             check_capacity_and_alloc_mem_by_element_num(sq_size + 1);
 
             Alloc _alloc;
@@ -214,10 +213,35 @@ namespace yLib{
             TYPE_ASC_ORDER = 1
         };
 
-        //fix a c++'s error at line(178-184)
-        const yLinearList<T, Alloc> & operator=(const yLinearList<T, Alloc> & sq_) const{
+        yLinearList(const yLinearList<T, Alloc> & sq_){
 
-            return sq_;
+            sq_element_size = sizeof(T);
+            check_capacity_and_alloc_mem_by_element_num(sq_.sq_size);
+            for(int _i = 0; _i < sq_.sq_size; _i++){
+
+                //call T copy assignment
+                ((T*)this->sq_data_head)[_i] = ((T*)sq_.sq_data_head)[_i];
+            }            
+        }
+
+        //fix a c++'s error at line(178-184)
+        yLinearList<T, Alloc> & operator=(const yLinearList<T, Alloc> & sq_) {
+
+            Alloc _alloc;
+            for(int _i = 0; _i < sq_size; _i++)
+                _alloc.destroy( ((T*)sq_data_head) + _i);
+
+            _alloc.deallocate((T *)sq_data_head, sq_capacity);
+
+            //realloc mem
+            sq_element_size = sizeof(T);
+            check_capacity_and_alloc_mem_by_element_num(sq_.sq_size);
+            for(int _i = 0; _i < sq_.sq_size; _i++){
+
+                //call T copy assignment
+                ((T*)this->sq_data_head)[_i] = ((T*)sq_.sq_data_head)[_i];
+            }
+            return *this;
         }
         /**
          * @description: only support ordered Linearlist(same order-type)(ascending order or descending order)
@@ -238,14 +262,16 @@ namespace yLib{
             check_capacity_and_alloc_mem_by_element_num(sq0_.sq_size + sq1_.sq_size);
             uint64_t _cur_idx = 0;
             uint64_t _bak_sq_smaller_pos = 0;
-            const yLinearList<T, Alloc> & sq_greater = sq0_;
-            const yLinearList<T, Alloc> & sq_smaller = sq1_;
+            const yLinearList<T, Alloc> * _sq_greater_ptr = &sq0_;
+            const yLinearList<T, Alloc> * _sq_small_ptr = &sq1_;
             if ( sq0_.sq_size < sq1_.sq_size){
 
-                sq_greater = sq1_;
-                sq_smaller = sq0_;
+                _sq_greater_ptr = &sq1_;
+                _sq_small_ptr = &sq0_;
             }
 
+            const yLinearList<T, Alloc> & sq_greater = *_sq_greater_ptr;
+            const yLinearList<T, Alloc> & sq_smaller = *_sq_small_ptr;
             for (uint64_t i_ = 0, j_ = 0; i_ < sq_greater.sq_get_size() ; ){
 
                 if (TYPE_DSC_ORDER == order_type_){//dec

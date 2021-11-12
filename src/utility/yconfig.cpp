@@ -45,12 +45,12 @@ int8_t yLib::yConfig::ReadFile(const std::string &file_path_){
 
         CONVERT_POINTER_TO_LIBCONFIG_CONFIG_INSTANCE(config_instance)->readFile(file_path_.c_str());
     }
-    catch(libconfig::FileIOException e){
+    catch(libconfig::FileIOException & e){
 
         yLib::yLog::E("yConfigReadFile FileIOException : %s", e.what());
         return -1;
     }
-    catch(libconfig::ParseException e){
+    catch(libconfig::ParseException & e){
 
         yLib::yLog::E("yConfigReadFile ParseException : %s", e.what());
         return -1;
@@ -72,12 +72,12 @@ int8_t yLib::yConfig::WriteFile(const std::string &file_path_){
 
        CONVERT_POINTER_TO_LIBCONFIG_CONFIG_INSTANCE(config_instance)->writeFile(file_path_.c_str());
     }
-    catch(libconfig::FileIOException e){
+    catch(libconfig::FileIOException & e){
 
         yLib::yLog::E("yConfigWriteFile FileIOException : %s", e.what());
         return -1;
     }
-    catch(libconfig::ParseException e){
+    catch(libconfig::ParseException & e){
 
         yLib::yLog::E("yConfigWriteFile ParseException : %s", e.what());
         return -1;

@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-10-21 13:51:28
  * @LastEditors: Sky
- * @LastEditTime: 2021-11-11 15:33:13
+ * @LastEditTime: 2021-11-11 16:47:05
  * @Description: 
  -->
 ## yLib
@@ -10,8 +10,8 @@
 ****
 [![codecov](https://codecov.io/gh/flyinskyin2013/yLib/branch/master/graph/badge.svg?token=CIOCB761NA)](https://codecov.io/gh/flyinskyin2013/yLib)
 [![Build Status](https://www.travis-ci.org/flyinskyin2013/yLib.svg?branch=master)](https://www.travis-ci.org/flyinskyin2013/yLib)
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/flyinskyin2013/yLib)
-![LGTM Grade](https://img.shields.io/lgtm/grade/cpp/github/flyinskyin2013/yLib)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/flyinskyin2013/yLib)](https://github.com/flyinskyin2013/yLib/releases)
+[![LGTM Grade](https://img.shields.io/lgtm/grade/cpp/github/flyinskyin2013/yLib)](https://lgtm.com/projects/g/flyinskyin2013/yLib)
 [![License](https://img.shields.io/badge/license-BSD--3--Clause-green.svg)](License.txt) 
 
 yLib 学习、收集、整理和验证在我日常工作中一些有用的知识。

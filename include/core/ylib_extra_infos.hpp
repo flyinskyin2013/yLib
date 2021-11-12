@@ -62,28 +62,28 @@ namespace yLib{
         static const std::string & GetyLibBuildPlatform(void) noexcept;
 
         /**
-         *  @fn      static const int GetyLibBuildVersionMajor(void) noexcept
+         *  @fn      static int GetyLibBuildVersionMajor(void) noexcept
          *  @brief   get build-version-major-string of yLib.
          *  @warning 
          *  @return The build-version-major-string
          */
-        static const int GetyLibBuildVersionMajor(void) noexcept;
+        static int GetyLibBuildVersionMajor(void) noexcept;
 
         /**
-         *  @fn      static const int GetyLibBuildVersionMinor(void) noexcept
+         *  @fn      static int GetyLibBuildVersionMinor(void) noexcept
          *  @brief   get build-version-minor-string of yLib.
          *  @warning 
          *  @return The build-version-minor-string
          */
-        static const int GetyLibBuildVersionMinor(void) noexcept;
+        static int GetyLibBuildVersionMinor(void) noexcept;
 
         /**
-         *  @fn      static const int GetyLibBuildVersionPatch(void) noexcept
+         *  @fn      static int GetyLibBuildVersionPatch(void) noexcept
          *  @brief   get build-version-patch-string of yLib.
          *  @warning 
          *  @return The build-version-patch-string
          */
-        static const int GetyLibBuildVersionPatch(void) noexcept;
+        static int GetyLibBuildVersionPatch(void) noexcept;
 
         /**
          *  @fn      static const int GetyLibBuildTimeStamp(void) noexcept

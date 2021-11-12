@@ -69,19 +69,19 @@ const std::string & yLib::yLibExtraInfos::GetyLibBuildPlatform(void) noexcept
 
 //    return G_YLIB_BUILD_VERSION_DEFINE;    
 //}
-const int yLib::yLibExtraInfos::GetyLibBuildVersionMajor(void) noexcept
+int yLib::yLibExtraInfos::GetyLibBuildVersionMajor(void) noexcept
 {
 
     return G_YLIB_BUILD_VERSION_MAJOR_DEFINE;
 }
 
-const int yLib::yLibExtraInfos::GetyLibBuildVersionMinor(void) noexcept
+int yLib::yLibExtraInfos::GetyLibBuildVersionMinor(void) noexcept
 {
 
     return G_YLIB_BUILD_VERSION_MINOR_DEFINE;
 }
 
-const int yLib::yLibExtraInfos::GetyLibBuildVersionPatch(void) noexcept
+int yLib::yLibExtraInfos::GetyLibBuildVersionPatch(void) noexcept
 {
 
     return G_YLIB_BUILD_VERSION_PATCH_DEFINE;

@@ -44,7 +44,7 @@ yLib::yAbstractSocket::~yAbstractSocket() noexcept
 }
 
 
-inline bool yLib::yAbstractSocket::socket_is_ready(void) const noexcept{
+bool yLib::yAbstractSocket::socket_is_ready(void) const noexcept{
 
     return (is_sockfd_valid && is_bind_success && is_connect_success);
 }

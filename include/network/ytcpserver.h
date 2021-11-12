@@ -102,7 +102,7 @@ namespace yLib{
          * @param {type} 
          * @return {type} 
          */
-        inline bool socket_is_ready(void) const noexcept override;
+        bool socket_is_ready(void) const noexcept override;
 
 
         /**

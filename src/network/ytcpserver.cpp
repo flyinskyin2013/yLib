@@ -98,7 +98,7 @@ yTcpServer::~yTcpServer()
  * @param {type} 
  * @return {type} 
 */
-inline bool yTcpServer::socket_is_ready(void) const noexcept
+bool yTcpServer::socket_is_ready(void) const noexcept
 {
 
     return (is_sockfd_valid && is_bind_success && is_connect_success&&is_listen_success);

@@ -36,7 +36,7 @@ extern "C"
 
 
 
-static xmlNodePtr __yXml_Tree_Traversal_Get__(xmlNodePtr ptr_node, \
+static int8_t __yXml_Tree_Traversal_Get__(xmlNodePtr ptr_node, \
     std::string &node_name, \
 	std::string &node_val_, \
     std::string &node_prop_name, \
@@ -150,7 +150,7 @@ static xmlNodePtr __yXml_Tree_Traversal_Get__(xmlNodePtr ptr_node, \
 		ptr_node = ptr_node->next;
 	}
 
-	return NULL;
+	return -1;
 }
 
 static int8_t __yXml_Tree_Traversal_Update__(xmlNodePtr ptr_node, \
@@ -263,7 +263,7 @@ static int8_t __yXml_Tree_Traversal_Update__(xmlNodePtr ptr_node, \
 		ptr_node = ptr_node->next;
 	}
 
-	return 0;
+	return -1;
 }
 
 
@@ -392,7 +392,7 @@ static int8_t __yXml_Tree_Traversal_Add__(xmlNodePtr ptr_node, \
 		ptr_node = ptr_node->next;
 	}
 
-
+	return -1;
 }
 
 

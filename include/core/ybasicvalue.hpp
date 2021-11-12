@@ -148,10 +148,10 @@ namespace yLib{
          * @param 
          * @return 
          */
-        ~yValue() noexcept;
+        // ~yValue() noexcept;
         // notice: can't give a pointer obj-sub-class of yValue to pointer yValue
         // Deleting an object through pointer to base invokes undefined behavior unless the destructor in the base class is virtual
-        // virtual ~yValue() noexcept;
+        virtual ~yValue() noexcept;
 
         //other constructor
         /**
