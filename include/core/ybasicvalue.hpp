@@ -250,6 +250,7 @@ namespace yLib{
          * @return 
          */
         explicit yValue(const std::string & value) noexcept;
+        explicit yValue(const char * value) noexcept;
 
         /**
          * @fn  yValue(yValueType type_, void * value) noexcept

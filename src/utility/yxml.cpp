@@ -195,6 +195,7 @@ static int8_t __yXml_Tree_Traversal_Update__(xmlNodePtr ptr_node, \
 			//second check opts_ex_
 			if (-233333 != opts_ex_.jump_times && 0 <= opts_ex_.jump_times && _check_prop_name_result){//
 
+#ifndef YLIB_CODECOVERAGE_SKIP_CODE
 				xmlNodePtr _ptr_parent = ptr_node->parent;
 
 				if ( !xmlStrcmp(_ptr_parent->name, BAD_CAST(opts_ex_.parent_node_name.c_str()) )){//check parent
@@ -231,6 +232,7 @@ static int8_t __yXml_Tree_Traversal_Update__(xmlNodePtr ptr_node, \
 
 					_second_check_result = false;
 				}
+#endif //YLIB_CODECOVERAGE_SKIP_CODE
 			}
 
 			if (_check_prop_name_result && _second_check_result){
@@ -312,6 +314,7 @@ static int8_t __yXml_Tree_Traversal_Add__(xmlNodePtr ptr_node, \
 			//second check opts_ex_
 			if (-233333 != opts_ex_.jump_times && 0 <= opts_ex_.jump_times && _check_prop_name_result){//
 
+#ifndef YLIB_CODECOVERAGE_SKIP_CODE
 				xmlNodePtr _ptr_parent = ptr_node->parent;
 
 				if ( !xmlStrcmp(_ptr_parent->name, BAD_CAST(opts_ex_.parent_node_name.c_str()) )){//check parent
@@ -348,6 +351,7 @@ static int8_t __yXml_Tree_Traversal_Add__(xmlNodePtr ptr_node, \
 
 					_second_check_result = false;
 				}
+#endif //YLIB_CODECOVERAGE_SKIP_CODE
 			}
 
 			

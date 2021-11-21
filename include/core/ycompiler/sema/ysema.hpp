@@ -11,10 +11,55 @@ Redistribution and use in source and binary forms, with or without modification,
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
+
 /*
- * @Author: Sky
- * @Date: 2021-03-20 11:33:58
- * @LastEditors: Sky
- * @LastEditTime: 2021-03-20 11:33:58
+ * @Author: your name
+ * @Date: 2021-11-27 14:16:42
+ * @LastEditTime: 2021-11-27 14:16:43
+ * @LastEditors: Please set LastEditors
  * @Description: 
+ * @FilePath: \yLib\include\core\ycompiler\sema\ysema.hpp
  */
+
+#ifndef __CORE_YCOMPILER_PARSE_YSEMA_HPP__
+#define __CORE_YCOMPILER_PARSE_YSEMA_HPP__
+
+#include "core/yobject.hpp"
+
+#include <cstdint>
+
+namespace yLib
+{
+    namespace ycompiler
+    {
+        class yConfigParser;
+
+        //semantic analysis
+        class __YLIB_CLASS_DECLSPEC__ ySema:
+        YLIB_PUBLIC_INHERIT_YOBJECT
+        {
+            private:
+            yConfigParser * parser;
+            public:
+            ySema() = delete;
+            ySema(yConfigParser * parser):parser(parser){}
+            ~ySema(){}
+
+            /**
+             *  @fn      int8_t ParseNumberConstantExpression(uint64_t & num)
+             *  @brief   parse num-constant-expr
+             *  @param   num the num parsed.
+             *  @return the num type or ret-status
+             *  @retval -1 error
+             *  @retval 1 int-constant
+             *  @retval 2 double-constant
+             * 
+             */
+            int8_t ParseNumberConstantExpression(uint64_t & num);
+        };
+    }
+}
+
+
+#endif //__CORE_YCOMPILER_PARSE_YSEMA_HPP__

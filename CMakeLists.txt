@@ -165,12 +165,10 @@ endif()
 if(WIN32)
 
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/third_part/windows)
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/third_part/windows/libconfig)
 
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/third_part/linux)
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/third_part/linux/libconfig)
 
 elseif(ANDROID)
 else()

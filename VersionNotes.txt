@@ -7,6 +7,15 @@
  -->
 Version Notes:
 ==========
+v0.1.0
+----------
+    1 New yConfig implemented by ycompiler and remove libconfig.
+    2 New yLog reference glog/log4cpp and remove log4cpp.
+    3 More unit-test for stability.
+    4 Import pybind11 and JNA.
+    5 More new content for WIN32 plateform.
+    6 More optimization for yLib.
+
 v0.0.9
 ----------
     1 Reconstructed yBasicValue/yConfig,yConfigValue/yJson,yJsonValue.

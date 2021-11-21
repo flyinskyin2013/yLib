@@ -10,6 +10,18 @@ set(SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/core/ybasicvalue.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/core/ylog.cpp
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/ycompiler/basic/yaction.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/ycompiler/basic/ycompiler_instance.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/ycompiler/basic/ydiagnostics.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/ycompiler/basic/yfile_manager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/ycompiler/basic/yfile_location.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/ycompiler/basic/ytoken.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/ycompiler/lex/ylexer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/ycompiler/parse/yconfig_parser.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/ycompiler/sema/ysema.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/ycompiler/tools/yconfig_parse_action.cpp
+
     ${CMAKE_CURRENT_SOURCE_DIR}/ylib_c.cpp
 
     ${CMAKE_CURRENT_BINARY_DIR}/ylib_extra_infos.cpp
@@ -176,17 +188,17 @@ if(WIN32)
 
         if(CMAKE_BUILD_TYPE MATCHES "Debug")
 
-            target_link_libraries( ylib_s PRIVATE jsoncppD.lib libconfig++D.lib libcurlD.lib libxml2D_a.lib  ws2_32 Shlwapi)
+            target_link_libraries( ylib_s PRIVATE jsoncppD.lib libcurlD.lib libxml2D_a.lib  ws2_32 Shlwapi)
             add_custom_command(TARGET ylib_s POST_BUILD
-                COMMAND lib.exe /out:ylib_s_new.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/jsoncppD.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libconfig++D.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libcurlD.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libxml2D_a.lib ${CMAKE_CURRENT_BINARY_DIR}/Debug/ylib_s.lib
+                COMMAND lib.exe /out:ylib_s_new.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/jsoncppD.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libcurlD.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libxml2D_a.lib ${CMAKE_CURRENT_BINARY_DIR}/Debug/ylib_s.lib
                 COMMAND ${CMAKE_COMMAND} -E rename ylib_s_new.lib ${CMAKE_CURRENT_BINARY_DIR}/Debug/ylib_s.lib
                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/
             )
         elseif (CMAKE_BUILD_TYPE MATCHES "Release")
 
-            target_link_libraries( ylib_s PRIVATE jsoncpp.lib libconfig++.lib libcurl.lib libxml2_a.lib ws2_32 Shlwapi)
+            target_link_libraries( ylib_s PRIVATE jsoncpp.lib libcurl.lib libxml2_a.lib ws2_32 Shlwapi)
             add_custom_command(TARGET ylib_s POST_BUILD
-                COMMAND lib.exe /out:ylib_s_new.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/jsoncpp.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libconfig++.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libcurl.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libxml2_a.lib ${CMAKE_CURRENT_BINARY_DIR}/Release/ylib_s.lib
+                COMMAND lib.exe /out:ylib_s_new.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/jsoncpp.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libcurl.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libxml2_a.lib ${CMAKE_CURRENT_BINARY_DIR}/Release/ylib_s.lib
                 COMMAND ${CMAKE_COMMAND} -E rename ylib_s_new.lib ${CMAKE_CURRENT_BINARY_DIR}/Release/ylib_s.lib
                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/
             )
@@ -203,11 +215,11 @@ if(WIN32)
         add_library(ylib SHARED ${SRC})
         if(CMAKE_BUILD_TYPE MATCHES "Debug")
 
-            target_link_libraries( ylib PRIVATE jsoncppD.lib libconfig++D.lib libcurlD.lib libxml2D_a.lib  ws2_32 Shlwapi)
+            target_link_libraries( ylib PRIVATE jsoncppD.lib libcurlD.lib libxml2D_a.lib  ws2_32 Shlwapi)
 
         elseif (CMAKE_BUILD_TYPE MATCHES "Release")
 
-            target_link_libraries( ylib PRIVATE jsoncpp.lib libconfig++.lib libcurl.lib libxml2_a.lib ws2_32 Shlwapi)
+            target_link_libraries( ylib PRIVATE jsoncpp.lib libcurl.lib libxml2_a.lib ws2_32 Shlwapi)
 
         endif()
         set_target_properties(ylib PROPERTIES COMPILE_DEFINITIONS "CURL_STATICLIB;BUILD_YLIB_WITH_EXPORT")
@@ -224,7 +236,6 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
                                     PRIVATE 
                                     libcurl.a
                                     libxml2.a 
-                                    liblibconfig++.a 
                                     libjsoncpp.a)
 
         # add_custom_command(TARGET target
@@ -244,7 +255,6 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
                             POST_BUILD
                             COMMAND ar -x ${PROJECT_SOURCE_DIR}/lib/linux/${BUILD_YLIB_ARCH}/libcurl.a
                             COMMAND ar -x ${PROJECT_SOURCE_DIR}/lib/linux/${BUILD_YLIB_ARCH}/libxml2.a
-                            COMMAND ar -x ${PROJECT_SOURCE_DIR}/lib/linux/${BUILD_YLIB_ARCH}/liblibconfig++.a
                             COMMAND ar -x ${PROJECT_SOURCE_DIR}/lib/linux/${BUILD_YLIB_ARCH}/libjsoncpp.a
                             COMMAND ar -x ${CMAKE_CURRENT_BINARY_DIR}/libylib_s.a
                             COMMAND rm -rf ${CMAKE_CURRENT_BINARY_DIR}/libylib_s.a
@@ -266,12 +276,14 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
             target_compile_options(ylib PRIVATE -coverage -fprofile-arcs -ftest-coverage -rdynamic)
             # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -coverage -fprofile-arcs -ftest-coverage")
             # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -coverage -fprofile-arcs -ftest-coverage")
-            target_link_libraries(ylib PRIVATE -coverage -lgcov libcurl.a libxml2.a liblibconfig++.a libjsoncpp.a)
+            target_link_libraries(ylib PRIVATE -coverage -lgcov libcurl.a libxml2.a libjsoncpp.a)
+
+            target_compile_options(ylib PRIVATE -D YLIB_CODECOVERAGE_SKIP_CODE)
         
         else()
 
             target_link_libraries(ylib
-                            PRIVATE libcurl.a libxml2.a liblibconfig++.a libjsoncpp.a)
+                            PRIVATE libcurl.a libxml2.a libjsoncpp.a)
         endif()
 
         set_target_properties(ylib PROPERTIES VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}" SOVERSION ${PROJECT_VERSION_MAJOR})

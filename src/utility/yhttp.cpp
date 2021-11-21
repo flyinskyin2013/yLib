@@ -83,6 +83,7 @@ static size_t write_callback(char *buffer_, size_t size_, size_t nmemb_, void *u
     }
     else{
 
+#ifndef YLIB_CODECOVERAGE_SKIP_CODE
         uint32_t _now_not_used_len = _buffer_len - _buffer_used_len;
         uint32_t _alloc_4k_count = (size_* nmemb_ / 4096) + 1;
 
@@ -103,6 +104,7 @@ static size_t write_callback(char *buffer_, size_t size_, size_t nmemb_, void *u
         memcpy((*(uint8_t **)userdata_) + 8 + _buffer_used_len, buffer_, size_*nmemb_);
         _buffer_used_len += size_*nmemb_;
         __little_endian_uint32_to_buf__(*_data_buf + 4, _buffer_used_len);
+#endif //YLIB_CODECOVERAGE_SKIP_CODE
     }
 
     return size_* nmemb_;

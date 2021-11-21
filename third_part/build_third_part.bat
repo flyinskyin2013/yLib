@@ -97,9 +97,6 @@ goto:eof
 
     @echo extract jsoncpp ... ...
     @tar -xzf jsoncpp_1.8.4.tar.gz
-
-    @echo extract libconfig ... ...
-    @tar -xzf libconfig-1.7.2.tar.gz
 @goto:eof
 
 :make
@@ -109,7 +106,6 @@ call:build_libcurl
 @REM libxml2 must build after any other-lib, because it needs build_out/include and build_out/lib
 call:build_libxml299
 call:build_jsoncpp
-call:build_libconfig
 
 call:self_print I "Build dependence complete."
 
@@ -125,9 +121,6 @@ call:self_print I "Build dependence complete."
 
     @echo remove jsoncpp-1.8.4 ... ...
     @rm -rf jsoncpp-1.8.4
-
-    @echo remove libconfig-1.7.2 ... ...
-    @rm -rf libconfig-1.7.2
 
     rm -rf build_out
 @goto:eof
@@ -165,19 +158,6 @@ call:self_print I "Build dependence complete."
 
 @goto:eof
 
-
-:build_libconfig
-
-    @echo building libconfig-1.7.2 ... ...
-    @cd %THIRD_PART_ROOT_PATH%/libconfig-1.7.2
-    @echo Patching cmake files ... ...
-    @patch -p1 < ../libconfig_cmake.patch
-    @mkdir build_msvc
-    @cd build_msvc
-    cmake -T %compile_tool_set%,host=x64 -A %compile_tool_arch% -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DCMAKE_INSTALL_PREFIX=%THIRD_PART_ROOT_PATH%\build_out ..
-    cmake --build . --config Release --target install
-
-@goto:eof
 
 :: echo -e "\033[字背景颜色;文字颜色m ${str} \033[0m"
 

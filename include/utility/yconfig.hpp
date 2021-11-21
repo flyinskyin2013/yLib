@@ -25,10 +25,17 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #define __YLIB_UTILITY_YCONFIG_HPP__
 
 #include <string>
+#include <memory>
 
 #include "core/ylog.hpp"
 #include "core/ycommon.hpp"
 #include "core/ybasicvalue.hpp"
+
+// import ycompiler
+#include "core/ycompiler/basic/ycompiler_instance.hpp"
+#include "core/ycompiler/tools/yconfig_parse_action.hpp"
+#include "core/ycompiler/basic/yfile_manager.hpp"
+#include "core/ycompiler/parse/yconfig_parser.hpp"
 
 namespace yLib{
 
@@ -44,12 +51,12 @@ namespace yLib{
 
         //other constructor
         /**
-         * @fn  explicit yConfigValue(int32_t value) noexcept
+         * @fn  explicit yConfigValue(int64_t value) noexcept
          * @brief override constructor
          * @param value the initial val.
          * @return 
          */
-        explicit yConfigValue(int32_t value) noexcept;
+        explicit yConfigValue(int64_t value) noexcept;
 
         /**
          * @fn  explicit yConfigValue(bool value) noexcept
@@ -60,12 +67,12 @@ namespace yLib{
         explicit yConfigValue(bool value) noexcept;
 
         /**
-         * @fn  explicit yConfigValue(float value) noexcept
+         * @fn  explicit yConfigValue(double value) noexcept
          * @brief override constructor
          * @param value the initial val.
          * @return 
          */
-        explicit yConfigValue(float value) noexcept;
+        explicit yConfigValue(double value) noexcept;
 
         /**
          * @fn  explicit yConfigValue(const std::string &value) noexcept
@@ -83,6 +90,13 @@ namespace yLib{
          */
         explicit yConfigValue(const char *value) noexcept;
 
+        /**
+         * @fn  explicit yConfigValue(uintptr_t ptr) noexcept;
+         * @brief override constructor
+         * @param value the initial val.
+         * @return 
+         */
+        explicit yConfigValue(uintptr_t ptr) noexcept;
 
         /**
          * @fn  yConfigValue(const yConfigValue &value)
@@ -115,12 +129,12 @@ namespace yLib{
         yConfigValue & operator=(const yConfigValue &&value) noexcept;
         
         /**
-         * @fn  yConfigValue & operator=(int32_t value_)
-         * @brief convert int32_t to exsited obj of yConfigValue
-         * @param value int32_t value.
+         * @fn  yConfigValue & operator=(int64_t value_)
+         * @brief convert int64_t to exsited obj of yConfigValue
+         * @param value int64_t value.
          * @return return obj of yConfigValue
          */    
-        yConfigValue & operator=(int32_t value) noexcept;
+        yConfigValue & operator=(int64_t value) noexcept;
 
         /**
          * @fn  yConfigValue & operator=(bool value)
@@ -131,12 +145,12 @@ namespace yLib{
         yConfigValue & operator=(bool value) noexcept;
 
         /**
-         * @fn  yConfigValue & operator=(float value)
-         * @brief convert float to exsited obj of yConfigValue
+         * @fn  yConfigValue & operator=(double value)
+         * @brief convert double to exsited obj of yConfigValue
          * @param value bool value.
          * @return return obj of yConfigValue
          */    
-        yConfigValue & operator=(float value) noexcept;
+        yConfigValue & operator=(double value) noexcept;
 
         /**
          * @fn  yConfigValue & operator=(const std::string & value)
@@ -153,13 +167,15 @@ namespace yLib{
          * @return return obj of yConfigValue
          */    
         yConfigValue & operator=(const char *value) noexcept;
+
+        yConfigValue & operator=(uintptr_t ptr) noexcept;
             
         /**
-         * @fn  operator uint32_t() const
-         * @brief convert yConfigValue to uint32_t
-         * @return return a uint32_t's val from obj.
+         * @fn  operator int64_t() const
+         * @brief convert yConfigValue to int64_t
+         * @return return a int64_t's val from obj.
          */
-        operator uint32_t() const noexcept override;
+        operator int64_t() const noexcept override;
 
         /**
          * @fn  operator bool() const
@@ -170,11 +186,11 @@ namespace yLib{
 
 
         /**
-         * @fn  operator float() const
-         * @brief convert yConfigValue to float
-         * @return return a float's val from obj.
+         * @fn  operator double() const
+         * @brief convert yConfigValue to double
+         * @return return a double's val from obj.
          */
-        operator float() const noexcept override;
+        operator double() const noexcept override;
 
 
         /**
@@ -183,6 +199,8 @@ namespace yLib{
          * @return return a std::string's val from obj.
          */
         operator std::string() const noexcept override;
+
+        operator uintptr_t() const noexcept override;
 
         friend class yConfig;
 
@@ -294,8 +312,9 @@ namespace yLib{
         int8_t AddNode(const std::string & pos, const std::string & name, yValue::yValueType type, const yConfigValue &value = yConfigValue());
 
         private:
-        void * config_instance;
-
+        ycompiler::yConfigDecl *LookUp(const std::string &node_path, ycompiler::yConfigDeclObject & decl_obj);
+        std::unique_ptr<ycompiler::yCompilerInstance> compiler_instance;
+        ycompiler::yFileManager * file_mgr;
     };
 
 

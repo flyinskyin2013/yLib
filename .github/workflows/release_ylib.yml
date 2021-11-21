@@ -584,7 +584,6 @@ jobs:
       with:
         tag_name: ${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}
         release_name: Release ${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}
-        body_path: ReleaseNotesTemplate.md
         draft: false
         prerelease: false
 

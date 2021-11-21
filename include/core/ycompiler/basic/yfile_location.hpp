@@ -1,3 +1,4 @@
+
 /*
 Copyright (c) 2018 - 2021 flyinskyin2013 All rights reserved.
 
@@ -11,28 +12,57 @@ Redistribution and use in source and binary forms, with or without modification,
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
+
 /*
  * @Author: Sky
- * @Date: 2021-03-20 11:33:33
+ * @Date: 2021-11-20 12:23:45
+ * @LastEditTime: 2021-11-21 09:41:04
  * @LastEditors: Sky
- * @LastEditTime: 2021-05-26 15:22:04
  * @Description: 
+ * @FilePath: \yLib\include\core\ycompiler\basic\yfile_location.hpp
+ * @Github: https://github.com/flyinskyin2013/yLib
  */
-#ifndef __YLIB_CORE_YCOMPILER_LEXICAL_ANALYZER_YLEXICALANALYZER_HPP__
-#define __YLIB_CORE_YCOMPILER_LEXICAL_ANALYZER_YLEXICALANALYZER_HPP__
 
-#include "core/yobject.hpp"
+#ifndef __CORE_YCOMPILER_BASIC_YFILE_LOCATION_HPP__
+#define __CORE_YCOMPILER_BASIC_YFILE_LOCATION_HPP__
 
-namespace yLib{
-
-    class __YLIB_CLASS_DECLSPEC__ yLexicalAnalyzer MACRO_PUBLIC_INHERIT_YOBJECT
+#include <string>
+namespace yLib
+{
+    namespace ycompiler
     {
-    private:
-        /* data */
-    public:
-        yLexicalAnalyzer(/* args */);
-        ~yLexicalAnalyzer();
-    };
-}
+        
+        class yFileLocation{
 
-#endif //__YLIB_CORE_YCOMPILER_LEXICAL_ANALYZER_YLEXICALANALYZER_HPP__
+            public:
+            const char * buf_start;
+            const char * buf_cur_ptr;
+
+            yFileLocation():
+            buf_start(nullptr), buf_cur_ptr(nullptr)
+            {}
+
+            yFileLocation(const char * buf_start, const char * buf_cur_ptr):
+            buf_start(buf_start), buf_cur_ptr(buf_cur_ptr)
+            {}
+
+            yFileLocation(const yFileLocation & loc){
+
+                buf_start = loc.buf_start;
+                buf_cur_ptr = loc.buf_cur_ptr;
+            }
+
+            yFileLocation & operator=(const yFileLocation & loc){
+
+                buf_start = loc.buf_start;
+                buf_cur_ptr = loc.buf_cur_ptr;
+                return *this;
+            }
+
+            bool GetLocationInfo(std::string & line, uint64_t & row, uint64_t &col);
+        };
+    } // namespace ycompiler
+} // namespace yLib
+
+#endif //__CORE_YCOMPILER_BASIC_YFILE_LOCATION_HPP__

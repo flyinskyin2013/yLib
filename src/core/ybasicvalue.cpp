@@ -229,6 +229,14 @@ yLib::yValue::yValue(const std::string & value) noexcept
     cur_value_type = yValueType::STRING_TYPE;
 }
 
+yLib::yValue::yValue(const char * value) noexcept{
+
+    CleanAllToDefault();
+
+    value_containter.string_val = value; 
+    cur_value_type = yValueType::STRING_TYPE;
+}
+
 yLib::yValue::yValue(yValueType type, void * value) noexcept
 
 {

@@ -2,7 +2,7 @@
  * @Author: Sky
  * @Date: 2019-10-21 13:51:28
  * @LastEditors: Sky
- * @LastEditTime: 2021-11-12 14:59:24
+ * @LastEditTime: 2021-12-01 17:02:56
  * @Description: 
  -->
 ## yLib
@@ -39,14 +39,19 @@ yLib BuildMatrix(GithubAction) <br>
 
 ## Version:
 ****
-Current lastest version: V0.0.9<br> 
+Current lastest version: V0.1.0<br> 
 Major versions maintain interface-compatibility<br> 
 More details,please see [Version Notes](VersionNotes.txt)
 
 MajorFeatures:
 ==========
 ****
-yLib contains that I used some useful skills.<br> 
+yLib contains that I used some useful skills.<br>
+<br> 
+There are some interesting contents:<br> 
+**yConfig** is implemented by **ycompiler** likes llvm-clang's frontend.<br> 
+**yLog** likes google-glog and log4cpp.<br> 
+<br> 
 More details,please see [Supported Notes](SupportedNotes.txt)<br> 
 
 Dependences:

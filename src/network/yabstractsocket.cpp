@@ -214,7 +214,7 @@ int8_t yLib::yAbstractSocket::connect(const std::string & ip, int32_t port, int 
               for the failure).
             */
            while(1){
-
+#ifndef YLIB_CODECOVERAGE_SKIP_CODE
                 fd_set _client_fd_set;
                 FD_ZERO(&_client_fd_set);
                 FD_SET(socket_fd, &_client_fd_set);
@@ -253,6 +253,7 @@ int8_t yLib::yAbstractSocket::connect(const std::string & ip, int32_t port, int 
 
                     break;
                 }
+#endif //YLIB_CODECOVERAGE_SKIP_CODE
            }
 
         }

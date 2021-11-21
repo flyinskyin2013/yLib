@@ -185,6 +185,7 @@ void yTcpServer::epoll_thread_context(OnClientConnectCB con_cb, OnClientDisconne
             */
             if (_ret_events_array[i].events & EPOLLHUP || _ret_events_array[i].events & EPOLLERR) {
 
+#ifndef YLIB_CODECOVERAGE_SKIP_CODE
                 yLib::yLog::I("server detect EPOLLHUP/EPOLLERR.");
 
                 //close server socket
@@ -200,6 +201,7 @@ void yTcpServer::epoll_thread_context(OnClientConnectCB con_cb, OnClientDisconne
                     yLib::yLog::E("call epoll_ctl() failed, error num is :%d", errno);
                     perror("call epoll_ctl()");
                 }
+#endif //YLIB_CODECOVERAGE_SKIP_CODE
 
             } 
             else if (_ret_events_array[i].events & EPOLLRDHUP) {
@@ -211,6 +213,7 @@ void yTcpServer::epoll_thread_context(OnClientConnectCB con_cb, OnClientDisconne
               toring.)
 
 */
+#ifndef YLIB_CODECOVERAGE_SKIP_CODE
                 yLib::yLog::I("server detect EPOLLRDHUP");
 
                 //close server socket
@@ -226,6 +229,7 @@ void yTcpServer::epoll_thread_context(OnClientConnectCB con_cb, OnClientDisconne
                     yLib::yLog::E("call epoll_ctl() failed, error num is :%d", errno);
                     perror("call epoll_ctl()");
                 }
+#endif //YLIB_CODECOVERAGE_SKIP_CODE
 
             } 
             else if (_ret_events_array[i].events & EPOLLIN) {//do nothing

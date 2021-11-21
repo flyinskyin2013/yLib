@@ -105,16 +105,6 @@ call:self_print I "Build dependence complete."
         wget -O libxml2-2.9.9.tar.gz https://github.com/GNOME/libxml2/archive/v2.9.9.tar.gz
     )
 
-    if exist libconfig-1.7.2.tar.gz (
-        REM check md5
-		REM md5sum -c libconfig-1.7.2.md5
-        call:self_print I "check md5 for libconfig-1.7.2.tar.gz"
-    )^
-    else (
-
-        wget -O libconfig-1.7.2.tar.gz https://github.com/hyperrealm/libconfig/archive/v1.7.2.tar.gz
-    )
-
     if exist jsoncpp_1.8.4.tar.gz (
         REM check md5
 		REM md5sum -c jsoncpp_1.8.4.md5
@@ -154,16 +144,12 @@ call:self_print I "Build dependence complete."
 	call:self_print I "arch_type is: %Default_Arch%"
 	
 	mkdir %ROOT_DIR%\include\third_part\%Default_Platform%
-	mkdir %ROOT_DIR%\include\third_part\%Default_Platform%\libconfig
 	mkdir %ROOT_DIR%\lib\%Default_Platform%\%Default_Arch%
 
 	cp build_out/include/* %ROOT_DIR%/include/third_part/%Default_Platform%/ -r
 	cp build_out/lib/* %ROOT_DIR%/lib/%Default_Platform%/%Default_Arch% -r
 
-    REM fix libconfig inc
-
 	cd %ROOT_DIR%/include/third_part/%Default_Platform%/
-	cp libconfig.h libconfig.h++ libconfig.hh libconfig/
     mv libxml2/libxml/ libxml
     rm -r libxml2
 

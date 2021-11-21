@@ -1,3 +1,7 @@
+/*
+yconfig unit-test
+*/
+//yconfig unit-test
 test:
 {
 
@@ -5,4 +9,38 @@ test:
     float = 2.3;
     bool = true;
     string = "HHHHHHHHH";
+    sub:{
+
+        int = 2;
+        float = 4.3;
+        bool = false;
+        string = "MMMMMMMM";        
+    };
+};
+//test_border obj
+test_border:
+{
+    /*
+    2^63 - 2^63-1
+    strtoll return LLONG_MAX LLONG_MIN
+    //http://www.cplusplus.com/reference/climits/
+    LLONG_MIN = -9223372036854775807
+    INT64_MIN = -9223372036854775808
+    */
+    int_max = 9223372036854775807;
+    int_min = -9223372036854775807;
+
+    /*
+    IEEE 754, 3.2.2. Double
+    p-max: 1.7976931348623158e+308
+    
+    denormalized numbers
+    p-min: 4.9406564584124654e-324
+    n-max: -4.9406564584124654e-324
+    n-min: -1.7976931348623158e+308
+    */
+    double_p_max = +1.7976931348623158e+308;
+    double_p_min = 4.9406564584124654e-324;
+    double_n_max = -4.9406564584124654e-324;
+    double_n_min = -1.7976931348623158e+308;
 };

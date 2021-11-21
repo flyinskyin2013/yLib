@@ -4,8 +4,5 @@ libcurl-7.55.1
 libxml2-2.9.9 
 (https://github.com/GNOME/libxml2/archive/v2.9.9.tar.gz)
 
-libconfig-1.7.2  
-(https://github.com/hyperrealm/libconfig/archive/v1.7.2.tar.gz)
-
 libjsoncpp-1.8.4 
 (https://github.com/open-source-parsers/jsoncpp/archive/1.8.4.tar.gz)

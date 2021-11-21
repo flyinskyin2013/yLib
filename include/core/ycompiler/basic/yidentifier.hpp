@@ -11,29 +11,38 @@ Redistribution and use in source and binary forms, with or without modification,
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
+
 /*
  * @Author: Sky
- * @Date: 2021-03-20 11:33:33
+ * @Date: 2021-11-20 17:26:44
+ * @LastEditTime: 2021-11-21 10:09:04
  * @LastEditors: Sky
- * @LastEditTime: 2021-05-26 15:58:30
  * @Description: 
+ * @FilePath: \yLib\include\core\ycompiler\basic\yidentifier.hpp
+ * @Github: https://github.com/flyinskyin2013/yLib
  */
 
-#include "core/ycompiler/lexical_analyzer/ylexicalanalyzer.hpp"
-using namespace yLib;
 
-//////////////////////////////////////////////////
-//////////////////////////////////////////////////
-//////////yLexicalAnalyzer
-//////////////////////////////////////////////////
-//////////////////////////////////////////////////
+#ifndef __CORE_YCOMPILER_BASIC_YIDENTIFIER_HPP__
+#define __CORE_YCOMPILER_BASIC_YIDENTIFIER_HPP__
 
-yLexicalAnalyzer::yLexicalAnalyzer(/* args */)
-MACRO_INIT_YOBJECT_PROPERTY(yLexicalAnalyzer)
+#include "core/yobject.hpp"
+
+
+namespace yLib
 {
+    namespace ycompiler
+    {
+
+        class __YLIB_CLASS_DECLSPEC__ yIdentifier:
+        YLIB_PUBLIC_INHERIT_YOBJECT
+        {
+            public:
+
+        };
+    }
 }
 
-yLexicalAnalyzer::~yLexicalAnalyzer()
-{
-}
 
+#endif //__CORE_YCOMPILER_BASIC_YIDENTIFIER_HPP__

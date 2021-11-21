@@ -4,7 +4,7 @@
  # @Author: Sky
  # @Date: 2021-04-09 14:22:29
  # @LastEditors: Sky
- # @LastEditTime: 2021-11-11 11:13:06
+ # @LastEditTime: 2021-11-23 13:47:33
  # @Description: 
 ### 
 
@@ -87,15 +87,8 @@ NETWORK_GROUP_MODULE_LIST=" "
 
 # utility group 
 
-# UTILITY_GROUP_MODULE_LIST=" \
-#                             yconfig \
-#                             yhttp \
-#                             yjson \
-#                             yshell \
-#                             ytimer \
-#                             yxml \
-#                             "
 UTILITY_GROUP_MODULE_LIST=" \
+                            yconfig \
                             yhttp \
                             yjson \
                             yshell \

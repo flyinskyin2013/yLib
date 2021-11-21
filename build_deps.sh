@@ -75,13 +75,6 @@ function check_download_third_part(){
 		wget -O libxml2-2.9.9.tar.gz https://github.com/GNOME/libxml2/archive/v2.9.9.tar.gz
 	fi
 
-	if [ -f libconfig-1.7.2.tar.gz ];
-	then
-		md5sum -c libconfig-1.7.2.md5
-	else
-		wget -O libconfig-1.7.2.tar.gz https://github.com/hyperrealm/libconfig/archive/v1.7.2.tar.gz
-	fi
-
 	if [ -f jsoncpp_1.8.4.tar.gz ];
 	then
 		md5sum -c jsoncpp_1.8.4.md5
@@ -205,7 +198,6 @@ function copy_prepared_file(){
 	self_print I "arch_typeIs:$arch_type"
 	
 	mkdir -p ${ROOT_DIR}/include/third_part/$platform_type/
-	mkdir -p ${ROOT_DIR}/include/third_part/$platform_type/libconfig
 
 	mkdir -p ${ROOT_DIR}/lib/$platform_type/$arch_type
 
@@ -213,7 +205,6 @@ function copy_prepared_file(){
 	cp build_out/lib/* ${ROOT_DIR}/lib/$platform_type/$arch_type -r
 
 	cd ${ROOT_DIR}/include/third_part/$platform_type/
-	cp libconfig.* libconfig/
 	ln -s libxml2/libxml/ libxml
 
 	cd ${ROOT_DIR}

@@ -11,27 +11,47 @@ Redistribution and use in source and binary forms, with or without modification,
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
+
 /*
  * @Author: Sky
- * @Date: 2021-03-20 11:33:58
+ * @Date: 2021-11-20 12:08:28
+ * @LastEditTime: 2021-11-21 10:05:02
  * @LastEditors: Sky
- * @LastEditTime: 2021-03-20 16:36:48
  * @Description: 
+ * @FilePath: \yLib\include\core\ycompiler\basic\yaction.hpp
+ * @Github: https://github.com/flyinskyin2013/yLib
  */
 
-class ySyntackticAnalyzer
-{
-private:
-    /* data */
-public:
-    ySyntackticAnalyzer(/* args */);
-    ~ySyntackticAnalyzer();
-};
 
-ySyntackticAnalyzer::ySyntackticAnalyzer(/* args */)
-{
-}
+#ifndef __CORE_YCOMPILER_BASIC_YACTION_HPP__
+#define __CORE_YCOMPILER_BASIC_YACTION_HPP__
 
-ySyntackticAnalyzer::~ySyntackticAnalyzer()
+#include "core/yobject.hpp"
+
+namespace yLib
 {
-}
+    namespace ycompiler
+    {
+        class yCompilerInstance;
+
+        class __YLIB_CLASS_DECLSPEC__ yAction:
+        YLIB_PUBLIC_INHERIT_YOBJECT
+        {
+            protected:
+            yCompilerInstance *ci = nullptr;
+            public:
+            yAction();
+            virtual ~yAction();
+            virtual bool Execute(void) = 0;
+
+            yCompilerInstance & GetCompilerInstance(void);
+            void SetCompilerInstance(yCompilerInstance * ins);
+
+        };
+    } // namespace ycompiler
+} // namespace yLib
+
+
+
+#endif //__CORE_YCOMPILER_BASIC_YACTION_HPP__

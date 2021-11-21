@@ -89,7 +89,8 @@ static int8_t __execute_impl_linux(const std::vector<YLIB_STD_STRING> & cmd, con
         if ( WIFEXITED(status) ){
             
             if ( WEXITSTATUS(status) != 0 ){
-                
+
+#ifndef YLIB_CODECOVERAGE_SKIP_CODE
                 yLib::yLog::E("WEXITSTATUS is not 0, WEXITSTATUS is %d .", WEXITSTATUS(status));
 
                 FILE * _ret_read_stream = fdopen(_pipe_fd[0], "r");
@@ -122,6 +123,7 @@ static int8_t __execute_impl_linux(const std::vector<YLIB_STD_STRING> & cmd, con
                 close(_pipe_fd[0]);//close pipe read
                 //close(_pipe_fd[1]);
                 return -1;
+#endif //YLIB_CODECOVERAGE_SKIP_CODE
             }
             else{//command-run is ready
 

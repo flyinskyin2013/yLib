@@ -11,53 +11,68 @@ Redistribution and use in source and binary forms, with or without modification,
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
+
 /*
  * @Author: Sky
- * @Date: 2021-03-20 14:31:59
+ * @Date: 2021-11-20 09:22:37
  * @LastEditors: Sky
- * @LastEditTime: 2021-05-26 15:15:36
+ * @LastEditTime: 2021-11-27 10:49:38
  * @Description: 
+ * @FilePath: /yLib/src/core/ycompiler/basic/ycompiler_instance.cpp
+ * https://github.com/flyinskyin2013/yLib
  */
 
-#ifndef __YLIB_CORE_YCOMPILER_CORE_YFILEBUFFERMANAGER_HPP__
-#define __YLIB_CORE_YCOMPILER_CORE_YFILEBUFFERMANAGER_HPP__
 
-#include <fstream>
-#include <cstdint>
-#include <string>
-#include <vector>
+#include "core/ycompiler/basic/ycompiler_instance.hpp"
+#include "core/ylog.hpp"
 
+using namespace yLib::ycompiler;
+using namespace yLib;
 
-#include "core/yobject.hpp"
-
-namespace yLib
+yCompilerInstance::yCompilerInstance()
+:file_mgr(nullptr),
+lex(nullptr),
+parser(nullptr)
 {
+
+}
+
+yCompilerInstance::~yCompilerInstance(){
     
-    class __YLIB_CLASS_DECLSPEC__ yFileBufferManager MACRO_PUBLIC_INHERIT_YOBJECT
-    {
-    private:
-        /* data */
-        std::vector<int8_t> file_buffer;
-        uint64_t process_pos = 0;
-        uint64_t cur_row = 0;
-        uint64_t cur_column = 0;
-    public:
-        yFileBufferManager(/* args */);
-        ~yFileBufferManager();
+}
 
-        //read api
-        int8_t LoadSourceFile(const std::string &src_file);
-        int8_t LoadSourceFile(const char * src_file);
+bool yCompilerInstance::ExecuteAction(yAction &act){
 
-        //
-        int8_t GetNext(void);
-        void BackPos(uint64_t num);
+    return act.Execute();
+}
 
-        uint64_t GetCurColumn(void);
-        uint64_t GetCurRow(void);
-    };
+void yCompilerInstance::SetFileManager(yFileManager * file_mgr){
 
-} // namespace yLib
+    this->file_mgr = std::unique_ptr<yFileManager>(file_mgr);
+}
 
 
-#endif //__YLIB_CORE_YCOMPILER_CORE_YFILEBUFFERMANAGER_HPP__
+yFileManager * yCompilerInstance::GetFileManger(void){
+
+    return file_mgr.get();
+}
+
+void yCompilerInstance::SetLexer(yLexer * lexer){
+
+    lex = std::unique_ptr<yLexer>(lexer);
+}
+yLexer * yCompilerInstance::GetLexer(void){
+
+    return lex.get();
+}
+
+void yCompilerInstance::SetParser(yParser * parser)
+{
+    this->parser = std::unique_ptr<yParser>(parser);
+}
+
+yParser * yCompilerInstance::GetParser(void)
+{
+    return parser.get();
+}

@@ -1,11 +1,13 @@
+#!/bin/bash
+
 ### 
 # @Author: Sky
  # @Date: 2019-10-28 17:35:17
- # @LastEditors: Please set LastEditors
- # @LastEditTime: 2021-09-04 16:33:50
+ # @LastEditors: Sky
+ # @LastEditTime: 2021-11-23 15:50:37
  # @Description: 
  ###
-#!/bin/bash
+
 
 Default_Arch="x86_64"
 SELF_C_FLAGS="-fPIC" 
@@ -22,8 +24,8 @@ DEF_CMAKE_CXX_COMPILER=""
 
 function clean(){
 
-	echo "clean curl-7.55.1/ libxml2-2.7.1/ curl-7.55.1/ libconfig-1.7.2/ jsoncpp-1.8.4/ ... ..."
-	rm -rf curl-7.55.1/ libxml2-2.7.1/  curl-7.55.1/  libconfig-1.7.2/ libxml2-2.9.9/ jsoncpp-1.8.4/
+	echo "clean curl-7.55.1/ jsoncpp-1.8.4/ ... ..."
+	rm -rf curl-7.55.1/ libxml2-2.9.9/ jsoncpp-1.8.4/
 
 	echo "clean build_out/ ... ..."
 	rm -rf build_out/
@@ -34,11 +36,8 @@ third_part_root_dir=$(cd `dirname $0`; pwd)
 function init_lib(){
 
 	tar -xzf curl-7.55.1.tar.gz
-	#tar -xvf libxml2-2.7.1.tar.gz
 	tar -xzf  libxml2-2.9.9.tar.gz
-	tar -xzf libconfig-1.7.2.tar.gz
 	tar -xzf jsoncpp_1.8.4.tar.gz
-
 }
 
 if [ ! -d "build_out" ]
@@ -156,65 +155,6 @@ function build_libxml_2_9_9(){
 	echo -e "\033[1;32;40m building libxml end ...  \033[0m"
 }
 
-function build_libconfig(){
-
-	echo -e "\033[1;32;40m building libconfig start ...  \033[0m"
-
-	cd libconfig-1.7.2 
-
-	if [  ! -d 'build' ]
-	then
-		echo -e "\033[0;33;40m create dir --- > build ...  \033[0m"
-		mkdir build
-	fi
-
-	if [  ! -d '_install' ]
-	then
-		echo -e "\033[0;33;40m create dir --- > _install ...  \033[0m"
-		mkdir _install
-	fi
-	
-	patch -p1 < ../libconfig_cmake.patch
-
-	
-	cd build
-
-	if [ ${Default_Arch} = "x86" ] || [ ${Default_Arch} = "x86_64" ]
-	then
-
-		SELF_C_FLAGS=${SELF_C_FLAGS}" -std=c99"
-		SELF_CXX_FLAGS=${SELF_CXX_FLAGS}" -std=c++11"
-		cmake -DCMAKE_INSTALL_PREFIX=${third_part_root_dir}/build_out -DCMAKE_C_FLAGS="${SELF_C_FLAGS}" -DCMAKE_CXX_FLAGS="${SELF_CXX_FLAGS}" -DBUILD_SHARED_LIBS=OFF ..
-		if [ $? -ne 0 ]
-		then 
-		
-			exit 1
-		fi 
-
-	else
-
-		# in cross compile mode
-		SELF_C_FLAGS=${SELF_C_FLAGS}" -std=c99"
-		SELF_CXX_FLAGS=${SELF_CXX_FLAGS}" -std=c++11"
-		cmake -DCMAKE_SYSTEM_PROCESSOR=${DEF_CMAKE_SYSTEM_PROCESSOR} -DCMAKE_C_COMPILER=${DEF_CMAKE_C_COMPILER} -DCMAKE_CXX_COMPILER=${DEF_CMAKE_CXX_COMPILER} -DCMAKE_INSTALL_PREFIX=${third_part_root_dir}/build_out -DCMAKE_C_FLAGS="${SELF_C_FLAGS}" -DCMAKE_CXX_FLAGS="${SELF_CXX_FLAGS}" -DBUILD_SHARED_LIBS=OFF ..
-		if [ $? -ne 0 ]
-		then 
-		
-			exit 1
-		fi 
-
-	fi
-	#./configure --prefix=${third_part_root_dir}/build_out  CFLAGS=-fPIC CPPFLAGS=-fPIC
-
-
-	make -j8
-
-	make install
-
-	echo -e "\033[1;32;40m building libconfig end ...  \033[0m"
-}
-
-
 function build_libjsoncpp(){
 
 	echo -e "\033[1;32;40m building libjsoncpp start ...  \033[0m"
@@ -289,16 +229,6 @@ function make_lib(){
         	echo "build libxml failed."
 		exit 1
 	fi
-
-
-	cd ${third_part_root_dir}
-	build_libconfig
-	if [ $? -ne 0 ]
-	then
-		echo "build libconfig failed."
-		exit 1
-	fi
-	
 
 	cd ${third_part_root_dir}
 	build_libjsoncpp

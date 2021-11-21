@@ -72,11 +72,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 ------------------------------------------------------------------------
-libconfig
-https://github.com/hyperrealm/libconfig/blob/master/LICENSE
-
-https://opensource.org/licenses/LGPL-2.1 (It is too long.)
-------------------------------------------------------------------------
 libjsoncpp
 https://github.com/open-source-parsers/jsoncpp/blob/master/LICENSE
 
