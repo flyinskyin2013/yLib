@@ -23,7 +23,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  */
 
 #include "core/ycompiler/sema/ysema.hpp"
-#include "core/ycompiler/parse/yconfig_parser.hpp"
+#include "core/ycompiler/parser/yconfig_parser.hpp"
 #include "core/ycompiler/basic/ydiagnostics.hpp"
 
 #include "core/ylog.hpp"

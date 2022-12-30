@@ -3,24 +3,12 @@
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--whole-archive")
 
 #----------------------------------------set core source---------------------------------
+FILE(GLOB_RECURSE SRC ${CMAKE_CURRENT_SOURCE_DIR}/core "*.c" "*.cpp")
+
+list(REMOVE_ITEM SRC ${CMAKE_CURRENT_SOURCE_DIR}/core/ycompiler/basic/yregularengine.cpp)
+
 set(SRC
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/ycommon.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/yobject.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/yexception.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/ybasicvalue.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/ylog.cpp
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/ycompiler/basic/yaction.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/ycompiler/basic/ycompiler_instance.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/ycompiler/basic/ydiagnostics.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/ycompiler/basic/yfile_manager.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/ycompiler/basic/yfile_location.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/ycompiler/basic/ytoken.cpp
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/ycompiler/lex/ylexer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/ycompiler/parse/yconfig_parser.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/ycompiler/sema/ysema.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/ycompiler/tools/yconfig_parse_action.cpp
+    ${SRC}
 
     ${CMAKE_CURRENT_SOURCE_DIR}/ylib_c.cpp
 

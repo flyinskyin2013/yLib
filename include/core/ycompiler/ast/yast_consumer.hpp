@@ -15,39 +15,47 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 /*
  * @Author: Sky
- * @Date: 2021-11-21 16:14:29
- * @LastEditTime: 2021-11-21 16:15:37
+ * @Date: 2022-12-04 13:50:41
+ * @LastEditTime: 2022-12-04 19:50:41
  * @LastEditors: Sky
  * @Description: 
- * @FilePath: \yLib\src\core\ycompiler\basic\ytoken.cpp
+ * @FilePath: \yLib\include\core\ycompiler\ast\yast_consumer.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
 
+#ifndef __CORE_YCOMPILER_AST_AST_CONSUMER_HPP__
+#define __CORE_YCOMPILER_AST_AST_CONSUMER_HPP__
 
 
+#include <memory>
 
+namespace yLib
+{
+    namespace ycompiler
+    {
+        class yDeclGroup;
+        class yASTContext;
 
-#include "core/ycompiler/basic/ytoken.hpp"
+        /// ASTConsumer - This is an abstract interface that should be implemented by
+        /// clients that read ASTs.  This abstraction layer allows the client to be
+        /// independent of the AST producer (e.g. parser vs AST dump file reader, etc).
+        class yASTConsumer{
+            public:
+            virtual ~yASTConsumer() {}
+            /// Initialize - This is called to initialize the consumer, providing the
+            /// ASTContext.
+            virtual void Initialize(yASTContext &ast_ctx) {}
+            /// HandleTopLevelDecl - Handle the specified top-level declaration.  This is
+            /// called by the parser to process every top-level Decl*.
+            ///
+            /// \returns true to continue parsing, or false to abort parsing.
+            virtual bool HandleTopLevelDecl(yDeclGroup &decl);    
 
-#include "core/ylog.hpp"
+            /// HandleTranslationUnit - This method is called when the ASTs for entire
+            /// translation unit have been parsed.
+            virtual void HandleTranslationUnit(yASTContext &ast_ctx) {}        
+        };
+    } // namespace ycompiler
+} // namespace yLib
 
-using namespace yLib::ycompiler;
-using namespace yLib;
-
-static const char * const TokNames[] = {
-
-    #define TOK(X) #X,
-    #include "core/ycompiler/basic/ytoken_kinds.def"
-    nullptr
-    #undef TOK
-};
-
-/// The name of a token will be an internal name (such as "l_square")
-/// and should not be used as part of diagnostic messages.
-const char *tok::getTokenName(yTokenKind Kind){
-
-    if (Kind < tok::NUM_TOKENS)
-        return TokNames[(uint16_t)Kind];
-
-    return nullptr;
-}    
+#endif //__CORE_YCOMPILER_AST_AST_CONSUMER_HPP__

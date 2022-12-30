@@ -15,39 +15,37 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 /*
  * @Author: Sky
- * @Date: 2021-11-20 13:17:41
- * @LastEditTime: 2021-11-21 10:13:01
+ * @Date: 2021-11-20 14:29:50
+ * @LastEditTime: 2021-11-21 09:51:43
  * @LastEditors: Sky
  * @Description: 
- * @FilePath: \yLib\include\core\ycompiler\tools\yconfig_parse_action.hpp
+ * @FilePath: \yLib\include\core\ycompiler\lex\ypreprocessor.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
 
+#ifndef __CORE_YCOMPILER_LEX_YPREPROCESSOR_HPP__
+#define __CORE_YCOMPILER_LEX_YPREPROCESSOR_HPP__
 
-#ifndef __CORE_YCOMPILER_TOOLS_YCONFIG_PARSE_ACTION_HPP__
-#define __CORE_YCOMPILER_TOOLS_YCONFIG_PARSE_ACTION_HPP__
+#include "core/yobject.hpp"
+#include "core/ycompiler/basic/yfile_manager.hpp"
+#include "ytoken.hpp"
 
-
-#include "core/ycompiler/frontend/yfrontend_action.hpp"
-#include "core/ycompiler/frontend/ycompiler_instance.hpp"
 namespace yLib
 {
     namespace ycompiler
     {
-        class yCompilerInstance;
+        /// Engages in a tight little dance with the lexer to efficiently
+        /// preprocess tokens.
+        ///
+        /// Lexers know only about tokens within a single source file, and don't
+        /// know anything about preprocessor-level issues like the \#include stack,
+        /// token expansion, etc.
+        class yPreprocessor{
 
-        class yConfigParseAction:public yFrontendAction{
-            private:
-            
             public:
-            yConfigParseAction() = delete;
-            yConfigParseAction(yCompilerInstance * ci);
-            ~yConfigParseAction();
-            bool Execute(void);
-
         };
     } // namespace ycompiler
 } // namespace yLib
 
 
-#endif //__CORE_YCOMPILER_TOOLS_YCONFIG_PARSE_ACTION_HPP__
+#endif //__CORE_YCOMPILER_LEX_YPREPROCESSOR_HPP__

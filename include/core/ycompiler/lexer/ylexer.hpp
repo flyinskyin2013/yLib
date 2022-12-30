@@ -15,69 +15,72 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 /*
  * @Author: Sky
- * @Date: 2021-11-20 14:35:44
- * @LastEditTime: 2021-11-21 10:09:41
+ * @Date: 2021-11-20 14:29:50
+ * @LastEditTime: 2021-11-21 09:51:43
  * @LastEditors: Sky
  * @Description: 
- * @FilePath: \yLib\include\core\ycompiler\basic\ytoken.hpp
+ * @FilePath: \yLib\include\core\ycompiler\lex\ylexer.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
 
-
-#ifndef __CORE_YCOMPILER_BASIC_YTOKEN_HPP__
-#define __CORE_YCOMPILER_BASIC_YTOKEN_HPP__
+#ifndef __CORE_YCOMPILER_LEX_YLEXER_HPP__
+#define __CORE_YCOMPILER_LEX_YLEXER_HPP__
 
 #include "core/yobject.hpp"
-#include "yfile_location.hpp"
+#include "core/ycompiler/basic/yfile_manager.hpp"
+#include "ytoken.hpp"
 
 namespace yLib
 {
     namespace ycompiler
     {
-        namespace tok{
 
-            enum yTokenKind : uint16_t {
-
-                #define TOK(X) X,
-                #include "ytoken_kinds.def"
-                NUM_TOKENS
-                #undef TOK
-            };
-            
-            /// The name of a token will be an internal name (such as "l_square")
-            /// and should not be used as part of diagnostic messages.
-            const char *getTokenName(yTokenKind Kind);  
-        }
- 
-
-        class __YLIB_CLASS_DECLSPEC__ yToken:
+        class __YLIB_CLASS_DECLSPEC__ yLexer:
         YLIB_PUBLIC_INHERIT_YOBJECT
         {
+            private:
+            const char * buf_start;
+            const char * buf_end;
+            const char * buf_cur_ptr;
+            yFileManager * file_mgr;
+
             public:
-            tok::yTokenKind kind;
-            uint64_t token_data_len;
-            void *token_data;
-
-            yFileLocation token_loc;
+            yLexer() = delete;
+            yLexer(yFileManager * file_mgr);
+            ~yLexer();
             
-            yToken(){
+            yFileManager * GetFileManager(void){return file_mgr;}
+            bool BackToPos(uint64_t pos);
 
-                kind  = tok::unknown;
-                token_data_len = 0;
-                token_data = nullptr;
-                
-            }
+            bool GetNextChar(char &c);
 
-            void clean(){
+            bool HasNextChar(void);
+            bool HasNextChar(const char * ptr);
 
-                kind  = tok::unknown;
-                token_data_len = 0;
-                token_data = nullptr;                
-            }
+            bool IsEof(void);
+            bool IsEof(const char * ptr);
 
+
+            void UpdateToken(yToken &token, const char *tok_end, tok::yTokenKind kind);
+
+            bool GetEndOfFileToken(yToken &token, const char * cur_ptr);
+
+            bool IsNumericChar(const char * cur_ptr);
+
+            bool GetNumericConstant(yToken &token, const char * cur_ptr);
+
+            bool IsIdentifierBodyChar(const char * cur_ptr);
+            bool GetIdentifier(yToken &token, const char * cur_ptr);
+
+            bool GetCharConstant(yToken &token, const char * cur_ptr);
+
+            bool GetStringLiteral(yToken &token, const char * cur_ptr);
+
+            bool TryNextToken(yToken & token);
+            bool NextToken(yToken & token);
         };
     } // namespace ycompiler
 } // namespace yLib
 
 
-#endif //__CORE_YCOMPILER_BASIC_YTOKEN_HPP__
+#endif //__CORE_YCOMPILER_LEX_YLEXER_HPP__

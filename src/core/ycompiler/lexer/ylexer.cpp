@@ -22,7 +22,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  * @FilePath: \yLib\src\core\ycompiler\lex\ylexer.cpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
-#include "core/ycompiler/lex/ylexer.hpp"
+#include "core/ycompiler/lexer/ylexer.hpp"
 #include "core/ycompiler/basic/ydiagnostics.hpp"
 #include "core/ylog.hpp"
 

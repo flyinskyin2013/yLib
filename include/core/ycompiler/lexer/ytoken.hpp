@@ -15,43 +15,78 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 /*
  * @Author: Sky
- * @Date: 2021-11-20 12:08:28
- * @LastEditTime: 2021-11-21 10:05:02
+ * @Date: 2021-11-20 14:35:44
+ * @LastEditTime: 2021-11-21 10:09:41
  * @LastEditors: Sky
  * @Description: 
- * @FilePath: \yLib\include\core\ycompiler\basic\yaction.hpp
+ * @FilePath: \yLib\include\core\ycompiler\basic\ytoken.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
 
 
-#ifndef __CORE_YCOMPILER_BASIC_YACTION_HPP__
-#define __CORE_YCOMPILER_BASIC_YACTION_HPP__
+#ifndef __CORE_YCOMPILER_BASIC_YTOKEN_HPP__
+#define __CORE_YCOMPILER_BASIC_YTOKEN_HPP__
 
 #include "core/yobject.hpp"
+#include "core/ycompiler/basic/yfile_location.hpp"
+#include "core/ycompiler/basic/ysource_location.hpp"
 
 namespace yLib
 {
     namespace ycompiler
     {
-        class yCompilerInstance;
+        namespace tok{
 
-        class __YLIB_CLASS_DECLSPEC__ yAction:
+            enum yTokenKind : uint16_t {
+
+                #define TOK(X) X,
+                #include "ytoken_kinds.def"
+                NUM_TOKENS
+                #undef TOK
+            };
+            
+            /// The name of a token will be an internal name (such as "l_square")
+            /// and should not be used as part of diagnostic messages.
+            const char *getTokenName(yTokenKind Kind);  
+        }
+ 
+
+        class __YLIB_CLASS_DECLSPEC__ yToken:
         YLIB_PUBLIC_INHERIT_YOBJECT
         {
-            protected:
-            yCompilerInstance *ci = nullptr;
             public:
-            yAction();
-            virtual ~yAction();
-            virtual bool Execute(void) = 0;
+            tok::yTokenKind kind;
+            uint64_t token_data_len;
+            void *token_data;
 
-            yCompilerInstance & GetCompilerInstance(void);
-            void SetCompilerInstance(yCompilerInstance * ins);
+            yFileLocation token_loc;
 
+
+            uint64_t loc; 
+            
+            yToken(){
+
+                kind  = tok::unknown;
+                token_data_len = 0;
+                token_data = nullptr;
+                
+            }
+
+            void clean(){
+
+                kind  = tok::unknown;
+                token_data_len = 0;
+                token_data = nullptr;                
+            }
+
+            /// Return a source location identifier for the specified
+            /// offset in the current file.
+            ySourceLocation getLocation() const {
+                return ySourceLocation::getFromRawEncoding(loc);
+            }
         };
     } // namespace ycompiler
 } // namespace yLib
 
 
-
-#endif //__CORE_YCOMPILER_BASIC_YACTION_HPP__
+#endif //__CORE_YCOMPILER_BASIC_YTOKEN_HPP__

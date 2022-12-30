@@ -25,6 +25,26 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include "utility/yconfig.hpp"
 
 
+// import ycompiler
+#include "core/ycompiler/frontend/ycompiler_instance.hpp"
+#include "core/ycompiler/tools/yconfig_parse_action.hpp"
+#include "core/ycompiler/basic/yfile_manager.hpp"
+#include "core/ycompiler/parser/yconfig_parser.hpp"
+
+#include "core/ycompiler/tools/yutils.hpp"
+
+#include <memory>
+
+
+#define GetCompilerInstanceRef(unique_ptr) (*((ycompiler::yCompilerInstance*)(unique_ptr.get())))
+
+
+static void compiler_instance_deleter(void * ci)
+{
+
+    delete ((yLib::ycompiler::yCompilerInstance*)ci);
+}
+
 using namespace yLib;
 using namespace yLib::ycompiler;
 
@@ -32,31 +52,27 @@ static yLib::yConfigValue g_yconfig_valuedefault_obj;
 
 yLib::yConfig::yConfig() 
 MACRO_INIT_YOBJECT_PROPERTY(yConfig), 
-compiler_instance(new (std::nothrow) ycompiler::yCompilerInstance())
-{
-    file_mgr = ycompiler::yFileManager::GetInstance();//this mgr deleted by ycompilerinstance
-}
-yLib::yConfig::~yConfig()
-{
-    if (file_mgr != nullptr)//if we don't move file-mgr ownership, we should delete it by hand.
-        delete file_mgr;
+compiler_instance((void *)new ycompiler::yCompilerInstance(), compiler_instance_deleter)
+{}
 
-    file_mgr = nullptr;
-}
+yLib::yConfig::~yConfig()
+{}
 
 int8_t yLib::yConfig::ReadFile(const std::string &file_path){
 
-    if (!file_mgr->InitFileManager(file_path)){
+    if (!GetCompilerInstanceRef(compiler_instance).GetFileManger().InitFileManager(file_path)){
 
         yLib::yLog::E("yConfig", "open cfg file(%s) failed\n", file_path.c_str());
         return -1;
     }
 
-    compiler_instance->SetFileManager(file_mgr);//we will move file_mgr to unique_ptr , we shouldn't delete it by hand.
-    file_mgr = nullptr;//we must set it to nullptr to avoid double-free
-    ycompiler::yConfigParseAction act(compiler_instance.get());
+    // Create and execute the frontend action.
+    // set action type
+    GetCompilerInstanceRef(compiler_instance).GetCompilerInvocationHelper().getFrontendOpts().act_type = ycompiler::ActionKind::PARSE_YCONFIG_AST;
 
-    if (!compiler_instance->ExecuteAction(act)){
+    std::unique_ptr<yFrontendAction> _act(CreateFrontendAction(GetCompilerInstanceRef(compiler_instance)));
+
+    if (!GetCompilerInstanceRef(compiler_instance).ExecuteAction(*_act.get())){
 
         LOGE("yConfig")<<"Run yconfig parse action failed.";
         return -1;
@@ -73,7 +89,7 @@ int8_t yLib::yConfig::WriteFile(const std::string &file_path_){
     return 0;
 }
 
-ycompiler::yConfigDecl * yLib::yConfig::LookUp(const std::string &node_path, ycompiler::yConfigDeclObject & decl_obj){
+static ycompiler::yConfigDecl * LookUp(const std::string &node_path, ycompiler::yConfigDeclObject & decl_obj){
 
     std::string _tmp_node_path = node_path;
     if (_tmp_node_path != ""){
@@ -116,7 +132,7 @@ ycompiler::yConfigDecl * yLib::yConfig::LookUp(const std::string &node_path, yco
 
 yLib::yConfigValue yLib::yConfig::GetValue(const std::string &node_path_) {
 
-    yConfigDeclObject & _root_object = *(yConfigDeclObject*)compiler_instance->GetParser()->GetASTData();
+    yConfigDeclObject & _root_object = *(yConfigDeclObject*)GetCompilerInstanceRef(compiler_instance).GetParser().GetASTData();
     yConfigValue _tmpValue;
 
     yConfigDecl *_decl = LookUp(node_path_, _root_object);

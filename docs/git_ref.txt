@@ -1,0 +1,18 @@
+提交所有未跟踪文件
+git add .
+
+查看工作区修改内容
+git diff > xxx.patch
+
+查看暂存区修改内容
+git diff --cached > xxx.patch
+
+显示修改内容的统计信息
+git diff --stat  
+git diff --cached --stat 
+
+
+这三条命令分别是，检查patch文件格式，测试patch是否能应用到当前分支，应用此patch。
+git apply --stat patchfile
+git apply --check patchfile
+git apply patchfile

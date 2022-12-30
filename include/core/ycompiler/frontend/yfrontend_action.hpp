@@ -15,64 +15,66 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 /*
  * @Author: Sky
- * @Date: 2021-11-20 09:22:37
+ * @Date: 2021-11-20 12:08:28
+ * @LastEditTime: 2021-11-21 10:05:02
  * @LastEditors: Sky
- * @LastEditTime: 2021-11-27 10:49:38
  * @Description: 
- * @FilePath: /yLib/src/core/ycompiler/basic/ycompiler_instance.cpp
- * https://github.com/flyinskyin2013/yLib
+ * @FilePath: \yLib\include\core\ycompiler\frontend\yfrontend_action.hpp
+ * @Github: https://github.com/flyinskyin2013/yLib
  */
 
 
-#include "core/ycompiler/basic/ycompiler_instance.hpp"
-#include "core/ylog.hpp"
+#ifndef __CORE_YCOMPILER_BASIC_YFRONTEND_ACTION_HPP__
+#define __CORE_YCOMPILER_BASIC_YFRONTEND_ACTION_HPP__
 
-using namespace yLib::ycompiler;
-using namespace yLib;
+#include "core/yobject.hpp"
 
-yCompilerInstance::yCompilerInstance()
-:file_mgr(nullptr),
-lex(nullptr),
-parser(nullptr)
+namespace yLib
 {
+    namespace ycompiler
+    {
+        class yCompilerInstance;
 
-}
+        class __YLIB_CLASS_DECLSPEC__ yFrontendAction:
+        YLIB_PUBLIC_INHERIT_YOBJECT
+        {
+            protected:
+            yCompilerInstance *ci = nullptr;
+            public:
+            yFrontendAction();
+            virtual ~yFrontendAction();
+            virtual bool Execute(void) = 0;
 
-yCompilerInstance::~yCompilerInstance(){
-    
-}
+            yCompilerInstance & GetCompilerInstance(void);
+            void SetCompilerInstance(yCompilerInstance * ins);
 
-bool yCompilerInstance::ExecuteAction(yAction &act){
+        };
 
-    return act.Execute();
-}
+        class yDoNothingFrontendAction:public yFrontendAction{
 
-void yCompilerInstance::SetFileManager(yFileManager * file_mgr){
+            public:
+            yDoNothingFrontendAction(){}
+            ~yDoNothingFrontendAction(){}
+            bool Execute(void){ return true;}
+        };
 
-    this->file_mgr = std::unique_ptr<yFileManager>(file_mgr);
-}
+        enum ActionKind {
+            //do nothing
+            DO_NOTHING,
+
+            /// Parse ASTs for yconfig
+            PARSE_YCONFIG_AST,
+        };
+        
+        class yFrontendOptions {
+
+            public:
+
+            ActionKind act_type = ActionKind::DO_NOTHING;
+        };
+    } // namespace ycompiler
+} // namespace yLib
 
 
-yFileManager * yCompilerInstance::GetFileManger(void){
 
-    return file_mgr.get();
-}
-
-void yCompilerInstance::SetLexer(yLexer * lexer){
-
-    lex = std::unique_ptr<yLexer>(lexer);
-}
-yLexer * yCompilerInstance::GetLexer(void){
-
-    return lex.get();
-}
-
-void yCompilerInstance::SetParser(yParser * parser)
-{
-    this->parser = std::unique_ptr<yParser>(parser);
-}
-
-yParser * yCompilerInstance::GetParser(void)
-{
-    return parser.get();
-}
+#endif //__CORE_YCOMPILER_BASIC_YFRONTEND_ACTION_HPP__

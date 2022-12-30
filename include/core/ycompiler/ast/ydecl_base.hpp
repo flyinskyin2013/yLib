@@ -15,39 +15,58 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 /*
  * @Author: Sky
- * @Date: 2021-11-20 13:17:41
- * @LastEditTime: 2021-11-21 10:13:01
+ * @Date: 2022-12-04 13:50:41
+ * @LastEditTime: 2022-12-04 19:50:41
  * @LastEditors: Sky
  * @Description: 
- * @FilePath: \yLib\include\core\ycompiler\tools\yconfig_parse_action.hpp
+ * @FilePath: \yLib\include\core\ycompiler\ast\ydecl_base.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
 
+#ifndef __CORE_YCOMPILER_AST_YDECL_BASE_HPP__
+#define __CORE_YCOMPILER_AST_YDECL_BASE_HPP__
 
-#ifndef __CORE_YCOMPILER_TOOLS_YCONFIG_PARSE_ACTION_HPP__
-#define __CORE_YCOMPILER_TOOLS_YCONFIG_PARSE_ACTION_HPP__
 
-
-#include "core/ycompiler/frontend/yfrontend_action.hpp"
-#include "core/ycompiler/frontend/ycompiler_instance.hpp"
+#include <memory>
 namespace yLib
 {
     namespace ycompiler
     {
-        class yCompilerInstance;
-
-        class yConfigParseAction:public yFrontendAction{
-            private:
-            
+        /// Decl - This represents one declaration (or definition), e.g. a variable,
+        /// typedef, function, struct, etc.
+        ///
+        /// Note: There are objects tacked on before the *beginning* of Decl
+        /// (and its subclasses) in its Decl::operator new(). Proper alignment
+        /// of all subclasses (not requiring more than the alignment of Decl) is
+        /// asserted in DeclBase.cpp.
+        class yDecl{
             public:
-            yConfigParseAction() = delete;
-            yConfigParseAction(yCompilerInstance * ci);
-            ~yConfigParseAction();
-            bool Execute(void);
-
+            
         };
+
+        /// DeclContext - This is used only as base class of specific decl types that
+        /// can act as declaration contexts. These decls are (only the top classes
+        /// that directly derive from DeclContext are mentioned, not their subclasses):
+        ///
+        ///   TranslationUnitDecl
+        ///   ExternCContext
+        ///   NamespaceDecl
+        ///   TagDecl
+        ///   OMPDeclareReductionDecl
+        ///   OMPDeclareMapperDecl
+        ///   FunctionDecl
+        ///   ObjCMethodDecl
+        ///   ObjCContainerDecl
+        ///   LinkageSpecDecl
+        ///   ExportDecl
+        ///   BlockDecl
+        ///   CapturedDecl
+        class DeclContext{
+            public:
+            
+        };
+
     } // namespace ycompiler
 } // namespace yLib
 
-
-#endif //__CORE_YCOMPILER_TOOLS_YCONFIG_PARSE_ACTION_HPP__
+#endif //__CORE_YCOMPILER_AST_YDECL_BASE_HPP__

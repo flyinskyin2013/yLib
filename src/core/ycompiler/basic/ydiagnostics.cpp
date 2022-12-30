@@ -107,3 +107,31 @@ void yDiagnosticsEngine::DiagReport(yToken &token, diag::DiagID id){
     yLog::E("", "row %lu, col %lu\n", _row, _col);
 #endif //YLIB_CODECOVERAGE_SKIP_CODE
 }
+
+
+yDiagnosticsEngine::yDiagnosticsEngine(std::unique_ptr<yDiagnosticsIDHandle> &&diag_id_handle, 
+                    std::unique_ptr<yDiagnosticOptions> &&diag_options,
+                    std::unique_ptr<yDiagnosticConsumer> &&diag_consumer)
+{
+    this->diag_id_handle = std::move(diag_id_handle);
+    this->diag_options = std::move(diag_options);
+    this->diag_consumer = std::move(diag_consumer);
+}
+
+
+
+yDiagnosticOptions::yDiagnosticOptions(){}
+yDiagnosticOptions::~yDiagnosticOptions(){}
+
+yDiagnosticsIDHandle::yDiagnosticsIDHandle(){}
+yDiagnosticsIDHandle::~yDiagnosticsIDHandle(){}
+
+
+std::string yDiagnosticsIDHandle::get_description(diag::DiagID id)
+{
+    return "";
+}
+
+
+yDiagnosticConsumer::yDiagnosticConsumer(){}
+yDiagnosticConsumer::~yDiagnosticConsumer(){}

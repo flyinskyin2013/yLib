@@ -15,39 +15,36 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 /*
  * @Author: Sky
- * @Date: 2021-11-20 13:17:41
- * @LastEditTime: 2021-11-21 10:13:01
+ * @Date: 2022-12-04 13:50:41
+ * @LastEditTime: 2022-12-04 19:50:41
  * @LastEditors: Sky
  * @Description: 
- * @FilePath: \yLib\include\core\ycompiler\tools\yconfig_parse_action.hpp
+ * @FilePath: \yLib\include\core\ycompiler\tools\yutils.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
 
+#ifndef __CORE_YCOMPILER_TOOLS_YUTILS_HPP__
+#define __CORE_YCOMPILER_TOOLS_YUTILS_HPP__
 
-#ifndef __CORE_YCOMPILER_TOOLS_YCONFIG_PARSE_ACTION_HPP__
-#define __CORE_YCOMPILER_TOOLS_YCONFIG_PARSE_ACTION_HPP__
-
-
-#include "core/ycompiler/frontend/yfrontend_action.hpp"
-#include "core/ycompiler/frontend/ycompiler_instance.hpp"
+#include <memory>
 namespace yLib
 {
     namespace ycompiler
     {
         class yCompilerInstance;
+        class yFrontendAction;
+        // ExecuteCompiler - Execute the given actions described by the
+        // compiler object in the given compiler instance.
+        bool ExecuteCompiler(yCompilerInstance &ci);
 
-        class yConfigParseAction:public yFrontendAction{
-            private:
-            
-            public:
-            yConfigParseAction() = delete;
-            yConfigParseAction(yCompilerInstance * ci);
-            ~yConfigParseAction();
-            bool Execute(void);
+        /// ParseAST - Parse the entire file specified, notifying the ASTConsumer as
+        /// the file is parsed.  This inserts the parsed decls into the translation unit
+        /// held by Ctx.
+        ///
+        void ParseAST(yCompilerInstance &ci);
 
-        };
+        std::unique_ptr<yFrontendAction> CreateFrontendAction(yCompilerInstance & ci);
     } // namespace ycompiler
 } // namespace yLib
 
-
-#endif //__CORE_YCOMPILER_TOOLS_YCONFIG_PARSE_ACTION_HPP__
+#endif //__CORE_YCOMPILER_TOOLS_YUTILS_HPP__

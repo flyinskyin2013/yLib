@@ -15,72 +15,38 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 /*
  * @Author: Sky
- * @Date: 2021-11-20 14:29:50
- * @LastEditTime: 2021-11-21 09:51:43
+ * @Date: 2022-12-04 13:53:41
+ * @LastEditTime: 2022-12-04 15:50:41
  * @LastEditors: Sky
  * @Description: 
- * @FilePath: \yLib\include\core\ycompiler\lex\ylexer.hpp
+ * @FilePath: \yLib\include\core\ycompiler\frontend\ycompiler_invocation_helper.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
 
-#ifndef __CORE_YCOMPILER_LEX_YLEXER_HPP__
-#define __CORE_YCOMPILER_LEX_YLEXER_HPP__
+#ifndef __CORE_YCOMPILER_FRONTEND_YCOMPILER_INVOCATION_HELPER_HPP__
+#define __CORE_YCOMPILER_FRONTEND_YCOMPILER_INVOCATION_HELPER_HPP__
 
-#include "core/yobject.hpp"
-#include "core/ycompiler/basic/yfile_manager.hpp"
-#include "core/ycompiler/basic/ytoken.hpp"
+#include "core/ycompiler/frontend/yfrontend_action.hpp"
+#include <memory>
 
 namespace yLib
 {
     namespace ycompiler
     {
-
-        class __YLIB_CLASS_DECLSPEC__ yLexer:
-        YLIB_PUBLIC_INHERIT_YOBJECT
-        {
+        // Helper class for holding the data necessary to invoke the compiler.
+        class yCompilerInvocationHelper{
             private:
-            const char * buf_start;
-            const char * buf_end;
-            const char * buf_cur_ptr;
-            yFileManager * file_mgr;
+            /// Options controlling the frontend itself.
+            yFrontendOptions frontend_opts;
 
             public:
-            yLexer() = delete;
-            yLexer(yFileManager * file_mgr);
-            ~yLexer();
-            
-            yFileManager * GetFileManager(void){return file_mgr;}
-            bool BackToPos(uint64_t pos);
+            yCompilerInvocationHelper();
+            ~yCompilerInvocationHelper();
 
-            bool GetNextChar(char &c);
-
-            bool HasNextChar(void);
-            bool HasNextChar(const char * ptr);
-
-            bool IsEof(void);
-            bool IsEof(const char * ptr);
-
-
-            void UpdateToken(yToken &token, const char *tok_end, tok::yTokenKind kind);
-
-            bool GetEndOfFileToken(yToken &token, const char * cur_ptr);
-
-            bool IsNumericChar(const char * cur_ptr);
-
-            bool GetNumericConstant(yToken &token, const char * cur_ptr);
-
-            bool IsIdentifierBodyChar(const char * cur_ptr);
-            bool GetIdentifier(yToken &token, const char * cur_ptr);
-
-            bool GetCharConstant(yToken &token, const char * cur_ptr);
-
-            bool GetStringLiteral(yToken &token, const char * cur_ptr);
-
-            bool TryNextToken(yToken & token);
-            bool NextToken(yToken & token);
+            yFrontendOptions &getFrontendOpts() { return frontend_opts; }
+            const yFrontendOptions &getFrontendOpts() const { return frontend_opts; }
         };
     } // namespace ycompiler
 } // namespace yLib
 
-
-#endif //__CORE_YCOMPILER_LEX_YLEXER_HPP__
+#endif //__CORE_YCOMPILER_FRONTEND_YCOMPILER_INVOCATION_HELPER_HPP__

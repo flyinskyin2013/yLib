@@ -24,7 +24,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #ifndef __YLIB_C_HPP__
 #define __YLIB_C_HPP__
 
-
+#ifndef __YLIB_EXPORT_DECLSPEC__
 #ifdef _WIN32
 
     #define __YLIB_EXPORT_DECLSPEC__ __declspec(dllexport)
@@ -36,6 +36,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #elif __unix__ || __unix
 
 #endif //__unix__ || __unix
+
+#endif //__YLIB_EXPORT_DECLSPEC__
 
 
 #define YLIB_C_API \

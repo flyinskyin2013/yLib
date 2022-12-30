@@ -29,9 +29,17 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #include "core/yobject.hpp"
 
-#include "core/ycompiler/lex/ylexer.hpp"
-#include "core/ycompiler/basic/ytoken.hpp"
-#include "core/ycompiler/parse/yparser.hpp"
+
+#include "core/ycompiler/basic/ysource_location.hpp"
+#include "core/ycompiler/basic/ydiagnostics.hpp"
+
+#include "core/ycompiler/lexer/ylexer.hpp"
+#include "core/ycompiler/lexer/ypreprocessor.hpp"
+
+
+#include "core/ycompiler/lexer/ytoken.hpp"
+
+#include "core/ycompiler/parser/yparser.hpp"
 #include "core/ycompiler/basic/yidentifier.hpp"
 #include "core/ycompiler/sema/ysema.hpp"
 
@@ -44,6 +52,8 @@ namespace yLib
 {
     namespace ycompiler
     {
+
+        class yDeclGroup;
         class __YLIB_CLASS_DECLSPEC__ yConfigDecl{
             public:
             enum yConfigDeclType{
@@ -133,82 +143,41 @@ namespace yLib
         };
         //yConfigParser Notes
         // G=(Vt, Vn, P, S)
-        /* ref: n1256.pdf 
-
-
-        Syntax-in-c99:
-        identifier:
-            ref: n1256.pdf 6.4.2 Identifiers
-
-        floating-constant:
-            ref: 6.4.4.1 Integer constants
-
-        integer-constant:
-            ref: 6.4.4.2 Floating constants
-
-        string-literal:
-            ref: n1256.pdf 6.4.5 String literals
-
-
-        yConfig Language Define
-        EBNF:
-        Syntax1:
-        translation-unit:
-            object-list
-
-
-        Syntax2:
-        object-list:
-            object
-            object-list ';'
-            object-list ';' object
-
-        Syntax3:
-        object:    
-            identifier ':' '{' declaration-list '}'
-
-        Syntax4:
-        declaration-list:
-            declaration-item
-            declaration-item ';'
-            object
-            object ';'
-            declaration-list ';' declaration-item
-            declaration-list ';' object
-
-        Syntax5:
-        declaration-item:
-            identifier '=' value-item 
-
-        Syntax6:
-        value-item:
-            floating-constant
-            integer-constant
-            string-literal
-            bool-constant
-
-        Syntax7:
-        bool-constant:
-            'true'
-            'false'
-        */
+        //ref: n1256.pdf 
         class __YLIB_CLASS_DECLSPEC__ yConfigParser:
         public yParser
         {
             friend class ySema;
 
             private:
-            yConfigDeclObject root_object;
-            
-            yLexer &lexer;
+            yPreprocessor & preprocessor;
+
+
             yToken next_token;
+
+            /// Tok - The current token we are peeking ahead.  All parsing methods assume
+            /// that this is valid.
             yToken cur_token;
 
-            ySema sema;
+
+            yConfigDeclObject root_object;
+            
+
+
+            yLexer &lexer;
+
+
+            ySema &sema;
+
+            yDiagnosticsEngine & diag_engine;
+
+
+
             
             public:
             
             yConfigParser(yLexer * lexer);
+            yConfigParser(ySema & sema);
             ~yConfigParser();
 
             bool ParseAST(void);
@@ -221,6 +190,20 @@ namespace yLib
 
             bool ParserObject(yConfigDeclObject & cur_obj, std::string &obj_name);
             bool ParserObjectList(void);
+
+
+            void Initialize(void);
+            bool ParseFirstTopLevelDecl(yDeclGroup &result);
+            bool ParseTopLevelDecl(yDeclGroup &result, bool is_first_decl);
+
+
+
+            public:
+            yDiagnosticBuilder Diag(ySourceLocation loc, unsigned diag_id);
+            yDiagnosticBuilder Diag(const yToken &cur_token, unsigned diag_id);
+            yDiagnosticBuilder Diag(unsigned diag_id) {
+                return Diag(cur_token, diag_id);
+            }
         };
     }
 }

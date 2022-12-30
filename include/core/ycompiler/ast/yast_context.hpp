@@ -15,35 +15,29 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 /*
  * @Author: Sky
- * @Date: 2021-11-20 13:22:06
- * @LastEditTime: 2021-11-20 13:23:15
+ * @Date: 2022-12-04 13:50:41
+ * @LastEditTime: 2022-12-04 19:50:41
  * @LastEditors: Sky
  * @Description: 
- * @FilePath: \yLib\src\core\ycompiler\basic\yaction.cpp
+ * @FilePath: \yLib\include\core\ycompiler\ast\yast_context.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
 
+#ifndef __CORE_YCOMPILER_AST_YAST_CONTEXT_HPP__
+#define __CORE_YCOMPILER_AST_YAST_CONTEXT_HPP__
 
-#include "core/ycompiler/basic/yaction.hpp"
-#include "core/ylog.hpp"
-
-using namespace yLib::ycompiler;
-using namespace yLib;
-
-yAction::yAction()
+#include <memory>
+namespace yLib
 {
+    namespace ycompiler
+    {
+        /// Holds long-lived AST nodes (such as types and decls) that can be
+        /// referred to throughout the semantic analysis of a file.
+        class yASTContext{
+            public:
+            
+        };
+    } // namespace ycompiler
+} // namespace yLib
 
-}
-
-yAction::~yAction(){
-    
-}
-
-yCompilerInstance & yAction::GetCompilerInstance(void){
-
-    return *ci;
-}
-void yAction::SetCompilerInstance(yCompilerInstance * ins){
-
-    ci = ins;
-}
+#endif //__CORE_YCOMPILER_AST_YAST_CONTEXT_HPP__

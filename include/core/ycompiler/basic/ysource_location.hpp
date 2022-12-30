@@ -1,3 +1,4 @@
+
 /*
 Copyright (c) 2018 - 2021 flyinskyin2013 All rights reserved.
 
@@ -15,42 +16,42 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 /*
  * @Author: Sky
- * @Date: 2021-11-20 16:49:17
- * @LastEditTime: 2021-11-21 10:11:57
+ * @Date: 2021-11-20 12:23:45
+ * @LastEditTime: 2021-11-21 09:41:04
  * @LastEditors: Sky
  * @Description: 
- * @FilePath: \yLib\include\core\ycompiler\parse\yparser.hpp
+ * @FilePath: \yLib\include\core\ycompiler\basic\ysource_location.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
 
+#ifndef __CORE_YCOMPILER_BASIC_YSOURCE_LOCATION_HPP__
+#define __CORE_YCOMPILER_BASIC_YSOURCE_LOCATION_HPP__
 
-#ifndef __CORE_YCOMPILER_PARSE_YPARSER_HPP__
-#define __CORE_YCOMPILER_PARSE_YPARSER_HPP__
-
-#include "core/yobject.hpp"
-
-#include "core/ycompiler/lex/ylexer.hpp"
-
-
-#include <list>
-
+#include <string>
+#include <cstdint>
 namespace yLib
 {
     namespace ycompiler
     {
-        class __YLIB_CLASS_DECLSPEC__ yParser:
-        YLIB_PUBLIC_INHERIT_YOBJECT
-        {
+        
+        class ySourceLocation{
+            private:
+            uint64_t ID;
+            
             public:
-            yParser(){
+
+            /// Turn a raw encoding of a SourceLocation object into
+            /// a real SourceLocation.
+            ///
+            /// \see getRawEncoding.
+            static ySourceLocation getFromRawEncoding(uint64_t Encoding) {
+                ySourceLocation X;
+                X.ID = Encoding;
+                return X;
             }
-            virtual ~yParser(){}
-            virtual bool ParseAST() = 0;
-            virtual bool ParseDecl() = 0;
-            virtual void * GetASTData() = 0;
+
         };
-    }
-}
+    } // namespace ycompiler
+} // namespace yLib
 
-
-#endif //__CORE_YCOMPILER_PARSE_YPARSER_HPP__
+#endif //__CORE_YCOMPILER_BASIC_YSOURCE_LOCATION_HPP__

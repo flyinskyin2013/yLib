@@ -26,7 +26,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 
 
-#include "core/ycompiler/parse/yconfig_parser.hpp"
+#include "core/ycompiler/parser/yconfig_parser.hpp"
 #include "core/ycompiler/basic/ydiagnostics.hpp"
 
 #include "core/ycompiler/sema/ysema.hpp"
@@ -37,7 +37,10 @@ using namespace yLib::ycompiler;
 using namespace yLib;
 
 yConfigParser::yConfigParser(yLexer * lexer)
-:lexer(*lexer), sema(this){}
+:lexer(*lexer), sema(*(ySema *)0), preprocessor(sema.GetPreprocessor()), diag_engine(*(yDiagnosticsEngine *)0){}
+
+yConfigParser::yConfigParser(ySema &sema)
+:lexer(*(yLexer *)0), sema(sema), preprocessor(sema.GetPreprocessor()), diag_engine(*(yDiagnosticsEngine *)0){}
 
 yConfigParser::~yConfigParser(){}
 
@@ -406,4 +409,34 @@ bool yConfigParser::ParserObject(yConfigDeclObject & cur_obj, std::string &obj_n
     }
 
     return true;
+}
+
+
+
+
+yDiagnosticBuilder yConfigParser::Diag(ySourceLocation loc, unsigned diag_id) {
+  return diag_engine.Report(loc, diag_id);
+}
+
+yDiagnosticBuilder yConfigParser::Diag(const yToken &cur_token, unsigned diag_id) {
+  return Diag(cur_token.getLocation(), diag_id);
+}
+
+
+void yConfigParser::Initialize(void){
+    
+}
+
+bool yConfigParser::ParseFirstTopLevelDecl(yDeclGroup &result){
+
+    bool _is_no_top_level_decls = ParseTopLevelDecl(result, true);
+    if (_is_no_top_level_decls){
+
+        // Diag(diag::)
+    }
+}
+
+bool yConfigParser::ParseTopLevelDecl(yDeclGroup &result, bool is_first_decl){
+
+
 }

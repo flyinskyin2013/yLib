@@ -176,12 +176,12 @@ namespace yLib {
 		/** @var bool shm_is_init_ready
 			@brief the shm is init-ready.
 		*/
-		bool shm_is_init_ready = false;
+		bool shm_is_init_ready;
 
 		/** @var bool shm_is_attach_ready
 			@brief the shm is attach-ready.
 		*/
-		bool shm_is_attach_ready = false;
+		bool shm_is_attach_ready;
 
 		/** @var bool is_mark_delete
 			@brief mark the shm will be deleted by destructor
@@ -191,7 +191,7 @@ namespace yLib {
 		/** @var void * shm_ptr
 			@brief the data-ptr of shm.
 		*/
-		void * shm_ptr = nullptr;
+		void * shm_ptr;
 
 		/** @var yShmParam cur_shm_param
 			@brief the cur param of shm.

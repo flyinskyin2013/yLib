@@ -27,6 +27,11 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #include "core/yobject.hpp"
 
+#include "core/ycompiler/ast/yast_context.hpp"
+#include "core/ycompiler/ast/yast_consumer.hpp"
+
+#include "core/ycompiler/lexer/ypreprocessor.hpp"
+
 #include <cstdint>
 
 namespace yLib
@@ -40,9 +45,14 @@ namespace yLib
         YLIB_PUBLIC_INHERIT_YOBJECT
         {
             private:
-            yConfigParser * parser;
+            yConfigParser *parser;
+            yPreprocessor *preprocessor;
+            yASTContext *ast_ctx;
+            yASTConsumer *ast_consumer;
+
             public:
             ySema() = delete;
+            ySema(yPreprocessor &preprocessor, yASTContext &ast_ctx, yASTConsumer &ast_consumer);
             ySema(yConfigParser * parser):parser(parser){}
             ~ySema(){}
 
@@ -57,6 +67,11 @@ namespace yLib
              * 
              */
             int8_t ParseNumberConstantExpression(uint64_t & num);
+
+
+            yPreprocessor &GetPreprocessor(){return *preprocessor;}
+            yASTContext &GetASTContext(){return *ast_ctx;}
+            yASTConsumer &GetASTConsumer(){return *ast_consumer;}
         };
     }
 }

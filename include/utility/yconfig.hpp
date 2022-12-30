@@ -31,11 +31,6 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include "core/ycommon.hpp"
 #include "core/ybasicvalue.hpp"
 
-// import ycompiler
-#include "core/ycompiler/basic/ycompiler_instance.hpp"
-#include "core/ycompiler/tools/yconfig_parse_action.hpp"
-#include "core/ycompiler/basic/yfile_manager.hpp"
-#include "core/ycompiler/parse/yconfig_parser.hpp"
 
 namespace yLib{
 
@@ -312,9 +307,7 @@ namespace yLib{
         int8_t AddNode(const std::string & pos, const std::string & name, yValue::yValueType type, const yConfigValue &value = yConfigValue());
 
         private:
-        ycompiler::yConfigDecl *LookUp(const std::string &node_path, ycompiler::yConfigDeclObject & decl_obj);
-        std::unique_ptr<ycompiler::yCompilerInstance> compiler_instance;
-        ycompiler::yFileManager * file_mgr;
+        std::unique_ptr<void, void(*)(void*)> compiler_instance;
     };
 
 

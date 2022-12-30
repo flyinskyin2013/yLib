@@ -55,8 +55,8 @@ namespace yLib{
         
     #elif __linux__ || __linux
 
-        #define __YLIB_EXPORT_DECLSPEC__
-        #define __YLIB_CLASS_DECLSPEC__
+        #define __YLIB_EXPORT_DECLSPEC__ __attribute__((visibility ("default")))
+        #define __YLIB_CLASS_DECLSPEC__ __attribute__((visibility ("default")))
         #define __YLIB_IMPORT__
         #define __YLIB_TEAMPLATE_CLASS_EXPORT__
         #define __YLIB_TEAMPLATE_FUNC_EXPORT__
@@ -96,14 +96,15 @@ namespace yLib{
 
     //define some useful macroes ----------------------------   end
 
+    /*
     // c99 for variadic macros
-    // #define example(...) \
-    //     do{ \
-    //         char msg_buf[1024]; \
-    //         sprintf(msg_buf, __VA_ARGS__); \
-    //         std::cout<<std::string(msg_buf)<<std::endl; \
-    //     }while(0)
-
+    #define example(...) \
+        do{ \
+            char msg_buf[1024]; \
+            sprintf(msg_buf, __VA_ARGS__); \
+            std::cout<<std::string(msg_buf)<<std::endl; \
+        }while(0)
+    */
 
     /** \def YLIB_STR
         \brief Convert __S to string.

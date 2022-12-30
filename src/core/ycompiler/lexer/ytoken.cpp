@@ -15,53 +15,39 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 /*
  * @Author: Sky
- * @Date: 2021-11-20 09:22:37
+ * @Date: 2021-11-21 16:14:29
+ * @LastEditTime: 2021-11-21 16:15:37
  * @LastEditors: Sky
- * @LastEditTime: 2021-11-27 10:59:49
  * @Description: 
- * @FilePath: /yLib/include/core/ycompiler/basic/ycompiler_instance.hpp
- * https://github.com/flyinskyin2013/yLib
+ * @FilePath: \yLib\src\core\ycompiler\basic\ytoken.cpp
+ * @Github: https://github.com/flyinskyin2013/yLib
  */
 
 
 
-#ifndef __CORE_YCOMPILER_BASIC_YCOMPILER_INSTANCE_HPP__
-#define __CORE_YCOMPILER_BASIC_YCOMPILER_INSTANCE_HPP__
-
-#include "yaction.hpp"
-#include "yfile_manager.hpp"
-#include "core/ycompiler/parse/yconfig_parser.hpp"
-#include "core/ycompiler/lex/ylexer.hpp"
-
-#include <memory>
-
-namespace yLib
-{
-    namespace ycompiler
-    {
-        
-        class yCompilerInstance{
-            private:
-            std::unique_ptr<yFileManager> file_mgr;
-            std::unique_ptr<yLexer> lex;
-            std::unique_ptr<yParser> parser;
-
-            public:
-            yCompilerInstance();
-            ~yCompilerInstance();
-            bool ExecuteAction(yAction &act);
-
-            void SetFileManager(yFileManager * file_mgr);
-            yFileManager * GetFileManger(void);
-
-            void SetLexer(yLexer * lexer);
-            yLexer * GetLexer(void);
-
-            void SetParser(yParser * parser);
-            yParser * GetParser(void);
-        };
-    } // namespace ycompiler
-} // namespace yLib
 
 
-#endif //__CORE_YCOMPILER_BASIC_YCOMPILER_INSTANCE_HPP__
+#include "core/ycompiler/lexer/ytoken.hpp"
+
+#include "core/ylog.hpp"
+
+using namespace yLib::ycompiler;
+using namespace yLib;
+
+static const char * const TokNames[] = {
+
+    #define TOK(X) #X,
+    #include "core/ycompiler/lexer/ytoken_kinds.def"
+    nullptr
+    #undef TOK
+};
+
+/// The name of a token will be an internal name (such as "l_square")
+/// and should not be used as part of diagnostic messages.
+const char *tok::getTokenName(yTokenKind Kind){
+
+    if (Kind < tok::NUM_TOKENS)
+        return TokNames[(uint16_t)Kind];
+
+    return nullptr;
+}    
