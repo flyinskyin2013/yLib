@@ -61,10 +61,9 @@ namespace yLib
             std::unique_ptr<yParser> parser;
             std::unique_ptr<yDiagnosticsEngine> diagnostics_engine;
             std::unique_ptr<yCompilerInvocationHelper> invocation_helper;
+            //yASTContext, yASTConsumer in ySema
             std::unique_ptr<ySema> sema;
-            std::unique_ptr<yPreprocessor> preprocessor;
-            std::unique_ptr<yASTContext> ast_ctx;
-            std::unique_ptr<yASTConsumer> ast_consumer;
+            // std::unique_ptr<yPreprocessor> preprocessor;
 
             public:
             yCompilerInstance();

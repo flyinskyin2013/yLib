@@ -1,0 +1,4 @@
+
+DECL(TranslationUnitDecl, Decl)
+DECL(RecordDecl, Decl)
+DECL(VarDecl, Decl)

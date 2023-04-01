@@ -22,22 +22,32 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  * @FilePath: \yLib\src\core\ycompiler\lex\ylexer.cpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
+
+#include "core/ycompiler/frontend/ycompiler_instance.hpp"
+
 #include "core/ycompiler/lexer/ylexer.hpp"
 #include "core/ycompiler/basic/ydiagnostics.hpp"
 #include "core/ylog.hpp"
 
+
 using namespace yLib::ycompiler;
 using namespace yLib;
 
-yLexer::yLexer(yFileManager * file_mgr){
-
-    buf_start = buf_cur_ptr = file_mgr->GetFileContentPtr();
-    buf_end = file_mgr->GetFileContentPtr() + file_mgr->GetFileContentSize();
+yLexer::yLexer(yCompilerInstance & ci)
+:ci(ci)
+{
+    // buf_start = buf_cur_ptr = ci.GetFileManger().GetFileContentPtr();
+    // buf_end = ci.GetFileManger().GetFileContentPtr() + ci.GetFileManger().GetFileContentSize();
 
     this->file_mgr = file_mgr;
 }
 yLexer::~yLexer(){
 
+}
+bool yLexer::SetFileBuffer(char * buf_start, char * buf_end)
+{
+    buf_cur_ptr = buf_start = buf_start;
+    buf_end = buf_end;
 }
 
 bool yLexer::BackToPos(uint64_t pos)

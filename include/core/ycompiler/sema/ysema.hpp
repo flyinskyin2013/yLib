@@ -39,21 +39,22 @@ namespace yLib
     namespace ycompiler
     {
         class yConfigParser;
+        class yCompilerInstance;
 
         //semantic analysis
         class __YLIB_CLASS_DECLSPEC__ ySema:
         YLIB_PUBLIC_INHERIT_YOBJECT
         {
             private:
-            yConfigParser *parser;
-            yPreprocessor *preprocessor;
-            yASTContext *ast_ctx;
-            yASTConsumer *ast_consumer;
+            std::unique_ptr<yPreprocessor> preprocessor;
+            std::unique_ptr<yASTContext> ast_ctx;
+            std::unique_ptr<yASTConsumer> ast_consumer;
 
+            yCompilerInstance & ci;
+            
             public:
             ySema() = delete;
-            ySema(yPreprocessor &preprocessor, yASTContext &ast_ctx, yASTConsumer &ast_consumer);
-            ySema(yConfigParser * parser):parser(parser){}
+            ySema(yCompilerInstance & ci);
             ~ySema(){}
 
             /**
@@ -69,9 +70,9 @@ namespace yLib
             int8_t ParseNumberConstantExpression(uint64_t & num);
 
 
-            yPreprocessor &GetPreprocessor(){return *preprocessor;}
-            yASTContext &GetASTContext(){return *ast_ctx;}
-            yASTConsumer &GetASTConsumer(){return *ast_consumer;}
+            yPreprocessor &GetPreprocessor();
+            yASTContext &GetASTContext();
+            yASTConsumer &GetASTConsumer();
         };
     }
 }

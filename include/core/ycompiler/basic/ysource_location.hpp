@@ -33,10 +33,24 @@ namespace yLib
 {
     namespace ycompiler
     {
-        
+        /// Encodes a location in the source. The SourceManager can decode this
+        /// to get at the full include stack, line and column information.
+        ///
+        /// Technically, a source location is simply an offset into the manager's view
+        /// of the input source, which is all input buffers (including macro
+        /// expansions) concatenated in an effectively arbitrary order. The manager
+        /// actually maintains two blocks of input buffers. One, starting at offset
+        /// 0 and growing upwards, contains all buffers from this module. The other,
+        /// starting at the highest possible offset and growing downwards, contains
+        /// buffers of loaded modules.
+        ///
+        /// In addition, one bit of SourceLocation is used for quick access to the
+        /// information whether the location is in a file or a macro expansion.
+        ///
+        /// It is important that this type remains small. It is currently 32 bits wide.
         class ySourceLocation{
             private:
-            uint64_t ID;
+            uint64_t offset;
             
             public:
 
@@ -46,7 +60,7 @@ namespace yLib
             /// \see getRawEncoding.
             static ySourceLocation getFromRawEncoding(uint64_t Encoding) {
                 ySourceLocation X;
-                X.ID = Encoding;
+                X.offset = Encoding;
                 return X;
             }
 

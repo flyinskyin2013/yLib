@@ -31,7 +31,8 @@ using namespace yLib::ycompiler;
 using namespace yLib;
 
 
-yCompilerInvocationHelper::yCompilerInvocationHelper()
+yCompilerInvocationHelper::yCompilerInvocationHelper(yCompilerInstance & ci)
+:ci(ci)
 {
 
 }

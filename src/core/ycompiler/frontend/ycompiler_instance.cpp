@@ -37,18 +37,16 @@ parser(nullptr),
 diagnostics_engine(nullptr),
 invocation_helper(nullptr)
 {
-    std::unique_ptr<ycompiler::yFileManager> _file_mgr = std::unique_ptr<ycompiler::yFileManager>(ycompiler::yFileManager::GetInstance());
-    // std::unique_ptr<ycompiler::yLexer> _lexer = std::unique_ptr<ycompiler::yLexer>(ycompiler::yLexer(_file_mgr.get()));
-    // std::unique_ptr<ycompiler::yParser> _parser = std::unique_ptr<ycompiler::yParser>(ycompiler::yParser());
-    // std::unique_ptr<ycompiler::yDiagnosticsEngine> _diag_engine = std::unique_ptr<ycompiler::yDiagnosticsEngine>(ycompiler::yDiagnosticsEngine());
-    // std::unique_ptr<ycompiler::yCompilerInvocationHelper> _invocation_helper = std::unique_ptr<ycompiler::yCompilerInvocationHelper>(ycompiler::yCompilerInvocationHelper());
+    std::unique_ptr<ycompiler::yFileManager> _file_mgr = std::unique_ptr<ycompiler::yFileManager>(ycompiler::yFileManager::GetInstance(*this));
+    std::unique_ptr<ycompiler::yLexer> _lexer = \
+        std::unique_ptr<ycompiler::yLexer>(new ycompiler::yLexer(*this));
+
+    std::unique_ptr<ycompiler::yCompilerInvocationHelper> _invocation_helper = std::unique_ptr<ycompiler::yCompilerInvocationHelper>(new ycompiler::yCompilerInvocationHelper(*this));
 
 
-    // this->SetFileManager(_file_mgr);
-    // this->SetLexer(_lexer);
-    // this->SetParser(_parser);
-    // this->SetDiagnosticsEngine(_diag_engine);
-    // this->SetCompilerInvocationHelper(_invocation_helper);
+    this->SetFileManager(std::move(_file_mgr));
+    this->SetLexer(std::move(_lexer));
+    this->SetCompilerInvocationHelper(std::move(_invocation_helper));
 }
 
 yCompilerInstance::~yCompilerInstance(){

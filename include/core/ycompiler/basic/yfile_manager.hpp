@@ -39,7 +39,7 @@ namespace yLib
 {
     namespace ycompiler
     {
-        
+        class yCompilerInstance;
         class __YLIB_CLASS_DECLSPEC__ yFileManager:
         YLIB_PUBLIC_INHERIT_YOBJECT
         {
@@ -50,8 +50,13 @@ namespace yLib
             uint64_t content_buf_size = 0;  
 
             static yFileManager * self_ins;
+
+            yCompilerInstance & ci;
+
+            static int32_t reference_count;
+
             protected:
-            yFileManager(void);
+            yFileManager(yCompilerInstance & ci);
             
             public:
             ~yFileManager(void);
@@ -61,7 +66,7 @@ namespace yLib
             const char * GetFileContentPtr(void);
             uint64_t GetFileContentSize(void);
 
-            static yFileManager * GetInstance(void);
+            static yFileManager * GetInstance(yCompilerInstance & ci);
             
         };
     } // namespace ycompiler

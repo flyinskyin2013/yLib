@@ -70,16 +70,37 @@ bool yLib::ycompiler::ExecuteCompiler(yCompilerInstance & ci)
 void yLib::ycompiler::ParseAST(yCompilerInstance &ci)
 {
 
+    std::unique_ptr<ycompiler::ySema> _sema = \
+        std::unique_ptr<ycompiler::ySema>(new ycompiler::ySema(ci));
+    ci.SetSema(std::move(_sema));
+
+
+    std::unique_ptr<ycompiler::yParser> _parser = \
+        std::unique_ptr<ycompiler::yParser>(new ycompiler::yConfigParser(ci));
+    ci.SetParser(std::move(_parser));
+
+
+    std::unique_ptr<ycompiler::yDiagnosticsIDHandle> _diag_id = \
+        std::unique_ptr<ycompiler::yDiagnosticsIDHandle>(new ycompiler::yDiagnosticsIDHandle());
+    std::unique_ptr<ycompiler::yDiagnosticOptions> _diag_opts = \
+        std::unique_ptr<ycompiler::yDiagnosticOptions>(new ycompiler::yDiagnosticOptions());
+    std::unique_ptr<ycompiler::yDiagnosticConsumer> _diag_consumer = \
+        std::unique_ptr<ycompiler::yDiagnosticConsumer>(new ycompiler::yDiagnosticConsumer());
+    std::unique_ptr<ycompiler::yDiagnosticsEngine> _diag_engine = \
+        std::unique_ptr<ycompiler::yDiagnosticsEngine>(new ycompiler::yDiagnosticsEngine(std::move(_diag_id), std::move(_diag_opts), std::move(_diag_consumer)));
+
+    ci.SetDiagnosticsEngine(std::move(_diag_engine));
+
+
+
     yASTConsumer & _consumer = ci.GetSema().GetASTConsumer();
 
-    std::unique_ptr<yConfigParser> _parser(new yConfigParser(ci.GetSema()));
-
-    _parser->Initialize();
-
+    // static_cast<yConfigParser&>(ci.GetParser()).Initialize();
+    ci.GetParser().Initialize();
     std::unique_ptr<yDeclGroup> _decl_group;
 
-    for (bool _is_eof = _parser->ParseFirstTopLevelDecl(*_decl_group.get()); \
-        !_is_eof; _is_eof = _parser->ParseTopLevelDecl(*_decl_group.get(), false)){
+    for (bool _is_eof = ci.GetParser().ParseFirstTopLevelDecl(*_decl_group.get()); \
+        !_is_eof; _is_eof = ci.GetParser().ParseTopLevelDecl(*_decl_group.get(), false)){
 
         if (_decl_group != nullptr && !_consumer.HandleTopLevelDecl(*_decl_group.get()))
             return;

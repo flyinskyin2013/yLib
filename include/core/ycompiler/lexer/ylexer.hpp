@@ -34,7 +34,7 @@ namespace yLib
 {
     namespace ycompiler
     {
-
+        class yCompilerInstance;
         class __YLIB_CLASS_DECLSPEC__ yLexer:
         YLIB_PUBLIC_INHERIT_YOBJECT
         {
@@ -43,12 +43,13 @@ namespace yLib
             const char * buf_end;
             const char * buf_cur_ptr;
             yFileManager * file_mgr;
-
+            yCompilerInstance & ci;
+            
             public:
             yLexer() = delete;
-            yLexer(yFileManager * file_mgr);
+            yLexer(yCompilerInstance & ci);
             ~yLexer();
-            
+            bool SetFileBuffer(char * buf_start, char * buf_end);
             yFileManager * GetFileManager(void){return file_mgr;}
             bool BackToPos(uint64_t pos);
 

@@ -7,6 +7,12 @@
  -->
 Version Notes:
 ==========
+v0.2.0
+----------
+    1 New yConfig implemented by new ycompiler.
+    2 Disable libidn2 for libcurl.
+    3 Import ctest.
+
 v0.1.0
 ----------
     1 New yConfig implemented by ycompiler and remove libconfig.

@@ -25,6 +25,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 
 #include <fstream>
+#include "core/ycompiler/frontend/ycompiler_instance.hpp"
 
 #include "core/ycompiler/basic/yfile_manager.hpp"
 #include "core/ylog.hpp"
@@ -33,23 +34,31 @@ using namespace yLib::ycompiler;
 using namespace yLib;
 
 yFileManager * yFileManager::self_ins = nullptr;
+int32_t yFileManager::reference_count = 0;
 
-yFileManager::yFileManager()
-:content_buf(nullptr), content_buf_size(0)
-{
-
-}
+yFileManager::yFileManager(yCompilerInstance & ci)
+:content_buf(nullptr), content_buf_size(0), ci(ci)
+{}
 
 yFileManager::~yFileManager(){
 
-    self_ins = nullptr;
+    reference_count --;
+
+    if (reference_count <= 0){
+        
+        delete self_ins;
+        self_ins = nullptr;
+    }
+    
 }
 
-yFileManager * yFileManager::GetInstance(void){
+yFileManager * yFileManager::GetInstance(yCompilerInstance & ci){
+
+    reference_count ++;
 
     if (self_ins == nullptr){
 
-        self_ins = new (std::nothrow) yFileManager();
+        self_ins = new (std::nothrow) yFileManager(ci);
     }
 
     return self_ins;
@@ -95,6 +104,8 @@ bool yFileManager::InitFileManager(const std::string & file_name){
 
     _in_file.close();
 
+
+    ci.GetLexer().SetFileBuffer((char *)GetFileContentPtr(), (char *)GetFileContentPtr() + GetFileContentSize());
     return true;
 }
 

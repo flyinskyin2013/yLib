@@ -52,7 +52,7 @@ namespace yLib
 {
     namespace ycompiler
     {
-
+        class yCompilerInstance;
         class yDeclGroup;
         class __YLIB_CLASS_DECLSPEC__ yConfigDecl{
             public:
@@ -150,7 +150,7 @@ namespace yLib
             friend class ySema;
 
             private:
-            yPreprocessor & preprocessor;
+            // yPreprocessor & preprocessor;
 
 
             yToken next_token;
@@ -162,22 +162,15 @@ namespace yLib
 
             yConfigDeclObject root_object;
             
-
-
             yLexer &lexer;
-
-
             ySema &sema;
+            yDiagnosticsEngine &diag_engine;
 
-            yDiagnosticsEngine & diag_engine;
-
-
-
+            yCompilerInstance & ci;
             
             public:
-            
-            yConfigParser(yLexer * lexer);
-            yConfigParser(ySema & sema);
+            yConfigParser()=delete;
+            yConfigParser(yCompilerInstance & ci);
             ~yConfigParser();
 
             bool ParseAST(void);
@@ -195,7 +188,7 @@ namespace yLib
             void Initialize(void);
             bool ParseFirstTopLevelDecl(yDeclGroup &result);
             bool ParseTopLevelDecl(yDeclGroup &result, bool is_first_decl);
-
+            yDeclGroup ParseExternalDeclaration(void);
 
 
             public:

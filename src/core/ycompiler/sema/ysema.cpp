@@ -25,16 +25,36 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include "core/ycompiler/sema/ysema.hpp"
 #include "core/ycompiler/parser/yconfig_parser.hpp"
 #include "core/ycompiler/basic/ydiagnostics.hpp"
+#include "core/ycompiler/frontend/ycompiler_instance.hpp"
 
 #include "core/ylog.hpp"
 
+
+
 using namespace yLib::ycompiler;
 using namespace yLib;
+ySema::ySema(yCompilerInstance & ci)
+:ci(ci)
+{
+    preprocessor = std::unique_ptr<yPreprocessor>(new yPreprocessor());
+    ast_ctx = std::unique_ptr<yASTContext>(new yASTContext());
+    ast_consumer = std::unique_ptr<yASTConsumer>(new yASTConsumer());
+}
+
+yPreprocessor &ySema::GetPreprocessor()
+{return *(preprocessor.get());}
+
+yASTContext &ySema::GetASTContext()
+{return *(ast_ctx.get());}
+
+yASTConsumer &ySema::GetASTConsumer()
+{return *(ast_consumer.get());}
 
 int8_t ySema::ParseNumberConstantExpression(uint64_t & num)
 {
     // process sign
     int8_t _sign = 1;
+    yConfigParser *parser = (yConfigParser*)&ci.GetParser();
     if (parser->cur_token.kind == tok::plus){
 
         parser->lexer.NextToken(parser->cur_token);

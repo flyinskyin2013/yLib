@@ -42,3 +42,89 @@ yCompilerInstance->ExecuteAction()
     -->SpecialAction->Execute()
         -->ParseAST()
 ```
+
+
+### yCompiler structure details
+
+yCompilerInstance 构造了yFileManager，yLexer，yCompilerInvocationHelper。并且通过后续的初始化，一共持有了以下的所有对象：
+- yFileManager
+- yLexer
+- yParser
+- yDiagnosticsEngine
+- yCompilerInvocationHelper
+- ySema
+
+
+ySema持有了如下对象：
+- yPreprocessor
+- yASTContext
+- yASTConsumer
+
+
+### AST
+config example
+```
+test:
+{
+
+    int = 1;
+    float = 2.3;
+    bool = true;
+    string = "HHHHHHHHH";
+    sub:{
+
+        int = 2;
+        float = 4.3;
+        bool = false;
+        string = "MMMMMMMM";        
+    };
+};
+```
+
+ast analyse
+```
+TranslationUnitDecl
+|-RecordDecl 
+| `-CompoundStmt 
+|   |-DeclStmt 
+|   | `-VarDecl
+|   |   `-IntegerLiteral
+|   |
+|   |-DeclStmt 
+|   | `-VarDecl
+|   |   `-FloatingLiteral
+|   |
+|   |-DeclStmt 
+|   | `-VarDecl
+|   |   `-BoolLiteralExpr
+|   |
+|   |-DeclStmt 
+|   | `-VarDecl
+|   |   `-StringLiteral
+|   |
+|   |-RecordDecl
+|   | `-CompoundStm
+|   |   |-DeclStmt 
+|   |   | `-VarDecl
+|   |   |   `-IntegerLiteral
+|   |   |
+|   |   |-DeclStmt 
+|   |   | `-VarDecl
+|   |   |   `-FloatingLiteral
+|   |   |
+|   |   |-DeclStmt 
+|   |   | `-VarDecl
+|   |   |   `-BoolLiteralExpr
+|   |   |
+|   |   |-DeclStmt 
+|   |   | `-VarDecl
+|   |   |   `-StringLiteral
+|   |
+|   |
+|   |
+
+```
+
+
+### clang dump ast
+clang -Xclang -ast-dump -c test.c

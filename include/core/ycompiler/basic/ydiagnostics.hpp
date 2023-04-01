@@ -31,6 +31,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include "core/ycompiler/basic/yfile_location.hpp"
 #include "core/ycompiler/lexer/ytoken.hpp"
 #include <memory>
+#include <limits>
 
 #include <cassert>
 
@@ -39,6 +40,7 @@ namespace yLib
     namespace ycompiler
     {
         class yDiagnosticsEngine;
+        class yCompilerInstance;
 
         namespace diag{
 
@@ -145,6 +147,7 @@ namespace yLib
             unsigned cur_diag_id;
 
             public:
+            yDiagnosticsEngine() = delete;
             yDiagnosticsEngine(std::unique_ptr<yDiagnosticsIDHandle> && diag_id_handle, 
                                 std::unique_ptr<yDiagnosticOptions> && diag_options,
                                 std::unique_ptr<yDiagnosticConsumer> && diag_consumer);

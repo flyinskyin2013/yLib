@@ -41,8 +41,21 @@ namespace yLib
         /// asserted in DeclBase.cpp.
         class yDecl{
             public:
+            /// Lists the kind of concrete classes of Decl.
+            enum Kind {
+            #define DECL(DERIVED, BASE) DERIVED,
+            #define ABSTRACT_DECL(DECL)
+            #define DECL_RANGE(BASE, START, END) \
+                    first##BASE = START, last##BASE = END,
+            #define LAST_DECL_RANGE(BASE, START, END) \
+                    first##BASE = START, last##BASE = END
+            #include "decl_nodes_kinds.def"
+            };
+
             
         };
+
+
 
         /// DeclContext - This is used only as base class of specific decl types that
         /// can act as declaration contexts. These decls are (only the top classes
@@ -61,7 +74,7 @@ namespace yLib
         ///   ExportDecl
         ///   BlockDecl
         ///   CapturedDecl
-        class DeclContext{
+        class yDeclContext{
             public:
             
         };

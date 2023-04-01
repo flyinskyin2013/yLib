@@ -33,14 +33,18 @@ namespace yLib
 {
     namespace ycompiler
     {
+        class yCompilerInstance;
+
         // Helper class for holding the data necessary to invoke the compiler.
         class yCompilerInvocationHelper{
             private:
             /// Options controlling the frontend itself.
             yFrontendOptions frontend_opts;
 
+            yCompilerInstance & ci;
             public:
-            yCompilerInvocationHelper();
+            yCompilerInvocationHelper() = delete;
+            yCompilerInvocationHelper(yCompilerInstance & ci);
             ~yCompilerInvocationHelper();
 
             yFrontendOptions &getFrontendOpts() { return frontend_opts; }

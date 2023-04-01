@@ -194,6 +194,7 @@ endif()
 
 
 if(BUILD_UNIT_TEST)
+    enable_testing()
     add_subdirectory(tests)
 endif()
 

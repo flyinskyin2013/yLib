@@ -24,23 +24,26 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  * @Github: https://github.com/flyinskyin2013/yLib
  */
 
-
+#include "core/ycompiler/frontend/ycompiler_instance.hpp"
 
 #include "core/ycompiler/parser/yconfig_parser.hpp"
 #include "core/ycompiler/basic/ydiagnostics.hpp"
 
 #include "core/ycompiler/sema/ysema.hpp"
 
+#include "core/ycompiler/ast/ydecl_group.hpp"
+
 #include "core/ylog.hpp"
 
 using namespace yLib::ycompiler;
 using namespace yLib;
 
-yConfigParser::yConfigParser(yLexer * lexer)
-:lexer(*lexer), sema(*(ySema *)0), preprocessor(sema.GetPreprocessor()), diag_engine(*(yDiagnosticsEngine *)0){}
-
-yConfigParser::yConfigParser(ySema &sema)
-:lexer(*(yLexer *)0), sema(sema), preprocessor(sema.GetPreprocessor()), diag_engine(*(yDiagnosticsEngine *)0){}
+yConfigParser::yConfigParser(yCompilerInstance & ci)
+:ci(ci), 
+lexer(ci.GetLexer()), 
+sema(ci.GetSema()), 
+// preprocessor(sema.GetPreprocessor()), //the initial order is not ci,lexer,sema,preprocessor,diag_engine
+diag_engine(ci.GetDiagnosticsEngine()){}
 
 yConfigParser::~yConfigParser(){}
 
@@ -426,17 +429,69 @@ yDiagnosticBuilder yConfigParser::Diag(const yToken &cur_token, unsigned diag_id
 void yConfigParser::Initialize(void){
     
 }
-
+/// Parse the first top-level declaration in a translation unit.
+///
+///   translation-unit:
+/// [C]     external-declaration
+/// [C]     translation-unit external-declaration
+/// [C++]   top-level-declaration-seq[opt]
+/// [C++20] global-module-fragment[opt] module-declaration
+///                 top-level-declaration-seq[opt] private-module-fragment[opt]
+///
+/// Note that in C, it is an error if there is no first declaration.
 bool yConfigParser::ParseFirstTopLevelDecl(yDeclGroup &result){
 
+    // C11 6.9p1 says translation units must have at least one top-level
+    // declaration. C++ doesn't have this restriction. We also don't want to
+    // complain if we have a precompiled header, although technically if the PCH
+    // is empty we should still emit the (pedantic) diagnostic.
+    // If the main file is a header, we're only pretending it's a TU; don't warn.
     bool _is_no_top_level_decls = ParseTopLevelDecl(result, true);
     if (_is_no_top_level_decls){
 
         // Diag(diag::)
+        
     }
 }
 
+/// ParseTopLevelDecl - Parse one top-level declaration, return whatever the
+/// action tells us to.  This returns true if the EOF was encountered.
+///
+///   top-level-declaration:
+///           declaration
+/// [C++20]   module-import-declaration
 bool yConfigParser::ParseTopLevelDecl(yDeclGroup &result, bool is_first_decl){
 
+    result = ParseExternalDeclaration();
+}
 
+/// ParseExternalDeclaration:
+///
+///       external-declaration: [C99 6.9], declaration: [C++ dcl.dcl]
+///         function-definition
+///         declaration
+/// [GNU]   asm-definition
+/// [GNU]   __extension__ external-declaration
+/// [OBJC]  objc-class-definition
+/// [OBJC]  objc-class-declaration
+/// [OBJC]  objc-alias-declaration
+/// [OBJC]  objc-protocol-definition
+/// [OBJC]  objc-method-definition
+/// [OBJC]  @end
+/// [C++]   linkage-specification
+/// [GNU] asm-definition:
+///         simple-asm-expr ';'
+/// [C++11] empty-declaration
+/// [C++11] attribute-declaration
+///
+/// [C++11] empty-declaration:
+///           ';'
+///
+/// [C++0x/GNU] 'extern' 'template' declaration
+///
+/// [Modules-TS] module-import-declaration
+///
+yDeclGroup yConfigParser::ParseExternalDeclaration(void)
+{
+    return yDeclGroup();
 }

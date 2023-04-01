@@ -40,7 +40,7 @@ namespace yLib{
     typedef void (*OnClientConnectCB)(uint64_t client_fd, const std::string &client_ip, uint64_t client_port);
     typedef void (*OnClientDisconnectCB)(uint64_t client_fd, const std::string &client_ip, uint64_t client_port);
 
-    class yTcpServer:public yAbstractSocket
+    class __YLIB_CLASS_DECLSPEC__ yTcpServer:public yAbstractSocket
     {
     private:
         std::unique_ptr<std::thread> epoll_thread_ptr;

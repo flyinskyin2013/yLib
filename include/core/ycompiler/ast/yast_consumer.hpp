@@ -49,7 +49,7 @@ namespace yLib
             /// called by the parser to process every top-level Decl*.
             ///
             /// \returns true to continue parsing, or false to abort parsing.
-            virtual bool HandleTopLevelDecl(yDeclGroup &decl);    
+            virtual bool HandleTopLevelDecl(yDeclGroup &decl){}    
 
             /// HandleTranslationUnit - This method is called when the ASTs for entire
             /// translation unit have been parsed.

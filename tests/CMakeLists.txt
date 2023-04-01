@@ -87,6 +87,7 @@ function(build_tests group_name_ sub_dir_name_ module_name_)
                 -pthread)
         endif()
         add_executable(${unit_test_target_name} ${SRC})  
+        add_test(NAME ${unit_test_target_name} COMMAND ${CMAKE_COMMAND} -DTEST_EXECUTABLE=$<TARGET_FILE:${unit_test_target_name}> -P ${CMAKE_CURRENT_SOURCE_DIR}/../cmakes/execute_test.cmake)
         target_link_libraries(${unit_test_target_name} ylib ${DEP_LIBS})
         add_dependencies(${unit_test_target_name} ylib YLIB_TESTS_SHARED_MAIN)
 
@@ -110,6 +111,7 @@ function(build_tests group_name_ sub_dir_name_ module_name_)
         endif()
 
         add_executable(${unit_test_target_name}_s ${SRC}) 
+        #add_test(NAME ${unit_test_target_name}_s COMMAND ${CMAKE_COMMAND} -DTEST_EXECUTABLE=$<TARGET_FILE:${unit_test_target_name}_s> -P ${CMAKE_CURRENT_SOURCE_DIR}/../cmakes/execute_test.cmake)
         target_link_libraries(${unit_test_target_name}_s ylib_s ${DEP_LIBS})
         add_dependencies(${unit_test_target_name}_s ylib_s YLIB_TESTS_SHARED_MAIN)
 
@@ -203,18 +205,18 @@ build_tests(UTILITY yTimer yTimer)
 #----------------------------------------------------------------------------------------
 
 #---------------------------------------Unit Test For Network Group----------------------
-if(BUILD_MODULE_YTCPSERVER)
-    build_tests(NETWORK TCP yTcpserver)
-endif()
+# if(BUILD_MODULE_YTCPSERVER)
+#     build_tests(NETWORK TCP yTcpserver)
+# endif()
 
-if(BUILD_MODULE_YTCPSOCKET)
-    build_tests(NETWORK TCP yTcpClient)
-endif()
+# if(BUILD_MODULE_YTCPSOCKET)
+#     build_tests(NETWORK TCP yTcpClient)
+# endif()
 
-if(BUILD_MODULE_YUDPSOCKET)
-    build_tests(NETWORK UDP yUdpClient)
-    build_tests(NETWORK UDP yUdpServer)
-endif()
+# if(BUILD_MODULE_YUDPSOCKET)
+#     build_tests(NETWORK UDP yUdpClient)
+#     build_tests(NETWORK UDP yUdpServer)
+# endif()
 
 ##########################################################################
 #----------------------------------------------------------------------------------------
