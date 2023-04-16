@@ -27,6 +27,11 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #include <cstdint>
 #include <queue>
+#include <future>
+#include <mutex>
+#include <condition_variable>
+#include <vector>
+#include <thread>
 
 namespace yLib
 {
@@ -40,8 +45,21 @@ namespace yLib
         uint64_t max_thread_num = 5;
         uint64_t keep_alive_max_time = 60;//(s)
         uint64_t max_task_queue_size = 20;
+
+        std::queue<std::function<void()>> task_queue_cxx11;
+        std::mutex queue_cxx11_mtx;
+
+        std::condition_variable condition;
+
+        void woker_thread_fn(void);
+
+        std::vector<std::thread> thread_vec;
+
+        bool stop_flag = true;
+
+        yThreadPool(void)noexcept {};
     public:
-        yThreadPool(void)noexcept;
+        yThreadPool(uint64_t max_thread_num) noexcept;
         ~yThreadPool()noexcept;
 
         bool set_core_thread_num(uint64_t num) noexcept;
@@ -49,8 +67,26 @@ namespace yLib
         bool set_keep_alive_max_time(uint64_t time) noexcept;
         bool set_task_queue_num(uint64_t num) noexcept;
         
-        int8_t add_task(yThreadTask * task) noexcept;    
+        int8_t add_task(yThreadTask * task) noexcept; 
 
+        template<class Fn, class... Args>
+        auto add_task(Fn && fn, Args &&... args) noexcept ->std::future<decltype(fn(args...))> 
+        {
+            using return_type = decltype(fn(args...));
+
+            auto new_packaged_task = std::make_shared<std::packaged_task<return_type()>>(std::bind(std::forward<Fn>(fn), std::forward<Args>(args)...));
+
+            auto result = new_packaged_task->get_future();
+
+            {
+                std::unique_lock<std::mutex> lock(queue_cxx11_mtx);
+                task_queue_cxx11.emplace([new_packaged_task](){(*new_packaged_task)();});
+            }
+
+            condition.notify_one();
+
+            return result;
+        }
     };
     
 } // namespace yLib

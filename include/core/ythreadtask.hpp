@@ -34,14 +34,14 @@ namespace yLib{
     private:
         void * task_args;
         /* data */
-        std::function<void(void*)> task;
+        std::function<void(void*)> task_func;
 
-        yThreadTask(std::function<void(void*)> task, void * task_args = nullptr) noexcept :task(task), task_args(task_args){}
+        yThreadTask(std::function<void(void*)> task, void * task_args = nullptr) noexcept {}
     public:
         yThreadTask(void) noexcept {}
         virtual ~yThreadTask() noexcept{}
 
-        virtual void task(void) noexcept;
+        virtual void task(void) noexcept{}
 
 
         static yThreadTask* create_task(std::function<void(void*)> task, void * task_args = nullptr);

@@ -47,6 +47,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     #include "ylib_extra_infos.hpp"
     #include "yobject.hpp"
     #include "ylog.hpp"
+    #include "ythreadpool.hpp"
     
     //in test
     #include "yallocator.hpp"

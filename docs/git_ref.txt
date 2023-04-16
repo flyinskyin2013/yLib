@@ -16,3 +16,51 @@ git diff --cached --stat
 git apply --stat patchfile
 git apply --check patchfile
 git apply patchfile
+
+
+
+创建分支
+git checkout -b branch-name
+
+切换分支
+git checkout branch-name
+
+创建tag
+git tag xxx
+
+查看git commit log
+git log
+
+显示commit graph
+git log --graph
+
+
+
+克隆指定分支代码
+git clone -b dev url
+
+克隆指定分支代码，且只clone最近的一次提交
+git clone -b dev --depth 1 url
+
+
+
+
+git 子模块相关
+git clone <repository> --recursive 递归的方式克隆整个项目
+git submodule add <repository> <path> 添加子模块
+git submodule init 初始化子模块
+git submodule update 更新子模块
+git submodule foreach git pull 拉取所有子模块
+
+
+删除子模块
+.gitmodules 文件项删除
+.git/.config 文件项删除
+.git/modules/ 下面子模块文件夹删除
+
+或者 
+git submodule deinit 子模块路径
+
+
+推送代码并创建远程分支
+git push origin xxx

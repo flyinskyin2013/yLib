@@ -247,6 +247,8 @@ build_tests(CORE yLib_Extra_Infos yLib_Extra_Infos)
 
 build_tests(CORE yAllocator yAllocator)
 
+build_tests(CORE yThreadPool yThreadPool)
+
 # for yLog
 build_tests(CORE yLog yLog)
 build_tests(CORE yLog yLog_Verify)
