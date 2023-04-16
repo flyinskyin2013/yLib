@@ -1,4 +1,12 @@
 /*
+ * @Author: Sky sky@sky-home.com
+ * @Date: 2022-12-30 19:25:05
+ * @LastEditors: Sky sky@sky-home.com
+ * @LastEditTime: 2023-04-16 15:51:28
+ * @FilePath: \yLib\include\core\ycompiler\ast\yast_consumer.hpp
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
+/*
 Copyright (c) 2018 - 2021 flyinskyin2013 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -49,7 +57,7 @@ namespace yLib
             /// called by the parser to process every top-level Decl*.
             ///
             /// \returns true to continue parsing, or false to abort parsing.
-            virtual bool HandleTopLevelDecl(yDeclGroup &decl){}    
+            virtual bool HandleTopLevelDecl(yDeclGroup &decl){ return true;}    
 
             /// HandleTranslationUnit - This method is called when the ASTs for entire
             /// translation unit have been parsed.

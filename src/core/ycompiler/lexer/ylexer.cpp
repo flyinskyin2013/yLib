@@ -48,6 +48,7 @@ bool yLexer::SetFileBuffer(char * buf_start, char * buf_end)
 {
     buf_cur_ptr = buf_start = buf_start;
     buf_end = buf_end;
+    return true;
 }
 
 bool yLexer::BackToPos(uint64_t pos)

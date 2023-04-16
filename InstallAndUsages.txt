@@ -16,8 +16,15 @@ For Windows
 
     Open powershell on windows10, download third_part
     >>cd yLib\third_part
-    >>..\download_third_part.ps1
-
+    >>..\download_third_part.ps1     (we can skip this, because build_deps.bat will do same things.)
+    
+    Note:
+        If show : ..\download_third_part.ps1 : 无法加载文件 E:\yLib\download_third_part.ps1，因为在此系统上禁止运行脚本。有关详细信息，请参阅 https:/go.microsoft.com/fwlink/?LinkID=135170 中的 about_Execution_Policies。
+            we should :
+                > get-executionpolicy (get current policy)
+                > get-help set-executionpolicy (help)
+                > set-executionpolicy Unrestricted (pass)
+                > set-executionpolicy Restricted (recovery)
     If I don't specially note that, the default shell is native-cmd.
 
 2. For third_part resources.
@@ -27,7 +34,8 @@ For Windows
 3. For yLib.
     >>mkdir build_vs2015_x64 
     >>cd build_vs2015_x64 
-    >>cmake -T v140,host=x64 -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=%cd%/install -DBUILD_YLIB_ARCH=x86_64 ..
+    >>cmake -T v140,host=x64 -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=%cd%/install -DBUILD_YLIB_ARCH=x86_64 .. (x64)
+    >>cmake -T v142,host=x64 -A Win32 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=%cd%/install -DBUILD_YLIB_ARCH=x86 ..   (x86)
     >>cmake --build . --config Release --target install
 
 For Linux:

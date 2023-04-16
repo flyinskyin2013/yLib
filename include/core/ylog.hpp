@@ -141,6 +141,7 @@ namespace yLib{
  
         uint16_t log_level = ENABLE_ALL_LOG_LEVEL;
         static EnableyLogFileParam file_param;
+        static EnableyLogFileParam & GetLogFileParam(void) { return file_param;}
         bool is_log_to_file = false;
         bool is_log_to_stdio = true;
     };

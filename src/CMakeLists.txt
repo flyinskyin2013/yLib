@@ -3,14 +3,17 @@
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--whole-archive")
 
 #----------------------------------------set core source---------------------------------
-FILE(GLOB_RECURSE SRC ${CMAKE_CURRENT_SOURCE_DIR}/core "*.c" "*.cpp")
-
+FILE(GLOB_RECURSE SRC  "*.c" "*.cpp")
+list(FILTER SRC EXCLUDE REGEX "${CMAKE_CURRENT_SOURCE_DIR}/ipc/.*")
+list(FILTER SRC EXCLUDE REGEX "${CMAKE_CURRENT_SOURCE_DIR}/network/.*")
+list(FILTER SRC EXCLUDE REGEX "${CMAKE_CURRENT_SOURCE_DIR}/utility/.*")
 list(REMOVE_ITEM SRC ${CMAKE_CURRENT_SOURCE_DIR}/core/ycompiler/basic/yregularengine.cpp)
-
+# message(FATAL_ERROR ${SRC})
 set(SRC
     ${SRC}
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/ylib_c.cpp
+    # include by FILE(GLOB_RECURSE xxx
+    # ${CMAKE_CURRENT_SOURCE_DIR}/ylib_c.cpp
 
     ${CMAKE_CURRENT_BINARY_DIR}/ylib_extra_infos.cpp
     )
@@ -105,28 +108,30 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
     ylib_build(NETWORK YABSTRACTSOCKET)
 
+
+    if(BUILD_MODULE_YTCPSERVER)
+
+        ylib_build(NETWORK YTCPSERVER)
+
+    endif()
+
+
+    if(BUILD_MODULE_YTCPSOCKET)
+
+        ylib_build(NETWORK YTCPSOCKET)
+
+    endif()
+
+    if(BUILD_MODULE_YUDPSOCKET)
+
+        ylib_build(NETWORK YUDPSOCKET)
+
+    endif()
 elseif(ANDROID)
     
 endif()
 
-if(BUILD_MODULE_YTCPSERVER)
 
-    ylib_build(NETWORK YTCPSERVER)
-
-endif()
-
-
-if(BUILD_MODULE_YTCPSOCKET)
-
-    ylib_build(NETWORK YTCPSOCKET)
-
-endif()
-
-if(BUILD_MODULE_YUDPSOCKET)
-
-    ylib_build(NETWORK YUDPSOCKET)
-
-endif()
 #----------------------------------------------------------------------------------------
 
 #----------------------------------set link dir------------------------------------------
@@ -191,8 +196,10 @@ if(WIN32)
                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/
             )
         endif()
-        
-        set_target_properties(ylib_s PROPERTIES COMPILE_DEFINITIONS "CURL_STATICLIB;BUILD_YLIB_WITH_EXPORT")
+
+        # https://social.msdn.microsoft.com/Forums/vstudio/en-US/26f1c8b2-6431-4a9a-8f76-0473d939c165/error-lnk2019-unresolved-external-symbol-why?forum=vcgeneral
+        # in static lib, we can't special __declspec(dllexport) or __declspec(dllimport)
+        set_target_properties(ylib_s PROPERTIES COMPILE_DEFINITIONS "CURL_STATICLIB;BUILD_YLIB_STATIC_LIB")
         # set_target_properties(ylib_s PROPERTIES COMPILE_DEFINITIONS CURL_STATICLIB)
         # set_target_properties(ylib_s PROPERTIES COMPILE_DEFINITIONS BUILD_YLIB_WITH_EXPORT)
         
@@ -440,3 +447,4 @@ set_target_properties(ylib_s PROPERTIES INTERFACE_LINK_LIBRARIES "")
 # 
 
 endif()
+

@@ -452,6 +452,7 @@ bool yConfigParser::ParseFirstTopLevelDecl(yDeclGroup &result){
         // Diag(diag::)
         
     }
+    return true;
 }
 
 /// ParseTopLevelDecl - Parse one top-level declaration, return whatever the
@@ -463,6 +464,7 @@ bool yConfigParser::ParseFirstTopLevelDecl(yDeclGroup &result){
 bool yConfigParser::ParseTopLevelDecl(yDeclGroup &result, bool is_first_decl){
 
     result = ParseExternalDeclaration();
+    return true;
 }
 
 /// ParseExternalDeclaration:

@@ -155,7 +155,7 @@ if(WIN32)
 
     # static and shared can't build at same time.
     set(BUILD_SHARED_YLIB ON)
-    set(BUILD_STATIC_YLIB OFF)
+    set(BUILD_STATIC_YLIB ON)
 
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
