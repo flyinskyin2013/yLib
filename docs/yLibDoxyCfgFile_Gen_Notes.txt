@@ -1,0 +1,8 @@
+apt install doxygen doxygen-gui 
+
+
+1 doxygen-gui (expert mode)
+
+
+
+2 doxygen xxx_cfg 

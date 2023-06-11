@@ -33,6 +33,25 @@ namespace yLib
 {
     namespace ycompiler
     {
+        /// An opaque identifier used by SourceManager which refers to a
+        /// source file (MemoryBuffer) along with its \#include path and \#line data.
+        ///
+        //This is the index of yMemoryBuffer by yFileManager
+        class yFileID{
+            private:
+            uint32_t ID;
+
+            public:
+            yFileID(){}
+            //rhs=right hand side
+            bool operator==(const yFileID &rhs) const { return ID == rhs.ID; }
+            bool operator!=(const yFileID &rhs) const { return ID != rhs.ID; }      
+
+            yFileID(uint32_t id):ID(id){}  
+
+            uint32_t GetRawID(void) {return ID;}  
+        };
+
         /// Encodes a location in the source. The SourceManager can decode this
         /// to get at the full include stack, line and column information.
         ///
@@ -50,10 +69,15 @@ namespace yLib
         /// It is important that this type remains small. It is currently 32 bits wide.
         class ySourceLocation{
             private:
-            uint64_t offset;
-            
-            public:
+            uint64_t offset; // from 0 ~ file_size - 1
+            yFileID file_id; 
 
+            public:
+            ySourceLocation(){}
+            ySourceLocation(yFileID file_id, uint64_t offset){
+                this->file_id = file_id;
+                this->offset = offset;
+            }
             /// Turn a raw encoding of a SourceLocation object into
             /// a real SourceLocation.
             ///
@@ -63,6 +87,9 @@ namespace yLib
                 X.offset = Encoding;
                 return X;
             }
+
+            uint64_t GetOffset(void) {return offset;}
+            yFileID GetFileID(void) {return file_id;}
 
         };
     } // namespace ycompiler

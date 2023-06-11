@@ -1,11 +1,14 @@
-提交所有未跟踪文件
+提交所有未跟踪文件到暂存区
 git add .
 
-查看工作区修改内容
+查看工作区相对于last-commit的修改内容
 git diff > xxx.patch
 
-查看暂存区修改内容
+查看暂存区相对于last-commit的修改内容
 git diff --cached > xxx.patch
+
+查看两个commit的修改内容
+git diff commit1ID commit2ID > xxx.patch
 
 显示修改内容的统计信息
 git diff --stat  

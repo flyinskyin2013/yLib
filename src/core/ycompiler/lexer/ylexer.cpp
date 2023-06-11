@@ -106,9 +106,6 @@ void yLexer::UpdateToken(yToken &token, const char *tok_end, tok::yTokenKind kin
     token.token_data_len = tok_end - buf_cur_ptr;
     token.token_data = (void *)buf_cur_ptr;
 
-    token.token_loc.buf_start = buf_start;
-    token.token_loc.buf_cur_ptr = buf_cur_ptr;
-
     buf_cur_ptr = tok_end;//update buf_cur_ptr
 }
 
@@ -199,8 +196,8 @@ bool yLexer::GetCharConstant(yToken &token, const char * cur_ptr){
         cur_ptr++;//real char
         if (cur_ptr[0] != '\''){
             
-            yFileLocation _loc(buf_start, cur_ptr);
-            yDiagnosticsEngine::DiagReport(_loc, diag::lexer_error_charconstant);
+            ySourceLocation _loc(file_id, 0);
+            ci.GetDiagnosticsEngine().DiagReport(_loc, diag::lexer_error_charconstant);
             return false;
         }
     }
@@ -209,8 +206,8 @@ bool yLexer::GetCharConstant(yToken &token, const char * cur_ptr){
         cur_ptr++;
         if (cur_ptr[0] != '\''){
             
-            yFileLocation _loc(buf_start, cur_ptr);
-            yDiagnosticsEngine::DiagReport(_loc, diag::lexer_error_charconstant);
+            ySourceLocation _loc(file_id, 0);
+            ci.GetDiagnosticsEngine().DiagReport(_loc, diag::lexer_error_charconstant);
             return false;
         }            
     }
@@ -227,8 +224,8 @@ bool yLexer::GetStringLiteral(yToken &token, const char * cur_ptr){
 
     if (IsEof(cur_ptr)){//we get eof before second '"'
 
-        yFileLocation _loc(buf_start, cur_ptr);
-        yDiagnosticsEngine::DiagReport(_loc, diag::lexer_error_stringliteral);
+        ySourceLocation _loc(file_id, 0);
+        ci.GetDiagnosticsEngine().DiagReport(_loc, diag::lexer_error_stringliteral);
         return false;
     }
 

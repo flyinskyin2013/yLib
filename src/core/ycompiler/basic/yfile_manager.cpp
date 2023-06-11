@@ -109,3 +109,59 @@ bool yFileManager::InitFileManager(const std::string & file_name){
     return true;
 }
 
+yFileEntry * yFileManager::GetFileEntry(const std::string & file_path)
+{
+    if (file_entry_map.count(file_path) > 0)
+        return file_entry_map[file_path];
+    
+    return nullptr;
+}
+
+yFileEntry * yFileManager::GetFileEntry(yFileID file_id)
+{
+    if (file_entry_vec.size() <= file_id.GetRawID())
+        return nullptr;
+    
+    return file_entry_vec[file_id.GetRawID()].get();
+}
+
+yMemoryBuffer * yFileManager::GetFileMemroyBuffer(const std::string & file_path)
+{
+    if (file_memory_buffer_map.count(file_path) > 0)
+        return file_memory_buffer_map[file_path];
+    
+    return nullptr;
+}
+
+yFileID yFileManager::GetFileID(yFileEntry * file_entry)
+{
+    uint32_t _i = 0; 
+    for(; _i < file_entry_vec.size(); _i++){
+
+        if (file_entry_vec[_i].get() == file_entry)
+            return yFileID(_i);
+    }
+
+    // the file entry not found, we should show some msg
+
+    return yFileID(0);//
+}
+
+bool yFileManager::open_and_cache_file(const std::string & file_path)
+{
+    auto _file_entry = std::unique_ptr<yFileEntry>(new yFileEntry());
+
+    _file_entry->file_path = file_path;
+    _file_entry->content = yMemoryBuffer::get_file_memory_buf(file_path);
+    if (_file_entry->content == nullptr)
+        return false;
+
+    _file_entry->file_size = _file_entry->content->get_buf_size() - 1;//more one byte　'0'
+
+    file_entry_map.insert({file_path, _file_entry.get()});
+    file_memory_buffer_map.insert({file_path, _file_entry->content.get()});
+
+    file_entry_vec.emplace_back(std::move(_file_entry));
+
+    return true;
+}

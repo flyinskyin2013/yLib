@@ -28,7 +28,6 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #define __CORE_YCOMPILER_BASIC_YTOKEN_HPP__
 
 #include "core/yobject.hpp"
-#include "core/ycompiler/basic/yfile_location.hpp"
 #include "core/ycompiler/basic/ysource_location.hpp"
 
 namespace yLib
@@ -59,10 +58,9 @@ namespace yLib
             uint64_t token_data_len;
             void *token_data;
 
-            yFileLocation token_loc;
-
-
             uint64_t loc; 
+            yFileID file_id;
+            uint64_t offset;
             
             yToken(){
 
@@ -82,7 +80,7 @@ namespace yLib
             /// Return a source location identifier for the specified
             /// offset in the current file.
             ySourceLocation getLocation() const {
-                return ySourceLocation::getFromRawEncoding(loc);
+                return ySourceLocation(file_id, offset);
             }
         };
     } // namespace ycompiler

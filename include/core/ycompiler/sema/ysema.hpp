@@ -32,6 +32,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #include "core/ycompiler/lexer/ypreprocessor.hpp"
 
+#include "core/ycompiler/parser/yraii_objects_for_parser.hpp"
+
 #include <cstdint>
 
 namespace yLib
@@ -73,6 +75,16 @@ namespace yLib
             yPreprocessor &GetPreprocessor();
             yASTContext &GetASTContext();
             yASTConsumer &GetASTConsumer();
+
+
+
+            /// Called before parsing a function declarator belonging to a function
+            /// declaration.
+            void ActOnStartFunctionDeclarationDeclarator(yDeclarator &D);
+
+            /// Called after parsing a function declarator belonging to a function
+            /// declaration.
+            void ActOnFinishFunctionDeclarationDeclarator(yDeclarator &D);
         };
     }
 }

@@ -80,7 +80,7 @@ namespace yLib{
 
             Alloc _alloc;
 
-            for (int _i = 0; _i < cur_size; _i++){
+            for (size_t _i = 0; _i < cur_size; _i++){
 
                 _alloc.destroy( stack_head + _i );
             }
@@ -196,7 +196,7 @@ namespace yLib{
             Alloc _alloc;
             
             T* _tmp_head = _alloc.allocate(new_cap_);
-            for (int _i = 0; _i < cur_size; _i ++){
+            for (size_t _i = 0; _i < cur_size; _i ++){
 
                 _alloc.construct(_tmp_head + _i, std::move(*(stack_head + _i)));
                 _alloc.destroy(stack_head + _i);

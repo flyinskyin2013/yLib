@@ -30,16 +30,28 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #include <memory>
 #include <string>
+#include <unordered_map>
+#include <vector>
+
 #include <cstdint>
 
 
 #include "core/yobject.hpp"
-
+#include "core/ycompiler/basic/yfile_entry.hpp"
+#include "core/ycompiler/basic/ysource_location.hpp"
 namespace yLib
 {
     namespace ycompiler
     {
         class yCompilerInstance;
+
+        /// Implements support for file system lookup, file system caching,
+        /// and directory search management.
+        ///
+        /// This also handles more advanced properties, such as uniquing files based
+        /// on "inode", so that a file with two names (e.g. symlinked) will be treated
+        /// as a single file.
+        ///
         class __YLIB_CLASS_DECLSPEC__ yFileManager:
         YLIB_PUBLIC_INHERIT_YOBJECT
         {
@@ -54,6 +66,11 @@ namespace yLib
             yCompilerInstance & ci;
 
             static int32_t reference_count;
+            
+            private:
+            std::vector<std::unique_ptr<yFileEntry>> file_entry_vec;
+            std::unordered_map<std::string, yFileEntry *> file_entry_map;
+            std::unordered_map<std::string, yMemoryBuffer *> file_memory_buffer_map;
 
             protected:
             yFileManager(yCompilerInstance & ci);
@@ -67,6 +84,14 @@ namespace yLib
             uint64_t GetFileContentSize(void);
 
             static yFileManager * GetInstance(yCompilerInstance & ci);
+
+            yFileEntry * GetFileEntry(const std::string & file_path);
+            yFileEntry * GetFileEntry(yFileID file_id);
+            yMemoryBuffer * GetFileMemroyBuffer(const std::string & file_path);
+
+            yFileID GetFileID(yFileEntry * file_entry);
+
+            bool open_and_cache_file(const std::string & file_path);
             
         };
     } // namespace ycompiler

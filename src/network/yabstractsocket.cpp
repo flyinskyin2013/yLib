@@ -104,9 +104,9 @@ int8_t yLib::yAbstractSocket::bind(const std::string & ip, int32_t port, int dom
 
     if (ip != "")
         local_socket_addr.sin_addr.s_addr = translate_ip_to_binary(ip);
-    else
+    else{
         local_socket_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-        
+    }
 	local_socket_addr.sin_family = domain;
 	local_socket_addr.sin_port = translate_port_to_binary(port);
 

@@ -1,0 +1,7 @@
+参考文档:
+https://zhuanlan.zhihu.com/p/38178015
+
+下载　texlive
+1 https://mirrors.huaweicloud.com/CTAN/systems/texlive/Images/texlive2022.iso
+
+

@@ -113,7 +113,13 @@ function(build_tests group_name_ sub_dir_name_ module_name_)
         add_executable(${unit_test_target_name}_s ${SRC}) 
         set_target_properties(${unit_test_target_name}_s PROPERTIES COMPILE_DEFINITIONS "BUILD_YLIB_STATIC_LIB")
         #add_test(NAME ${unit_test_target_name}_s COMMAND ${CMAKE_COMMAND} -DTEST_EXECUTABLE=$<TARGET_FILE:${unit_test_target_name}_s> -P ${CMAKE_CURRENT_SOURCE_DIR}/../cmakes/execute_test.cmake)
-        target_link_libraries(${unit_test_target_name}_s ylib_s ${DEP_LIBS} Ws2_32)
+        
+        if(WIN32)
+            target_link_libraries(${unit_test_target_name}_s ylib_s ${DEP_LIBS} Ws2_32)
+        elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
+            target_link_libraries(${unit_test_target_name}_s ylib_s ${DEP_LIBS})
+        endif()
+
         add_dependencies(${unit_test_target_name}_s ylib_s YLIB_TESTS_SHARED_MAIN)
 
         INSTALL(TARGETS  ${unit_test_target_name}_s

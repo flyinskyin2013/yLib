@@ -69,6 +69,18 @@ yFileManager & yCompilerInstance::GetFileManger(void){
     return *file_mgr.get();
 }
 
+
+void yCompilerInstance::SetSourceManager(std::unique_ptr<ySourceManager> && src_mgr)
+{
+    this->src_mgr = std::move(src_mgr);
+}
+
+ySourceManager & yCompilerInstance::GetSourceManager(void)
+{
+    return *src_mgr.get();
+}
+
+
 void yCompilerInstance::SetLexer(std::unique_ptr<yLexer> && lexer){
 
     this->lexer = std::move(lexer);

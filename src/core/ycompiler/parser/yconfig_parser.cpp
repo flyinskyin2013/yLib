@@ -27,6 +27,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include "core/ycompiler/frontend/ycompiler_instance.hpp"
 
 #include "core/ycompiler/parser/yconfig_parser.hpp"
+#include "core/ycompiler/parser/yraii_objects_for_parser.hpp"
+
 #include "core/ycompiler/basic/ydiagnostics.hpp"
 
 #include "core/ycompiler/sema/ysema.hpp"
@@ -133,7 +135,7 @@ bool yConfigParser::ParserObjectList(void){
 
     if (cur_token.kind != tok::identifier && cur_token.kind != tok::comment){
 
-        yDiagnosticsEngine::DiagReport(cur_token.token_loc, diag::yconfigparser_error_expect_obj_or_comment);
+        ci.GetDiagnosticsEngine().DiagReport(cur_token, diag::yconfigparser_error_expect_obj_or_comment);
         return false;
     }
 
@@ -162,7 +164,7 @@ bool yConfigParser::ParserObjectList(void){
         
         if (root_object.decl_map.count(_obj_name) > 0){//exsit object name error
 
-            yDiagnosticsEngine::DiagReport(cur_token, diag::yconfigparser_error_objname_exsit);
+            ci.GetDiagnosticsEngine().DiagReport(cur_token, diag::yconfigparser_error_objname_exsit);
             return false;
         }
         else{
@@ -178,7 +180,7 @@ bool yConfigParser::ParserObjectList(void){
 
     if (cur_token.kind != tok::eof){
 
-        yDiagnosticsEngine::DiagReport(cur_token, diag::yconfigparser_error_expect_obj_or_comment);
+        ci.GetDiagnosticsEngine().DiagReport(cur_token, diag::yconfigparser_error_expect_obj_or_comment);
         return false;
     }
 
@@ -189,7 +191,7 @@ bool yConfigParser::ParserDeclareItem(yConfigDeclItem & item, std::string &item_
 
     if (cur_token.kind != tok::identifier){
 
-        yDiagnosticsEngine::DiagReport(cur_token, diag::yconfigparser_error_expect_identifier);
+        ci.GetDiagnosticsEngine().DiagReport(cur_token, diag::yconfigparser_error_expect_identifier);
         return false;
     }
     std::string _identifier_str((const char *)cur_token.token_data, cur_token.token_data_len);
@@ -197,7 +199,7 @@ bool yConfigParser::ParserDeclareItem(yConfigDeclItem & item, std::string &item_
     lexer.NextToken(cur_token);//next tok, skip identifier
     if (cur_token.kind != tok::equal){
 
-        yDiagnosticsEngine::DiagReport(cur_token, diag::yconfigparser_error_expect_equal);
+        ci.GetDiagnosticsEngine().DiagReport(cur_token, diag::yconfigparser_error_expect_equal);
         return false;
     }            
 
@@ -251,7 +253,7 @@ bool yConfigParser::ParserDeclareItem(yConfigDeclItem & item, std::string &item_
         }
         else{
 
-            yDiagnosticsEngine::DiagReport(cur_token, diag::yconfigparser_error_expect_true_or_false);
+            ci.GetDiagnosticsEngine().DiagReport(cur_token, diag::yconfigparser_error_expect_true_or_false);
             return false;
         }
         
@@ -259,7 +261,7 @@ bool yConfigParser::ParserDeclareItem(yConfigDeclItem & item, std::string &item_
     }
     else{
 
-        yDiagnosticsEngine::DiagReport(cur_token, diag::yconfigparser_error_expect_valid_item_val);
+        ci.GetDiagnosticsEngine().DiagReport(cur_token, diag::yconfigparser_error_expect_valid_item_val);
         return false;
     }
 
@@ -272,7 +274,7 @@ bool yConfigParser::ParserDeclareItem(yConfigDeclItem & item, std::string &item_
         lexer.TryNextToken(next_token);//try get next token
         if (next_token.kind == tok::identifier){//two object must split by ;
 
-            yDiagnosticsEngine::DiagReport(cur_token, diag::yconfigparser_error_expect_semi);
+            ci.GetDiagnosticsEngine().DiagReport(cur_token, diag::yconfigparser_error_expect_semi);
             return false;
         }
     }
@@ -299,7 +301,7 @@ bool yConfigParser::ParserDeclareList(yConfigDeclObject & cur_obj, std::string &
 
         if (cur_token.kind != tok::identifier){
 
-            yDiagnosticsEngine::DiagReport(cur_token, diag::yconfigparser_error_expect_identifier);
+            ci.GetDiagnosticsEngine().DiagReport(cur_token, diag::yconfigparser_error_expect_identifier);
             return false;
         }
 
@@ -317,7 +319,7 @@ bool yConfigParser::ParserDeclareList(yConfigDeclObject & cur_obj, std::string &
 
                 if (cur_obj.decl_map.count(_identifier_name) > 0){//exsit object name error
 
-                    yDiagnosticsEngine::DiagReport(cur_token, diag::yconfigparser_error_exsit_identifier);
+                    ci.GetDiagnosticsEngine().DiagReport(cur_token, diag::yconfigparser_error_exsit_identifier);
                     return false;
                 }
                 else{           
@@ -339,7 +341,7 @@ bool yConfigParser::ParserDeclareList(yConfigDeclObject & cur_obj, std::string &
                 cur_obj.decl_order_vec.push_back(std::move(_decl));  
                 if (cur_obj.decl_map.count(_identifier_name) > 0){//exsit object name error
 
-                    yDiagnosticsEngine::DiagReport(cur_token, diag::yconfigparser_error_exsit_identifier);
+                    ci.GetDiagnosticsEngine().DiagReport(cur_token, diag::yconfigparser_error_exsit_identifier);
                     return false;
                 }
                 else{   
@@ -355,7 +357,7 @@ bool yConfigParser::ParserDeclareList(yConfigDeclObject & cur_obj, std::string &
         }
         else{
 
-            yDiagnosticsEngine::DiagReport(cur_token, diag::yconfigparser_error_expect_colon_or_equal);
+            ci.GetDiagnosticsEngine().DiagReport(cur_token, diag::yconfigparser_error_expect_colon_or_equal);
             return false;                
         }
     }
@@ -367,20 +369,20 @@ bool yConfigParser::ParserObject(yConfigDeclObject & cur_obj, std::string &obj_n
 
     if (cur_token.kind != tok::identifier){
 
-        yDiagnosticsEngine::DiagReport(cur_token, diag::yconfigparser_error_obj_start_of_identifier);
+        ci.GetDiagnosticsEngine().DiagReport(cur_token, diag::yconfigparser_error_obj_start_of_identifier);
         return false;
     }
     lexer.NextToken(cur_token);//next token, skip identifier
     if (cur_token.kind != tok::colon){
 
-        yDiagnosticsEngine::DiagReport(cur_token, diag::yconfigparser_error_obj_second_field);
+        ci.GetDiagnosticsEngine().DiagReport(cur_token, diag::yconfigparser_error_obj_second_field);
         return false;
     }
 
     lexer.NextToken(cur_token);//next token, skip colon
     if (cur_token.kind != tok::l_brace){
 
-        yDiagnosticsEngine::DiagReport(cur_token, diag::yconfigparser_error_obj_third_field);
+        ci.GetDiagnosticsEngine().DiagReport(cur_token, diag::yconfigparser_error_obj_third_field);
         return false;
     }
     
@@ -392,7 +394,7 @@ bool yConfigParser::ParserObject(yConfigDeclObject & cur_obj, std::string &obj_n
     //we get new token in ParserObject or ParserDeclareList
     if (cur_token.kind != tok::r_brace){
 
-        yDiagnosticsEngine::DiagReport(cur_token, diag::yconfigparser_error_obj_final_field);
+        ci.GetDiagnosticsEngine().DiagReport(cur_token, diag::yconfigparser_error_obj_final_field);
         return false;
     }
 
@@ -406,7 +408,7 @@ bool yConfigParser::ParserObject(yConfigDeclObject & cur_obj, std::string &obj_n
         lexer.TryNextToken(next_token);//try get next token
         if (next_token.kind == tok::identifier){//two object must split by ;
 
-            yDiagnosticsEngine::DiagReport(cur_token, diag::yconfigparser_error_expect_semi);
+            ci.GetDiagnosticsEngine().DiagReport(cur_token, diag::yconfigparser_error_expect_semi);
             return false;
         }
     }
@@ -439,6 +441,13 @@ void yConfigParser::Initialize(void){
 ///                 top-level-declaration-seq[opt] private-module-fragment[opt]
 ///
 /// Note that in C, it is an error if there is no first declaration.
+
+// In yConfigLanguage.md 2.7
+// translation-unit:
+//     external-declaration
+//     translation-unit external-declaration
+
+
 bool yConfigParser::ParseFirstTopLevelDecl(yDeclGroup &result){
 
     // C11 6.9p1 says translation units must have at least one top-level
@@ -461,10 +470,15 @@ bool yConfigParser::ParseFirstTopLevelDecl(yDeclGroup &result){
 ///   top-level-declaration:
 ///           declaration
 /// [C++20]   module-import-declaration
+
+// In yConfigLanguage.md 2.7
+// external-declaration:
+//      declaration  
+//      object-definition
 bool yConfigParser::ParseTopLevelDecl(yDeclGroup &result, bool is_first_decl){
 
     result = ParseExternalDeclaration();
-    return true;
+    return false;
 }
 
 /// ParseExternalDeclaration:
@@ -493,7 +507,211 @@ bool yConfigParser::ParseTopLevelDecl(yDeclGroup &result, bool is_first_decl){
 ///
 /// [Modules-TS] module-import-declaration
 ///
+
+// In yConfigLanguage.md 2.7
+// external-declaration:
+//      declaration  
+//      object-definition
 yDeclGroup yConfigParser::ParseExternalDeclaration(void)
 {
+    return ParseDeclarationOrObjectDefinition();
+}
+
+
+yDeclGroup yConfigParser::ParseDeclarationOrObjectDefinition(void)
+{
+    //prepare first token, and second token
+    lexer.NextToken(cur_token);
+    lexer.TryNextToken(next_token);
+
+    return ParseDeclOrObjectDefInternal();
+}
+
+/// Parse either a function-definition or a declaration.  We can't tell which
+/// we have until we read up to the compound-statement in function-definition.
+/// TemplateParams, if non-NULL, provides the template parameters when we're
+/// parsing a C++ template-declaration.
+///
+///       function-definition: [C99 6.9.1]
+///         decl-specs      declarator declaration-list[opt] compound-statement
+/// [C90] function-definition: [C99 6.7.1] - implicit int result
+/// [C90]   decl-specs[opt] declarator declaration-list[opt] compound-statement
+///
+///       declaration: [C99 6.7]
+///         declaration-specifiers init-declarator-list[opt] ';'
+/// [!C99]  init-declarator-list ';'                   [TODO: warn in c99 mode]
+/// [OMP]   threadprivate-directive
+/// [OMP]   allocate-directive                         [TODO]
+///
+
+// In yConfigLanguage.md 2.7.1
+// object-definition:
+//     declarator : compound-statement
+yDeclGroup yConfigParser::ParseDeclOrObjectDefInternal(void)
+{
+    return ParseDeclGroup();
+}
+
+
+
+/// ParseDirectDeclarator
+///       direct-declarator: [C99 6.7.5]
+/// [C99]   identifier
+///         '(' declarator ')'
+/// [GNU]   '(' attributes declarator ')'
+/// [C90]   direct-declarator '[' constant-expression[opt] ']'
+/// [C99]   direct-declarator '[' type-qual-list[opt] assignment-expr[opt] ']'
+/// [C99]   direct-declarator '[' 'static' type-qual-list[opt] assign-expr ']'
+/// [C99]   direct-declarator '[' type-qual-list 'static' assignment-expr ']'
+/// [C99]   direct-declarator '[' type-qual-list[opt] '*' ']'
+/// [C++11] direct-declarator '[' constant-expression[opt] ']'
+///                    attribute-specifier-seq[opt]
+///         direct-declarator '(' parameter-type-list ')'
+///         direct-declarator '(' identifier-list[opt] ')'
+/// [GNU]   direct-declarator '(' parameter-forward-declarations
+///                    parameter-type-list[opt] ')'
+/// [C++]   direct-declarator '(' parameter-declaration-clause ')'
+///                    cv-qualifier-seq[opt] exception-specification[opt]
+/// [C++11] direct-declarator '(' parameter-declaration-clause ')'
+///                    attribute-specifier-seq[opt] cv-qualifier-seq[opt]
+///                    ref-qualifier[opt] exception-specification[opt]
+/// [C++]   declarator-id
+/// [C++11] declarator-id attribute-specifier-seq[opt]
+///
+///       declarator-id: [C++ 8]
+///         '...'[opt] id-expression
+///         '::'[opt] nested-name-specifier[opt] type-name
+///
+///       id-expression: [C++ 5.1]
+///         unqualified-id
+///         qualified-id
+///
+///       unqualified-id: [C++ 5.1]
+///         identifier
+///         operator-function-id
+///         conversion-function-id
+///          '~' class-name
+///         template-id
+///
+/// C++17 adds the following, which we also handle here:
+///
+///       simple-declaration:
+///         <decl-spec> '[' identifier-list ']' brace-or-equal-initializer ';'
+///
+/// Note, any additional constructs added here may need corresponding changes
+/// in isConstructorDeclarator.
+
+// In yConfigLanguage.md 2.5.2
+// declarator:
+//     pointeropt direct-declarator
+// direct-declarator:
+//     identifier
+void yConfigParser::ParseDirectDeclarator(yDeclarator &D)
+{
+    if (cur_token.kind == tok::identifier){
+
+        sema.ActOnStartFunctionDeclarationDeclarator(D);
+
+        sema.ActOnFinishFunctionDeclarationDeclarator(D);
+    }
+}
+
+/// ParseDeclaratorInternal - Parse a C or C++ declarator. The direct-declarator
+/// is parsed by the function passed to it. Pass null, and the direct-declarator
+/// isn't parsed at all, making this function effectively parse the C++
+/// ptr-operator production.
+///
+/// If the grammar of this construct is extended, matching changes must also be
+/// made to TryParseDeclarator and MightBeDeclarator, and possibly to
+/// isConstructorDeclarator.
+///
+///       declarator: [C99 6.7.5] [C++ 8p4, dcl.decl]
+/// [C]     pointer[opt] direct-declarator
+/// [C++]   direct-declarator
+/// [C++]   ptr-operator declarator
+///
+///       pointer: [C99 6.7.5]
+///         '*' type-qualifier-list[opt]
+///         '*' type-qualifier-list[opt] pointer
+///
+///       ptr-operator:
+///         '*' cv-qualifier-seq[opt]
+///         '&'
+/// [C++0x] '&&'
+/// [GNU]   '&' restrict[opt] attributes[opt]
+/// [GNU?]  '&&' restrict[opt] attributes[opt]
+///         '::'[opt] nested-name-specifier '*' cv-qualifier-seq[opt]
+
+// In yConfigLanguage.md 2.5.2
+// declarator:
+//     pointeropt direct-declarator
+// direct-declarator:
+//     identifier
+void yConfigParser::ParseDeclaratorInternal(yDeclarator &D,
+                               DirectDeclParseFunction DirectDeclParser)
+{
+
+    //parse direct-declarator
+    (this->*DirectDeclParser)(D);
+}
+
+/// ParseDeclarator - Parse and verify a newly-initialized declarator.
+///
+void yConfigParser::ParseDeclarator(yDeclarator &D)
+{
+  /// This implements the 'declarator' production in the C grammar, then checks
+  /// for well-formedness and issues diagnostics.
+  ParseDeclaratorInternal(D, &yConfigParser::ParseDirectDeclarator);
+}
+
+/// ParseDeclGroup - Having concluded that this is either a function
+/// definition or a group of object declarations, actually parse the
+/// result.
+yDeclGroup yConfigParser::ParseDeclGroup(void)
+{
+
+    //parse first declarator
+    yParsingDeclarator D(*this, yDeclaratorContext::File);
+    ParseDeclarator(D);
+
+    yDecl * _the_decl = ParseObjectDefinition(D);
+
+    yDeclGroup * _the_decl_group = yDeclGroup::Create(ci.GetSema().GetASTContext(), &_the_decl, 1);
+
+    return *_the_decl_group;
+}
+
+/// ParseFunctionDefinition - We parsed and verified that the specified
+/// Declarator is well formed.  If this is a K&R-style function, read the
+/// parameters declaration-list, then start the compound-statement.
+///
+///       function-definition: [C99 6.9.1]
+///         decl-specs      declarator declaration-list[opt] compound-statement
+/// [C90] function-definition: [C99 6.7.1] - implicit int result
+/// [C90]   decl-specs[opt] declarator declaration-list[opt] compound-statement
+/// [C++] function-definition: [C++ 8.4]
+///         decl-specifier-seq[opt] declarator ctor-initializer[opt]
+///         function-body
+/// [C++] function-definition: [C++ 8.4]
+///         decl-specifier-seq[opt] declarator function-try-block
+///
+
+// In yConfigLanguage.md 2.7.1
+// object-definition:
+//     declarator : compound-statement
+yDecl* yConfigParser::ParseObjectDefinition(yDeclarator &D)
+{
+    ySourceLocation _decl_start_loc = cur_token.getLocation();
+    ySourceLocation _decl_end_loc;
+
+    yDeclGroup _decl_group = ParseDeclaration(D, _decl_end_loc);
+
+
+    return nullptr;
+}
+
+yDeclGroup yConfigParser::ParseDeclaration(yDeclarator &D, ySourceLocation& decl_end_loc)
+{
+
     return yDeclGroup();
 }

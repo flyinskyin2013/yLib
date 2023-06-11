@@ -44,6 +44,7 @@ namespace yLib
             const char * buf_cur_ptr;
             yFileManager * file_mgr;
             yCompilerInstance & ci;
+            yFileID file_id;
             
             public:
             yLexer() = delete;

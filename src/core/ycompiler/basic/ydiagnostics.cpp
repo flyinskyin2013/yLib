@@ -69,20 +69,18 @@ static int DiagArgNumTable[] = {
     #undef DIAG_INFO
 };
 
-void yDiagnosticsEngine::DiagReport(yFileLocation & loc, diag::DiagID id){
-    
+void yDiagnosticsEngine::DiagReport(ySourceLocation & loc, diag::DiagID id)
+{
 #ifndef YLIB_CODECOVERAGE_SKIP_CODE
-    yLib::yLog::E("Error%d\n", id);
     if (DiagArgNumTable[id] == 0)
         yLog::E(DiagTageNameTable[id], "%s",DiagInfoTable[id]);
     
+    
     std::string _str;
-    uint64_t _row = 0;
-    uint64_t _col = 0;
-
-    loc.GetLocationInfo(_str, _row, _col);
-    yLog::E("", "line-content: %s\n", _str.c_str());
-    yLog::E("", "row %lu, col %lu\n", _row, _col);
+    uint64_t _row = src_mgr.get_row_num(loc.GetFileID(), loc.GetOffset());
+    uint64_t _col = src_mgr.get_col_num(loc.GetFileID(), loc.GetOffset());
+    
+    yLog::E("", "File: %s:%d:%d\n", src_mgr.GetFileManager().GetFileEntry(loc.GetFileID())->get_file_path().c_str(), _row, _col);
 #endif //YLIB_CODECOVERAGE_SKIP_CODE
 }
 
@@ -98,20 +96,21 @@ void yDiagnosticsEngine::DiagReport(yToken &token, diag::DiagID id){
         yLog::E(DiagTageNameTable[id], DiagInfoTable[id], _tok_name.c_str());
     }
 
-    std::string _str;
-    uint64_t _row = 0;
-    uint64_t _col = 0;
-
-    token.token_loc.GetLocationInfo(_str, _row, _col);
-    yLog::E("", "line-content: %s\n", _str.c_str());
-    yLog::E("", "row %lu, col %lu\n", _row, _col);
+    ySourceLocation _loc = token.getLocation();
+    std::string _str((char *)token.token_data, token.token_data_len);
+    uint64_t _row = src_mgr.get_row_num(_loc.GetFileID(), _loc.GetOffset());
+    uint64_t _col = src_mgr.get_col_num(_loc.GetFileID(), _loc.GetOffset());
+    
+    yLog::E("", "File: %s:%d:%d\n", src_mgr.GetFileManager().GetFileEntry(_loc.GetFileID())->get_file_path().c_str(), _row, _col);
+    yLog::E("", "%s\n", _str.c_str());
 #endif //YLIB_CODECOVERAGE_SKIP_CODE
 }
 
 
 yDiagnosticsEngine::yDiagnosticsEngine(std::unique_ptr<yDiagnosticsIDHandle> &&diag_id_handle, 
                     std::unique_ptr<yDiagnosticOptions> &&diag_options,
-                    std::unique_ptr<yDiagnosticConsumer> &&diag_consumer)
+                    std::unique_ptr<yDiagnosticConsumer> &&diag_consumer, ySourceManager& src_mgr)
+:src_mgr(src_mgr)
 {
     this->diag_id_handle = std::move(diag_id_handle);
     this->diag_options = std::move(diag_options);

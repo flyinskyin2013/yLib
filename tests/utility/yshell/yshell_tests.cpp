@@ -32,7 +32,7 @@ TEST_CASE( "Test yShell apis" , "[yShell_Apis]" ){
         std::vector<YLIB_STD_STRING> cmd_env_vec;
         std::vector<YLIB_STD_STRING> cmd_result_vec;
 
-        #ifdef __linux__ || __linux
+        #if __linux__ || __linux
         cmd_vec.push_back(CONVERT_STR_TO_YLIB_STD_STRING(/usr/bin/env));
         #endif //__linux__ || __linux
 
@@ -43,7 +43,7 @@ TEST_CASE( "Test yShell apis" , "[yShell_Apis]" ){
         REQUIRE(0 == (int)shell.Execute(cmd_vec, arg_vec, cmd_env_vec, cmd_result_vec));
         REQUIRE(1 == cmd_result_vec.size());
 
-        #ifdef __linux__ || __linux
+        #if __linux__ || __linux
         REQUIRE_THAT(cmd_result_vec[0].c_str(), Catch::Equals ( "MY_VAR=my_env_var" ));
         #endif //__linux__ || __linux
     }
@@ -66,13 +66,13 @@ TEST_CASE( "Test yShell apis" , "[yShell_Apis]" ){
 
         YLIB_STD_STRING _test_str =  _construct_test_str();
 
-        #ifdef __linux__ || __linux
+        #if __linux__ || __linux
         cmd_vec.push_back("/bin/echo");
         #endif //__linux__ || __linux
 
         cmd_vec.push_back(CONVERT_STR_TO_YLIB_STD_STRING(echo));
         
-        #ifdef __linux__ || __linux
+        #if __linux__ || __linux
         cmd_vec.push_back("-e");
         #endif //__linux__ || __linux
         
@@ -92,13 +92,13 @@ TEST_CASE( "Test yShell apis" , "[yShell_Apis]" ){
         std::vector<YLIB_STD_STRING> cmd_env_vec;
         std::vector<YLIB_STD_STRING> cmd_result_vec;
 
-        #ifdef __linux__ || __linux
+        #if __linux__ || __linux
         cmd_vec.push_back("/bin/echo");
         #endif //__linux__ || __linux
 
         cmd_vec.push_back(CONVERT_STR_TO_YLIB_STD_STRING(echo));
         
-        #ifdef __linux__ || __linux
+        #if __linux__ || __linux
         cmd_vec.push_back("-e");
         #endif //__linux__ || __linux
 
@@ -114,7 +114,7 @@ TEST_CASE( "Test yShell apis" , "[yShell_Apis]" ){
             REQUIRE(0 == (int)shell.Execute(cmd_vec, arg_vec, cmd_env_vec, cmd_result_vec));
             REQUIRE(1 == cmd_result_vec.size());
 
-            #ifdef __linux__ || __linux
+            #if __linux__ || __linux
             REQUIRE_THAT(cmd_result_vec[0].c_str(), Catch::Equals ( "test 100 times" ));
             #endif //__linux__ || __linux
         }

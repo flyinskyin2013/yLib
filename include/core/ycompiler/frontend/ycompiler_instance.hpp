@@ -57,6 +57,7 @@ namespace yLib
         class yCompilerInstance{
             private:
             std::unique_ptr<yFileManager> file_mgr;
+            std::unique_ptr<ySourceManager> src_mgr;
             std::unique_ptr<yLexer> lexer;
             std::unique_ptr<yParser> parser;
             std::unique_ptr<yDiagnosticsEngine> diagnostics_engine;
@@ -73,6 +74,9 @@ namespace yLib
             void SetFileManager(std::unique_ptr<yFileManager> && file_mgr);
             yFileManager & GetFileManger(void);
 
+            void SetSourceManager(std::unique_ptr<ySourceManager> && src_mgr);
+            ySourceManager & GetSourceManager(void);
+
             void SetLexer(std::unique_ptr<yLexer> && lexer);
             yLexer & GetLexer(void);
 
@@ -87,6 +91,8 @@ namespace yLib
 
             void SetSema(std::unique_ptr<ySema> && sema);
             ySema & GetSema(void);
+
+
         };
     } // namespace ycompiler
 } // namespace yLib

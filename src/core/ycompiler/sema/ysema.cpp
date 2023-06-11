@@ -101,11 +101,26 @@ int8_t ySema::ParseNumberConstantExpression(uint64_t & num)
     }
     else{
 
-        yDiagnosticsEngine::DiagReport(parser->cur_token, diag::ysema_error_expect_numconstant);
+        ci.GetDiagnosticsEngine().DiagReport(parser->cur_token, diag::ysema_error_expect_numconstant);
         return -1;
     }
     
 
     return -1;
+
+}
+
+
+/// Called before parsing a function declarator belonging to a function
+/// declaration.
+void ySema::ActOnStartFunctionDeclarationDeclarator(yDeclarator &D)
+{
+
+}
+
+/// Called after parsing a function declarator belonging to a function
+/// declaration.
+void ySema::ActOnFinishFunctionDeclarationDeclarator(yDeclarator &D)
+{
 
 }

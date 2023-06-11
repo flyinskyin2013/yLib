@@ -32,6 +32,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #include "core/ycompiler/basic/ysource_location.hpp"
 #include "core/ycompiler/basic/ydiagnostics.hpp"
+#include "core/ycompiler/ast/ydecl_base.hpp"
 
 #include "core/ycompiler/lexer/ylexer.hpp"
 #include "core/ycompiler/lexer/ypreprocessor.hpp"
@@ -40,6 +41,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include "core/ycompiler/lexer/ytoken.hpp"
 
 #include "core/ycompiler/parser/yparser.hpp"
+#include "core/ycompiler/parser/yraii_objects_for_parser.hpp"
+
 #include "core/ycompiler/basic/yidentifier.hpp"
 #include "core/ycompiler/sema/ysema.hpp"
 
@@ -152,11 +155,11 @@ namespace yLib
             private:
             // yPreprocessor & preprocessor;
 
-
-            yToken next_token;
-
             /// Tok - The current token we are peeking ahead.  All parsing methods assume
             /// that this is valid.
+            yToken next_token;
+
+
             yToken cur_token;
 
 
@@ -189,7 +192,19 @@ namespace yLib
             bool ParseFirstTopLevelDecl(yDeclGroup &result);
             bool ParseTopLevelDecl(yDeclGroup &result, bool is_first_decl);
             yDeclGroup ParseExternalDeclaration(void);
+            yDeclGroup ParseDeclarationOrObjectDefinition(void);
+            yDeclGroup ParseDeclOrObjectDefInternal(void);
+            yDeclGroup ParseDeclGroup(void);
 
+            yDecl* ParseObjectDefinition(yDeclarator &D);
+            void ParseDeclarator(yDeclarator &D);
+            /// A function that parses a variant of direct-declarator.
+            typedef void (yConfigParser::*DirectDeclParseFunction)(yDeclarator&);
+            void ParseDeclaratorInternal(yDeclarator &D,
+                               DirectDeclParseFunction DirectDeclParser);
+            void ParseDirectDeclarator(yDeclarator &D);
+
+            yDeclGroup ParseDeclaration(yDeclarator &D, ySourceLocation& decl_end_loc);
 
             public:
             yDiagnosticBuilder Diag(ySourceLocation loc, unsigned diag_id);

@@ -70,7 +70,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         ENABLE_ALL_LOG_LEVEL = 0xFFFF,
     } yLogLevel;
 */
-__YLIB_EXPORT_DECLSPEC__ struct yLogTagPropertyC{
+struct __YLIB_EXPORT_DECLSPEC__ yLogTagPropertyC{
 
     uint16_t log_level = 0xFFFF;
     bool is_log_to_file = false;

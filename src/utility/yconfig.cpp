@@ -60,7 +60,7 @@ yLib::yConfig::~yConfig()
 
 int8_t yLib::yConfig::ReadFile(const std::string &file_path){
 
-    if (!GetCompilerInstanceRef(compiler_instance).GetFileManger().InitFileManager(file_path)){
+    if (!GetCompilerInstanceRef(compiler_instance).GetFileManger().open_and_cache_file(file_path)){
 
         yLib::yLog::E("yConfig", "open cfg file(%s) failed\n", file_path.c_str());
         return -1;

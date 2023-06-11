@@ -50,6 +50,7 @@ run the following commmands.
 2. For yLib.
     >>mkdir -p build 
     >>cd build && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 ..
+    （注意，在cmake中构建的库架构必须和上述第一步的build_deps.sh的架构对应，否则需要自行修改cmake指向特定架构的第三方库）
     >>make -j4 && make install
 
 Defaultly,In directory(yLib/build/install), it may have those directories including cmake, examples, include, lib and so on. You can use them by following way:

@@ -28,8 +28,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #define __CORE_YCOMPILER_BASIC_YDIAGNOSTICS_HPP__
 
 #include "core/yobject.hpp"
-#include "core/ycompiler/basic/yfile_location.hpp"
+#include "core/ycompiler/basic/ysource_location.hpp"
 #include "core/ycompiler/lexer/ytoken.hpp"
+#include "core/ycompiler/basic/ysource_manager.hpp"
 #include <memory>
 #include <limits>
 
@@ -135,6 +136,7 @@ namespace yLib
             std::unique_ptr<yDiagnosticsIDHandle> diag_id_handle;
             std::unique_ptr<yDiagnosticOptions> diag_options;
             std::unique_ptr<yDiagnosticConsumer> diag_consumer;
+            ySourceManager& src_mgr;
 
 
             /// The location of the current diagnostic that is in flight.
@@ -150,9 +152,11 @@ namespace yLib
             yDiagnosticsEngine() = delete;
             yDiagnosticsEngine(std::unique_ptr<yDiagnosticsIDHandle> && diag_id_handle, 
                                 std::unique_ptr<yDiagnosticOptions> && diag_options,
-                                std::unique_ptr<yDiagnosticConsumer> && diag_consumer);
-            static void DiagReport(yFileLocation & loc, diag::DiagID id);
-            static void DiagReport(yToken &token, diag::DiagID id);
+                                std::unique_ptr<yDiagnosticConsumer> && diag_consumer,
+                                ySourceManager& src_mgr);
+
+            void DiagReport(ySourceLocation & loc, diag::DiagID id);
+            void DiagReport(yToken &token, diag::DiagID id);
 
             /// Issue the message to the client.
             ///

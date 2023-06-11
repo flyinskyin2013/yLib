@@ -87,7 +87,7 @@ void yLib::ycompiler::ParseAST(yCompilerInstance &ci)
     std::unique_ptr<ycompiler::yDiagnosticConsumer> _diag_consumer = \
         std::unique_ptr<ycompiler::yDiagnosticConsumer>(new ycompiler::yDiagnosticConsumer());
     std::unique_ptr<ycompiler::yDiagnosticsEngine> _diag_engine = \
-        std::unique_ptr<ycompiler::yDiagnosticsEngine>(new ycompiler::yDiagnosticsEngine(std::move(_diag_id), std::move(_diag_opts), std::move(_diag_consumer)));
+        std::unique_ptr<ycompiler::yDiagnosticsEngine>(new ycompiler::yDiagnosticsEngine(std::move(_diag_id), std::move(_diag_opts), std::move(_diag_consumer), ci.GetSourceManager()));
 
     ci.SetDiagnosticsEngine(std::move(_diag_engine));
 

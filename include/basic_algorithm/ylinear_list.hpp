@@ -86,7 +86,7 @@ namespace yLib{
                 _tmp_sq_data_head = _alloc.allocate(std::ceil(_tmp_sq_capacity/sizeof(T)));//_tmp_sq_capacity/sizeof(T) + 1 
                 
                 //call construct func
-                for (int i_ = 0; i_ < sq_size; i_++ ){
+                for (size_t i_ = 0; i_ < sq_size; i_++ ){
 
                     _alloc.construct( ((T *)_tmp_sq_data_head) + i_,  *(((T*)sq_data_head) + i_));//copy or move construct
                 }
@@ -94,7 +94,7 @@ namespace yLib{
 
                 //call destory func
 
-                for (int i_ = 0; i_ < sq_size; i_++ ){
+                for (size_t i_ = 0; i_ < sq_size; i_++ ){
 
                     _alloc.destroy( ((T *)sq_data_head) + i_);
                 }
@@ -118,7 +118,7 @@ namespace yLib{
         ~yLinearList(){
 
             Alloc _alloc;
-            for(int _i = 0; _i < sq_size; _i++)
+            for(size_t _i = 0; _i < sq_size; _i++)
                 _alloc.destroy( ((T*)sq_data_head) + _i);
             _alloc.deallocate((T *)sq_data_head, sq_capacity);
         }
@@ -149,7 +149,7 @@ namespace yLib{
             }
             
             _alloc.construct( ((T*)sq_data_head) + sq_size, value_);//construct a obj at tail.
-            for (int64_t _i = sq_size - 1; _i != -1; _i --){
+            for (uint64_t _i = sq_size - 1; _i >= 0; _i --){
 
                 if (pos_ != _i){
                 
@@ -314,7 +314,7 @@ namespace yLib{
             }
             
             if (_bak_sq_smaller_pos < sq_smaller.sq_get_size())
-                for (int j_ = _bak_sq_smaller_pos; j_ < sq_smaller.sq_get_size(); j_ ++, _cur_idx++)
+                for (size_t j_ = _bak_sq_smaller_pos; j_ < sq_smaller.sq_get_size(); j_ ++, _cur_idx++)
                     sq_insert(_cur_idx , sq_smaller.sq_get_value(j_));
 
             return 0;
