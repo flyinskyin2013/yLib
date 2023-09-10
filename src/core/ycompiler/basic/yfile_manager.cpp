@@ -33,80 +33,24 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 using namespace yLib::ycompiler;
 using namespace yLib;
 
-yFileManager * yFileManager::self_ins = nullptr;
 int32_t yFileManager::reference_count = 0;
 
 yFileManager::yFileManager(yCompilerInstance & ci)
-:content_buf(nullptr), content_buf_size(0), ci(ci)
+:ci(ci)
 {}
 
-yFileManager::~yFileManager(){
-
-    reference_count --;
-
-    if (reference_count <= 0){
-        
-        delete self_ins;
-        self_ins = nullptr;
-    }
-    
-}
+yFileManager::~yFileManager(){}
 
 yFileManager * yFileManager::GetInstance(yCompilerInstance & ci){
 
-    reference_count ++;
+    yFileManager * _self_ins = new (std::nothrow) yFileManager(ci);
+    if (nullptr == _self_ins){//check new 
 
-    if (self_ins == nullptr){
-
-        self_ins = new (std::nothrow) yFileManager(ci);
+        yLib::yLog::E("Create instance for yFileManager failed.");
+        return nullptr;
     }
 
-    return self_ins;
-}
-
-const char * yFileManager::GetFileContentPtr(void){
-
-    return content_buf.get();
-}
-
-uint64_t yFileManager::GetFileContentSize(void){
-
-    return content_buf_size;
-}
-
-bool yFileManager::InitFileManager(const std::string & file_name){
-
-    std::ifstream _in_file(file_name);
-
-    if (!_in_file.is_open()){
-
-        yLog::E("yFileManager", "Can't open input-c-file(%s)!!!\n", file_name.c_str());
-        return false;        
-    }
-
-    _in_file.seekg(0, _in_file.end);
-    uint64_t _content_size = _in_file.tellg();
-    _in_file.seekg(0, _in_file.beg);    
-
-    content_buf_size = _content_size + 1;        
-
-    if (nullptr == (content_buf = std::unique_ptr<char[]>(new (std::nothrow) char[content_buf_size]))) {
-
-        yLog::E("yFileManager", "Can't open input-c-file(%lu)!!!\n", content_buf_size);
-        return false;
-    }
-
-    // reset buf
-    ::memset(content_buf.get(), 0, sizeof(char)*(content_buf_size));
-
-    //read file-content
-    _in_file.read(content_buf.get(), _content_size);
-
-    _in_file.close();
-
-
-    ci.GetLexer().SetFileBuffer((char *)GetFileContentPtr(), (char *)GetFileContentPtr() + GetFileContentSize());
-    return true;
+    return _self_ins;
 }
 
 yFileEntry * yFileManager::GetFileEntry(const std::string & file_path)
@@ -119,8 +63,12 @@ yFileEntry * yFileManager::GetFileEntry(const std::string & file_path)
 
 yFileEntry * yFileManager::GetFileEntry(yFileID file_id)
 {
-    if (file_entry_vec.size() <= file_id.GetRawID())
+    if (file_entry_vec.size() <= file_id.GetRawID()){
+
+        yLog::E("yFileManager::GetFileEntry error, file_entry_vec.size[%d] not <= file_id.GetRawID[%d]\n", \
+            file_entry_vec.size(), file_id.GetRawID());
         return nullptr;
+    }
     
     return file_entry_vec[file_id.GetRawID()].get();
 }
@@ -149,6 +97,12 @@ yFileID yFileManager::GetFileID(yFileEntry * file_entry)
 
 bool yFileManager::open_and_cache_file(const std::string & file_path)
 {
+    //we has cached this file
+    if (0 < file_entry_map.count(file_path) && 0 < file_memory_buffer_map.count(file_path)){
+
+        return true;
+    }
+
     auto _file_entry = std::unique_ptr<yFileEntry>(new yFileEntry());
 
     _file_entry->file_path = file_path;
@@ -164,4 +118,10 @@ bool yFileManager::open_and_cache_file(const std::string & file_path)
     file_entry_vec.emplace_back(std::move(_file_entry));
 
     return true;
+}
+
+
+yFileID yFileManager::GetCachedMaxFileID(void)
+{
+    return yFileID(file_entry_vec.size() - 1);
 }

@@ -39,6 +39,8 @@ namespace yLib
 {
     namespace ycompiler
     {
+        class yCompilerInstance;
+
         /// This class handles loading and caching of source files into memory.
         ///
         /// This object owns the MemoryBuffer objects for all of the loaded
@@ -54,19 +56,21 @@ namespace yLib
         class __YLIB_CLASS_DECLSPEC__ ySourceManager
         {
             private:
-            yFileManager &file_mgr;
-
+            yCompilerInstance & ci;
+            yFileManager& file_mgr;
+            yFileID main_file_id;
             
             public:
+            ySourceManager(yCompilerInstance &CI);
 
             /// Get the source location for the given file:line:col triplet.
             ///
             /// If the source file is included multiple times, the source location will
             /// be based upon the first inclusion.
-            ySourceLocation translate_file_row_col(yFileEntry & file_entry, uint32_t row, uint32_t col);
-            ySourceLocation translate_row_col(yFileID file_id, uint32_t row, uint32_t col);
+            // ySourceLocation translate_file_row_col(yFileEntry & file_entry, uint32_t row, uint32_t col);
+            // ySourceLocation translate_row_col(yFileID file_id, uint32_t row, uint32_t col);
 
-            uint64_t get_file_offset(yFileEntry& file_entry, uint32_t row, uint32_t col);
+            // uint64_t get_file_offset(yFileEntry& file_entry, uint32_t row, uint32_t col);
 
 
             uint32_t get_col_num(yFileID file_id, uint32_t file_offset);
@@ -80,6 +84,14 @@ namespace yLib
 
 
             yFileManager& GetFileManager(void) {return file_mgr;}
+
+            /// Returns the FileID of the main source file.
+            yFileID getMainFileID() const { return main_file_id; }
+
+            /// Set the file ID for the main source file.
+            void setMainFileID(yFileID FID) {
+                main_file_id = FID;
+            }
         };
     }
 }

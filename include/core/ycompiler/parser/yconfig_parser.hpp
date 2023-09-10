@@ -46,6 +46,10 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include "core/ycompiler/basic/yidentifier.hpp"
 #include "core/ycompiler/sema/ysema.hpp"
 
+#include "core/ycompiler/ast/ystmt.hpp"
+#include "core/ycompiler/ast/yexpr.hpp"
+
+
 #include <unordered_map>
 #include <memory>
 #include <string>
@@ -171,32 +175,36 @@ namespace yLib
 
             yCompilerInstance & ci;
             
+            
             public:
+
+            //===--------------------------------------------------------------------===//
+            // Scope manipulation
+
+            /// ParseScope - Introduces a new scope for parsing. The kind of
+            /// scope is determined by ScopeFlags. Objects of this type should
+            /// be created on the stack to coincide with the position where the
+            /// parser enters the new scope, and this object's constructor will
+            /// create that new scope. Similarly, once the object is destroyed
+            /// the parser will exit the scope.
+            class yParseScope {
+            };
+
             yConfigParser()=delete;
             yConfigParser(yCompilerInstance & ci);
             ~yConfigParser();
 
-            bool ParseAST(void);
-            bool ParseDecl(void);
-            void * GetASTData();
-
-            bool ParserTranslationUnit(void);
-            bool ParserDeclareItem(yConfigDeclItem & item, std::string &item_name);
-            bool ParserDeclareList(yConfigDeclObject & cur_obj, std::string &obj_name);
-
-            bool ParserObject(yConfigDeclObject & cur_obj, std::string &obj_name);
-            bool ParserObjectList(void);
-
-
             void Initialize(void);
             bool ParseFirstTopLevelDecl(yDeclGroup &result);
             bool ParseTopLevelDecl(yDeclGroup &result, bool is_first_decl);
-            yDeclGroup ParseExternalDeclaration(void);
-            yDeclGroup ParseDeclarationOrObjectDefinition(void);
-            yDeclGroup ParseDeclOrObjectDefInternal(void);
-            yDeclGroup ParseDeclGroup(void);
+            yDeclGroup &ParseExternalDeclaration(void);
+            yDeclGroup &ParseDeclarationOrObjectDefinition(void);
+            yDeclGroup &ParseDeclOrObjectDefInternal(void);
+            yDeclGroup &ParseDeclGroup(void);
 
             yDecl* ParseObjectDefinition(yDeclarator &D);
+            yDecl*  ParseDeclarationAfterDeclaratorAndAttributes(yDeclarator &D);
+
             void ParseDeclarator(yDeclarator &D);
             /// A function that parses a variant of direct-declarator.
             typedef void (yConfigParser::*DirectDeclParseFunction)(yDeclarator&);
@@ -204,13 +212,48 @@ namespace yLib
                                DirectDeclParseFunction DirectDeclParser);
             void ParseDirectDeclarator(yDeclarator &D);
 
-            yDeclGroup ParseDeclaration(yDeclarator &D, ySourceLocation& decl_end_loc);
+
+            yDecl *ParseFunctionStatementBody(yDecl *Decl, yParseScope &BodyScope);
+            yStmt *ParseCompoundStatementBody(bool isStmtExpr = false);
+            void ParseCompoundStatementLeadingPragmas(){}
+
+            yStmt* ParseStatementOrDeclaration(std::vector<yStmt*> &Stmts);
+            yStmt* ParseStatementOrDeclarationAfterAttributes(std::vector<yStmt*> &Stmts);
+
+            // Expr that doesn't include commas.
+            yExpr* ParseAssignmentExpression();
+
+            yExpr* ParseInitializer(){
+
+                //In yConfig, we don't have ParseBraceInitializer()
+                return ParseAssignmentExpression();
+            }
+
+            yExpr* ParseCastExpression();
+            yExpr* ParseRHSOfBinaryExpression(yExpr* lhs);
+            
+            yExpr* ParseCXXBoolLiteral();
+            yExpr* ParseStringLiteralExpression();
 
             public:
             yDiagnosticBuilder Diag(ySourceLocation loc, unsigned diag_id);
             yDiagnosticBuilder Diag(const yToken &cur_token, unsigned diag_id);
             yDiagnosticBuilder Diag(unsigned diag_id) {
                 return Diag(cur_token, diag_id);
+            }
+
+
+
+            /// ConsumeToken - Consume the current 'peek token' and lex the next one.
+            /// This does not work with special tokens: string literals, code completion,
+            /// annotation tokens and balanced tokens must be handled using the specific
+            /// consume methods.
+            /// Returns the location of the consumed token.
+            ySourceLocation ConsumeToken() {
+                ySourceLocation _prev_tok_loc = cur_token.getLocation();
+                lexer.NextToken(cur_token);
+                lexer.TryNextToken(next_token);
+                return _prev_tok_loc;
             }
         };
     }

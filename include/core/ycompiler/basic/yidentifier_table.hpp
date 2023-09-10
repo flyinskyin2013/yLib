@@ -15,45 +15,52 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 /*
  * @Author: Sky
- * @Date: 2022-12-04 13:50:41
- * @LastEditTime: 2022-12-04 19:50:41
+ * @Date: 2023-07-09 13:50:41
+ * @LastEditTime: 2023-07-09 19:50:41
  * @LastEditors: Sky
  * @Description: 
- * @FilePath: \yLib\include\core\ycompiler\ast\ydecl_group.hpp
+ * @FilePath: \yLib\include\core\ycompiler\ast\yidentifier_table.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
 
-#ifndef __CORE_YCOMPILER_AST_YDECL_GROUP_HPP__
-#define __CORE_YCOMPILER_AST_YDECL_GROUP_HPP__
+#ifndef __CORE_YCOMPILER_AST_YIDENTIFIER_TABLE_HPP__
+#define __CORE_YCOMPILER_AST_YIDENTIFIER_TABLE_HPP__
 
 
 #include <memory>
-#include <vector>
+#include <cstdint>
+
+#include "core/ycompiler/basic/ytoken_kind.hpp"
 
 namespace yLib
 {
     namespace ycompiler
     {
-        class yASTContext;
-        class yDecl;
 
-        //maybe decl-vec
-        class yDeclGroup
-        {
-            private:
-            std::vector<yDecl*> decl_vec;
-            
-            yDeclGroup(std::vector<yDecl*> &&decl_vec):decl_vec(decl_vec){}
+        /// One of these records is kept for each identifier that
+        /// is lexed.  This contains information about whether the token was \#define'd,
+        /// is a language keyword, or if it is a front-end token of some sort (e.g. a
+        /// variable or function name).  The preprocessor keeps this information in a
+        /// set, and all tok::identifier tokens have a pointer to one of these.
+        /// It is aligned to 8 bytes because DeclarationName needs the lower 3 bits.
+        class yIdentifierInfo {
+            std::string identifier;
+            tok::yTokenKind token_kind;
             public:
-            yDeclGroup(){}
-            
-            bool add_decl(yDecl * decl){decl_vec.push_back(decl); return true;}
-            std::vector<yDecl*> & get_decl_vec(){return decl_vec;}
-            static yDeclGroup * Create(yASTContext & ast_ctx, yDecl ** decls, uint64_t num_decls);
-            static yDeclGroup * Create(yASTContext & ast_ctx, std::vector<yDecl*> &&decl_vec);
-        };
-        
-    } // namespace ycompiler
-} // namespace yLib
+            yIdentifierInfo(const std::string & name, tok::yTokenKind tok_kind):identifier(name), token_kind(tok_kind){}
+            std::string get_identifier_name(){return identifier;}
 
-#endif //__CORE_YCOMPILER_AST_YDECL_GROUP_HPP__
+        };
+
+        /// Implements an efficient mapping from strings to IdentifierInfo nodes.
+        ///
+        /// This has no other purpose, but this is an extremely performance-critical
+        /// piece of the code, as each occurrence of every identifier goes through
+        /// here when lexed.
+        class yIdentifierTable {
+            
+        };
+    }
+}
+
+#endif //__CORE_YCOMPILER_AST_YIDENTIFIER_TABLE_HPP__

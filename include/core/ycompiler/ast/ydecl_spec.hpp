@@ -28,6 +28,11 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #include <string>
 
+
+#include "core/ycompiler/basic/yspecifiers.hpp"
+#include "core/ycompiler/basic/yidentifier_table.hpp"
+#include "core/ycompiler/basic/ysource_location.hpp"
+
 namespace yLib
 {
     namespace ycompiler
@@ -62,6 +67,59 @@ namespace yLib
             RequiresExpr         // C++2a requires-expression.
         };
 
+
+        /// Describes the kind of unqualified-id parsed.
+        enum class yUnqualifiedIdKind {
+        /// An identifier.
+        IK_Identifier,
+        /// An overloaded operator name, e.g., operator+.
+        IK_OperatorFunctionId,
+        /// A conversion function name, e.g., operator int.
+        IK_ConversionFunctionId,
+        /// A user-defined literal name, e.g., operator "" _i.
+        IK_LiteralOperatorId,
+        /// A constructor name.
+        IK_ConstructorName,
+        /// A constructor named via a template-id.
+        IK_ConstructorTemplateId,
+        /// A destructor name.
+        IK_DestructorName,
+        /// A template-id, e.g., f<int>.
+        IK_TemplateId,
+        /// An implicit 'self' parameter
+        IK_ImplicitSelfParam,
+        /// A deduction-guide name (a template-name)
+        IK_DeductionGuideName
+        };
+
+        /// Represents a C++ unqualified-id that has been parsed.
+        class yUnqualifiedId {
+        private:
+            /// When Kind == IK_Identifier, the parsed identifier, or when
+            /// Kind == IK_UserLiteralId, the identifier suffix.
+            yIdentifierInfo *Identifier;
+
+            /// The location of the first token that describes this unqualified-id,
+            /// which will be the location of the identifier, "operator" keyword,
+            /// tilde (for a destructor), or the template name of a template-id.
+            ySourceLocation StartLocation;
+
+            /// The location of the last token that describes this unqualified-id.
+            ySourceLocation EndLocation;
+
+        public:
+            /// Describes the kind of unqualified-id parsed.
+            yUnqualifiedIdKind Kind;
+
+            void SetIdentifier(yIdentifierInfo *Id, ySourceLocation IdLoc) {
+                Kind = yUnqualifiedIdKind::IK_Identifier;
+                Identifier = Id;
+                StartLocation = EndLocation = IdLoc;
+            }
+            yIdentifierInfo * GetIdentifierInfo(){return Identifier;}
+            ySourceLocation GetStartLocation(){return StartLocation;}
+        };
+
         /// Information about one declarator, including the parsed type
         /// information and the identifier.
         ///
@@ -75,11 +133,102 @@ namespace yLib
         /// Instances of this class should be a transient object that lives on the
         /// stack, not objects that are allocated in large quantities on the heap.
         class yDeclarator {
+            private:
+            yUnqualifiedId Name;
+            ySourceRange Range;
+
+            bool is_obj_def = false;
+            bool valid = true;
             public:
             /// Where we are parsing this declarator.
             yDeclaratorContext declearator_ctx;
 
             yDeclarator(yDeclaratorContext declearator_ctx){this->declearator_ctx = declearator_ctx;}
+
+            /// Set the name of this declarator to be the given identifier.
+            void SetIdentifier(yIdentifierInfo *Id, ySourceLocation IdLoc) {
+                Name.SetIdentifier(Id, IdLoc);
+            }
+            yUnqualifiedId & GetIdentifier(void) {
+                return Name;
+            }
+
+            void SetRange(ySourceLocation b, ySourceLocation e){
+
+                Range.SetBegin(b);
+                Range.SetEnd(e);
+            }
+
+            void SetAsObjectDefinitionDeclarator(){is_obj_def = true;}
+            bool IsObjectDefinition(){return is_obj_def;}
+
+            void set_is_valid(bool is_valid){this->valid = is_valid;}
+            bool is_valid(){return valid;}
+        };
+
+
+        /// Captures information about "declaration specifiers".
+        ///
+        /// "Declaration specifiers" encompasses storage-class-specifiers,
+        /// type-specifiers, type-qualifiers, and function-specifiers.
+        class DeclSpec {
+        public:
+            /// storage-class-specifier
+            /// \note The order of these enumerators is important for diagnostics.
+            enum StorageClassSpecifier {
+                SCS_unspecified = 0,
+                SCS_typedef,
+                SCS_extern,
+                SCS_static,
+                SCS_auto,
+                SCS_register,
+                SCS_private_extern,
+                SCS_mutable
+            };
+
+            /// ParsedSpecifiers - Flags to query which specifiers were applied.  This is
+            /// returned by getParsedSpecifiers.
+            enum ParsedSpecifiers {
+                PQ_None                  = 0,
+                PQ_StorageClassSpecifier = 1,
+                PQ_TypeSpecifier         = 2,
+                PQ_TypeQualifier         = 4,
+                PQ_FunctionSpecifier     = 8
+                // FIXME: Attributes should be included here.
+            };
+
+            // storage-class-specifier
+            /*SCS*/unsigned StorageClassSpec : 3;
+            /*TSCS*/unsigned ThreadStorageClassSpec : 2;
+            unsigned SCS_extern_in_linkage_spec : 1;
+
+            // type-specifier
+            /*TypeSpecifierWidth*/ unsigned TypeSpecWidth : 2;
+            /*TSC*/unsigned TypeSpecComplex : 2;
+            /*TSS*/unsigned TypeSpecSign : 2;
+            /*TST*/unsigned TypeSpecType : 6;
+            unsigned TypeAltiVecVector : 1;
+            unsigned TypeAltiVecPixel : 1;
+            unsigned TypeAltiVecBool : 1;
+            unsigned TypeSpecOwned : 1;
+            unsigned TypeSpecPipe : 1;
+            unsigned TypeSpecSat : 1;
+            unsigned ConstrainedAuto : 1;
+
+            // type-qualifiers
+            unsigned TypeQualifiers : 5;  // Bitwise OR of TQ.
+
+            // function-specifier
+            unsigned FS_inline_specified : 1;
+            unsigned FS_forceinline_specified: 1;
+            unsigned FS_virtual_specified : 1;
+            unsigned FS_noreturn_specified : 1;
+
+            // friend-specifier
+            unsigned Friend_specified : 1;
+
+            // constexpr-specifier
+            unsigned ConstexprSpecifier : 2;
         };
     } // namespace ycompiler
 } // namespace yLib

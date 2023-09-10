@@ -28,6 +28,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #define __CORE_YCOMPILER_BASIC_YFRONTEND_ACTION_HPP__
 
 #include "core/yobject.hpp"
+#include "core/ycompiler/basic/ysource_location.hpp" // for yFileID
 
 namespace yLib
 {
@@ -48,6 +49,53 @@ namespace yLib
             yCompilerInstance & GetCompilerInstance(void);
             void SetCompilerInstance(yCompilerInstance * ins);
 
+            /// Callback before starting processing a single input, giving the
+            /// opportunity to modify the CompilerInvocation or do some other action
+            /// before BeginSourceFileAction is called.
+            ///
+            /// \return True on success; on failure BeginSourceFileAction(),
+            /// ExecuteAction() and EndSourceFileAction() will not be called.
+            virtual bool BeginInvocation(yCompilerInstance &CI) { return true; }
+            virtual bool EndInvocation(yCompilerInstance &CI) { return true; }
+
+            /// Callback at the start of processing a single input.
+            ///
+            /// \return True on success; on failure ExecutionAction() and
+            /// EndSourceFileAction() will not be called.
+            virtual bool BeginSourceFileAction(yCompilerInstance &CI) {
+                return true;
+            }
+
+            /// Callback at the end of processing a single input.
+            ///
+            /// This is guaranteed to only be called following a successful call to
+            /// BeginSourceFileAction (and BeginSourceFile).
+            virtual void EndSourceFileAction() {}
+
+            /// Prepare the action for processing the input file \p Input.
+            ///
+            /// This is run after the options and frontend have been initialized,
+            /// but prior to executing any per-file processing.
+            ///
+            /// \param CI - The compiler instance this action is being run from. The
+            /// action may store and use this object up until the matching EndSourceFile
+            /// action.
+            ///
+            /// \param Input - The input filename and kind. Some input kinds are handled
+            /// specially, for example AST inputs, since the AST file itself contains
+            /// several objects which would normally be owned by the
+            /// CompilerInstance. When processing AST input files, these objects should
+            /// generally not be initialized in the CompilerInstance -- they will
+            /// automatically be shared with the AST file in between
+            /// BeginSourceFile() and EndSourceFile().
+            ///
+            /// \return True on success; on failure the compilation of this file should
+            /// be aborted and neither Execute() nor EndSourceFile() should be called.
+            bool BeginSourceFile(yCompilerInstance &CI, yFileID fid);
+
+            /// Perform any per-file post processing, deallocate per-file
+            /// objects, and run statistics and output file cleanup code.
+            virtual void EndSourceFile();
         };
 
         class yDoNothingFrontendAction:public yFrontendAction{

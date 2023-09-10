@@ -47,6 +47,5 @@ yConfigParseAction::~yConfigParseAction(){
 
 bool yConfigParseAction::Execute(void){
 
-    ParseAST(*ci);
-    return true;
+    return ParseAST(*ci);
 }

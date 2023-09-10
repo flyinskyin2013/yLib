@@ -43,15 +43,18 @@ namespace yLib
         class __YLIB_CLASS_DECLSPEC__ yParser:
         YLIB_PUBLIC_INHERIT_YOBJECT
         {
+            protected:
+            bool meet_error = false;
+
             public:
-            yParser(){}
+            yParser():meet_error(false){}
             virtual ~yParser(){}
-            virtual bool ParseAST() = 0;
-            virtual bool ParseDecl() = 0;
-            virtual void * GetASTData() = 0;
             virtual void Initialize() = 0;
             virtual bool ParseFirstTopLevelDecl(yDeclGroup &result) = 0;
             virtual bool ParseTopLevelDecl(yDeclGroup &result, bool is_first_decl) = 0;
+
+            bool has_error(){return meet_error;}
+            void set_paser_error(bool error){meet_error = error;}
         };
     }
 }

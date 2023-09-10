@@ -34,18 +34,17 @@ yCompilerInstance::yCompilerInstance()
 :file_mgr(nullptr),
 lexer(nullptr),
 parser(nullptr),
-diagnostics_engine(nullptr),
+diagnostic_engine(nullptr),
 invocation_helper(nullptr)
 {
     std::unique_ptr<ycompiler::yFileManager> _file_mgr = std::unique_ptr<ycompiler::yFileManager>(ycompiler::yFileManager::GetInstance(*this));
-    std::unique_ptr<ycompiler::yLexer> _lexer = \
-        std::unique_ptr<ycompiler::yLexer>(new ycompiler::yLexer(*this));
+    //before we get lexer, we should init the file_mgr to yCompilerInstance
+    this->SetFileManager(std::move(_file_mgr));
+
+    std::unique_ptr<ycompiler::ySourceManager> _src_mgr = std::unique_ptr<ycompiler::ySourceManager>(new ycompiler::ySourceManager(*this));
+    this->SetSourceManager(std::move(_src_mgr));
 
     std::unique_ptr<ycompiler::yCompilerInvocationHelper> _invocation_helper = std::unique_ptr<ycompiler::yCompilerInvocationHelper>(new ycompiler::yCompilerInvocationHelper(*this));
-
-
-    this->SetFileManager(std::move(_file_mgr));
-    this->SetLexer(std::move(_lexer));
     this->SetCompilerInvocationHelper(std::move(_invocation_helper));
 }
 
@@ -55,7 +54,22 @@ yCompilerInstance::~yCompilerInstance(){
 
 bool yCompilerInstance::ExecuteAction(yFrontendAction &act){
 
-    return act.Execute();
+    yFileID id(0);
+
+    for ( ; id <= GetFileManger().GetCachedMaxFileID(); id++){
+
+        //we set fileid to source-manager
+        act.BeginSourceFile(*this, id);//parse one source file
+
+        if (!act.Execute()){
+
+            return false;
+        }
+
+        act.EndSourceFile();
+    }
+
+    return true;
 }
 
 void yCompilerInstance::SetFileManager(std::unique_ptr<yFileManager> && file_mgr){
@@ -102,12 +116,12 @@ yParser & yCompilerInstance::GetParser(void)
 
 void yCompilerInstance::SetDiagnosticsEngine(std::unique_ptr<yDiagnosticsEngine> && diagnostic_engine)
 {
-    this->diagnostics_engine = std::move(diagnostics_engine);
+    this->diagnostic_engine = std::move(diagnostic_engine);
 }
 
 yDiagnosticsEngine & yCompilerInstance::GetDiagnosticsEngine(void)
 {
-    return *diagnostics_engine.get();
+    return *diagnostic_engine.get();
 }
 
 void yCompilerInstance::SetCompilerInvocationHelper(std::unique_ptr<yCompilerInvocationHelper> && invocation_helper)
@@ -131,3 +145,4 @@ ySema & yCompilerInstance::GetSema(void)
 
     return *sema.get();
 }
+

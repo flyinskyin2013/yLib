@@ -31,11 +31,13 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #include "core/ycompiler/ast/ydecl_base.hpp"
 #include "core/ycompiler/ast/ydecl_group.hpp"
-
+#include "core/ycompiler/ast/yexpr.hpp"
+#include "core/ycompiler/ast/ydecl_spec.hpp"
 namespace yLib
 {
     namespace ycompiler
     {
+        class yStmt;
         class yASTContext;
 
         /// The top declaration context.
@@ -59,27 +61,54 @@ namespace yLib
         /// Note that not every NamedDecl is actually named (e.g., a struct might
         /// be anonymous), and not every name is an identifier.
         class yNamedDecl : public yDecl {
+            protected:
             /// The name of this declaration, which is typically a normal
             /// identifier but may also be a special kind of name (C++
             /// constructor, Objective-C selector, etc.)
-            std::string Name;
+            std::string decl_name;
 
             public:
-            std::string & getName() {return Name;}
+            std::string & getName() {return decl_name;}
         };
 
 
         /// Represent the declaration of a variable (in which case it is
         /// an lvalue) a function (in which case it is a function designator) or
         /// an enum constant.
-        class yValueDecl : public yNamedDecl {};
+        class yValueDecl : public yNamedDecl {
+
+        };
 
         /// Represents a ValueDecl that came out of a declarator.
         /// Contains type source information through TypeSourceInfo.
-        class yDeclaratorDecl : public yValueDecl {};
+        class yDeclaratorDecl : public yValueDecl {
+
+
+        };
 
         /// Represents a variable declaration or definition.
-        class yVarDecl : public yDeclaratorDecl{};
+        class yVarDecl : public yDeclaratorDecl{
+            yDeclarator D;
+            ySourceLocation loc;
+            typedef union __init_pointer__
+            {
+                /* data */
+                yStmt * stmt;
+            } InitType;
+            
+            InitType init;
+
+            yVarDecl(yDeclarator &D, ySourceLocation &loc):D(D), loc(loc){
+                decl_name = D.GetIdentifier().GetIdentifierInfo()->get_identifier_name();
+                set_decl_kind(yDecl::Kind::VarDecl);
+            }
+            public:
+            static yVarDecl * Create(yDeclarator &D, ySourceLocation &loc){
+                return new yVarDecl(D, loc);
+            }
+            void set_init(yExpr * expr){init.stmt = expr;}
+            InitType get_init(){return init;}
+        };
 
         /// Represents a declaration of a type.
         class yTypeDecl : public yNamedDecl {};
@@ -97,6 +126,39 @@ namespace yLib
         /// This decl will be marked invalid if *any* members are invalid.
         class yRecordDecl : public yTagDecl {
 
+        };
+
+
+        /// Represents a function declaration or definition.
+        ///
+        /// Since a given function can be declared several times in a program,
+        /// there may be several FunctionDecls that correspond to that
+        /// function. Only one of those FunctionDecls will be found when
+        /// traversing the list of declarations in the context of the
+        /// FunctionDecl (e.g., the translation unit); this FunctionDecl
+        /// contains all of the information known about the function. Other,
+        /// previous declarations of the function are available via the
+        /// getPreviousDecl() chain.
+        class yObjectDecl : public yDeclaratorDecl,
+                            public yDeclContext{
+            std::unique_ptr<yStmt> body;
+            yUnqualifiedId * UnqualifiedId;
+            
+            yObjectDecl(yUnqualifiedId * Name):UnqualifiedId(Name){
+                this->decl_name = Name->GetIdentifierInfo()->get_identifier_name();
+                set_decl_kind(yDecl::Object);
+            }
+            public:
+            void set_body(yStmt * obj_body){
+                body = std::unique_ptr<yStmt>(obj_body);
+            } 
+
+            yStmt * get_body(void){return body.get();}
+
+            static yObjectDecl* Create(yUnqualifiedId * Name){
+
+                return new yObjectDecl(Name);
+            }                           
         };
 
     } // namespace ycompiler

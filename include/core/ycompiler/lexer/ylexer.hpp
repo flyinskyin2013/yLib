@@ -42,16 +42,17 @@ namespace yLib
             const char * buf_start;
             const char * buf_end;
             const char * buf_cur_ptr;
-            yFileManager * file_mgr;
+            yFileManager & file_mgr;
             yCompilerInstance & ci;
             yFileID file_id;
             
+
             public:
             yLexer() = delete;
             yLexer(yCompilerInstance & ci);
             ~yLexer();
             bool SetFileBuffer(char * buf_start, char * buf_end);
-            yFileManager * GetFileManager(void){return file_mgr;}
+            yFileManager * GetFileManager(void){return &file_mgr;}
             bool BackToPos(uint64_t pos);
 
             bool GetNextChar(char &c);

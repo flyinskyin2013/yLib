@@ -28,8 +28,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #ifndef __CORE_YCOMPILER_BASIC_YCOMPILER_INSTANCE_HPP__
 #define __CORE_YCOMPILER_BASIC_YCOMPILER_INSTANCE_HPP__
 
-#include "yfrontend_action.hpp"
-#include "ycompiler_invocation_helper.hpp"
+#include "core/ycompiler/frontend/yfrontend_action.hpp"
+#include "core/ycompiler/frontend/ycompiler_invocation_helper.hpp"
 
 
 #include "core/ycompiler/basic/yfile_manager.hpp"
@@ -60,11 +60,13 @@ namespace yLib
             std::unique_ptr<ySourceManager> src_mgr;
             std::unique_ptr<yLexer> lexer;
             std::unique_ptr<yParser> parser;
-            std::unique_ptr<yDiagnosticsEngine> diagnostics_engine;
+            std::unique_ptr<yDiagnosticsEngine> diagnostic_engine;
             std::unique_ptr<yCompilerInvocationHelper> invocation_helper;
             //yASTContext, yASTConsumer in ySema
             std::unique_ptr<ySema> sema;
             // std::unique_ptr<yPreprocessor> preprocessor;
+
+            
 
             public:
             yCompilerInstance();
@@ -91,8 +93,6 @@ namespace yLib
 
             void SetSema(std::unique_ptr<ySema> && sema);
             ySema & GetSema(void);
-
-
         };
     } // namespace ycompiler
 } // namespace yLib

@@ -12,6 +12,8 @@ v0.2.0
     1 New yConfig implemented by new ycompiler.
     2 Disable libidn2 for libcurl.
     3 Import ctest.
+    4 Fix all warnnings.
+    5 New System(Android) support for BuildMatrix.
 
 v0.1.0
 ----------

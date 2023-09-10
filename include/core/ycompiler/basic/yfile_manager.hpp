@@ -56,13 +56,6 @@ namespace yLib
         YLIB_PUBLIC_INHERIT_YOBJECT
         {
             private:
-            std::unique_ptr<char[]> content_buf;
-
-            // the size is file-content + 1
-            uint64_t content_buf_size = 0;  
-
-            static yFileManager * self_ins;
-
             yCompilerInstance & ci;
 
             static int32_t reference_count;
@@ -90,6 +83,8 @@ namespace yLib
             yMemoryBuffer * GetFileMemroyBuffer(const std::string & file_path);
 
             yFileID GetFileID(yFileEntry * file_entry);
+
+            yFileID GetCachedMaxFileID(void);
 
             bool open_and_cache_file(const std::string & file_path);
             

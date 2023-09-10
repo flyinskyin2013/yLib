@@ -29,25 +29,13 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #include "core/yobject.hpp"
 #include "core/ycompiler/basic/ysource_location.hpp"
+#include "core/ycompiler/basic/yidentifier_table.hpp"
 
 namespace yLib
 {
     namespace ycompiler
     {
-        namespace tok{
 
-            enum yTokenKind : uint16_t {
-
-                #define TOK(X) X,
-                #include "ytoken_kinds.def"
-                NUM_TOKENS
-                #undef TOK
-            };
-            
-            /// The name of a token will be an internal name (such as "l_square")
-            /// and should not be used as part of diagnostic messages.
-            const char *getTokenName(yTokenKind Kind);  
-        }
  
 
         class __YLIB_CLASS_DECLSPEC__ yToken:
@@ -56,6 +44,20 @@ namespace yLib
             public:
             tok::yTokenKind kind;
             uint64_t token_data_len;
+            /// PtrData - This is a union of four different pointer types, which depends
+            /// on what type of token this is:
+            ///  Identifiers, keywords, etc:
+            ///    This is an IdentifierInfo*, which contains the uniqued identifier
+            ///    spelling.
+            ///  Literals:  isLiteral() returns true.
+            ///    This is a pointer to the start of the token in a text buffer, which
+            ///    may be dirty (have trigraphs / escaped newlines).
+            ///  Annotations (resolved type names, C++ scopes, etc): isAnnotation().
+            ///    This is a pointer to sema-specific data for the annotation token.
+            ///  Eof:
+            //     This is a pointer to a Decl.
+            ///  Other:
+            ///    This is null.
             void *token_data;
 
             uint64_t loc; 
@@ -81,6 +83,26 @@ namespace yLib
             /// offset in the current file.
             ySourceLocation getLocation() const {
                 return ySourceLocation(file_id, offset);
+            }
+
+            yIdentifierInfo *GetIdentifierInfo(){return (yIdentifierInfo *)token_data;}
+
+            /// Return true if this is a C or C++ string-literal (or
+            /// C++11 user-defined-string-literal) token.
+            bool is_string_literal(){
+
+                return  kind == tok::string_literal || \
+                        kind == tok::wide_string_literal || kind == tok::utf8_string_literal || \
+                        kind == tok::utf16_string_literal || kind == tok::utf32_string_literal;
+            }
+            
+            /// Return true if this is a "literal" kind, like a numeric
+            /// constant, string, etc.
+            bool is_literal(){
+                return  kind == tok::numeric_constant || kind == tok::char_constant ||
+                        kind == tok::wide_char_constant || kind == tok::utf8_char_constant ||
+                        kind == tok::utf16_char_constant || kind == tok::utf32_char_constant ||
+                        is_string_literal() || kind == tok::header_name;                
             }
         };
     } // namespace ycompiler

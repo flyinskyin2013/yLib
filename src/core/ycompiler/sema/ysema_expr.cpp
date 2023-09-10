@@ -15,45 +15,48 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 /*
  * @Author: Sky
- * @Date: 2022-12-04 13:50:41
- * @LastEditTime: 2022-12-04 19:50:41
+ * @Date: 2023-08-27 14:27:50
+ * @LastEditTime: 2023-08-27 18:59:57
  * @LastEditors: Sky
  * @Description: 
- * @FilePath: \yLib\include\core\ycompiler\ast\ydecl_group.hpp
+ * @FilePath: \yLib\include\core\ycompiler\sema\ysema_expr.cpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
 
-#ifndef __CORE_YCOMPILER_AST_YDECL_GROUP_HPP__
-#define __CORE_YCOMPILER_AST_YDECL_GROUP_HPP__
+#include "core/ycompiler/sema/ysema.hpp"
 
+using namespace yLib::ycompiler;
+using namespace yLib;
 
-#include <memory>
-#include <vector>
+static inline yUnaryOperatorKind ConvertTokenKindToUnaryOpcode(tok::yTokenKind Kind) {
 
-namespace yLib
+  yUnaryOperatorKind Opc;
+  switch (Kind) {
+
+    case tok::plus:         Opc = UO_Plus; break;
+    case tok::minus:        Opc = UO_Minus; break;
+    default: //Unknown unary op!
+        break;
+  }
+  return Opc;
+}
+
+yExpr * ySema::CreateBuiltinUnaryOp(ySourceLocation OpLoc,
+                                    yUnaryOperatorKind Opc,
+                                    yExpr *InputExpr)
 {
-    namespace ycompiler
-    {
-        class yASTContext;
-        class yDecl;
+    return yUnaryOperator::Create(OpLoc, Opc, InputExpr);
+}
 
-        //maybe decl-vec
-        class yDeclGroup
-        {
-            private:
-            std::vector<yDecl*> decl_vec;
-            
-            yDeclGroup(std::vector<yDecl*> &&decl_vec):decl_vec(decl_vec){}
-            public:
-            yDeclGroup(){}
-            
-            bool add_decl(yDecl * decl){decl_vec.push_back(decl); return true;}
-            std::vector<yDecl*> & get_decl_vec(){return decl_vec;}
-            static yDeclGroup * Create(yASTContext & ast_ctx, yDecl ** decls, uint64_t num_decls);
-            static yDeclGroup * Create(yASTContext & ast_ctx, std::vector<yDecl*> &&decl_vec);
-        };
-        
-    } // namespace ycompiler
-} // namespace yLib
+yExpr * ySema::BuildUnaryOp(ySourceLocation OpLoc,
+                        yUnaryOperatorKind Opc, yExpr *Input)
+{
+    return CreateBuiltinUnaryOp(OpLoc, Opc, Input);
+}
 
-#endif //__CORE_YCOMPILER_AST_YDECL_GROUP_HPP__
+yExpr * ySema::ActOnUnaryOp(ySourceLocation OpLoc,
+                        tok::yTokenKind Op, yExpr *Input)
+{
+    return BuildUnaryOp(OpLoc, ConvertTokenKindToUnaryOpcode(Op), Input);
+}
+

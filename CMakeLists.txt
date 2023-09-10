@@ -129,7 +129,7 @@ endif()
 #----------------------------choose build module-----------------------------------------
 
 
-# On windows platefrom, now, Only support yLog and ySharedMemory
+# On windows platefrom
 if(WIN32)
 
     # UtilityGroup
@@ -144,9 +144,7 @@ if(WIN32)
     set(BUILD_MODULE_YSHAREDMEMORY "ON")
 
     # NetworkGroup
-    set(BUILD_MODULE_YTCPSERVER "OFF")
     set(BUILD_MODULE_YTCPSOCKET "OFF")
-    set(BUILD_MODULE_YUDPSERVER "OFF")
     set(BUILD_MODULE_YUDPSOCKET "OFF")
 
     #yLib Framework

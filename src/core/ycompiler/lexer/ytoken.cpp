@@ -37,7 +37,7 @@ using namespace yLib;
 static const char * const TokNames[] = {
 
     #define TOK(X) #X,
-    #include "core/ycompiler/lexer/ytoken_kinds.def"
+    #include "core/ycompiler/basic/ytoken_kinds.def"
     nullptr
     #undef TOK
 };

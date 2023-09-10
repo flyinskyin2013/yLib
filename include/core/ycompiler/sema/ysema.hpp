@@ -29,10 +29,18 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #include "core/ycompiler/ast/yast_context.hpp"
 #include "core/ycompiler/ast/yast_consumer.hpp"
+#include "core/ycompiler/ast/yoperation_kinds.hpp"
 
 #include "core/ycompiler/lexer/ypreprocessor.hpp"
 
 #include "core/ycompiler/parser/yraii_objects_for_parser.hpp"
+
+#include "core/ycompiler/ast/ydeclaration_name.hpp"
+#include "core/ycompiler/lexer/yliteral_support.hpp"
+
+#include "core/ycompiler/ast/ystmt.hpp"
+#include "core/ycompiler/ast/yexpr.hpp"
+#include "core/ycompiler/ast/ydecl.hpp"
 
 #include <cstdint>
 
@@ -59,23 +67,16 @@ namespace yLib
             ySema(yCompilerInstance & ci);
             ~ySema(){}
 
-            /**
-             *  @fn      int8_t ParseNumberConstantExpression(uint64_t & num)
-             *  @brief   parse num-constant-expr
-             *  @param   num the num parsed.
-             *  @return the num type or ret-status
-             *  @retval -1 error
-             *  @retval 1 int-constant
-             *  @retval 2 double-constant
-             * 
-             */
-            int8_t ParseNumberConstantExpression(uint64_t & num);
-
-
             yPreprocessor &GetPreprocessor();
             yASTContext &GetASTContext();
             yASTConsumer &GetASTConsumer();
+            void SetASTConsumer(yASTConsumer &ast_consumer){
+                this->ast_consumer = std::unique_ptr<yASTConsumer>(new yASTConsumer(ast_consumer));
+            }
 
+            //TranslationUnit
+            void ActOnStartOfTranslationUnit();
+            void ActOnEndOfTranslationUnit();
 
 
             /// Called before parsing a function declarator belonging to a function
@@ -85,6 +86,55 @@ namespace yLib
             /// Called after parsing a function declarator belonging to a function
             /// declaration.
             void ActOnFinishFunctionDeclarationDeclarator(yDeclarator &D);
+
+            yDecl *ActOnFinishObjectBody(yDecl *obj_decl, yStmt *obj_body);
+            yDecl *ActOnFinishObjectBody(yDecl *obj_decl, yStmt *obj_body, bool IsInstantiation){return nullptr;}
+
+            void ActOnAfterCompoundStatementLeadingPragmas(){}
+            yStmt* ActOnCompoundStmt(std::vector<yStmt*> &&stmt_vec);
+            yStmt* ActOnAttributedStmt(yStmt *SubStmt){return SubStmt;}
+
+            //We get a decl by yDeclarator
+            yDecl *ActOnDeclarator(yDeclarator &D);
+            /// Retrieves the declaration name from a parsed unqualified-id.
+            yDeclarationNameInfo GetNameFromUnqualifiedId(yUnqualifiedId &Name);
+
+            /// GetNameForDeclarator - Determine the full declaration name for the
+            /// given Declarator.
+            yDeclarationNameInfo GetNameForDeclarator(yDeclarator &D);
+            yNamedDecl *HandleDeclarator(yDeclarator &D);
+            yNamedDecl *ActOnVariableDeclarator(yDeclarator &D);
+            void AddInitializerToDecl(yDecl *decl, yExpr *init, bool DirectInit);
+
+            void FinalizeDeclaration(yDecl *D);
+            yDeclGroup &FinalizeDeclaratorGroup(yDecl *decl);
+
+
+            yExpr * ActOnNumericConstant(yToken & tok);
+            static yExpr *BuildFloatingLiteral(ySema &S, yNumericLiteralParser &Literal, ySourceLocation loc);
+
+            /// ActOnStringLiteral - The specified tokens were lexed as pasted string
+            /// fragments (e.g. "foo" "bar" L"baz").
+            yExpr *ActOnStringLiteral(std::vector<yToken> &str_tok_vec);
+
+            /// ActOnCXXBoolLiteral - Parse {true,false} literals.
+            yExpr * ActOnCXXBoolLiteral(yToken & BoolToks);
+
+            yDecl *ActOnStartOfFunctionDef(yDeclarator &D);
+
+            yExpr * BuildUnaryOp(ySourceLocation OpLoc,
+                                    yUnaryOperatorKind Opc, yExpr *Input);
+            yExpr * ActOnUnaryOp(ySourceLocation OpLoc,
+                                    tok::yTokenKind Op, yExpr *Input);
+            yExpr * CreateBuiltinUnaryOp(ySourceLocation OpLoc,
+                                                yUnaryOperatorKind Opc,
+                                                yExpr *InputExpr);
+
+
+            yStmt * ActOnDeclStmt(yDecl *decl, ySourceLocation loc){
+
+                return new yDeclStmt(decl, loc);
+            }
         };
     }
 }

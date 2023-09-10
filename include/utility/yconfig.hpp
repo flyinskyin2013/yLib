@@ -306,6 +306,7 @@ namespace yLib{
          */      
         int8_t AddNode(const std::string & pos, const std::string & name, yValue::yValueType type, const yConfigValue &value = yConfigValue());
 
+        void * get_compiler_ins(){return compiler_instance.get();}
         private:
         std::unique_ptr<void, void(*)(void*)> compiler_instance;
     };

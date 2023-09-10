@@ -25,6 +25,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 
 #include "core/ycompiler/frontend/yfrontend_action.hpp"
+#include "core/ycompiler/frontend/ycompiler_instance.hpp"
+
 #include "core/ylog.hpp"
 
 using namespace yLib::ycompiler;
@@ -46,4 +48,17 @@ yCompilerInstance & yFrontendAction::GetCompilerInstance(void){
 void yFrontendAction::SetCompilerInstance(yCompilerInstance * ins){
 
     ci = ins;
+}
+
+bool yFrontendAction::BeginSourceFile(yCompilerInstance &CI, yFileID fid)
+{
+    CI.GetSourceManager().setMainFileID(fid);
+    return true;
+}
+
+/// Perform any per-file post processing, deallocate per-file
+/// objects, and run statistics and output file cleanup code.
+void yFrontendAction::EndSourceFile()
+{
+
 }

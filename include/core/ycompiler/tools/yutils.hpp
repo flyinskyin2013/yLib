@@ -41,7 +41,8 @@ namespace yLib
         /// the file is parsed.  This inserts the parsed decls into the translation unit
         /// held by Ctx.
         ///
-        void ParseAST(yCompilerInstance &ci);
+        bool ParseAST(yCompilerInstance &ci);
+
 
         std::unique_ptr<yFrontendAction> CreateFrontendAction(yCompilerInstance & ci);
     } // namespace ycompiler

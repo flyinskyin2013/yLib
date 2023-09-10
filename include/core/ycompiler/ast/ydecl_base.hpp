@@ -28,6 +28,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 
 #include <memory>
+
+#include "core/ycompiler/basic/ysource_location.hpp"
+
 namespace yLib
 {
     namespace ycompiler
@@ -41,17 +44,31 @@ namespace yLib
         /// asserted in DeclBase.cpp.
         class yDecl{
             public:
-            /// Lists the kind of concrete classes of Decl.
-            enum Kind {
-            #define DECL(DERIVED, BASE) DERIVED,
-            #define ABSTRACT_DECL(DECL)
-            #define DECL_RANGE(BASE, START, END) \
-                    first##BASE = START, last##BASE = END,
-            #define LAST_DECL_RANGE(BASE, START, END) \
-                    first##BASE = START, last##BASE = END
-            #include "decl_nodes_kinds.def"
-            };
+                /// Lists the kind of concrete classes of Decl.
+                enum Kind {
+                #define DECL(DERIVED, BASE) DERIVED,
+                #define ABSTRACT_DECL(DECL)
+                #define DECL_RANGE(BASE, START, END) \
+                        first##BASE = START, last##BASE = END,
+                #define LAST_DECL_RANGE(BASE, START, END) \
+                        first##BASE = START, last##BASE = END
+                #include "decl_nodes_kinds.def"
+                };
 
+            private:
+
+            protected:
+            /// Loc - The location of this decl.
+            ySourceLocation loc;
+            yDecl::Kind kind;
+
+            public:
+            
+            void set_decl_kind(yDecl::Kind kind){this->kind = kind;}
+            yDecl::Kind get_decl_kind(void) {return kind;}
+
+            void set_decl_loc(ySourceLocation loc){this->loc = loc;}
+            ySourceLocation get_decl_loc(void){return loc;}
             
         };
 

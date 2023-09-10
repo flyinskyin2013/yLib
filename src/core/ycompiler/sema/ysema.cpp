@@ -26,6 +26,12 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include "core/ycompiler/parser/yconfig_parser.hpp"
 #include "core/ycompiler/basic/ydiagnostics.hpp"
 #include "core/ycompiler/frontend/ycompiler_instance.hpp"
+#include "core/ycompiler/ast/ydeclaration_name.hpp"
+
+#include "core/ycompiler/ast/ydecl_spec.hpp"
+#include "core/ycompiler/ast/ydecl.hpp"
+#include "core/ycompiler/ast/ydecl_base.hpp"
+
 
 #include "core/ylog.hpp"
 
@@ -38,7 +44,13 @@ ySema::ySema(yCompilerInstance & ci)
 {
     preprocessor = std::unique_ptr<yPreprocessor>(new yPreprocessor());
     ast_ctx = std::unique_ptr<yASTContext>(new yASTContext());
-    ast_consumer = std::unique_ptr<yASTConsumer>(new yASTConsumer());
+
+    if (ActionKind::PARSE_YCONFIG_AST == ci.GetCompilerInvocationHelper().getFrontendOpts().act_type ){
+
+        ast_consumer = std::unique_ptr<yASTConsumer>(new yConfigASTReader());
+    }
+    else
+        ast_consumer = std::unique_ptr<yASTConsumer>(new yASTConsumer());
 }
 
 yPreprocessor &ySema::GetPreprocessor()
@@ -50,65 +62,15 @@ yASTContext &ySema::GetASTContext()
 yASTConsumer &ySema::GetASTConsumer()
 {return *(ast_consumer.get());}
 
-int8_t ySema::ParseNumberConstantExpression(uint64_t & num)
-{
-    // process sign
-    int8_t _sign = 1;
-    yConfigParser *parser = (yConfigParser*)&ci.GetParser();
-    if (parser->cur_token.kind == tok::plus){
+/// This is called before the very first declaration in the translation unit
+/// is parsed. Note that the ASTContext may have already injected some
+/// declarations.
+void ySema::ActOnStartOfTranslationUnit(){}
 
-        parser->lexer.NextToken(parser->cur_token);
-    }
-    else if (parser->cur_token.kind == tok::minus){
-
-        parser->lexer.NextToken(parser->cur_token);
-        _sign = -1;
-    }
-
-    if (parser->cur_token.kind == tok::numeric_constant){
-
-        std::string _str((char *)parser->cur_token.token_data, parser->cur_token.token_data_len);
-        if (_str.find('.') == _str.npos){//int
-
-            char * _end_char = nullptr;
-            int64_t _ret = std::strtoll(_str.c_str(), &_end_char, 0) * _sign;
-            if (*_end_char != '\0'){
-
-                LOGE("ySema")<<"parse a numeric constant(int64_t) failed.";
-                return -1;
-            }
-
-            ::memcpy((char*)&num, (char *)&_ret, sizeof(int64_t));
-            return 1;
-            
-        }
-        else{//float
-
-            char * _end_char = nullptr;
-            double _ret = std::strtod(_str.c_str(), &_end_char) * _sign;
-            if (*_end_char != '\0'){
-
-                LOGE("ySema")<<"parse a numeric constant(double) failed.";
-                return -1;
-            }
-
-            ::memcpy((char*)&num, (char *)&_ret, sizeof(double));
-            return 2;
-            
-        }
-
-        
-    }
-    else{
-
-        ci.GetDiagnosticsEngine().DiagReport(parser->cur_token, diag::ysema_error_expect_numconstant);
-        return -1;
-    }
-    
-
-    return -1;
-
-}
+/// ActOnEndOfTranslationUnit - This is called at the very end of the
+/// translation unit when EOF is reached and all but the top-level scope is
+/// popped.
+void ySema::ActOnEndOfTranslationUnit(){}
 
 
 /// Called before parsing a function declarator belonging to a function
@@ -123,4 +85,164 @@ void ySema::ActOnStartFunctionDeclarationDeclarator(yDeclarator &D)
 void ySema::ActOnFinishFunctionDeclarationDeclarator(yDeclarator &D)
 {
 
+}
+
+
+yNamedDecl *ySema::ActOnVariableDeclarator(yDeclarator &D)
+{
+    yDeclarationNameInfo _name_info = GetNameForDeclarator(D);
+    // yDeclarationName _name = _name_info.get_name();
+
+    // yIdentifierInfo *_indentifier_info = _name.GetAsIdentifierInfo();
+
+    ySourceLocation _start_loc = _name_info.get_nameloc();
+    yVarDecl *NewVD = yVarDecl::Create(D, _start_loc);
+
+
+    return NewVD;
+}
+/// Retrieves the declaration name from a parsed unqualified-id.
+yDeclarationNameInfo
+ySema::GetNameFromUnqualifiedId(yUnqualifiedId &Name) {
+
+    yDeclarationNameInfo _name_info;
+
+    _name_info.set_nameloc(Name.GetStartLocation());
+
+    if (Name.Kind == yUnqualifiedIdKind::IK_Identifier){
+        
+        yDeclarationName _name(Name.GetIdentifierInfo());
+        _name_info.set_name(_name);
+    }
+
+    return _name_info;
+}
+/// GetNameForDeclarator - Determine the full declaration name for the
+/// given Declarator.
+yDeclarationNameInfo ySema::GetNameForDeclarator(yDeclarator &D) {
+  return GetNameFromUnqualifiedId(D.GetIdentifier());
+}
+
+yNamedDecl *ySema::HandleDeclarator(yDeclarator &D)
+{
+    // yDeclarationNameInfo _name_info = GetNameForDeclarator(D);
+    // yDeclarationName _name = _name_info.get_name();
+    
+    yNamedDecl * _name_decl = ActOnVariableDeclarator(D);
+
+    return _name_decl;
+}
+
+yDecl *ySema::ActOnDeclarator(yDeclarator &D)
+{
+    yDecl *Dcl = HandleDeclarator(D);
+
+    return Dcl;
+}
+
+
+yDeclGroup &ySema::FinalizeDeclaratorGroup(yDecl *decl)
+{
+    std::vector<yDecl*> _decl_vec;
+
+    if (nullptr != decl)
+        _decl_vec.push_back(decl);
+    
+    yASTContext _ctx;
+
+    return *yDeclGroup::Create(_ctx, std::move(_decl_vec));
+}
+
+void ySema::AddInitializerToDecl(yDecl *decl, yExpr *init, bool DirectInit)
+{
+    yVarDecl * _decl = (yVarDecl*)decl;
+
+    _decl->set_init(init);
+}
+
+/// FinalizeDeclaration - called by ParseDeclarationAfterDeclarator to perform
+/// any semantic actions necessary after any initializer has been attached.
+void ySema::FinalizeDeclaration(yDecl *D)
+{
+    
+}
+
+
+yExpr * ySema::ActOnNumericConstant(yToken & tok)
+{
+
+    yExpr * _ret = nullptr;
+
+    yNumericLiteralParser _numeric_literal(tok);
+
+    if (_numeric_literal.isIntegerLiteral()){
+
+        int64_t _int64_val = 0;
+
+        _numeric_literal.GetIntegerValue(_int64_val);
+
+        _ret = yIntegerLiteral::Create(_int64_val, tok.getLocation());
+    }
+
+    if (_numeric_literal.isFloatingLiteral()){
+
+        _ret = BuildFloatingLiteral(*this, _numeric_literal, tok.getLocation());
+    }
+    else{
+
+        //unkown NumericLiteral
+    }
+
+    return _ret;
+}
+
+yExpr *ySema::BuildFloatingLiteral(ySema &S, yNumericLiteralParser &Literal, ySourceLocation loc)
+{
+    double _val = 0.f;
+
+    Literal.GetFloatValue(_val);
+
+    return yFloatingLiteral::Create(_val, loc);
+}
+
+
+yStmt* ySema::ActOnCompoundStmt(std::vector<yStmt*> &&stmt_vec)
+{
+    return yCompoundStmt::Create(std::move(stmt_vec));
+}
+
+yDecl *ySema::ActOnFinishObjectBody(yDecl *obj_decl, yStmt *obj_body)
+{
+    yObjectDecl * _obj_decl = (yObjectDecl *)obj_decl;
+
+    _obj_decl->set_body(obj_body);
+
+    return _obj_decl;
+}
+
+yDecl *ySema::ActOnStartOfFunctionDef(yDeclarator &D)
+{
+    
+    return (yDecl *)yObjectDecl::Create(&D.GetIdentifier());
+}
+
+yExpr *ySema::ActOnStringLiteral(std::vector<yToken> &str_tok_vec)
+{
+    ySourceLocation _loc = str_tok_vec[0].getLocation();
+
+    std::string _str = "";
+    for (auto _tok:str_tok_vec){
+
+        _str += std::string((char *)_tok.token_data + 1, _tok.token_data_len - 2);
+    }
+
+    return yStringLiteral::Create(_str, _loc);
+}
+
+
+yExpr * ySema::ActOnCXXBoolLiteral(yToken & BoolToks)
+{
+    bool _val = BoolToks.kind == tok::kw_true?true:false;
+
+    return yCXXBoolLiteralExpr::Create(_val, BoolToks.getLocation());
 }

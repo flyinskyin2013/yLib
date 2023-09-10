@@ -25,13 +25,13 @@ TEST_CASE( "Test yUdpServer apis" , "[yUdpServer_Apis]" ){
         ::memset(read_buffer, 0, 100);
         REQUIRE(::strlen("I am client0") == udp_server.recvfrom(read_buffer, 100, client_ip, client_port));
 
-        yLib::yLog::I("udpserver recv: %s", read_buffer);
+        yLib::yLog::I("udpserver recv: %s\n", read_buffer);
         REQUIRE_THAT( read_buffer, Catch::Equals ( "I am client0" ));//verify client0 sendto
 
 
         std::string msg_base = "server: your ip " + client_ip + " your port " + std::to_string(client_port);
         std::string msg_base_compare = "";
-        yLib::yLog::I("udpserver recv: %s", msg_base.c_str());
+        yLib::yLog::I("udpserver recv: %s\n", msg_base.c_str());
         msg_base_compare = "server: your ip " + std::string("127.0.0.1") + " your port " + std::to_string(12345);
         REQUIRE_THAT( msg_base, Catch::Equals ( msg_base_compare ));//verify client0 sendto's ip and port
 
@@ -42,11 +42,11 @@ TEST_CASE( "Test yUdpServer apis" , "[yUdpServer_Apis]" ){
 
         ::memset(read_buffer, 0, 100);
         REQUIRE(::strlen("I am client1") == udp_server.recvfrom(read_buffer, 100, client_ip, client_port));
-        yLib::yLog::I("udpserver recv: %s", read_buffer);
+        yLib::yLog::I("udpserver recv: %s\n", read_buffer);
         REQUIRE_THAT( read_buffer, Catch::Equals ( "I am client1" ));//verify client1 sendto
 
         msg_base = "server: your ip " + client_ip + " your port " + std::to_string(client_port);
-        yLib::yLog::I("udpserver recv: %s", msg_base.c_str());
+        yLib::yLog::I("udpserver recv: %s\n", msg_base.c_str());
         msg_base_compare = "server: your ip " + std::string("127.0.0.1") + " your port " + std::to_string(12346);
         REQUIRE_THAT( msg_base, Catch::Equals ( msg_base_compare ));//verify client1 sendto's ip and port
 
@@ -56,11 +56,11 @@ TEST_CASE( "Test yUdpServer apis" , "[yUdpServer_Apis]" ){
         //===================================================================
         
         REQUIRE(::strlen("I am client2") == udp_server.recvfrom(read_buffer, 100, client_ip, client_port));
-        yLib::yLog::I("udpserver recv: %s", read_buffer);
+        yLib::yLog::I("udpserver recv: %s\n", read_buffer);
         REQUIRE_THAT( read_buffer, Catch::Equals ( "I am client2" ));//verify client2 sendto
 
         msg_base = "server: your ip " + client_ip + " your port " + std::to_string(client_port);
-        yLib::yLog::I("udpserver recv: %s", msg_base.c_str());
+        yLib::yLog::I("udpserver recv: %s\n", msg_base.c_str());
 
         //we can't verify client2's port . It's random.
         REQUIRE_THAT("127.0.0.1", Catch::Equals (client_ip));

@@ -45,7 +45,16 @@ namespace yLib
             yFileID(){}
             //rhs=right hand side
             bool operator==(const yFileID &rhs) const { return ID == rhs.ID; }
-            bool operator!=(const yFileID &rhs) const { return ID != rhs.ID; }      
+            bool operator!=(const yFileID &rhs) const { return ID != rhs.ID; }
+            bool operator>(const yFileID &rhs) const { return ID > rhs.ID; }   
+            bool operator>=(const yFileID &rhs) const { return ID >= rhs.ID; }   
+            bool operator<(const yFileID &rhs) const { return ID < rhs.ID; }       
+            bool operator<=(const yFileID &rhs) const { return ID <= rhs.ID; }    
+
+            //prefix ++
+            uint32_t& operator++(void) { ID++; return ID;} 
+            //postfix ++
+            const uint32_t operator++(int i){ uint32_t _old = ID; ID++; return _old;}
 
             yFileID(uint32_t id):ID(id){}  
 
@@ -91,6 +100,18 @@ namespace yLib
             uint64_t GetOffset(void) {return offset;}
             yFileID GetFileID(void) {return file_id;}
 
+        };
+
+        /// A trivial tuple used to represent a source range.
+        class ySourceRange {
+            ySourceLocation B;
+            ySourceLocation E;
+        public:
+            ySourceLocation GetBegin() const { return B; }
+            ySourceLocation GetEnd() const { return E; }
+
+            void SetBegin(ySourceLocation b) { B = b; }
+            void SetEnd(ySourceLocation e) { E = e; }
         };
     } // namespace ycompiler
 } // namespace yLib

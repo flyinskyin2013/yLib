@@ -108,17 +108,10 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
     ylib_build(NETWORK YABSTRACTSOCKET)
 
-
-    if(BUILD_MODULE_YTCPSERVER)
-
-        ylib_build(NETWORK YTCPSERVER)
-
-    endif()
-
-
     if(BUILD_MODULE_YTCPSOCKET)
 
         ylib_build(NETWORK YTCPSOCKET)
+        ylib_build(NETWORK YTCPSERVER)
 
     endif()
 

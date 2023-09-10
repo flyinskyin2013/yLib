@@ -168,11 +168,12 @@ namespace yLib
             /// which can be an invalid location if no position information is available.
             inline yDiagnosticBuilder Report(ySourceLocation loc,
                                                             unsigned diag_id) {
-                assert(cur_diag_id == std::numeric_limits<unsigned>::max() &&
-                        "Multiple diagnostics in flight at once!");
+
                 cur_diag_loc = loc;
                 cur_diag_id = diag_id;
 
+                DiagReport(loc, (diag::DiagID)diag_id);
+                
                 return yDiagnosticBuilder(this);
             }
         };

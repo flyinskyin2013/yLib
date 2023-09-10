@@ -43,6 +43,7 @@ namespace yLib
     {
         class yDeclGroup;
         class yASTContext;
+        class yDecl;
 
         /// ASTConsumer - This is an abstract interface that should be implemented by
         /// clients that read ASTs.  This abstraction layer allows the client to be
@@ -62,6 +63,30 @@ namespace yLib
             /// HandleTranslationUnit - This method is called when the ASTs for entire
             /// translation unit have been parsed.
             virtual void HandleTranslationUnit(yASTContext &ast_ctx) {}        
+        };
+
+
+        class yConfigASTReader:public yASTConsumer{
+
+            yASTContext * ast_ctx;
+            
+            std::unique_ptr<yDeclGroup> decl_group;
+
+            public:
+            yConfigASTReader();
+            /// Initialize - This is called to initialize the consumer, providing the
+            /// ASTContext.
+            void Initialize(yASTContext &ast_ctx) override;
+            /// HandleTopLevelDecl - Handle the specified top-level declaration.  This is
+            /// called by the parser to process every top-level Decl*.
+            ///
+            /// \returns true to continue parsing, or false to abort parsing.
+            bool HandleTopLevelDecl(yDeclGroup &decl) override;        
+
+            void SetDeclGroup(std::unique_ptr<yDeclGroup> && decl_group);
+            yDeclGroup & GetDeclGroup(void);    
+
+            yDecl * GetDecl(const std::string & path, yDecl * parent);   
         };
     } // namespace ycompiler
 } // namespace yLib

@@ -71,7 +71,7 @@ TEST_CASE( "Test yTcpServer apis" , "[yTcpServer_Apis]" ){
         REQUIRE(_svr_write_msg.length() == tcp_client0.read(recv_msg_buff, 100));
         REQUIRE_THAT( _svr_write_msg, Catch::Equals ( recv_msg_buff ));
 
-        yLib::yLog::I("client0: recv: %s", recv_msg_buff); 
+        yLib::yLog::I("client0: recv: %s\n", recv_msg_buff); 
 //===================================================================
         memset(recv_msg_buff, 0, sizeof(recv_msg_buff));
         _svr_write_msg = "tcpserver recv: " + std::string("I am client1");
@@ -79,7 +79,7 @@ TEST_CASE( "Test yTcpServer apis" , "[yTcpServer_Apis]" ){
         REQUIRE(_svr_write_msg.length() == tcp_client1.read(recv_msg_buff, 100));
         REQUIRE_THAT( _svr_write_msg, Catch::Equals ( recv_msg_buff ));
         
-        yLib::yLog::I("client1: recv: %s", recv_msg_buff); 
+        yLib::yLog::I("client1: recv: %s\n", recv_msg_buff); 
 //===================================================================
         memset(recv_msg_buff, 0, sizeof(recv_msg_buff));
         _svr_write_msg = "tcpserver recv: " + std::string("I am client2");
@@ -87,7 +87,7 @@ TEST_CASE( "Test yTcpServer apis" , "[yTcpServer_Apis]" ){
         REQUIRE(_svr_write_msg.length() == tcp_client2.read(recv_msg_buff, 100));
         REQUIRE_THAT( _svr_write_msg, Catch::Equals ( recv_msg_buff ));
 
-        yLib::yLog::I("client2: recv: %s", recv_msg_buff);      
+        yLib::yLog::I("client2: recv: %s\n", recv_msg_buff);      
     }
     
     

@@ -50,7 +50,7 @@ static const char * DiagInfoTable[] = {
     nullptr
     #undef DIAG_INFO
 };
-
+/*
 static yLogSeverity DiagLogLevelTable[] = {
 
     #define DIAG_INFO(diag_name, tag_name, level, info, argnum) \
@@ -59,7 +59,7 @@ static yLogSeverity DiagLogLevelTable[] = {
     #include "core/ycompiler/basic/ydiagnostic_kinds.def"
     #undef DIAG_INFO
 };
-
+*/
 static int DiagArgNumTable[] = {
 
     #define DIAG_INFO(diag_name, tag_name, level, info, argnum) \

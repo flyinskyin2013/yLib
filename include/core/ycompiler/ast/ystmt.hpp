@@ -26,11 +26,15 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #ifndef __CORE_YCOMPILER_AST_YSTMT_HPP__
 #define __CORE_YCOMPILER_AST_YSTMT_HPP__
 
+#include <vector>
+
 
 namespace yLib
 {
     namespace ycompiler
     {
+        class yDecl;
+        
         /// Stmt - This represents one statement.
         ///
         class yStmt {
@@ -42,20 +46,49 @@ namespace yLib
                     first##BASE##Constant=FIRST##Class, last##BASE##Constant=LAST##Class,
                 #define LAST_STMT_RANGE(BASE, FIRST, LAST) \
                     first##BASE##Constant=FIRST##Class, last##BASE##Constant=LAST##Class
-                #define ABSTRACT_STMT(STMT)
+                #define ABSTRACT_STMT(STMT) STMT
                 #include "stmt_nodes_kinds.def"
             };
+        protected:
+            StmtClass stmt_kind = StmtClass::NoStmtClass;
+
+        public:
+            StmtClass get_stmt_kind(){ return stmt_kind;}
         };
 
         /// CompoundStmt - This represents a group of statements like { stmt stmt }.
-        class yCompoundStmt final : public yStmt{};
+        class yCompoundStmt final : public yStmt{
+            private:
+            std::vector<yStmt*> stmt_vec;
+
+            yCompoundStmt(std::vector<yStmt*> && stmts):stmt_vec(stmts){
+                stmt_kind = yStmt::StmtClass::yCompoundStmtClass;
+            }
+            //yCompoundStmt(std::vector<yStmt*> & stmts):stmt_vec(stmts){}
+            public:
+            static yStmt* Create(std::vector<yStmt*> && stmts){
+
+                return (yStmt*) new yCompoundStmt(std::move(stmts));
+            }
+
+            std::vector<yStmt*> & get_stmt_vec(void){return stmt_vec;}
+        };
 
 
         /// DeclStmt - Adaptor class for mixing declarations with statements and
         /// expressions. For example, CompoundStmt mixes statements, expressions
         /// and declarations (variables, types). Another example is ForStmt, where
         /// the first statement can be an expression or a declaration.
-        class yDeclStmt : public yStmt {};
+        class yDeclStmt : public yStmt {
+
+            yDecl * decl;
+            ySourceLocation loc;
+            public:
+            yDeclStmt(yDecl*decl, ySourceLocation loc):decl(decl), loc(loc){
+                stmt_kind = yStmt::StmtClass::yDeclStmtClass;
+            }
+            yDecl * get_decl(){return decl;}
+        };
 
 
         /// Represents a statement that could possibly have a value and type. This
@@ -64,7 +97,12 @@ namespace yLib
         /// Value statements have a special meaning when they are the last non-null
         /// statement in a GNU statement expression, where they determine the value
         /// of the statement expression.
-        class yValueStmt : public yStmt {};
+        class yValueStmt : public yStmt {
+            public:
+            yValueStmt(){
+                stmt_kind = yStmt::StmtClass::yValueStmtClass;
+            }
+        };
     } // namespace ycompiler
     
 } // namespace yLib

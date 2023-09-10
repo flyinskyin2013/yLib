@@ -174,7 +174,7 @@ int8_t yLib::yJson::WriteMemory(int8_t * addr_, uint64_t max_size_){
 
     std::string _json_str = static_cast<Json::Value*>(json_root_value)->toStyledString();
 
-    int _json_str_len = _json_str.length();
+    size_t _json_str_len = _json_str.length();
 
     if ( max_size_ - 1 <= _json_str_len ){
 
@@ -244,8 +244,8 @@ static yLib::yJsonValue g_yjson_value_null_reference_obj;
 yLib::yJsonValue::yJsonValue() noexcept
 :yBasicValue(NULL_TYPE, nullptr),
 json_value(nullptr),
-is_special_obj(false),
-value_holder_map(nullptr)
+value_holder_map(nullptr),
+is_special_obj(false)
 {
 
     cur_value_type = yValueType::NULL_TYPE;//repeat set val
@@ -256,8 +256,8 @@ value_holder_map(nullptr)
 yLib::yJsonValue::yJsonValue(int64_t value_) noexcept 
 :yBasicValue(value_),
 json_value(nullptr),
-is_special_obj(false),
-value_holder_map(nullptr)
+value_holder_map(nullptr),
+is_special_obj(false)
 {
 
 
@@ -269,8 +269,8 @@ value_holder_map(nullptr)
 yLib::yJsonValue::yJsonValue(uint64_t value_) noexcept 
 :yBasicValue(value_),
 json_value(nullptr),
-is_special_obj(false),
-value_holder_map(nullptr)
+value_holder_map(nullptr),
+is_special_obj(false)
 {
 
 
@@ -283,8 +283,8 @@ value_holder_map(nullptr)
 yLib::yJsonValue::yJsonValue(bool value_) noexcept 
 :yBasicValue(value_),
 json_value(nullptr),
-is_special_obj(false),
-value_holder_map(nullptr)
+value_holder_map(nullptr),
+is_special_obj(false)
 {
 
     cur_value_type = yValueType::BOOL_TYPE;
@@ -295,8 +295,8 @@ value_holder_map(nullptr)
 yLib::yJsonValue::yJsonValue(double value_) noexcept 
 :yBasicValue(value_),
 json_value(nullptr),
-is_special_obj(false),
-value_holder_map(nullptr)
+value_holder_map(nullptr),
+is_special_obj(false)
 {
 
     cur_value_type = yValueType::DOUBLE_TYPE;
@@ -307,8 +307,8 @@ value_holder_map(nullptr)
 yLib::yJsonValue::yJsonValue(std::string value_) noexcept 
 :yBasicValue(value_),
 json_value(nullptr),
-is_special_obj(false),
-value_holder_map(nullptr)
+value_holder_map(nullptr),
+is_special_obj(false)
 {
 
     cur_value_type = yValueType::STRING_TYPE;
@@ -319,8 +319,8 @@ value_holder_map(nullptr)
 yLib::yJsonValue::yJsonValue(yValueType value_type_) noexcept 
 :yBasicValue(value_type_, nullptr),
 json_value(nullptr),
-is_special_obj(false),
-value_holder_map(nullptr)
+value_holder_map(nullptr),
+is_special_obj(false)
 {
 
     cur_value_type = value_type_;
@@ -366,8 +366,8 @@ value_holder_map(nullptr)
 yLib::yJsonValue::yJsonValue(bool build_special_, void * ptr_) noexcept
 :yBasicValue(),
 json_value(nullptr),
-is_special_obj(true),
-value_holder_map(nullptr)
+value_holder_map(nullptr),
+is_special_obj(true)
 {
 
 }
@@ -375,8 +375,8 @@ value_holder_map(nullptr)
 yLib::yJsonValue::yJsonValue(const yLib::yJsonValue & value_) noexcept 
 :yBasicValue(),//the base obj is null-obj
 json_value(nullptr),
-is_special_obj(false),
-value_holder_map(nullptr)
+value_holder_map(nullptr),
+is_special_obj(false)
 {
     CleanAllToDefault();//must be clean first,this op will modify type and value-container
 
@@ -427,8 +427,8 @@ value_holder_map(nullptr)
 yLib::yJsonValue::yJsonValue(const yLib::yJsonValue && value_) noexcept 
 :yBasicValue(value_),
 json_value(nullptr),
-is_special_obj(false),
-value_holder_map(nullptr)
+value_holder_map(nullptr),
+is_special_obj(false)
 {
     CleanAllToDefault();//must be clean first,this op will modify type and value-container
 
@@ -818,7 +818,7 @@ yLib::yJsonValue & yLib::yJsonValue::operator [](uint64_t idx_){
         value_holder_map->insert(std::make_pair(std::to_string((uintptr_t)_find_result), _value));//insert a new special obj to map
 
     //For Debuger
-    yJsonValue & _dbg_ptr = _ret_pair.first->second;
+    // yJsonValue & _dbg_ptr = _ret_pair.first->second;
     return _ret_pair.first->second;
 }
 

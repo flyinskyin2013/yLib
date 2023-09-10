@@ -34,12 +34,13 @@ using namespace yLib::ycompiler;
 using namespace yLib;
 
 yLexer::yLexer(yCompilerInstance & ci)
-:ci(ci)
+:file_mgr(ci.GetFileManger()),ci(ci)
 {
-    // buf_start = buf_cur_ptr = ci.GetFileManger().GetFileContentPtr();
-    // buf_end = ci.GetFileManger().GetFileContentPtr() + ci.GetFileManger().GetFileContentSize();
+    yFileEntry *  _file_entry = ci.GetFileManger().GetFileEntry(ci.GetSourceManager().getMainFileID());
+    yMemoryBuffer * _file_buffer = ci.GetFileManger().GetFileMemroyBuffer(_file_entry->get_file_path());
 
-    this->file_mgr = file_mgr;
+    buf_start = buf_cur_ptr = (char * )_file_buffer->get_buf_start();
+    buf_end = (char * )_file_buffer->get_buf_end();
 }
 yLexer::~yLexer(){
 
@@ -104,7 +105,24 @@ void yLexer::UpdateToken(yToken &token, const char *tok_end, tok::yTokenKind kin
 
     token.kind = kind;
     token.token_data_len = tok_end - buf_cur_ptr;
-    token.token_data = (void *)buf_cur_ptr;
+    token.file_id = ci.GetSourceManager().getMainFileID();
+    token.offset = token.loc = buf_cur_ptr - buf_start;
+
+    if (tok::identifier == kind){
+
+        std::string _identifier = std::string(buf_cur_ptr, token.token_data_len);
+        token.token_data = (void *)new yIdentifierInfo(_identifier, kind);
+    }
+    else{
+        //the 'true' or 'false' will be recognized identifier firstly, we should check it
+        if (tok::kw_true == kind || tok::kw_false == kind){
+
+            delete (yIdentifierInfo *)token.token_data;
+            token.token_data = 0;
+        }
+        
+        token.token_data = (void *)buf_cur_ptr;
+    }
 
     buf_cur_ptr = tok_end;//update buf_cur_ptr
 }
@@ -183,7 +201,20 @@ bool yLexer::GetIdentifier(yToken &token, const char * cur_ptr){
     while(IsIdentifierBodyChar(cur_ptr))
         cur_ptr ++;
     
-    UpdateToken(token, cur_ptr, tok::identifier);
+    //check we get true/false literal
+    std::string _val((char *)buf_cur_ptr, cur_ptr - buf_cur_ptr);
+
+    if (_val == "true" || _val == "false"){//kw
+
+        if (_val == "true")
+            UpdateToken(token, cur_ptr, tok::kw_true);
+        else
+            UpdateToken(token, cur_ptr, tok::kw_false);
+    }
+    else{//identifier
+
+        UpdateToken(token, cur_ptr, tok::identifier);
+    }
     return true;
 }
 

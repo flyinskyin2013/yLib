@@ -1,0 +1,25 @@
+#ifndef CAST_OPERATION
+#  define CAST_OPERATION(Name)
+#endif
+
+#undef CAST_OPERATION
+
+
+
+#ifndef BINARY_OPERATION
+#  define BINARY_OPERATION(Name, Spelling)
+#endif
+
+#undef BINARY_OPERATION
+
+
+
+#ifndef UNARY_OPERATION
+#  define UNARY_OPERATION(Name, Spelling)
+#endif
+
+// [C99 6.5.3.3] Unary arithmetic
+UNARY_OPERATION(Plus, "+")
+UNARY_OPERATION(Minus, "-")
+
+#undef UNARY_OPERATION

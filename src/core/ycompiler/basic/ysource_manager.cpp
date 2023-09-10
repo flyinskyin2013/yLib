@@ -25,9 +25,16 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 
 #include "core/ycompiler/basic/ysource_manager.hpp"
+#include "core/ycompiler/frontend/ycompiler_instance.hpp"
+
+#include "core/ylog.hpp"
+
 
 using namespace yLib::ycompiler;
 
+ySourceManager::ySourceManager(yCompilerInstance &CI)
+:ci(CI), file_mgr(CI.GetFileManger()){}
+/*
 uint64_t ySourceManager::get_file_offset(yFileEntry & file_entry, uint32_t row, uint32_t col)
 {
     yMemoryBuffer * _mem_buf = file_mgr.GetFileMemroyBuffer(file_entry.get_file_path());
@@ -76,6 +83,7 @@ ySourceLocation ySourceManager::translate_row_col(yFileID file_id, uint32_t row,
     yFileEntry * _file_entry = file_mgr.GetFileEntry(file_id);
     return ySourceLocation(file_id, get_file_offset(*_file_entry, row, col));
 }
+*/
 
 std::pair<uint32_t, uint32_t> ySourceManager::get_row_col_impl(yFileID file_id, uint32_t file_offset)
 {
@@ -86,6 +94,14 @@ std::pair<uint32_t, uint32_t> ySourceManager::get_row_col_impl(yFileID file_id, 
 
     uint32_t _row = 1;
     uint32_t _col = 1;
+
+    if (_mem_buf->get_buf_end()-_mem_buf->get_buf_start() <= file_offset)//get end of buf
+    {
+        yLib::yLog::E("ySourceManager::get_row_col_impl file-max-len = %d,invalid file_offset= %d\n", \
+            _mem_buf->get_buf_end()-_mem_buf->get_buf_start(), file_offset);
+        return {1, 1};
+    }
+
     for (; _file_content_ptr != (char *)_mem_buf->get_buf_end(); _file_content_ptr++){
 
         if (file_offset == (_file_content_ptr - (char*)_mem_buf->get_buf_start()))//find offset
@@ -96,8 +112,11 @@ std::pair<uint32_t, uint32_t> ySourceManager::get_row_col_impl(yFileID file_id, 
             _file_content_ptr ++;
 
             if (_file_content_ptr == (char *)_mem_buf->get_buf_end())//get end of buf
+            {
+                yLib::yLog::E("ySourceManager::get_row_col_impl file-max-len = %d, \
+                    invalid file_offset= %d\n", _mem_buf->get_buf_end()-_mem_buf->get_buf_start(), file_offset);
                 break;
-            
+            }
             _row ++;
             _col = 1;
         }

@@ -15,45 +15,42 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 /*
  * @Author: Sky
- * @Date: 2022-12-04 13:50:41
- * @LastEditTime: 2022-12-04 19:50:41
+ * @Date: 2023-07-16 13:50:41
+ * @LastEditTime: 2023-07-16 19:50:41
  * @LastEditors: Sky
  * @Description: 
- * @FilePath: \yLib\include\core\ycompiler\ast\ydecl_group.hpp
+ * @FilePath: \yLib\include\core\ycompiler\basic\ytoken_kind.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
 
-#ifndef __CORE_YCOMPILER_AST_YDECL_GROUP_HPP__
-#define __CORE_YCOMPILER_AST_YDECL_GROUP_HPP__
+#ifndef __CORE_YCOMPILER_BASIC_YTOKEN_KIND_HPP__
+#define __CORE_YCOMPILER_BASIC_YTOKEN_KIND_HPP__
 
 
 #include <memory>
-#include <vector>
+#include <cstdint>
+
+#include "core/ycompiler/lexer/ytoken.hpp"
 
 namespace yLib
 {
     namespace ycompiler
     {
-        class yASTContext;
-        class yDecl;
+        namespace tok{
 
-        //maybe decl-vec
-        class yDeclGroup
-        {
-            private:
-            std::vector<yDecl*> decl_vec;
-            
-            yDeclGroup(std::vector<yDecl*> &&decl_vec):decl_vec(decl_vec){}
-            public:
-            yDeclGroup(){}
-            
-            bool add_decl(yDecl * decl){decl_vec.push_back(decl); return true;}
-            std::vector<yDecl*> & get_decl_vec(){return decl_vec;}
-            static yDeclGroup * Create(yASTContext & ast_ctx, yDecl ** decls, uint64_t num_decls);
-            static yDeclGroup * Create(yASTContext & ast_ctx, std::vector<yDecl*> &&decl_vec);
-        };
-        
-    } // namespace ycompiler
-} // namespace yLib
+            enum yTokenKind : uint16_t {
 
-#endif //__CORE_YCOMPILER_AST_YDECL_GROUP_HPP__
+                #define TOK(X) X,
+                #include "ytoken_kinds.def"
+                NUM_TOKENS
+                #undef TOK
+            };
+            
+            /// The name of a token will be an internal name (such as "l_square")
+            /// and should not be used as part of diagnostic messages.
+            const char *getTokenName(yTokenKind Kind);  
+        }
+    }
+}
+
+#endif //__CORE_YCOMPILER_BASIC_YTOKEN_KIND_HPP__

@@ -66,19 +66,15 @@ bool yLib::ycompiler::ExecuteCompiler(yCompilerInstance & ci)
     return true;
 }
 
-
-void yLib::ycompiler::ParseAST(yCompilerInstance &ci)
+bool yLib::ycompiler::ParseAST(yCompilerInstance &ci)
 {
+    std::unique_ptr<ycompiler::yLexer> _lexer = \
+        std::unique_ptr<ycompiler::yLexer>(new ycompiler::yLexer(ci));
+    ci.SetLexer(std::move(_lexer));
 
     std::unique_ptr<ycompiler::ySema> _sema = \
         std::unique_ptr<ycompiler::ySema>(new ycompiler::ySema(ci));
     ci.SetSema(std::move(_sema));
-
-
-    std::unique_ptr<ycompiler::yParser> _parser = \
-        std::unique_ptr<ycompiler::yParser>(new ycompiler::yConfigParser(ci));
-    ci.SetParser(std::move(_parser));
-
 
     std::unique_ptr<ycompiler::yDiagnosticsIDHandle> _diag_id = \
         std::unique_ptr<ycompiler::yDiagnosticsIDHandle>(new ycompiler::yDiagnosticsIDHandle());
@@ -92,19 +88,33 @@ void yLib::ycompiler::ParseAST(yCompilerInstance &ci)
     ci.SetDiagnosticsEngine(std::move(_diag_engine));
 
 
+    std::unique_ptr<ycompiler::yParser> _parser = \
+        std::unique_ptr<ycompiler::yParser>(new ycompiler::yConfigParser(ci));
+    ci.SetParser(std::move(_parser));
+
 
     yASTConsumer & _consumer = ci.GetSema().GetASTConsumer();
 
+
     // static_cast<yConfigParser&>(ci.GetParser()).Initialize();
     ci.GetParser().Initialize();
-    std::unique_ptr<yDeclGroup> _decl_group;
+    std::unique_ptr<yDeclGroup> _decl_group = std::unique_ptr<yDeclGroup>(new yDeclGroup());
+    
 
     for (bool _is_eof = ci.GetParser().ParseFirstTopLevelDecl(*_decl_group.get()); \
         !_is_eof; _is_eof = ci.GetParser().ParseTopLevelDecl(*_decl_group.get(), false)){
+        
+        if (ci.GetParser().has_error())
+            return false;
 
+        //add decl group to _consumer
         if (_decl_group != nullptr && !_consumer.HandleTopLevelDecl(*_decl_group.get()))
-            return;
+            return false;
+
+        _decl_group = std::unique_ptr<yDeclGroup>(new yDeclGroup());//reset decl_group
     } 
 
     _consumer.HandleTranslationUnit(ci.GetSema().GetASTContext());
+
+    return true;
 }

@@ -15,7 +15,16 @@
 #include <cstdint>
 
 TEST_CASE( "Test yConfig apis" , "[yConfig_Apis]" ){
-    
+
+    SECTION("test yConfigReadFile(const std::string & file_path) failed") {
+
+        yLib::yConfig _config;
+        
+        //for more code coverage, when ycompiler fails.
+        //get  "Expect an identifier" error
+        REQUIRE(-1 == _config.ReadFile("test_fail.conf"));
+    }
+
     SECTION("test yConfigReadFile(const std::string & file_path)") {
 
         yLib::yConfig _config;

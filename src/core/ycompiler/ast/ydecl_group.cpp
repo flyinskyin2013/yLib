@@ -15,45 +15,27 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 /*
  * @Author: Sky
- * @Date: 2022-12-04 13:50:41
- * @LastEditTime: 2022-12-04 19:50:41
+ * @Date: 2023-08-26 14:22:45
+ * @LastEditTime: 2023-08-26 15:22:36
  * @LastEditors: Sky
  * @Description: 
- * @FilePath: \yLib\include\core\ycompiler\ast\ydecl_group.hpp
+ * @FilePath: \yLib\src\core\ycompiler\ast\ydecl_group.cpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
 
-#ifndef __CORE_YCOMPILER_AST_YDECL_GROUP_HPP__
-#define __CORE_YCOMPILER_AST_YDECL_GROUP_HPP__
+
+#include "core/ycompiler/ast/ydecl_group.hpp"
 
 
-#include <memory>
-#include <vector>
+using namespace yLib::ycompiler;
+using namespace yLib;
 
-namespace yLib
+
+yDeclGroup * yDeclGroup::Create(yASTContext & ast_ctx, yDecl ** decls, uint64_t num_decls)
 {
-    namespace ycompiler
-    {
-        class yASTContext;
-        class yDecl;
-
-        //maybe decl-vec
-        class yDeclGroup
-        {
-            private:
-            std::vector<yDecl*> decl_vec;
-            
-            yDeclGroup(std::vector<yDecl*> &&decl_vec):decl_vec(decl_vec){}
-            public:
-            yDeclGroup(){}
-            
-            bool add_decl(yDecl * decl){decl_vec.push_back(decl); return true;}
-            std::vector<yDecl*> & get_decl_vec(){return decl_vec;}
-            static yDeclGroup * Create(yASTContext & ast_ctx, yDecl ** decls, uint64_t num_decls);
-            static yDeclGroup * Create(yASTContext & ast_ctx, std::vector<yDecl*> &&decl_vec);
-        };
-        
-    } // namespace ycompiler
-} // namespace yLib
-
-#endif //__CORE_YCOMPILER_AST_YDECL_GROUP_HPP__
+    return nullptr;
+}
+yDeclGroup * yDeclGroup::Create(yASTContext & ast_ctx, std::vector<yDecl*> &&decl_vec)
+{
+    return new yDeclGroup(std::move(decl_vec));
+}

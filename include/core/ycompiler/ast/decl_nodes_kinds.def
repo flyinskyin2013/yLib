@@ -2,3 +2,25 @@
 DECL(TranslationUnitDecl, Decl)
 DECL(RecordDecl, Decl)
 DECL(VarDecl, Decl)
+
+#ifndef NAMED
+#  define NAMED(Type, Base) DECL(Type, Base)
+#endif
+
+#ifndef VALUE
+#  define VALUE(Type, Base) NAMED(Type, Base)
+#endif
+
+#ifndef DECLARATOR
+#  define DECLARATOR(Type, Base) VALUE(Type, Base)
+#endif
+
+#ifndef OBJECT
+#define OBJECT(Type, Base) DECLARATOR(Type, Base)
+#endif
+OBJECT(Object, DeclaratorDecl)
+
+#ifndef FUNCTION
+#define FUNCTION(Type, Base) DECLARATOR(Type, Base)
+#endif
+FUNCTION(Function, DeclaratorDecl)

@@ -15,45 +15,48 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 /*
  * @Author: Sky
- * @Date: 2022-12-04 13:50:41
- * @LastEditTime: 2022-12-04 19:50:41
+ * @Date: 2023-08-27 14:27:50
+ * @LastEditTime: 2023-08-27 18:59:57
  * @LastEditors: Sky
  * @Description: 
- * @FilePath: \yLib\include\core\ycompiler\ast\ydecl_group.hpp
+ * @FilePath: \yLib\include\core\ycompiler\ast\yoperation_kinds.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
 
-#ifndef __CORE_YCOMPILER_AST_YDECL_GROUP_HPP__
-#define __CORE_YCOMPILER_AST_YDECL_GROUP_HPP__
+#ifndef __CORE_YCOMPILER_AST_YOPERATION_KINDS_HPP__
+#define __CORE_YCOMPILER_AST_YOPERATION_KINDS_HPP__
 
+#include <cstdint>
 
-#include <memory>
-#include <vector>
+#include "core/yobject.hpp"
+#include "core/ycompiler/lexer/ytoken.hpp"
 
 namespace yLib
 {
     namespace ycompiler
     {
-        class yASTContext;
-        class yDecl;
+        /// CastKind - The kind of operation required for a conversion.
+        enum yCastKind {
+        #define CAST_OPERATION(Name) CK_##Name,
 
-        //maybe decl-vec
-        class yDeclGroup
-        {
-            private:
-            std::vector<yDecl*> decl_vec;
-            
-            yDeclGroup(std::vector<yDecl*> &&decl_vec):decl_vec(decl_vec){}
-            public:
-            yDeclGroup(){}
-            
-            bool add_decl(yDecl * decl){decl_vec.push_back(decl); return true;}
-            std::vector<yDecl*> & get_decl_vec(){return decl_vec;}
-            static yDeclGroup * Create(yASTContext & ast_ctx, yDecl ** decls, uint64_t num_decls);
-            static yDeclGroup * Create(yASTContext & ast_ctx, std::vector<yDecl*> &&decl_vec);
+
+        #include "operation_kinds.def"
+        };
+
+        enum yBinaryOperatorKind {
+
+        #define BINARY_OPERATION(Name, Spelling) BO_##Name,
+
+        #include "operation_kinds.def"
+        };
+
+        enum yUnaryOperatorKind {
+
+        #define UNARY_OPERATION(Name, Spelling) UO_##Name,
+        #include "operation_kinds.def"
         };
         
-    } // namespace ycompiler
-} // namespace yLib
+    }
+}
 
-#endif //__CORE_YCOMPILER_AST_YDECL_GROUP_HPP__
+#endif //__CORE_YCOMPILER_AST_YOPERATION_KINDS_HPP__
