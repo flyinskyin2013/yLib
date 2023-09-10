@@ -49,6 +49,8 @@ run the following commmands.
     >>chmod +x build_deps.sh
     >>./build_deps.sh All
 
+    Note:
+        Need autoconf automake libtool pkg-config
 
 2. For yLib.
     >>mkdir -p build 

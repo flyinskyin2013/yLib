@@ -1,0 +1,7 @@
+查看cxx的abi对应api名称
+c++flit xxxxxxxxxxxx
+
+
+gdb:
+    查看所有so的映射信息
+    info proc mappings

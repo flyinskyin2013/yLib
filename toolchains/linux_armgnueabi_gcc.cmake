@@ -25,8 +25,8 @@ set(CMAKE_C_COMPILER "arm-linux-gnueabi-gcc")
 set(CMAKE_CXX_COMPILER "arm-linux-gnueabi-g++")
 set(STRIP "arm-linux-gnueabi-strip" CACHE INTERNAL "strip command" FORCE)
 
-set(CMAKE_C_FLAGS "-march=armv7-a -mfloat-abi=softfp -mfpu=neon-vfpv4")
-set(CMAKE_CXX_FLAGS "-march=armv7-a -mfloat-abi=softfp -mfpu=neon-vfpv4")
+set(CMAKE_C_FLAGS "-march=armv7-a -mfloat-abi=softfp -mfpu=neon")
+set(CMAKE_CXX_FLAGS "-march=armv7-a -mfloat-abi=softfp -mfpu=neon")
 
 # Set the given cache <variable> (cache entry). Since cache entries are meant to provide user-settable 
 # values this does not overwrite existing cache entries by default. Use the FORCE option to overwrite existing entries.

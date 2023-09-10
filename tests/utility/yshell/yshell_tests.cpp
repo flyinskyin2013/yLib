@@ -19,7 +19,7 @@
 #include <iostream>
 
 
-DEFINE_TEST_CASE_FOR_CLASS_INFO(yShell)
+// DEFINE_TEST_CASE_FOR_CLASS_INFO(yShell)
 
 TEST_CASE( "Test yShell apis" , "[yShell_Apis]" ){
 
