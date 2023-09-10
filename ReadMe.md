@@ -32,9 +32,10 @@ yLib BuildMatrix(GithubAction) <br>
 | Linux | GCC 9.x/7.x   | [![Build Status][build_linux_x86_gcc]][ci_linux_x86_gcc] |  [![Build Status][build_linux_x64_gcc]][ci_linux_x64_gcc] |  
 | Linux | Clang 10.x/6.x | [![Build Status][build_linux_x86_clang]][ci_linux_x86_clang] |  [![Build Status][build_linux_x64_clang]][ci_linux_x64_clang] |  
 | Linux | ARM GCC 9.x/7.x | [![Build Status][build_linux_arm_gcc]][ci_linux_arm_gcc] |  [![Build Status][build_linux_aarch64_gcc]][ci_linux_aarch64_gcc] |  
-| Windows | VS2015 | [![Build Status][build_windows_x86_vs2015]][ci_windows_x86_vs2015] |  [![Build Status][build_windows_x64_vs2015]][ci_windows_x64_vs2015] |  
-| Windows | VS2017 | [![Build Status][build_windows_x86_vs2017]][ci_windows_x86_vs2017] |  [![Build Status][build_windows_x64_vs2017]][ci_windows_x64_vs2017] |
-| Windows | VS2019 | [![Build Status][build_windows_x86_vs2019]][ci_windows_x86_vs2019] |  [![Build Status][build_windows_x64_vs2019]][ci_windows_x64_vs2019] |
+| Windows | VS2015(v140) | - |  - |  
+| Windows | VS2017(v141) | [![Build Status][build_windows_x86_vs2017]][ci_windows_x86_vs2017] |  [![Build Status][build_windows_x64_vs2017]][ci_windows_x64_vs2017] |
+| Windows | VS2019(v142) | [![Build Status][build_windows_x86_vs2019]][ci_windows_x86_vs2019] |  [![Build Status][build_windows_x64_vs2019]][ci_windows_x64_vs2019] |
+| Windows | VS2022(v143) | [![Build Status][build_windows_x86_vs2022]][ci_windows_x86_vs2022] |  [![Build Status][build_windows_x64_vs2022]][ci_windows_x64_vs2022] |
 | Android | NDK-Default | - |  - |  
 
 [build_linux_x86_gcc]: https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/linux_x86_gcc.yml?branch=master
@@ -66,6 +67,12 @@ yLib BuildMatrix(GithubAction) <br>
 [ci_windows_x86_vs2019]:https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x86_vs2019
 [build_windows_x64_vs2019]:https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/windows_x64_vs2019.yml?branch=master
 [ci_windows_x64_vs2019]:https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x64_vs2019
+
+
+[build_windows_x86_vs2022]:https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/windows_x86_vs2022.yml?branch=master
+[ci_windows_x86_vs2022]:https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x86_vs2022
+[build_windows_x64_vs2022]:https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/windows_x64_vs2022.yml?branch=master
+[ci_windows_x64_vs2022]:https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x64_vs2022
 
 
 ## Version:

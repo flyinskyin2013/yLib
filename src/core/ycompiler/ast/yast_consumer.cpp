@@ -261,7 +261,7 @@ yDecl* yConfigASTReader::GetDecl(const std::string & path, yDecl * parent)
     yDecl * _found = nullptr;
     if (parent == nullptr){//get root decl, only yObjectDecl or yVarDecl
 
-        for(auto _decl:decl_group->get_decl_vec()){
+        for(yDecl * _decl:decl_group->get_decl_vec()){
             
             _found = CheckDecl(path, _decl);
 

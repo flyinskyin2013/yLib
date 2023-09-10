@@ -36,6 +36,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 
 #include <memory>
+#include <string>
 
 namespace yLib
 {

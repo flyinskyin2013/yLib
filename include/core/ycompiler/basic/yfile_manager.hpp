@@ -67,7 +67,8 @@ namespace yLib
 
             protected:
             yFileManager(yCompilerInstance & ci);
-            
+            yFileManager(const yFileManager&) = delete;
+            yFileManager& operator=(const yFileManager&) = delete;
             public:
             ~yFileManager(void);
 

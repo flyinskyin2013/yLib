@@ -31,6 +31,9 @@ For Windows
     >>cd yLib
     >>build_deps.bat vs2015 x86_64
 
+    Note:
+        If cmd doesn't have cp and rm , you should add them to PATH.
+
 3. For yLib.
     >>mkdir build_vs2015_x64 
     >>cd build_vs2015_x64 

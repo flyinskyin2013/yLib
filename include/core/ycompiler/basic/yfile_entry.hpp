@@ -54,6 +54,10 @@ namespace yLib
             std::unique_ptr<yMemoryBuffer> content;
 
             public:
+            yFileEntry(){}
+            yFileEntry(const yFileEntry&) = delete;
+            yFileEntry& operator=(const yFileEntry&) = delete;
+
             const std::string & get_file_path(void){return file_path;}
             const std::string & get_dir_path(void){return dir_path;}
             const uint64_t & get_file_size(void){return file_size;}

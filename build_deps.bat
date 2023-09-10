@@ -33,6 +33,10 @@ else if "%1%"=="vs2019" (
 
     set Default_CompileSet="vs2019"
 )^
+else if "%1%"=="vs2022" (
+
+    set Default_CompileSet="vs2022"
+)^
 else (
     echo "Notice: we need two param. Those are CompileSet(vs2015(default)\vs2017\vs2019) and Arch(x86\x86_64(default))"
     echo "Example: build_deps.bat vs2015 x86_64"
