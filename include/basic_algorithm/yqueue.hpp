@@ -85,7 +85,7 @@ namespace yLib{
                 //----@@@@@@@@@@@@@@-----
                 if (end_pos > begin_pos){
 
-                    for (int _i = 0; _i < cur_size; _i ++){
+                    for (size_t _i = 0; _i < cur_size; _i ++){
 
                         _alloc.destroy(begin_pos + _i);
                     }
@@ -253,7 +253,7 @@ namespace yLib{
                 //----@@@@@@@@@@@@@@-----
                 if (end_pos > begin_pos){
 
-                    for (int _i = 0; _i < cur_size; _i ++){
+                    for (size_t _i = 0; _i < cur_size; _i ++){
 
                         _alloc.construct(_tmp_head + _i, std::move(*(begin_pos + _i)));
                         _alloc.destroy(begin_pos + _i);

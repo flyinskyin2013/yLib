@@ -23,13 +23,20 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  * @FilePath: \yLib\include\core\ycompiler\basic\ytoken_kinds.def
  * @Github: https://github.com/flyinskyin2013/yLib
  */
-
+//token
 #ifndef TOK
 #define TOK(X)
 #endif
+
+//
 #ifndef PUNCTUATOR
 #define PUNCTUATOR(X,Y) TOK(X)
 #endif
+
+#ifndef KEYWORD
+#define KEYWORD(X,Y) TOK(kw_ ## X)
+#endif
+
 
 // These define members of the tok::* namespace.
 
@@ -38,6 +45,7 @@ TOK(eof)                 // End of file.
 TOK(eod)                 // End of preprocessing directive (end of line inside a
                          // directive).
 TOK(code_completion)     // Code completion marker
+
 
 // C99 6.4.9: Comments.
 TOK(comment)             // Comment (only in -E -C[C] mode)
@@ -129,3 +137,10 @@ PUNCTUATOR(hashat,              "#@")
 PUNCTUATOR(periodstar,          ".*")
 PUNCTUATOR(arrowstar,           "->*")
 PUNCTUATOR(coloncolon,          "::")
+
+
+
+
+KEYWORD(bool                        , BOOLSUPPORT)
+KEYWORD(false                       , BOOLSUPPORT)
+KEYWORD(true                        , BOOLSUPPORT)

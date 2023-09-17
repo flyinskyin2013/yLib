@@ -33,6 +33,7 @@ DIAG_INFO(lexer_error_charconstant, yLexer, yLib::yLogSeverity::LOG_ERROR, "Expe
 DIAG_INFO(lexer_error_stringliteral, yLexer, yLib::yLogSeverity::LOG_ERROR, "Expect a '\"'\n", 0)
 
 // yConfigParser
+DIAG_INFO(yconfigparser_warn_empty_source, yConfigParser, yLib::yLogSeverity::LOG_WARN, "The source file is emtpy\n", 0)
 DIAG_INFO(yconfigparser_error_expect_obj_or_comment, yConfigParser, yLib::yLogSeverity::LOG_ERROR, "Expect a object or comment\n", 0)
 DIAG_INFO(yconfigparser_error_objname_exsit, yConfigParser, yLib::yLogSeverity::LOG_ERROR, "The object-name(%s) is exist\n", 1)
 DIAG_INFO(yconfigparser_error_obj_start_of_identifier, yConfigParser, yLib::yLogSeverity::LOG_ERROR, "Object(%s) must start of an identifier\n", 1)

@@ -10,33 +10,33 @@
 
 //The vector of total thread
 std::vector<yThread> g_thread_vector;
-
-// #define yCreateThread(name, attr,routine, param) \
-//     do{ \
-//         yThread _thread; \
-//         int ret = 0; \
-//         _thread.th_name = name; \
-//         _thread.th_attr = attr; \
-//         _thread.th_routine = routine; \
-//         _thread.th_param = param; \
-//         g_thread_vector.push_back(_thread); \
-//         if ( 0 > (ret = pthread_create(&_thread.th_id, _thread.th_attr, _thread.th_routine, _thread.th_param)) ){ \
-//             std::string msg = "Thread: " + _thread.th_name + " Create failed."; \
-//             yLib::yLog::E(msg.c_str()); \
-//         } \
-//         else{ \
-//             std::string msg = "thread create successully, id is " + std::to_string(_thread.th_id); \
-//             yLib::yLog::I(msg.c_str()); \
-//          } \
-//     }while(0)
-
+/*
+#define yCreateThread(name, attr,routine, param) \
+    do{ \
+        yThread _thread; \
+        int ret = 0; \
+        _thread.th_name = name; \
+        _thread.th_attr = attr; \
+        _thread.th_routine = routine; \
+        _thread.th_param = param; \
+        g_thread_vector.push_back(_thread); \
+        if ( 0 > (ret = pthread_create(&_thread.th_id, _thread.th_attr, _thread.th_routine, _thread.th_param)) ){ \
+            std::string msg = "Thread: " + _thread.th_name + " Create failed."; \
+            yLib::yLog::E(msg.c_str()); \
+        } \
+        else{ \
+            std::string msg = "thread create successully, id is " + std::to_string(_thread.th_id); \
+            yLib::yLog::I(msg.c_str()); \
+         } \
+    }while(0)
+*/
 void yCreateThread(std::string & name, pthread_attr_t * attr, ThreadRoutine routine, void * param);
 void yCleanThread(void);
 
 void * test_thread(void * arg){
 
     //
-    void * ret;
+    void * ret = nullptr;
     yLib::yLog::I(" test thread successfully.");
     //pthread_detach(getpid());
     return ret;
@@ -130,7 +130,7 @@ void yCleanThread(void){
 
     if ( g_thread_vector.size() == 0 )
         return ;
-    for ( int i = 0; i < g_thread_vector.size(); i ++ ){
+    for ( size_t i = 0; i < g_thread_vector.size(); i ++ ){
 
         if ( NULL != g_thread_vector[i].th_attr ){//deal with attr is not NULL
 

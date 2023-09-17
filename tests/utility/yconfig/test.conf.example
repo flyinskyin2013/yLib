@@ -2,14 +2,20 @@
 yconfig unit-test
 */
 //yconfig unit-test
-test:
+
+test_int = 1;
+test_float = 2.3;
+test_bool = false;
+test_string = "HelloWorld";
+
+test=
 {
 
     int = 1;
     float = 2.3;
     bool = true;
     string = "HHHHHHHHH";
-    sub:{
+    sub={
 
         int = 2;
         float = 4.3;
@@ -18,7 +24,7 @@ test:
     };
 };
 //test_border obj
-test_border:
+test_border=
 {
     /*
     2^63 - 2^63-1

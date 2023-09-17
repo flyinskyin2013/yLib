@@ -1,0 +1,9 @@
+/*
+yconfig unit-test
+*/
+//yconfig unit-test
+test=
+{
+
+    = 1;
+};

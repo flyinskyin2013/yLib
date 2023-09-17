@@ -5,9 +5,9 @@ jobs:
   build_linux_gnueabi:
     name: build on gnueabi(last_ubuntu) platefrom  using gcc
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        os: [ubuntu-18.04, ubuntu-20.04]
+    # strategy:
+    #   matrix:
+    #     os: [ubuntu-18.04, ubuntu-20.04]
     steps:
     - name: checkout my rep
       uses: actions/checkout@v2

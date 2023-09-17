@@ -25,6 +25,26 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include "utility/yconfig.hpp"
 
 
+// import ycompiler
+#include "core/ycompiler/frontend/ycompiler_instance.hpp"
+#include "core/ycompiler/tools/yconfig_parse_action.hpp"
+#include "core/ycompiler/basic/yfile_manager.hpp"
+#include "core/ycompiler/parser/yconfig_parser.hpp"
+
+#include "core/ycompiler/tools/yutils.hpp"
+
+#include <memory>
+
+
+#define GetCompilerInstanceRef(unique_ptr) (*((ycompiler::yCompilerInstance*)(unique_ptr.get())))
+#define GetCompilerInstanceRefByRaw(raw_ptr) (*((ycompiler::yCompilerInstance*)(raw_ptr)))
+
+static void compiler_instance_deleter(void * ci)
+{
+
+    delete ((yLib::ycompiler::yCompilerInstance*)ci);
+}
+
 using namespace yLib;
 using namespace yLib::ycompiler;
 
@@ -32,31 +52,27 @@ static yLib::yConfigValue g_yconfig_valuedefault_obj;
 
 yLib::yConfig::yConfig() 
 MACRO_INIT_YOBJECT_PROPERTY(yConfig), 
-compiler_instance(new (std::nothrow) ycompiler::yCompilerInstance())
-{
-    file_mgr = ycompiler::yFileManager::GetInstance();//this mgr deleted by ycompilerinstance
-}
-yLib::yConfig::~yConfig()
-{
-    if (file_mgr != nullptr)//if we don't move file-mgr ownership, we should delete it by hand.
-        delete file_mgr;
+compiler_instance((void *)new ycompiler::yCompilerInstance(), compiler_instance_deleter)
+{}
 
-    file_mgr = nullptr;
-}
+yLib::yConfig::~yConfig()
+{}
 
 int8_t yLib::yConfig::ReadFile(const std::string &file_path){
 
-    if (!file_mgr->InitFileManager(file_path)){
+    if (!GetCompilerInstanceRef(compiler_instance).GetFileManger().open_and_cache_file(file_path)){
 
         yLib::yLog::E("yConfig", "open cfg file(%s) failed\n", file_path.c_str());
         return -1;
     }
 
-    compiler_instance->SetFileManager(file_mgr);//we will move file_mgr to unique_ptr , we shouldn't delete it by hand.
-    file_mgr = nullptr;//we must set it to nullptr to avoid double-free
-    ycompiler::yConfigParseAction act(compiler_instance.get());
+    // Create and execute the frontend action.
+    // set action type
+    GetCompilerInstanceRef(compiler_instance).GetCompilerInvocationHelper().getFrontendOpts().act_type = ycompiler::ActionKind::PARSE_YCONFIG_AST;
 
-    if (!compiler_instance->ExecuteAction(act)){
+    std::unique_ptr<yFrontendAction> _act(CreateFrontendAction(GetCompilerInstanceRef(compiler_instance)));
+
+    if (!GetCompilerInstanceRef(compiler_instance).ExecuteAction(*_act.get())){
 
         LOGE("yConfig")<<"Run yconfig parse action failed.";
         return -1;
@@ -73,103 +89,141 @@ int8_t yLib::yConfig::WriteFile(const std::string &file_path_){
     return 0;
 }
 
-ycompiler::yConfigDecl * yLib::yConfig::LookUp(const std::string &node_path, ycompiler::yConfigDeclObject & decl_obj){
+static yConfigValue ConvertDeclToConfigValue(yDecl * decl)
+{
 
+    yConfigValue _tmp_val;
+
+    if (yDecl::Kind::Object == decl->get_decl_kind()){
+
+        _tmp_val = (uintptr_t)decl;
+    }
+    else if (yDecl::Kind::VarDecl == decl->get_decl_kind()){
+
+        yVarDecl * _var_decl = (yVarDecl * )decl;
+        yStmt * _stmt = _var_decl->get_init().stmt;
+
+        switch (_stmt->get_stmt_kind())
+        {
+        case yStmt::StmtClass::yIntegerLiteralClass:{
+            /* code */
+            _tmp_val = (int64_t)((yIntegerLiteral*)_stmt)->get_val();
+            break;
+        }
+        case yStmt::StmtClass::yFloatingLiteralClass:{
+            /* code */
+            _tmp_val = (double)((yFloatingLiteral*)_stmt)->get_val();
+            break;
+        }
+        case yStmt::StmtClass::yCXXBoolLiteralExprClass:{
+            /* code */
+            _tmp_val = (bool)((yCXXBoolLiteralExpr*)_stmt)->get_val();
+            break;
+        }
+        case yStmt::StmtClass::yStringLiteralClass:{
+            /* code */
+            _tmp_val = (std::string)((yStringLiteral*)_stmt)->get_val();
+            break;
+        }
+        case yStmt::StmtClass::yUnaryOperatorClass:{
+            /* code */
+            //we only support yIntegerLiteral/yFloatingLiteral, we check it in parser
+
+            yUnaryOperator * _unary_op = (yUnaryOperator *)_stmt;
+            
+            yStmt * _expr_stmt = _unary_op->get_val();
+
+            int _sign = _unary_op->get_op_kind() == 0? 1 : -1;
+
+            if (_expr_stmt->get_stmt_kind() == yStmt::StmtClass::yIntegerLiteralClass){
+
+                int64_t _val = ((yIntegerLiteral*)_expr_stmt)->get_val();
+                
+                if (-1 == _sign)
+                    _val *= _sign;
+
+                _tmp_val = _val;
+            }
+            else{
+
+                double _val = ((yFloatingLiteral*)_expr_stmt)->get_val();
+                _val *= _sign;
+
+                _tmp_val = _val;
+            }
+            break;
+        }
+        default:
+            break;
+        }
+    }
+    if (yConfigValue::yValueType::NONE_TYPE == _tmp_val.GetType())
+        yLib::yLog::E("ConvertDeclToConfigValue: expect a ObjectDecl or VarDecl\n");
+    return _tmp_val;
+
+}
+static yDecl *  LookUp(yCompilerInstance & ci, const std::string &node_path, yDecl * parent = nullptr);
+static yDecl *  LookUp(yCompilerInstance & ci, const std::string &node_path, yDecl * parent)
+{
+    yConfigASTReader &_cfg_ast_reader = (yConfigASTReader &)ci.GetSema().GetASTConsumer();
     std::string _tmp_node_path = node_path;
+    yDecl * _tmp_decl = nullptr;
+
+
     if (_tmp_node_path != ""){
         
         std::size_t _find_pos = 0;
-        if (_tmp_node_path.npos != (_find_pos = _tmp_node_path.find_first_of('.'))){
+        if (std::string::npos != (_find_pos = _tmp_node_path.find_first_of('.'))){//not basic-name
 
             std::string _cur_node_name = _tmp_node_path.substr(0, _find_pos);
-            if (decl_obj.decl_map.count(_cur_node_name) > 0){//found a decl
+            _tmp_decl = _cfg_ast_reader.GetDecl(_cur_node_name, parent);
+            if (nullptr != _tmp_decl){//found a decl
 
-                if (decl_obj.decl_map[_cur_node_name]->GetDeclType() == yConfigDecl::OBJECT_TYPE){//this is an obj type
+                if (_tmp_decl->get_decl_kind() == yDecl::Kind::Object){//this is an obj type
 
                     std::string _new_node_path = _tmp_node_path.substr(_find_pos + 1);//skip '.'
-                    return LookUp(_new_node_path, *((yConfigDeclObject*)decl_obj.decl_map[_cur_node_name]));
+                    
+                    return LookUp(ci, _new_node_path, _tmp_decl);
                 }
                 else{//invalid node name
 
+                    yLib::yLog::E("node(%s) is not object.\n", _cur_node_name.c_str());
                     return nullptr;
                 }
             }
             else{
-
+                
+                yLib::yLog::E("can't found node(%s).\n", _cur_node_name.c_str());
                 return nullptr;
             }
         }
         else{//last name
 
-            if (decl_obj.decl_map.count(_tmp_node_path) > 0){//found a decl
+            _tmp_decl = _cfg_ast_reader.GetDecl(_tmp_node_path, parent);
+            if (nullptr != _tmp_decl){//found a decl
 
-                return decl_obj.decl_map[_tmp_node_path];
+                return _tmp_decl;
             }
             else{
-
+                
+                yLib::yLog::E("can't found node(%s).\n", _tmp_node_path.c_str());
                 return nullptr;
             }            
         }
     }
+
     return nullptr;
 }
 
+
 yLib::yConfigValue yLib::yConfig::GetValue(const std::string &node_path_) {
 
-    yConfigDeclObject & _root_object = *(yConfigDeclObject*)compiler_instance->GetParser()->GetASTData();
-    yConfigValue _tmpValue;
-
-    yConfigDecl *_decl = LookUp(node_path_, _root_object);
-    if (nullptr == _decl){
+    yConfigValue _tmpValue = ConvertDeclToConfigValue(LookUp(GetCompilerInstanceRef(compiler_instance), node_path_));
+    
+    if (yConfigValue::NONE_TYPE == _tmpValue.GetType()){
 
         yLib::yLog::E("Node(%s) is not found", node_path_.c_str());
         return std::move(_tmpValue);//gcc enable RVO(return value optimization) defaultly.
-    }
-  
-    switch(_decl->GetDeclType()){
-
-        case yConfigDecl::ITEM_TYPE:{
-
-            yConfigDeclItem * _item = (yConfigDeclItem *)_decl;
-            switch (_item->GetItemType())
-            {
-            case yConfigDeclItem::INT64T_TYPE:{
-                /* code */
-                _tmpValue = _item->GetInt64t();
-                break;
-            }
-            case yConfigDeclItem::DOUBLE_TYPE:{
-                /* code */
-                _tmpValue = _item->GetDouble();
-                break;
-            }
-            case yConfigDeclItem::STRING_TYPE:{
-                /* code */
-                _tmpValue = _item->GetStringLiteral();
-                break;
-            }
-            case yConfigDeclItem::BOOL_TYPE:{
-                /* code */
-                _tmpValue = _item->GetBool();
-                break;
-            }
-            default:
-                yLib::yLog::E("yConfigValueType: Invalid value type(NONE_TYPE)(%s)", node_path_.c_str());
-                return std::move(_tmpValue);//gcc enable RVO(return value optimization) defaultly.
-                break;
-            }
-            break;
-		}
-        case yConfigDecl::OBJECT_TYPE:{
-
-            _tmpValue = (uintptr_t)(_decl);
-            break;
-		}
-        default :{
-        
-            yLib::yLog::E("yConfigValueType: Invalid value type(%s)", node_path_.c_str());
-            return std::move(_tmpValue);//gcc enable RVO(return value optimization) defaultly.
-        }  
     }
 
     return std::move(_tmpValue);////gcc enable RVO(return value optimization) defaultly.

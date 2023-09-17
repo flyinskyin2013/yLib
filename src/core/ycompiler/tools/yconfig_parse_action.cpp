@@ -28,6 +28,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #include "core/ycompiler/tools/yconfig_parse_action.hpp"
 
+#include "core/ycompiler/tools/yutils.hpp"
+
 #include "core/ylog.hpp"
 
 using namespace yLib::ycompiler;
@@ -45,8 +47,5 @@ yConfigParseAction::~yConfigParseAction(){
 
 bool yConfigParseAction::Execute(void){
 
-    ci->SetLexer(new (std::nothrow) yLexer(ci->GetFileManger()));
-    ci->SetParser(new (std::nothrow) yConfigParser(ci->GetLexer()));
-
-    return ci->GetParser()->ParseAST();
+    return ParseAST(*ci);
 }

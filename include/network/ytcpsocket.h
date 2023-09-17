@@ -49,7 +49,7 @@ extern "C"{
 
 namespace yLib{
 
-    class yTcpSocket : public yAbstractSocket
+    class __YLIB_CLASS_DECLSPEC__ yTcpSocket : public yAbstractSocket
     {
     public:
         yTcpSocket(/* args */) noexcept;

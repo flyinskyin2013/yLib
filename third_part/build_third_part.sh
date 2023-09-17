@@ -70,7 +70,7 @@ function build_libcurl(){
 	if [ ${Default_Arch} = "x86" ] || [ ${Default_Arch} = "x86_64" ]
 	then
 
-		./configure --prefix=${third_part_root_dir}/build_out --without-ssl --without-zlib --without-librtmp --disable-rtsp --disable-ldap --disable-ldaps   CFLAGS="${SELF_C_FLAGS}" CPPFLAGS="${SELF_CXX_FLAGS}"
+		./configure --prefix=${third_part_root_dir}/build_out --without-libidn2 --without-ssl --without-zlib --without-librtmp --disable-rtsp --disable-ldap --disable-ldaps   CFLAGS="${SELF_C_FLAGS}" CPPFLAGS="${SELF_CXX_FLAGS}"
 		if [ $? -ne 0 ]
 		then
 
@@ -80,7 +80,7 @@ function build_libcurl(){
 	else
 
 		# in cross compile mode
-		./configure --prefix=${third_part_root_dir}/build_out --without-ssl --without-zlib --without-librtmp --disable-rtsp --disable-ldap --disable-ldaps --host=${CONFIGURE_HOST}  CFLAGS="${SELF_C_FLAGS}" CPPFLAGS="${SELF_CXX_FLAGS}" CC="${CONFIGURE_CC}" CXX="${CONFIGURE_CXX}"
+		./configure --prefix=${third_part_root_dir}/build_out --without-libidn2  --without-ssl --without-zlib --without-librtmp --disable-rtsp --disable-ldap --disable-ldaps --host=${CONFIGURE_HOST}  CFLAGS="${SELF_C_FLAGS}" CPPFLAGS="${SELF_CXX_FLAGS}" CC="${CONFIGURE_CC}" CXX="${CONFIGURE_CXX}"
 		if [ $? -ne 0 ]
 		then
 

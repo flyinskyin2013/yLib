@@ -1,0 +1,71 @@
+提交所有未跟踪文件到暂存区
+git add .
+
+查看工作区相对于last-commit的修改内容
+git diff > xxx.patch
+
+查看暂存区相对于last-commit的修改内容
+git diff --cached > xxx.patch
+
+查看两个commit的修改内容
+git diff commit1ID commit2ID > xxx.patch
+
+显示修改内容的统计信息
+git diff --stat  
+git diff --cached --stat 
+
+
+这三条命令分别是，检查patch文件格式，测试patch是否能应用到当前分支，应用此patch。
+git apply --stat patchfile
+git apply --check patchfile
+git apply patchfile
+
+
+
+创建分支
+git checkout -b branch-name
+
+切换分支
+git checkout branch-name
+
+创建tag
+git tag xxx
+推送tag到远端
+git push --tags 
+
+查看git commit log
+git log
+
+显示commit graph
+git log --graph
+
+
+
+克隆指定分支代码
+git clone -b dev url
+
+克隆指定分支代码，且只clone最近的一次提交
+git clone -b dev --depth 1 url
+
+
+
+
+git 子模块相关
+git clone <repository> --recursive 递归的方式克隆整个项目
+git submodule add <repository> <path> 添加子模块
+git submodule init 初始化子模块
+git submodule update 更新子模块
+git submodule foreach git pull 拉取所有子模块
+
+
+删除子模块
+.gitmodules 文件项删除
+.git/.config 文件项删除
+.git/modules/ 下面子模块文件夹删除
+
+或者 
+git submodule deinit 子模块路径
+
+
+推送代码并创建远程分支
+git push origin xxx

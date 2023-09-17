@@ -28,15 +28,15 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #define __CORE_YCOMPILER_TOOLS_YCONFIG_PARSE_ACTION_HPP__
 
 
-#include "core/ycompiler/basic/yaction.hpp"
-#include "core/ycompiler/basic/ycompiler_instance.hpp"
+#include "core/ycompiler/frontend/yfrontend_action.hpp"
+#include "core/ycompiler/frontend/ycompiler_instance.hpp"
 namespace yLib
 {
     namespace ycompiler
     {
         class yCompilerInstance;
 
-        class yConfigParseAction:public yAction{
+        class yConfigParseAction:public yFrontendAction{
             private:
             
             public:

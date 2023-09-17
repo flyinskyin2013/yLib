@@ -45,6 +45,16 @@ function(AppendBuiltTestList val)
 
 endfunction()
 
+function(AddTwoProcessUnitTest test_name proc1_target proc2_target)
+
+add_test(NAME ${test_name}
+    COMMAND ${CMAKE_COMMAND} 
+    -DTEST_EXECUTABLE=${CMAKE_CURRENT_SOURCE_DIR}/run_multi_process.sh 
+    -DTEST_ARG0=$<TARGET_FILE:${proc1_target}> 
+    -DTEST_ARG1=$<TARGET_FILE:${proc2_target}>
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/../cmakes/execute_test.cmake)
+
+endfunction()
 
 function(build_tests group_name_ sub_dir_name_ module_name_)
 
@@ -85,8 +95,26 @@ function(build_tests group_name_ sub_dir_name_ module_name_)
             set(DEP_LIBS
                 ${DEP_LIBS}
                 -pthread)
+        elseif(CMAKE_SYSTEM_NAME MATCHES "Android")
+
+            set(DEP_LIBS
+                ${DEP_LIBS}
+                -pthread log)
         endif()
         add_executable(${unit_test_target_name} ${SRC})  
+
+        # we skip and specially process:
+        # unit_test_ytcpclient/unit_test_ytcpserver
+        # unit_test_yudpclient/unit_test_yudpserver
+        # unit_test_ysharedmemory_r/unit_test_ysharedmemory_w
+        if (${unit_test_target_name} MATCHES "yudp")
+        elseif (${unit_test_target_name} MATCHES "ytcp")
+        elseif (${unit_test_target_name} MATCHES "ysharedmemory")
+        else()
+            add_test(NAME ${unit_test_target_name} COMMAND ${CMAKE_COMMAND} -DTEST_EXECUTABLE=$<TARGET_FILE:${unit_test_target_name}> -P ${CMAKE_CURRENT_SOURCE_DIR}/../cmakes/execute_test.cmake)
+        endif()
+
+        
         target_link_libraries(${unit_test_target_name} ylib ${DEP_LIBS})
         add_dependencies(${unit_test_target_name} ylib YLIB_TESTS_SHARED_MAIN)
 
@@ -107,10 +135,25 @@ function(build_tests group_name_ sub_dir_name_ module_name_)
             set(DEP_LIBS
                 ${DEP_LIBS}
                 -pthread)
+        elseif(CMAKE_SYSTEM_NAME MATCHES "Android")
+            set(DEP_LIBS
+                ${DEP_LIBS}
+                -pthread log)
         endif()
 
         add_executable(${unit_test_target_name}_s ${SRC}) 
-        target_link_libraries(${unit_test_target_name}_s ylib_s ${DEP_LIBS})
+        set_target_properties(${unit_test_target_name}_s PROPERTIES COMPILE_DEFINITIONS "BUILD_YLIB_STATIC_LIB")
+        #add_test(NAME ${unit_test_target_name}_s COMMAND ${CMAKE_COMMAND} -DTEST_EXECUTABLE=$<TARGET_FILE:${unit_test_target_name}_s> -P ${CMAKE_CURRENT_SOURCE_DIR}/../cmakes/execute_test.cmake)
+        
+        if(WIN32)
+            target_link_libraries(${unit_test_target_name}_s ylib_s ${DEP_LIBS} Ws2_32)
+        elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
+            target_link_libraries(${unit_test_target_name}_s ylib_s ${DEP_LIBS})
+
+        elseif(CMAKE_SYSTEM_NAME MATCHES "Android")
+            target_link_libraries(${unit_test_target_name}_s ylib_s ${DEP_LIBS} log)
+        endif()
+
         add_dependencies(${unit_test_target_name}_s ylib_s YLIB_TESTS_SHARED_MAIN)
 
         INSTALL(TARGETS  ${unit_test_target_name}_s
@@ -149,10 +192,12 @@ if(BUILD_MODULE_YCONFIG)
     build_tests(UTILITY yConfig yConfig)
 
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/utility/yconfig/test.conf.example test.conf @ONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/utility/yconfig/test_fail.conf.example test_fail.conf @ONLY)
 
     INSTALL(FILES
 
         ${CMAKE_CURRENT_BINARY_DIR}/test.conf
+        ${CMAKE_CURRENT_BINARY_DIR}/test_fail.conf
         DESTINATION 
         tests
     )
@@ -203,17 +248,19 @@ build_tests(UTILITY yTimer yTimer)
 #----------------------------------------------------------------------------------------
 
 #---------------------------------------Unit Test For Network Group----------------------
-if(BUILD_MODULE_YTCPSERVER)
-    build_tests(NETWORK TCP yTcpserver)
-endif()
 
 if(BUILD_MODULE_YTCPSOCKET)
+    build_tests(NETWORK TCP yTcpserver)
     build_tests(NETWORK TCP yTcpClient)
+
+    AddTwoProcessUnitTest(unit_test_ytcp unit_test_ytcpserver unit_test_ytcpclient)
 endif()
 
 if(BUILD_MODULE_YUDPSOCKET)
     build_tests(NETWORK UDP yUdpClient)
     build_tests(NETWORK UDP yUdpServer)
+
+    AddTwoProcessUnitTest(unit_test_yudp unit_test_yudpserver unit_test_yudpclient)
 endif()
 
 ##########################################################################
@@ -221,10 +268,12 @@ endif()
 
 #----------------------------------Unit Test For IPC Group------------------------------
 ##########################################################################
+if (BUILD_MODULE_YSHAREDMEMORY)
+    build_tests(IPC ySharedMemory ySharedMemory_R)
+    build_tests(IPC ySharedMemory ySharedMemory_W)
 
-build_tests(IPC ySharedMemory ySharedMemory_R)
-build_tests(IPC ySharedMemory ySharedMemory_W)
-
+    AddTwoProcessUnitTest(unit_test_ysharedmemory unit_test_ysharedmemory_r unit_test_ysharedmemory_w)
+endif()
 ##########################################################################
 #----------------------------------------------------------------------------------------
 
@@ -244,6 +293,8 @@ build_tests(CORE yBasicValue yBasicValue)
 build_tests(CORE yLib_Extra_Infos yLib_Extra_Infos)
 
 build_tests(CORE yAllocator yAllocator)
+
+build_tests(CORE yThreadPool yThreadPool)
 
 # for yLog
 build_tests(CORE yLog yLog)

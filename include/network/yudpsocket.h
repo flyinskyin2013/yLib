@@ -51,7 +51,7 @@ namespace yLib{
 
     typedef void (*RecvFromCB)(uint64_t ip_, uint64_t port_);
 
-    class yUdpSocket : public yAbstractSocket
+    class __YLIB_CLASS_DECLSPEC__ yUdpSocket : public yAbstractSocket
     {
     public:
         yUdpSocket(void) noexcept;

@@ -24,8 +24,11 @@ public:
         *data_val = val_;
     }
     ~yTestElementData() noexcept{
-        if (nullptr != data_val) 
-            delete data_val;data_val=nullptr;
+        if (nullptr != data_val) {
+
+            delete data_val;
+            data_val=nullptr;
+        }
     }
     
     yTestElementData & operator=(const yTestElementData & data_) {

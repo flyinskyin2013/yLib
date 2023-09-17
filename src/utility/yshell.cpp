@@ -36,12 +36,12 @@ static int8_t __execute_impl_linux(const std::vector<YLIB_STD_STRING> & cmd, con
     YLIB_STD_CHAR ** parse_cmd_array = new YLIB_STD_CHAR * [cmd.size() + args.size() + 1];
     parse_cmd_array[cmd.size() + args.size()] = nullptr;    
 
-    for(int _i = 0; _i < cmd.size(); _i++){
+    for(size_t _i = 0; _i < cmd.size(); _i++){
 
         parse_cmd_array[_i] = const_cast<char *>(cmd[_i].c_str());
     }
 
-    for(int _i = 0; _i < args.size(); _i++){
+    for(size_t _i = 0; _i < args.size(); _i++){
 
         parse_cmd_array[_i + cmd.size()] = const_cast<char *>(args[_i].c_str());
     }
@@ -50,7 +50,7 @@ static int8_t __execute_impl_linux(const std::vector<YLIB_STD_STRING> & cmd, con
     YLIB_STD_CHAR ** parse_cmd_env_array = new YLIB_STD_CHAR * [env.size() + 1];
     parse_cmd_env_array[env.size()] = nullptr;    
 
-    for(int _i = 0; _i < env.size(); _i++){
+    for(size_t _i = 0; _i < env.size(); _i++){
 
         parse_cmd_env_array[_i] = const_cast<char *>(env[_i].c_str());
     }
@@ -96,8 +96,8 @@ static int8_t __execute_impl_linux(const std::vector<YLIB_STD_STRING> & cmd, con
                 FILE * _ret_read_stream = fdopen(_pipe_fd[0], "r");
                 while ( 1 && nullptr != result_read_buffer){
                     
-                    memset(result_read_buffer, 0, result_line_buf_size + 1);
-                    if ( NULL == fgets(result_read_buffer, result_line_buf_size, _ret_read_stream) ){
+                    memset(result_read_buffer, 0, result_line_buf_size);
+                    if ( NULL == fgets(result_read_buffer, result_line_buf_size - 1, _ret_read_stream) ){
 
                         break;//have no charactor or error
                     }
@@ -130,8 +130,8 @@ static int8_t __execute_impl_linux(const std::vector<YLIB_STD_STRING> & cmd, con
                 FILE * _ret_read_stream = fdopen(_pipe_fd[0], "r");
                 while ( 1 && nullptr != result_read_buffer){
                     
-                    memset(result_read_buffer, 0, result_line_buf_size + 1);
-                    if ( NULL == fgets(result_read_buffer, result_line_buf_size, _ret_read_stream) ){
+                    memset(result_read_buffer, 0, result_line_buf_size);
+                    if ( NULL == fgets(result_read_buffer, result_line_buf_size - 1, _ret_read_stream) ){
 
                         break;//have no charactor or error
                     }

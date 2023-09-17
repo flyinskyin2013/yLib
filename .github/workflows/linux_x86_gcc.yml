@@ -5,9 +5,9 @@ jobs:
   build_last_ubuntu_x86_gcc:
     name: build on x86(last_ubuntu) platefrom  using gcc
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        os: [ubuntu-18.04, ubuntu-20.04]
+    # strategy:
+    #   matrix:
+    #     os: [ubuntu-18.04, ubuntu-20.04]
     steps:
     - name: checkout my rep
       uses: actions/checkout@v2

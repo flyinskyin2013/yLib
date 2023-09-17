@@ -445,7 +445,8 @@ int8_t yLib::yXml::ReadFromXmlFile(std::string & xml_file_){
 
 int8_t yLib::yXml::UpdateXmlValue(std::string &node_name_, std::string &node_prop_name_, std::string &node_prop_val_, const std::string &node_val_, const yXmlOptsEx & opts_ex_){
 
-	xmlNodePtr _proot = NULL, _pcur = NULL;
+	// xmlNodePtr _proot = NULL, _pcur = NULL;
+	xmlNodePtr _proot = NULL;
 	/*****************获取xml文档对象的根节对象********************/
 	_proot = xmlDocGetRootElement(xmlfile_pdoc_ptr);
 	
@@ -468,7 +469,8 @@ int8_t yLib::yXml::UpdateXmlValue(std::string &node_name_, std::string &node_pro
 
 int8_t yLib::yXml::GetXmlValue(std::string &node_name_, std::string &node_prop_name_, std::string &node_prop_val_, std::string &node_val_, const yXmlOptsEx & opts_ex_) const{
 
-	xmlNodePtr _proot = NULL, _pcur = NULL;
+	// xmlNodePtr _proot = NULL, _pcur = NULL;
+	xmlNodePtr _proot = NULL;
 	/*****************获取xml文档对象的根节对象********************/
 	_proot = xmlDocGetRootElement(xmlfile_pdoc_ptr);
 	
@@ -491,7 +493,8 @@ int8_t yLib::yXml::GetXmlValue(std::string &node_name_, std::string &node_prop_n
 
 int8_t yLib::yXml::AddXmlValue(std::string & parent_node_name_, std::string &node_name_, std::string &node_prop_name_, std::string &node_prop_val_, const std::string &node_val_, const yXmlOptsEx & opts_ex_){
 
-	xmlNodePtr _proot = NULL, _pcur = NULL;
+	// xmlNodePtr _proot = NULL, _pcur = NULL;
+	xmlNodePtr _proot = NULL;
 	/*****************获取xml文档对象的根节对象********************/
 	_proot = xmlDocGetRootElement(xmlfile_pdoc_ptr);
 	

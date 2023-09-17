@@ -17,9 +17,9 @@ YLIB_IMPLEMENT_CLASSINFO_CONTENT_S(ySharedMemory)
 
 
 yLib::ySharedMemory::ySharedMemory(uint64_t shm_size, const yShmParam & shm_param, bool is_delete) noexcept
-:shm_ptr(nullptr),
-shm_is_init_ready(false),
-shm_is_attach_ready(false)
+:shm_is_init_ready(false),
+shm_is_attach_ready(false),
+shm_ptr(nullptr)
 {
 #ifdef _WIN32
 

@@ -19,9 +19,18 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  * @Description: 
  */
 
+#include "ylib.hpp"
+
+#ifdef __cplusplus
+extern "C" {
+#endif //__cplusplus
+
 #include "ylib_c.h"
 
-#include "ylib.hpp"
+#ifdef __cplusplus
+}
+#endif //__cplusplus
+
 
 #include <cstdarg>
 

@@ -64,7 +64,7 @@ TEST_CASE( "Test yUdpClient apis" , "[yUdpClient_Apis]" ){
         REQUIRE(12355 == svr_port);
         std::string svr_ip_str = svr_ip;
         REQUIRE_THAT(svr_ip_str.c_str(), Catch::Equals ( "127.0.0.1" ));
-        yLib::yLog::I("client0: recv: %s,  ip is %s,  port is %d", recv_msg_buff , svr_ip.c_str(), svr_port);
+        yLib::yLog::I("client0: recv: %s,  ip is %s,  port is %d\n", recv_msg_buff , svr_ip.c_str(), svr_port);
         REQUIRE_THAT( recv_msg_buff, Catch::Equals ( msg_base_compare ));
 
 
@@ -73,7 +73,7 @@ TEST_CASE( "Test yUdpClient apis" , "[yUdpClient_Apis]" ){
         REQUIRE(12355 == svr_port);
         svr_ip_str = svr_ip;
         REQUIRE_THAT(svr_ip_str, Catch::Equals ( "127.0.0.1" ));
-        yLib::yLog::I("client1: recv: %s,  ip is %s,  port is %d", recv_msg_buff , svr_ip.c_str(), svr_port);
+        yLib::yLog::I("client1: recv: %s,  ip is %s,  port is %d\n", recv_msg_buff , svr_ip.c_str(), svr_port);
 
         msg_base_compare = "server: your ip " + std::string("127.0.0.1") + " your port " + std::to_string(12346);
         REQUIRE_THAT( recv_msg_buff, Catch::Equals ( msg_base_compare ));
@@ -83,6 +83,6 @@ TEST_CASE( "Test yUdpClient apis" , "[yUdpClient_Apis]" ){
         REQUIRE(12355 == svr_port);
         svr_ip_str = svr_ip;
         REQUIRE_THAT(svr_ip_str, Catch::Equals ( "127.0.0.1" ));
-        yLib::yLog::I("client2: recv: %s,  ip is %s,  port is %d", recv_msg_buff , svr_ip.c_str(), svr_port);
+        yLib::yLog::I("client2: recv: %s,  ip is %s,  port is %d\n", recv_msg_buff , svr_ip.c_str(), svr_port);
     }
 }

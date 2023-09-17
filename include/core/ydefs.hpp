@@ -38,25 +38,41 @@ namespace yLib{
 
     #ifdef _WIN32
 
-        #define __YLIB_EXPORT_DECLSPEC__ __declspec(dllexport)
-        #ifdef BUILD_YLIB_WITH_EXPORT
-            #define __YLIB_CLASS_DECLSPEC__ __declspec(dllexport)
-        #else
-            #define __YLIB_CLASS_DECLSPEC__ __declspec(dllimport)
-        #endif //BUILD_YLIB_WITH_EXPORT
         
-        #define __YLIB_TEAMPLATE_CLASS_EXPORT__ __declspec(dllexport)
-        #define __YLIB_TEAMPLATE_FUNC_EXPORT__ __declspec(dllexport)
 
-        #define __YLIB_IMPORT__ __declspec(dllimport)
+        #ifdef BUILD_YLIB_STATIC_LIB
+            //static lib
+            // https://social.msdn.microsoft.com/Forums/vstudio/en-US/26f1c8b2-6431-4a9a-8f76-0473d939c165/error-lnk2019-unresolved-external-symbol-why?forum=vcgeneral
+            #define __YLIB_CLASS_DECLSPEC__
+            #define __YLIB_TEAMPLATE_CLASS_EXPORT__ 
+            #define __YLIB_TEAMPLATE_FUNC_EXPORT__ 
+
+            #define __YLIB_IMPORT__ 
+
+        #else //shard lib
+            
+            #define __YLIB_EXPORT_DECLSPEC__ __declspec(dllexport)
+
+            #ifdef BUILD_YLIB_WITH_EXPORT
+                #define __YLIB_CLASS_DECLSPEC__ __declspec(dllexport)
+            #else
+                #define __YLIB_CLASS_DECLSPEC__ __declspec(dllimport)
+            #endif //BUILD_YLIB_WITH_EXPORT
+
+            #define __YLIB_TEAMPLATE_CLASS_EXPORT__ __declspec(dllexport)
+            #define __YLIB_TEAMPLATE_FUNC_EXPORT__ __declspec(dllexport)
+
+            #define __YLIB_IMPORT__ __declspec(dllimport)
+        #endif
+
 
         #define __YLIB_DEPRECATED_ATTRIBUTE__ __declspec(deprecated)
         #define __YLIB_DEPRECATED_ATTRIBUTE_WITH_MSG__(msg) __declspec(deprecated(msg))
         
     #elif __linux__ || __linux
 
-        #define __YLIB_EXPORT_DECLSPEC__
-        #define __YLIB_CLASS_DECLSPEC__
+        #define __YLIB_EXPORT_DECLSPEC__ __attribute__((visibility ("default")))
+        #define __YLIB_CLASS_DECLSPEC__ __attribute__((visibility ("default")))
         #define __YLIB_IMPORT__
         #define __YLIB_TEAMPLATE_CLASS_EXPORT__
         #define __YLIB_TEAMPLATE_FUNC_EXPORT__
@@ -96,14 +112,15 @@ namespace yLib{
 
     //define some useful macroes ----------------------------   end
 
+    /*
     // c99 for variadic macros
-    // #define example(...) \
-    //     do{ \
-    //         char msg_buf[1024]; \
-    //         sprintf(msg_buf, __VA_ARGS__); \
-    //         std::cout<<std::string(msg_buf)<<std::endl; \
-    //     }while(0)
-
+    #define example(...) \
+        do{ \
+            char msg_buf[1024]; \
+            sprintf(msg_buf, __VA_ARGS__); \
+            std::cout<<std::string(msg_buf)<<std::endl; \
+        }while(0)
+    */
 
     /** \def YLIB_STR
         \brief Convert __S to string.

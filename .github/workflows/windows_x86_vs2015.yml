@@ -4,7 +4,7 @@ on: [push, pull_request]
 jobs:
   build_windows_x86_vs2017:
     name: build on x86(windows) platefrom  using vs2015
-    runs-on: windows-latest
+    runs-on: windows-2019
     steps:
     - name: checkout my rep
       uses: actions/checkout@v2

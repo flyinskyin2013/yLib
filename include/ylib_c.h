@@ -24,7 +24,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #ifndef __YLIB_C_HPP__
 #define __YLIB_C_HPP__
 
-
+#ifndef __YLIB_EXPORT_DECLSPEC__
 #ifdef _WIN32
 
     #define __YLIB_EXPORT_DECLSPEC__ __declspec(dllexport)
@@ -36,6 +36,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #elif __unix__ || __unix
 
 #endif //__unix__ || __unix
+
+#endif //__YLIB_EXPORT_DECLSPEC__
 
 
 #define YLIB_C_API \
@@ -68,7 +70,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         ENABLE_ALL_LOG_LEVEL = 0xFFFF,
     } yLogLevel;
 */
-__YLIB_EXPORT_DECLSPEC__ struct yLogTagPropertyC{
+struct __YLIB_EXPORT_DECLSPEC__ yLogTagPropertyC{
 
     uint16_t log_level = 0xFFFF;
     bool is_log_to_file = false;

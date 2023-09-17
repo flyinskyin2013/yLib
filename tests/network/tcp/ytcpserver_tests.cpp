@@ -95,7 +95,7 @@ TEST_CASE( "Test yTcpServer apis" , "[yTcpServer_Apis]" ){
 
                 REQUIRE(recv_msg_str.length() == read(g_client_array[0], recv_msg_buff, 100));
                 std::string _msg = "tcpserver recv: " + std::string(recv_msg_buff);
-                yLib::yLog::I(_msg);
+                yLib::yLog::I("%s\n", _msg.c_str());
                 
                 REQUIRE_THAT( recv_msg_str, Catch::Equals ( recv_msg_buff ));//verify client0 write
 
@@ -108,7 +108,7 @@ TEST_CASE( "Test yTcpServer apis" , "[yTcpServer_Apis]" ){
 
                 REQUIRE(recv_msg_str.length() == read(g_client_array[1], recv_msg_buff, 100));
                 _msg = "tcpserver recv: " + std::string(recv_msg_buff);
-                yLib::yLog::I(_msg);
+                yLib::yLog::I("%s\n", _msg.c_str());
                 
                 REQUIRE_THAT( recv_msg_str, Catch::Equals ( recv_msg_buff ));//verify client1 write
 
@@ -121,7 +121,7 @@ TEST_CASE( "Test yTcpServer apis" , "[yTcpServer_Apis]" ){
                 
                 REQUIRE(recv_msg_str.length() == read(g_client_array[2], recv_msg_buff, 100));
                 _msg = "tcpserver recv: " + std::string(recv_msg_buff);
-                yLib::yLog::I(_msg);
+                yLib::yLog::I("%s\n", _msg.c_str());
 
                 REQUIRE_THAT( recv_msg_str, Catch::Equals ( recv_msg_buff ));//verify client2 write
 

@@ -89,9 +89,18 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
     endif()
 
-    
+    # for hidden symbols
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -fvisibility=hidden")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -fvisibility=hidden")
+
+    # for strictly check
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -Wall")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -Wall")
+
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+
 
     # if gcc > 4.9 add sanitizers
     # gcc 5.x has bug for "ld: unrecognized option '--push-state--no-as-needed'", we should use gcc 7.5
@@ -112,7 +121,57 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
     endif()
 
 elseif(ANDROID)
-    message(FATAL_ERROR "Don't support this system ${CMAKE_SYSTEM_NAME}.")  
+    ylib_check_gcc_or_clang_version_for_cxx11()
+
+    if(CMAKE_BUILD_TYPE MATCHES "(Release|RELEASE|release)")
+
+        #release mode 
+
+    else()
+
+        #debug mode
+        # add_compile_options(-g)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+
+    endif()
+
+    # for hidden symbols
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -fvisibility=hidden")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -fvisibility=hidden")
+
+    # for strictly check
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -Wall")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -Wall")
+
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    
+    # #-s, --strip-all             Strip all symbols
+    # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-s")
+    # #-s, --strip-all             Strip all symbols
+    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-s")
+
+    set (CMAKE_SHARED_LINKER_FLAGS "-Wl,-s")
+    set (CMAKE_EXE_LINKER_FLAGS "-Wl,-s")
+
+    # if gcc > 4.9 add sanitizers
+    # gcc 5.x has bug for "ld: unrecognized option '--push-state--no-as-needed'", we should use gcc 7.5
+    if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 7.3)
+
+        if (ENABLE_GNU_SANITIZER)
+
+            message(STATUS "Enable AddressSanitizer MemorySanitizer")
+            set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address -fsanitize=leak -fsanitize=undefined")
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize=leak -fsanitize=undefined")
+            
+        endif()
+
+    else()
+
+        set(ENABLE_GNU_SANITIZER OFF)
+
+    endif()
 else()
     message(FATAL_ERROR "Don't support this system ${CMAKE_SYSTEM_NAME}.")
 endif()
@@ -122,7 +181,7 @@ endif()
 #----------------------------choose build module-----------------------------------------
 
 
-# On windows platefrom, now, Only support yLog and ySharedMemory
+# On windows platefrom
 if(WIN32)
 
     # UtilityGroup
@@ -137,9 +196,7 @@ if(WIN32)
     set(BUILD_MODULE_YSHAREDMEMORY "ON")
 
     # NetworkGroup
-    set(BUILD_MODULE_YTCPSERVER "OFF")
     set(BUILD_MODULE_YTCPSOCKET "OFF")
-    set(BUILD_MODULE_YUDPSERVER "OFF")
     set(BUILD_MODULE_YUDPSOCKET "OFF")
 
     #yLib Framework
@@ -148,12 +205,33 @@ if(WIN32)
 
     # static and shared can't build at same time.
     set(BUILD_SHARED_YLIB ON)
-    set(BUILD_STATIC_YLIB OFF)
+    set(BUILD_STATIC_YLIB ON)
 
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
 elseif(ANDROID)
+    # UtilityGroup
+    set(BUILD_MODULE_YHTTP "OFF")
+    set(BUILD_MODULE_YLOG "ON")
+    set(BUILD_MODULE_YSHELL "ON")
+    set(BUILD_MODULE_YXML "OFF")
+    set(BUILD_MODULE_YCONFIG  "ON")
+    set(BUILD_MODULE_YJSON  "OFF")
 
+    # IpcGroup
+    set(BUILD_MODULE_YSHAREDMEMORY "OFF")
+
+    # NetworkGroup
+    set(BUILD_MODULE_YTCPSOCKET "ON")
+    set(BUILD_MODULE_YUDPSOCKET "ON")
+
+    #yLib Framework
+    set(BUILD_MODULE_YTEMP "ON")
+    set(BUILD_MODULE_YMAIN "ON")
+
+    # static and shared can't build at same time.
+    set(BUILD_SHARED_YLIB ON)
+    set(BUILD_STATIC_YLIB ON)
 else()
     message(FATAL_ERROR "Don't support this system ${CMAKE_SYSTEM_NAME}.")    
 endif()
@@ -187,6 +265,7 @@ endif()
 
 
 if(BUILD_UNIT_TEST)
+    enable_testing()
     add_subdirectory(tests)
 endif()
 

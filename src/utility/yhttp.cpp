@@ -84,7 +84,7 @@ static size_t write_callback(char *buffer_, size_t size_, size_t nmemb_, void *u
     else{
 
 #ifndef YLIB_CODECOVERAGE_SKIP_CODE
-        uint32_t _now_not_used_len = _buffer_len - _buffer_used_len;
+        // uint32_t _now_not_used_len = _buffer_len - _buffer_used_len;
         uint32_t _alloc_4k_count = (size_* nmemb_ / 4096) + 1;
 
         uint8_t * _new_buf_addr = (uint8_t *)realloc(*_data_buf, _buffer_len + _alloc_4k_count * 4096);

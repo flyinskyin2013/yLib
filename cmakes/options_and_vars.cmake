@@ -17,7 +17,6 @@ option(BUILD_MODULE_YXML "Build module-yxml " ON)
 option(BUILD_MODULE_YCONFIG "Build module-yconfig " ON)
 option(BUILD_MODULE_YJSON "Build module-yjson " ON)
 option(BUILD_MODULE_YSHAREDMEMORY "Build module-ysharedmemory " ON)
-option(BUILD_MODULE_YTCPSERVER "Build module-ytcpserver " ON)
 option(BUILD_MODULE_YTCPSOCKET "Build module-ytcpsocket " ON)
 option(BUILD_MODULE_YUDPSOCKET "Build module-yudpsocket " ON)
 

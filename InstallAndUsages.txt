@@ -16,18 +16,29 @@ For Windows
 
     Open powershell on windows10, download third_part
     >>cd yLib\third_part
-    >>..\download_third_part.ps1
-
+    >>..\download_third_part.ps1     (we can skip this, because build_deps.bat will do same things.)
+    
+    Note:
+        If show : ..\download_third_part.ps1 : 无法加载文件 E:\yLib\download_third_part.ps1，因为在此系统上禁止运行脚本。有关详细信息，请参阅 https:/go.microsoft.com/fwlink/?LinkID=135170 中的 about_Execution_Policies。
+            we should :
+                > get-executionpolicy (get current policy)
+                > get-help set-executionpolicy (help)
+                > set-executionpolicy Unrestricted (pass)
+                > set-executionpolicy Restricted (recovery)
     If I don't specially note that, the default shell is native-cmd.
 
 2. For third_part resources.
     >>cd yLib
     >>build_deps.bat vs2015 x86_64
 
+    Note:
+        If cmd doesn't have cp and rm , you should add them to PATH.
+
 3. For yLib.
     >>mkdir build_vs2015_x64 
     >>cd build_vs2015_x64 
-    >>cmake -T v140,host=x64 -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=%cd%/install -DBUILD_YLIB_ARCH=x86_64 ..
+    >>cmake -T v140,host=x64 -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=%cd%/install -DBUILD_YLIB_ARCH=x86_64 .. (x64)
+    >>cmake -T v142,host=x64 -A Win32 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=%cd%/install -DBUILD_YLIB_ARCH=x86 ..   (x86)
     >>cmake --build . --config Release --target install
 
 For Linux:
@@ -38,10 +49,13 @@ run the following commmands.
     >>chmod +x build_deps.sh
     >>./build_deps.sh All
 
+    Note:
+        Need autoconf automake libtool pkg-config
 
 2. For yLib.
     >>mkdir -p build 
     >>cd build && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 ..
+    （注意，在cmake中构建的库架构必须和上述第一步的build_deps.sh的架构对应，否则需要自行修改cmake指向特定架构的第三方库）
     >>make -j4 && make install
 
 Defaultly,In directory(yLib/build/install), it may have those directories including cmake, examples, include, lib and so on. You can use them by following way:
@@ -51,3 +65,18 @@ Defaultly,In directory(yLib/build/install), it may have those directories includ
 
 2. In other project,you can add compiler flags to include ylib_install_dir/include and add linker flags to link ylib_install_dir/lib/libylib.so.For example:
 >> gcc  -I ylib_install_dir/include -L ylib_install_dir/lib -lylib
+
+
+
+For Android:
+-------------------------------------
+run the following commmands.
+1. For yLib.
+    >>mkdir -p build 
+    >>cd build 
+    构建armeabi-v7a
+    >>cmake -DCMAKE_TOOLCHAIN_FILE="$ANDROID_NDK/build/cmake/android.toolchain.cmake" -DANDROID_ABI="armeabi-v7a" -DANDROID_PLATFORM=android-21 -DCMAKE_BUILD_TYPE=Release -DBUILD_YLIB_ARCH=android ..
+    构建arm64-v8a
+    >>cmake -DCMAKE_TOOLCHAIN_FILE="$ANDROID_NDK/build/cmake/android.toolchain.cmake" -DANDROID_ABI="arm64-v8a" -DANDROID_PLATFORM=android-21 -DCMAKE_BUILD_TYPE=Release -DBUILD_YLIB_ARCH=android ..
+    （注意，在cmake中构建的库架构必须和上述第一步的build_deps.sh的架构对应，否则需要自行修改cmake指向特定架构的第三方库）
+    >>make -j4 && make install
