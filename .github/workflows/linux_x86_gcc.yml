@@ -10,7 +10,7 @@ jobs:
     #     os: [ubuntu-18.04, ubuntu-20.04]
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: set env and init
       env:

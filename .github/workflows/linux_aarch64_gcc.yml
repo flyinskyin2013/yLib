@@ -11,7 +11,7 @@ jobs:
     #     os: [ubuntu-18.04, ubuntu-20.04]
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: set env and init
       env:
@@ -35,7 +35,7 @@ jobs:
     - name: checkout-qemu
       #if we don't hit cache-qemu, we should compile qemu
       if: steps.cache-qemu.outputs.cache-hit != 'true'
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         repository: qemu/qemu
         path: qemu
@@ -87,4 +87,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
