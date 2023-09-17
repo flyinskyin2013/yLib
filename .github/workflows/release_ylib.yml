@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: check out my rep
-      uses: actions/checkout@v1
+      uses: actions/checkout@v4
 
     - name: package
       run: |
@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: set env and init
       env:
@@ -91,7 +91,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: set env and init
       env:
@@ -151,7 +151,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: set env and init
       env:
@@ -205,7 +205,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: set env and init
       env:
@@ -259,7 +259,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: set env and init
       env:
@@ -315,7 +315,7 @@ jobs:
     runs-on: windows-2019
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Configure build for x86
       uses: ilammy/msvc-dev-cmd@v1
@@ -367,7 +367,7 @@ jobs:
     runs-on: windows-2019
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Configure build for amd64
       uses: ilammy/msvc-dev-cmd@v1
@@ -419,7 +419,7 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Configure build for x86
       uses: ilammy/msvc-dev-cmd@v1
@@ -472,7 +472,7 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Configure build for amd64
       uses: ilammy/msvc-dev-cmd@v1
@@ -524,7 +524,7 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Configure build for x86
       uses: ilammy/msvc-dev-cmd@v1
@@ -576,7 +576,7 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Configure build for amd64
       uses: ilammy/msvc-dev-cmd@v1
@@ -628,7 +628,7 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Configure build for x86
       uses: ilammy/msvc-dev-cmd@v1
@@ -680,7 +680,7 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Configure build for amd64
       uses: ilammy/msvc-dev-cmd@v1
@@ -733,7 +733,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: set env and init
       env:
@@ -784,7 +784,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: build ylib
       working-directory: /home/runner/work/yLib/yLib/build
@@ -812,7 +812,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: build ylib
       working-directory: /home/runner/work/yLib/yLib/build

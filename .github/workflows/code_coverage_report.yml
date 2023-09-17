@@ -12,7 +12,7 @@ jobs:
 
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: install lcov
       run: sudo apt-get install lcov -y

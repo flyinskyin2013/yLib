@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: set env and init
       env:
