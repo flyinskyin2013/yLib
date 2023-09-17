@@ -119,7 +119,7 @@ jobs:
         THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
       run: |
         cd $GITHUB_WORKSPACE
-        ./build_deps.sh All
+        ./build_deps.sh All x86 linux
 
       working-directory: /home/runner/work/yLib/yLib
 
@@ -735,6 +735,15 @@ jobs:
     - name: checkout my rep
       uses: actions/checkout@v4
 
+    - name: set env and init
+      env:
+        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+      run: |
+        echo $GITHUB_WORKSPACE
+        ls $GITHUB_WORKSPACE
+        cd $GITHUB_WORKSPACE
+        mkdir -p build
+
     - name: build ylib
       working-directory: /home/runner/work/yLib/yLib/build
       run: |
@@ -762,6 +771,15 @@ jobs:
     steps:
     - name: checkout my rep
       uses: actions/checkout@v4
+
+    - name: set env and init
+      env:
+        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+      run: |
+        echo $GITHUB_WORKSPACE
+        ls $GITHUB_WORKSPACE
+        cd $GITHUB_WORKSPACE
+        mkdir -p build
 
     - name: build ylib
       working-directory: /home/runner/work/yLib/yLib/build

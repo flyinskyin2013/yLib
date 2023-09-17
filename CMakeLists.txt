@@ -9,7 +9,7 @@ cmake_minimum_required(VERSION 3.0)
 cmake_policy(SET CMP0048 NEW)
 
 SET(PROJECT_NAME yLib)
-project(${PROJECT_NAME} VERSION 0.1.0.0)
+project(${PROJECT_NAME} VERSION 0.2.0.0)
 
 
 
