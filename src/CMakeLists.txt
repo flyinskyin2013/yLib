@@ -121,7 +121,20 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
     endif()
 elseif(ANDROID)
-    
+    ylib_build(NETWORK YABSTRACTSOCKET)
+
+    if(BUILD_MODULE_YTCPSOCKET)
+
+        ylib_build(NETWORK YTCPSOCKET)
+        ylib_build(NETWORK YTCPSERVER)
+
+    endif()
+
+    if(BUILD_MODULE_YUDPSOCKET)
+
+        ylib_build(NETWORK YUDPSOCKET)
+
+    endif()
 endif()
 
 
@@ -287,6 +300,77 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
     endif()
 
 elseif(ANDROID)
+
+    if(BUILD_STATIC_YLIB)
+
+    add_library(ylib_s STATIC ${SRC})
+    # target_link_libraries( ylib_s
+    #                             PRIVATE 
+    #                             libcurl.a
+    #                             libxml2.a 
+    #                             libjsoncpp.a)
+
+    # add_custom_command(TARGET target
+    # PRE_BUILD | PRE_LINK | POST_BUILD
+    # COMMAND command1 [ARGS] [args1...]
+    # [COMMAND command2 [ARGS] [args2...] ...]
+    # [WORKING_DIRECTORY dir]
+    # [COMMENT comment] [VERBATIM])
+    # add_custom_command(TARGET ylib_s
+    #                     PRE_BUILD
+    #                     COMMAND rm -rf ${CMAKE_CURRENT_BINARY_DIR}/3rd_all_objs
+    #                     COMMAND mkdir ${CMAKE_CURRENT_BINARY_DIR}/3rd_all_objs
+    #                     COMMAND rm -rf ${CMAKE_CURRENT_BINARY_DIR}/libylib_s.a
+    #                     )
+
+    # add_custom_command(TARGET ylib_s
+    #                     POST_BUILD
+    #                     COMMAND ar -x ${PROJECT_SOURCE_DIR}/lib/linux/${BUILD_YLIB_ARCH}/libcurl.a
+    #                     COMMAND ar -x ${PROJECT_SOURCE_DIR}/lib/linux/${BUILD_YLIB_ARCH}/libxml2.a
+    #                     COMMAND ar -x ${PROJECT_SOURCE_DIR}/lib/linux/${BUILD_YLIB_ARCH}/libjsoncpp.a
+    #                     COMMAND ar -x ${CMAKE_CURRENT_BINARY_DIR}/libylib_s.a
+    #                     COMMAND rm -rf ${CMAKE_CURRENT_BINARY_DIR}/libylib_s.a
+    #                     COMMAND ar -cr ../libylib_s.a ./*.o
+    #                     # update symbol
+    #                     COMMAND ranlib ../libylib_s.a 
+    #                     COMMAND rm -rf ${CMAKE_CURRENT_BINARY_DIR}/3rd_all_objs
+    #                     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/3rd_all_objs
+    #                     )
+    endif()
+
+    if(BUILD_SHARED_YLIB)
+
+    add_library(ylib SHARED ${SRC})
+    target_compile_options(ylib PRIVATE -fPIC)
+    if(ENABLE_YLIB_COVERAGE)
+
+        # -rdynamic for yException
+        target_compile_options(ylib PRIVATE -coverage -fprofile-arcs -ftest-coverage -rdynamic)
+        # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -coverage -fprofile-arcs -ftest-coverage")
+        # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -coverage -fprofile-arcs -ftest-coverage")
+        target_link_libraries(ylib PRIVATE -coverage -lgcov)
+
+        target_compile_options(ylib PRIVATE -D YLIB_CODECOVERAGE_SKIP_CODE)
+
+    else()
+
+        # target_link_libraries(ylib
+        #                 PRIVATE libcurl.a libxml2.a libjsoncpp.a)
+    endif()
+
+    set_target_properties(ylib PROPERTIES VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}" SOVERSION ${PROJECT_VERSION_MAJOR})
+    
+    # strip by linker flag: -Wl,-s
+    # # strip lib
+    # if(CMAKE_BUILD_TYPE MATCHES "Release")
+    #     add_custom_command(TARGET ylib
+    #         POST_BUILD
+    #         COMMAND ${STRIP} libylib.so
+    #         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/
+    #     )
+    # endif()
+    endif()
+
 else()
 endif()
 

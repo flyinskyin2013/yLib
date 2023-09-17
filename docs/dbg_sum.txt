@@ -1,7 +1,67 @@
 查看cxx的abi对应api名称
 c++flit xxxxxxxxxxxx
 
+readelf：
+    查看elf文件的elf文件头
+    readelf -h libylib.so.0.1.0 
+
+    查看elf文件的program头信息
+    readelf -l libylib.so.0.1.0 
+
+    查看elf文件的段头信息
+    readelf -S libylib.so.0.1.0 
+
+    查看elf文件的符号信息
+    readelf -s libylib.so.0.1.0 
+
+objdump:
+    反编译并dump出0x4000~0x4020的反汇编内容
+    objdump -d --start-address=0x4000 --stop-address=0x4020  libylib.so.0.1.0 
+
+
 
 gdb:
+    查看info proc的帮助信息
+    help info proc
     查看所有so的映射信息
     info proc mappings
+
+    设置反汇编指令格式，更喜欢intel格式哦
+    set disassembly-flavor att
+    set disassembly-flavor intel
+    show disassembly-flavor
+
+gdb 下断点：
+    查看所有断点
+    info breakpoints
+    删除某个序号断点
+    d number
+
+    代码断点：
+        对源码某一行下断点
+        b xxx.cpp:123
+        对某地址进行下断点
+        b *0xfff1234546
+
+    内存断点:
+        监控内存值改变
+        watch expr [if condition] (expr 可以是变量，可以是表达式，可以是寄存器：watch $eax if $eax == 0x111)
+
+        监控内存值被读取
+        rwatch expr [if condition]
+
+        监控内存值被读取和写入
+        awatch expr [if condition]
+
+
+gdb分屏调试方法：
+    layout src：显示源代码窗口
+    layout asm：显示汇编窗口
+    layout regs：显示源代码/汇编和寄存器窗口
+    layout split：显示源代码和汇编窗口
+    layout next：显示下一个layout
+    layout prev：显示上一个layout
+    Ctrl + L：刷新窗口
+    Ctrl + x，再按1：单窗口模式，显示一个窗口
+    Ctrl + x，再按2：双窗口模式，显示两个窗口
+    Ctrl + x，再按a：回到传统模式，即退出layout，回到执行layout之前的调试窗口。

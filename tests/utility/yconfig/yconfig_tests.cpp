@@ -58,8 +58,28 @@ TEST_CASE( "Test yConfig apis" , "[yConfig_Apis]" ){
         yLib::yConfig _config;
         _config.ReadFile("test.conf");
 
-        yLib::yConfigValue _tmp_value = _config.GetValue("test.float");
+        yLib::yConfigValue _tmp_value;
 
+        //test root decl
+        _tmp_value = _config.GetValue("test_int");
+        REQUIRE(_tmp_value.GetType() == yLib::yBasicValue::INT64_TYPE);
+        REQUIRE(1 == (int64_t)_tmp_value);
+
+        _tmp_value = _config.GetValue("test_float");
+        REQUIRE(_tmp_value.GetType() == yLib::yBasicValue::DOUBLE_TYPE);
+        double _d_val_root = 2.3;
+        REQUIRE(_d_val_root == (double)_tmp_value);
+
+        _tmp_value = _config.GetValue("test_bool");
+        REQUIRE(_tmp_value.GetType() == yLib::yBasicValue::BOOL_TYPE);
+        REQUIRE(false == (bool)_tmp_value);
+
+        _tmp_value  = _config.GetValue("test_string");
+        REQUIRE(_tmp_value.GetType() == yLib::yBasicValue::STRING_TYPE);
+        REQUIRE_THAT( ((std::string)_tmp_value).c_str(), Catch::Equals ( "HelloWorld" ));
+        //test root decl
+
+        _tmp_value = _config.GetValue("test.float");
         REQUIRE(_tmp_value.GetType() == yLib::yBasicValue::DOUBLE_TYPE);
         double _d_val = 2.3;
         REQUIRE(_d_val == (double)_tmp_value);

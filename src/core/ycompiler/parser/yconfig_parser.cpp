@@ -172,7 +172,9 @@ void yConfigParser::ParseDirectDeclarator(yDeclarator &declarator)
 
         ConsumeToken();//eat 'indentifier'
 
-        if (cur_token.kind == tok::colon){//check ':'
+        lexer.TryNextToken(next_token);//try eat '='
+
+        if (next_token.kind == tok::l_brace){//check '{'
 
             declarator.SetAsObjectDefinitionDeclarator();
         }
@@ -230,7 +232,7 @@ yDeclGroup & yConfigParser::ParseDeclGroup(void)
     yDecl* _decl = nullptr;
     if (_declarator.IsObjectDefinition()){//parse object defination
 
-        //eat ':{...};'
+        //eat '={...};'
         _decl = ParseObjectDefinition(_declarator);
     }
     else{//parse declaration, In yConfig, We only have Ojbect-Defination in top-level-decl.
@@ -255,7 +257,7 @@ yDecl* yConfigParser::ParseObjectDefinition(yDeclarator &D)
 
     yParseScope _scope;
     
-    ConsumeToken();//eat ':'
+    ConsumeToken();//eat '='
 
     return ParseFunctionStatementBody(_func_decl, _scope);;
 }

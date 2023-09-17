@@ -95,6 +95,11 @@ function(build_tests group_name_ sub_dir_name_ module_name_)
             set(DEP_LIBS
                 ${DEP_LIBS}
                 -pthread)
+        elseif(CMAKE_SYSTEM_NAME MATCHES "Android")
+
+            set(DEP_LIBS
+                ${DEP_LIBS}
+                -pthread log)
         endif()
         add_executable(${unit_test_target_name} ${SRC})  
 
@@ -130,6 +135,10 @@ function(build_tests group_name_ sub_dir_name_ module_name_)
             set(DEP_LIBS
                 ${DEP_LIBS}
                 -pthread)
+        elseif(CMAKE_SYSTEM_NAME MATCHES "Android")
+            set(DEP_LIBS
+                ${DEP_LIBS}
+                -pthread log)
         endif()
 
         add_executable(${unit_test_target_name}_s ${SRC}) 
@@ -140,6 +149,9 @@ function(build_tests group_name_ sub_dir_name_ module_name_)
             target_link_libraries(${unit_test_target_name}_s ylib_s ${DEP_LIBS} Ws2_32)
         elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
             target_link_libraries(${unit_test_target_name}_s ylib_s ${DEP_LIBS})
+
+        elseif(CMAKE_SYSTEM_NAME MATCHES "Android")
+            target_link_libraries(${unit_test_target_name}_s ylib_s ${DEP_LIBS} log)
         endif()
 
         add_dependencies(${unit_test_target_name}_s ylib_s YLIB_TESTS_SHARED_MAIN)

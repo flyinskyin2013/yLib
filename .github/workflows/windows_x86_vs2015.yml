@@ -4,7 +4,7 @@ on: [push, pull_request]
 jobs:
   build_windows_x86_vs2017:
     name: build on x86(windows) platefrom  using vs2015
-    runs-on: windows-latest
+    runs-on: windows-2019
     steps:
     - name: checkout my rep
       uses: actions/checkout@v2
@@ -14,28 +14,28 @@ jobs:
       with:
         arch: amd64_x86
 
-    # - name: set env and init
-    #   env:
-    #     THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
-    #   run: |
-    #     $download_ps_file = "${{github.workspace}}/download_third_part.ps1"
-    #     cd third_part
-    #     powershell $download_ps_file
-    #     cd ..
-    #     mkdir build_vs2015_x86
-    #     ls 
+    - name: set env and init
+      env:
+        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
+      run: |
+        $download_ps_file = "${{github.workspace}}/download_third_part.ps1"
+        cd third_part
+        powershell $download_ps_file
+        cd ..
+        mkdir build_vs2015_x86
+        ls 
 
-    # - name: build third part
-    #   env:
-    #     THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
-    #   run: |
-    #     .\build_deps.bat vs2015 x86
+    - name: build third part
+      env:
+        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
+      run: |
+        .\build_deps.bat vs2015 x86
 
-    #   working-directory: D:\a\yLib\yLib\
+      working-directory: D:\a\yLib\yLib\
 
-    # - name: build ylib
-    #   working-directory: D:\a\yLib\yLib\
-    #   run: |
-    #     cd build_vs2015_x86
-    #     cmake -T v140,host=x64 -A Win32 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install -DBUILD_YLIB_ARCH=x86 ..
-    #     cmake --build . --config Release --target install      
+    - name: build ylib
+      working-directory: D:\a\yLib\yLib\
+      run: |
+        cd build_vs2015_x86
+        cmake -T v140,host=x64 -A Win32 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install -DBUILD_YLIB_ARCH=x86 ..
+        cmake --build . --config Release --target install      

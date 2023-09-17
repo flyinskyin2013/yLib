@@ -2,7 +2,7 @@
 yconfig unit-test
 */
 //yconfig unit-test
-test:
+test=
 {
 
     = 1;

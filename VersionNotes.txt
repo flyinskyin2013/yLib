@@ -13,7 +13,7 @@ v0.2.0
     2 Disable libidn2 for libcurl.
     3 Import ctest.
     4 Fix all warnnings.
-    5 New System(Android) support for BuildMatrix.
+    5 Improve CI for Android support and more assets for release.
 
 v0.1.0
 ----------

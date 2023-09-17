@@ -96,8 +96,8 @@ static int8_t __execute_impl_linux(const std::vector<YLIB_STD_STRING> & cmd, con
                 FILE * _ret_read_stream = fdopen(_pipe_fd[0], "r");
                 while ( 1 && nullptr != result_read_buffer){
                     
-                    memset(result_read_buffer, 0, result_line_buf_size + 1);
-                    if ( NULL == fgets(result_read_buffer, result_line_buf_size, _ret_read_stream) ){
+                    memset(result_read_buffer, 0, result_line_buf_size);
+                    if ( NULL == fgets(result_read_buffer, result_line_buf_size - 1, _ret_read_stream) ){
 
                         break;//have no charactor or error
                     }
@@ -130,8 +130,8 @@ static int8_t __execute_impl_linux(const std::vector<YLIB_STD_STRING> & cmd, con
                 FILE * _ret_read_stream = fdopen(_pipe_fd[0], "r");
                 while ( 1 && nullptr != result_read_buffer){
                     
-                    memset(result_read_buffer, 0, result_line_buf_size + 1);
-                    if ( NULL == fgets(result_read_buffer, result_line_buf_size, _ret_read_stream) ){
+                    memset(result_read_buffer, 0, result_line_buf_size);
+                    if ( NULL == fgets(result_read_buffer, result_line_buf_size - 1, _ret_read_stream) ){
 
                         break;//have no charactor or error
                     }

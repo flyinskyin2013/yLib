@@ -28,7 +28,15 @@ extern "C"{
 #ifdef _WIN32
     //SymGetSymFromAddr64，SymGetLineFromAddr64
 #elif __linux__ || __linux
-#include <execinfo.h>
+
+    #ifdef __ANDROID__
+        //android don't have execinfo.h
+    #else
+
+        #include <execinfo.h>
+
+    #endif //
+
 #endif
 
 #include <stdlib.h>
@@ -81,30 +89,40 @@ inline void yLib::yException::get_stack_trace_info(void) noexcept
     //SymGetSymFromAddr64，SymGetLineFromAddr64
 #elif __linux__ || __linux
 
-    // int backtrace(void **buffer, int size);
+    #ifdef __ANDROID__
+        //android don't have execinfo.h
+    #else
 
-    // -rdynamic put all symbols to .dynsym section
-    // char **backtrace_symbols(void *const *buffer, int size);
+        // #include <execinfo.h>
 
-    // mangle/demangle(c++filt)
-    void * _buf[max_stack_item_num];
-    char ** _stack_infos;
+        // int backtrace(void **buffer, int size);
 
-    int _num_addr = ::backtrace(_buf, max_stack_item_num);
+        // -rdynamic put all symbols to .dynsym section
+        // char **backtrace_symbols(void *const *buffer, int size);
 
-    _stack_infos = ::backtrace_symbols(_buf, _num_addr);
-    if (NULL == _stack_infos){
+        // mangle/demangle(c++filt)
+        void * _buf[max_stack_item_num];
+        char ** _stack_infos;
 
-        stack_trace_msg = "";
-        return;
-    }
+        int _num_addr = ::backtrace(_buf, max_stack_item_num);
 
-    for(int _i = 0; _i < _num_addr; _i ++){
+        _stack_infos = ::backtrace_symbols(_buf, _num_addr);
+        if (NULL == _stack_infos){
 
-        stack_trace_msg += std::string(_stack_infos[_i]) + "\n";
-    }
+            stack_trace_msg = "";
+            return;
+        }
 
-    ::free(_stack_infos);
+        for(int _i = 0; _i < _num_addr; _i ++){
+
+            stack_trace_msg += std::string(_stack_infos[_i]) + "\n";
+        }
+
+        ::free(_stack_infos);
+
+    #endif //
+
+
     
 #endif 
 }

@@ -30,6 +30,8 @@ git checkout branch-name
 
 创建tag
 git tag xxx
+推送tag到远端
+git push --tags 
 
 查看git commit log
 git log
