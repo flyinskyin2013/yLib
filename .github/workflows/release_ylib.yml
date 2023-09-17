@@ -728,57 +728,6 @@ jobs:
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2022_x64.zip  
 
 
-    linux_x64_gcc:
-    needs: [prepare_release]
-    runs-on: ubuntu-latest
-    steps:
-    - name: checkout my rep
-      uses: actions/checkout@v4
-
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
-      run: |
-        echo $GITHUB_WORKSPACE
-        ls $GITHUB_WORKSPACE
-        cd $GITHUB_WORKSPACE
-        chmod +x build_deps.sh
-        mkdir -p build
-        
-      working-directory: /home/runner/work/yLib/yLib
-
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
-      run: |
-        cd $GITHUB_WORKSPACE
-        ./build_deps.sh All
-
-      working-directory: /home/runner/work/yLib/yLib
-
-    - name: build ylib
-      working-directory: /home/runner/work/yLib/yLib/build
-      run: |
-        cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_x64_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 -DENABLE_GNU_SANITIZER=OFF ..
-        make -j`nproc`
-        make install
-
-    - name: package
-      run: |
-        cd build/install
-        rm examples/ -rf
-        rm tests/ -rf
-        rm -f /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_x64_gcc.zip
-        zip -9 -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_x64_gcc.zip .
-
-    - name: upload-zip
-      uses: actions/upload-artifact@v3
-      with:
-        name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_x64_gcc
-        path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_x64_gcc.zip    
-
-
-
   android_aarch64_v8a:
     needs: [prepare_release]
     runs-on: ubuntu-latest

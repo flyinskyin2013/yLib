@@ -32,6 +32,11 @@ git checkout branch-name
 git tag xxx
 推送tag到远端
 git push --tags 
+删除本地tag
+git tag -d  V0.2.0A0
+删除远端tag
+git push --delete origin V0.2.0A0
+
 
 查看git commit log
 git log
