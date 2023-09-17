@@ -881,7 +881,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_aarch64_gcc/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-aarch64_gcc_7_5.zip
+        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_aarch64_gcc/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_aarch64_gcc.zip
         asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_aarch64_gcc.zip
         asset_content_type: application/zip
 
