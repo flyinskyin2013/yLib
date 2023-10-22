@@ -29,7 +29,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include <cstdint>
 
 #include "core/ycompiler/basic/ymemory_buffer.hpp"
-#include "core/ylog.hpp"
+#include "core/ylog/ylog.hpp"
 
 using namespace yLib::ycompiler;
 
@@ -73,5 +73,14 @@ std::unique_ptr<yMemoryBuffer> yMemoryBuffer::get_file_memory_buf(const std::str
 
     _in_file.close();
 
-    return std::move(_file_buf);
+    
+    //problem: moving a local object in a return statement prevents copy elision
+    //Automatic RVO:
+    /*
+    //C++11_ISOIEC 14882-2011_n3242 12.8 $32
+        in a return statement in a function with a class return type, when the expression is the name of a
+        non-volatile automatic object (other than a function or catch-clause parameter) with the same cvunqualified type as the function return type, the copy/move operation can be omitted by constructing
+        the automatic object directly into the function’s return value
+    */
+    return _file_buf;
 }

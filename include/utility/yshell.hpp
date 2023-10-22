@@ -56,7 +56,7 @@ extern "C"{
 
 
 #include "core/ycommon.hpp"
-#include "core/ylog.hpp"
+#include "core/ylog/ylog.hpp"
 
 namespace yLib{
 

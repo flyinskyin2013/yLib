@@ -29,7 +29,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #include "core/ycompiler/lexer/ytoken.hpp"
 
-#include "core/ylog.hpp"
+#include "core/ylog/ylog.hpp"
 
 using namespace yLib::ycompiler;
 using namespace yLib;

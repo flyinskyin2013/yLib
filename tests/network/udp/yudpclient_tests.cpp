@@ -49,18 +49,18 @@ TEST_CASE( "Test yUdpClient apis" , "[yUdpClient_Apis]" ){
         REQUIRE(-1 == udp_client3.bind("", 12346));
 
         std::string msg0 = "I am client0";
-        REQUIRE(msg0.length() == udp_client0.sendto(msg0.c_str(), msg0.length(), "127.0.0.1", 12355));
+        REQUIRE((int64_t)msg0.length() == udp_client0.sendto(msg0.c_str(), msg0.length(), "127.0.0.1", 12355));
 
         std::string msg1 = "I am client1";
-        REQUIRE(msg0.length() == udp_client1.sendto(msg1.c_str(), msg1.length(), "127.0.0.1", 12355));
+        REQUIRE((int64_t)msg0.length() == udp_client1.sendto(msg1.c_str(), msg1.length(), "127.0.0.1", 12355));
 
         std::string msg2 = "I am client2";
-        REQUIRE(msg0.length() == udp_client2.sendto(msg2.c_str(), msg2.length(), "127.0.0.1", 12355));
+        REQUIRE((int64_t)msg0.length() == udp_client2.sendto(msg2.c_str(), msg2.length(), "127.0.0.1", 12355));
 
 
         memset(recv_msg_buff, 0, sizeof(recv_msg_buff));
         std::string msg_base_compare = "server: your ip " + std::string("127.0.0.1") + " your port " + std::to_string(12345);
-        REQUIRE(msg_base_compare.length() == udp_client0.recvfrom(recv_msg_buff, 100, svr_ip, svr_port));
+        REQUIRE((int64_t)msg_base_compare.length() == udp_client0.recvfrom(recv_msg_buff, 100, svr_ip, svr_port));
         REQUIRE(12355 == svr_port);
         std::string svr_ip_str = svr_ip;
         REQUIRE_THAT(svr_ip_str.c_str(), Catch::Equals ( "127.0.0.1" ));
@@ -69,7 +69,7 @@ TEST_CASE( "Test yUdpClient apis" , "[yUdpClient_Apis]" ){
 
 
         memset(recv_msg_buff, 0, sizeof(recv_msg_buff));
-        REQUIRE(msg_base_compare.length() == udp_client1.recvfrom(recv_msg_buff, 100, svr_ip, svr_port));
+        REQUIRE((int64_t)msg_base_compare.length() == udp_client1.recvfrom(recv_msg_buff, 100, svr_ip, svr_port));
         REQUIRE(12355 == svr_port);
         svr_ip_str = svr_ip;
         REQUIRE_THAT(svr_ip_str, Catch::Equals ( "127.0.0.1" ));
@@ -79,7 +79,7 @@ TEST_CASE( "Test yUdpClient apis" , "[yUdpClient_Apis]" ){
         REQUIRE_THAT( recv_msg_buff, Catch::Equals ( msg_base_compare ));
 
         memset(recv_msg_buff, 0, sizeof(recv_msg_buff));
-        REQUIRE(msg_base_compare.length() == udp_client2.recvfrom(recv_msg_buff, 100, svr_ip, svr_port));
+        REQUIRE((int64_t)msg_base_compare.length() == udp_client2.recvfrom(recv_msg_buff, 100, svr_ip, svr_port));
         REQUIRE(12355 == svr_port);
         svr_ip_str = svr_ip;
         REQUIRE_THAT(svr_ip_str, Catch::Equals ( "127.0.0.1" ));

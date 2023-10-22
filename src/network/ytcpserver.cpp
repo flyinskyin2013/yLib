@@ -22,7 +22,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  */
 #include "network/ytcpserver.h"
 
-#include "core/ylog.hpp"
+#include "core/ylog/ylog.hpp"
 
 #ifdef __cplusplus
 extern "C"{

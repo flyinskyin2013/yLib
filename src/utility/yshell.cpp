@@ -22,7 +22,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  */
 
 #include "utility/yshell.hpp"
-#include "core/ylog.hpp"
+#include "core/ylog/ylog.hpp"
 
 #include <cstring>
 #include <iostream>
@@ -184,7 +184,10 @@ static int8_t __execute_impl_linux(const std::vector<YLIB_STD_STRING> & cmd, con
             // yLib::yLog::E("execve failed.errno is %d", errno); 
             //we can't use yLib::yLog::X, because stdout is connected with _pipe_fd[1]
             std::string _e_msg = std::string("execve failed. errno is ") + std::to_string(errno);
-            ::write(_pipe_fd[1], _e_msg.c_str(), _e_msg.length());
+            ssize_t _written_num = ::write(_pipe_fd[1], _e_msg.c_str(), _e_msg.length());
+            if (0 > _written_num || (size_t)_written_num != _e_msg.length()){
+                LOGE("yShell")<<"write error msg to pipe failure";
+            }
 
             close(_pipe_fd[1]);
             _exit(127);

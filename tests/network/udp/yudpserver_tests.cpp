@@ -35,7 +35,7 @@ TEST_CASE( "Test yUdpServer apis" , "[yUdpServer_Apis]" ){
         msg_base_compare = "server: your ip " + std::string("127.0.0.1") + " your port " + std::to_string(12345);
         REQUIRE_THAT( msg_base, Catch::Equals ( msg_base_compare ));//verify client0 sendto's ip and port
 
-        REQUIRE(msg_base.length() == udp_server.sendto(msg_base.c_str(), msg_base.length(), client_ip, client_port));//sendto msg back to client0
+        REQUIRE((int64_t)msg_base.length() == udp_server.sendto(msg_base.c_str(), msg_base.length(), client_ip, client_port));//sendto msg back to client0
 
 
         //===================================================================
@@ -51,7 +51,7 @@ TEST_CASE( "Test yUdpServer apis" , "[yUdpServer_Apis]" ){
         REQUIRE_THAT( msg_base, Catch::Equals ( msg_base_compare ));//verify client1 sendto's ip and port
 
 
-        REQUIRE(msg_base.length() == udp_server.sendto(msg_base.c_str(), msg_base.length(), client_ip, client_port));//sendto msg back to client1
+        REQUIRE((int64_t)msg_base.length() == udp_server.sendto(msg_base.c_str(), msg_base.length(), client_ip, client_port));//sendto msg back to client1
 
         //===================================================================
         
@@ -65,7 +65,7 @@ TEST_CASE( "Test yUdpServer apis" , "[yUdpServer_Apis]" ){
         //we can't verify client2's port . It's random.
         REQUIRE_THAT("127.0.0.1", Catch::Equals (client_ip));
 
-        REQUIRE(msg_base.length() == udp_server.sendto(msg_base.c_str(), msg_base.length(), client_ip, client_port));
+        REQUIRE((int64_t)msg_base.length() == udp_server.sendto(msg_base.c_str(), msg_base.length(), client_ip, client_port));
         
         // REQUIRE_THAT( _exp0.what(), Catch::Equals ( "Basic exception of yLib." ));
         // REQUIRE_THAT( _exp1.what(), Catch::Equals ( "exception 1 msg" ));

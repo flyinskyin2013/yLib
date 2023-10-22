@@ -51,7 +51,7 @@ namespace yLib
         };
 
         enum yUnaryOperatorKind {
-
+            UO_INVALID = 0,
         #define UNARY_OPERATION(Name, Spelling) UO_##Name,
         #include "operation_kinds.def"
         };

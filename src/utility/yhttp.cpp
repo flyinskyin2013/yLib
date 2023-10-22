@@ -24,7 +24,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  */
 
 #include "utility/yhttp.hpp"
-#include "core/ylog.hpp"
+#include "core/ylog/ylog.hpp"
 
 #ifdef __cplusplus
 extern "C"{

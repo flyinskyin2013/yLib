@@ -18,6 +18,9 @@ objdump:
     反编译并dump出0x4000~0x4020的反汇编内容
     objdump -d --start-address=0x4000 --stop-address=0x4020  libylib.so.0.1.0 
 
+hexdump:
+	显示偏移0x1000的16字节
+	hexdump -n 16  -s 0x1000 xxx_file
 
 
 gdb:

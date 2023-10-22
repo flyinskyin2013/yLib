@@ -133,7 +133,13 @@ static yConfigValue ConvertDeclToConfigValue(yDecl * decl)
             
             yStmt * _expr_stmt = _unary_op->get_val();
 
-            int _sign = _unary_op->get_op_kind() == 0? 1 : -1;
+            if (_unary_op->get_op_kind() == UO_INVALID){
+
+                LOGE(yConfig)<<"ConvertDeclToConfigValue(): yUnaryOperator kind invalid";
+                return _tmp_val;
+            }
+
+            int _sign = _unary_op->get_op_kind() == UO_Plus? 1 : -1;
 
             if (_expr_stmt->get_stmt_kind() == yStmt::StmtClass::yIntegerLiteralClass){
 
@@ -217,16 +223,23 @@ static yDecl *  LookUp(yCompilerInstance & ci, const std::string &node_path, yDe
 
 
 yLib::yConfigValue yLib::yConfig::GetValue(const std::string &node_path_) {
-
+    //problem: moving a local object in a return statement prevents copy elision
+    //Automatic RVO:
+    /*
+    //C++11_ISOIEC 14882-2011_n3242 12.8 $32
+        in a return statement in a function with a class return type, when the expression is the name of a
+        non-volatile automatic object (other than a function or catch-clause parameter) with the same cv unqualified type as the function return type, the copy/move operation can be omitted by constructing
+        the automatic object directly into the function’s return value
+    */
     yConfigValue _tmpValue = ConvertDeclToConfigValue(LookUp(GetCompilerInstanceRef(compiler_instance), node_path_));
     
     if (yConfigValue::NONE_TYPE == _tmpValue.GetType()){
 
         yLib::yLog::E("Node(%s) is not found", node_path_.c_str());
-        return std::move(_tmpValue);//gcc enable RVO(return value optimization) defaultly.
+        return _tmpValue;//gcc enable RVO(return value optimization) defaultly.
     }
 
-    return std::move(_tmpValue);////gcc enable RVO(return value optimization) defaultly.
+    return _tmpValue;////gcc enable RVO(return value optimization) defaultly.
 }
 
 

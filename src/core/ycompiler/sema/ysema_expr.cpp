@@ -30,7 +30,7 @@ using namespace yLib;
 
 static inline yUnaryOperatorKind ConvertTokenKindToUnaryOpcode(tok::yTokenKind Kind) {
 
-  yUnaryOperatorKind Opc;
+  yUnaryOperatorKind Opc = UO_INVALID;
   switch (Kind) {
 
     case tok::plus:         Opc = UO_Plus; break;

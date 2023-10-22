@@ -36,7 +36,7 @@ TEST_CASE( "Test yJson apis" , "[yJson_Apis]" ){
 
         yLib::yJsonValue _val_int64(int64_t(1));
         yLib::yJsonValue _val_uint64(uint64_t(2));
-        uint64_t _val_test = (uint64_t)_val_uint64;
+        // uint64_t _val_test = (uint64_t)_val_uint64;
         
         yLib::yJsonValue _val_bool(false);
         yLib::yJsonValue _val_double(double(3.f));

@@ -50,7 +50,7 @@ TEST_CASE( "Test yConfig apis" , "[yConfig_Apis]" ){
         _value_uintptr1 = (uintptr_t)0x654321;
         yLib::yConfigValue _value_uintptr2;
         _value_uintptr2 = _value_uintptr1;
-        uintptr_t _uintptr = (uintptr_t)_value_uintptr1;
+        // uintptr_t _uintptr = (uintptr_t)_value_uintptr1;
     }
 
     SECTION("test yConfigGetValue(const char * node_path) and yConfigGetValue(const std::string & node_path)") {

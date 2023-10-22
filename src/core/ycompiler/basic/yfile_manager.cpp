@@ -28,7 +28,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include "core/ycompiler/frontend/ycompiler_instance.hpp"
 
 #include "core/ycompiler/basic/yfile_manager.hpp"
-#include "core/ylog.hpp"
+#include "core/ylog/ylog.hpp"
 
 using namespace yLib::ycompiler;
 using namespace yLib;

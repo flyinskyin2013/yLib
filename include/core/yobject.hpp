@@ -35,7 +35,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 namespace yLib
 {   
     /**
-     *  @class yNotCopyable
+     *  @class yStaticClass
      *  @brief This class and child-class can't construct, they are static class.
      */
     class __YLIB_CLASS_DECLSPEC__ yStaticClass

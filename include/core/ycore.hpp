@@ -32,7 +32,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     #include "yexception.hpp"
     #include "ylib_extra_infos.hpp"
     #include "yobject.hpp"
-    #include "ylog.hpp"
+    #include "ylog/ylog.hpp"
     #include "ythreadpool.hpp"
     
     //in test
@@ -46,7 +46,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     #include "yexception.hpp"
     #include "ylib_extra_infos.hpp"
     #include "yobject.hpp"
-    #include "ylog.hpp"
+    #include "ylog/ylog.hpp"
     #include "ythreadpool.hpp"
     
     //in test

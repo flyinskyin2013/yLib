@@ -27,7 +27,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #include "core/ycompiler/lexer/ylexer.hpp"
 #include "core/ycompiler/basic/ydiagnostics.hpp"
-#include "core/ylog.hpp"
+#include "core/ylog/ylog.hpp"
 
 
 using namespace yLib::ycompiler;

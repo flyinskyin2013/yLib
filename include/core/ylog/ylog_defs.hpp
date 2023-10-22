@@ -11,41 +11,27 @@ Redistribution and use in source and binary forms, with or without modification,
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
-
 /*
- * @Author: Sky
- * @Date: 2021-11-20 13:50:05
- * @LastEditTime: 2021-11-21 12:24:45
- * @LastEditors: Sky
  * @Description: 
- * @FilePath: \yLib\src\core\ycompiler\tools\yconfig_parse_action.cpp
+ * @Author: Sky
+ * @Date: 2023-09-23 10:44:05
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2023-09-23 12:02:07
+ * @FilePath: \yLib\include\core\ylog/ylog.hpp
  * @Github: https://github.com/flyinskyin2013/yLib
  */
 
+#ifndef __YLIB_CORE_YLOG_YLOG_DEFS_HPP__
+#define __YLIB_CORE_YLOG_YLOG_DEFS_HPP__
 
 
-
-#include "core/ycompiler/tools/yconfig_parse_action.hpp"
-
-#include "core/ycompiler/tools/yutils.hpp"
-
-#include "core/ylog/ylog.hpp"
-
-using namespace yLib::ycompiler;
-using namespace yLib;
-
-yConfigParseAction::yConfigParseAction(yCompilerInstance * ci){
-
-    this->ci = ci;
-}
-
-yConfigParseAction::~yConfigParseAction(){
-
+namespace yLib{
     
+    //8kb
+    #define YLIB_YLOGMESSAGE_MAX_LEN  1024*8
 }
 
-bool yConfigParseAction::Execute(void){
 
-    return ParseAST(*ci);
-}
+
+
+#endif //__YLIB_CORE_YLOG_YLOG_DEFS_HPP__

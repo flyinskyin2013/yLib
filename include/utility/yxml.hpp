@@ -39,7 +39,7 @@ typedef xmlDoc * xmlDocPtr;
 #include <string>
 
 
-#include "core/ylog.hpp"
+#include "core/ylog/ylog.hpp"
 #include "core/ycommon.hpp"
 namespace yLib{
 

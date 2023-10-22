@@ -59,8 +59,8 @@ TEST_CASE( "Test yTcpServer apis" , "[yTcpServer_Apis]" ){
         yTcpServer tcp_server2(1, 2, 1999);
 
         char recv_msg_buff[100];
-        uint64_t svr_ip;
-        uint64_t svr_port;
+        // uint64_t svr_ip;
+        // uint64_t svr_port;
 
         REQUIRE(0 == tcp_server.bind("127.0.0.1", 12356));
 
@@ -93,39 +93,39 @@ TEST_CASE( "Test yTcpServer apis" , "[yTcpServer_Apis]" ){
                 ::memset(recv_msg_buff, 0, 100);
                 std::string recv_msg_str = "I am client0";
 
-                REQUIRE(recv_msg_str.length() == read(g_client_array[0], recv_msg_buff, 100));
+                REQUIRE((int64_t)recv_msg_str.length() == read(g_client_array[0], recv_msg_buff, 100));
                 std::string _msg = "tcpserver recv: " + std::string(recv_msg_buff);
                 yLib::yLog::I("%s\n", _msg.c_str());
                 
                 REQUIRE_THAT( recv_msg_str, Catch::Equals ( recv_msg_buff ));//verify client0 write
 
-                REQUIRE(_msg.length() == write(g_client_array[0], _msg.c_str(), _msg.length()));
+                REQUIRE((int64_t)_msg.length() == write(g_client_array[0], _msg.c_str(), _msg.length()));
 
 //===================================================================
 
                 ::memset(recv_msg_buff, 0, 100);
                 recv_msg_str = "I am client1";
 
-                REQUIRE(recv_msg_str.length() == read(g_client_array[1], recv_msg_buff, 100));
+                REQUIRE((int64_t)recv_msg_str.length() == read(g_client_array[1], recv_msg_buff, 100));
                 _msg = "tcpserver recv: " + std::string(recv_msg_buff);
                 yLib::yLog::I("%s\n", _msg.c_str());
                 
                 REQUIRE_THAT( recv_msg_str, Catch::Equals ( recv_msg_buff ));//verify client1 write
 
-                REQUIRE(_msg.length() == write(g_client_array[1], _msg.c_str(), _msg.length()));
+                REQUIRE((int64_t)_msg.length() == write(g_client_array[1], _msg.c_str(), _msg.length()));
 
 //===================================================================
 
                 ::memset(recv_msg_buff, 0, 100);
                 recv_msg_str = "I am client2";
                 
-                REQUIRE(recv_msg_str.length() == read(g_client_array[2], recv_msg_buff, 100));
+                REQUIRE((int64_t)recv_msg_str.length() == read(g_client_array[2], recv_msg_buff, 100));
                 _msg = "tcpserver recv: " + std::string(recv_msg_buff);
                 yLib::yLog::I("%s\n", _msg.c_str());
 
                 REQUIRE_THAT( recv_msg_str, Catch::Equals ( recv_msg_buff ));//verify client2 write
 
-                REQUIRE(_msg.length() == write(g_client_array[2], _msg.c_str(), _msg.length()));
+                REQUIRE((int64_t)_msg.length() == write(g_client_array[2], _msg.c_str(), _msg.length()));
                 
                 sleep(10);//sleep for client close tcp-socket
                 for(int _i = 0; _i < 3; _i++)
