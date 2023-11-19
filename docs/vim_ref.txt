@@ -1,0 +1,57 @@
+列操作
+ctrl+v 进入visual mode
+    选择要删除的列，然后d删除内容
+
+    选择要添加的列的前面，然后shift+i 进入插入模式，然后esc退出，插入列
+
+快速格式化当前代码
+	方法一：
+	gg 切换到第一行
+	=G 格式化所有代码
+	方法二：
+	gg 切换到第一行
+	shift + v 进入visual mode
+	shift + g 全选所有
+	= 格式化
+
+显示不可见字符
+set invlist
+
+显示文件是unix换行还是dos换行
+set fileformat(ff)
+转换为dos
+set ff=dos
+转换为unix
+set ff=unix
+
+
+快速移动到行首，行尾
+    $ 行尾 
+    ^ 行首
+
+
+vim 二进制操作
+    // open file as binary mode.
+    vim -b file
+
+    :set binary
+
+    // : enters command-line mode,
+    // % matches whole file as a range, 
+    // ! filters that range through an external command
+    // xxd is that external shell command
+    :%!xxd
+
+    // edit the file
+    ...
+    // Once you make the changes (in the hex part), you can go back to text with -r command on xxd
+    :%!xxd -r
+
+    // rembember you can also use syntax highlighting for hex editing in vim with that command:
+    :set ft=xxd
+    :set filetype=xxd
+
+
+vim 在命令前加no或者inv，代表否定选项，翻转选项值
+    no{option} and inv{option} in Vim
+    例如:set list 显示不可见， set invlist 显示不可见，再次执行不显示不可见

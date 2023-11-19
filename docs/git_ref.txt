@@ -19,6 +19,10 @@ git diff --cached --stat
 git apply --stat patchfile
 git apply --check patchfile
 git apply patchfile
+显示更多检查和应用信息
+git apply --stat patchfile -v
+git apply --check patchfile -v
+git apply patchfile -v
 
 
 
@@ -74,3 +78,30 @@ git submodule deinit 子模块路径
 
 推送代码并创建远程分支
 git push origin xxx
+
+
+显示分支信息
+git describe --tags （输出V0.2.0A0-1-gdcc0647）
+    1:从tag V0.2.0A0开始，有1个commit
+    gdcc0647：g 为git的缩写，在多种管理工具并存的环境中很有用处
+    dcc0647：7位字符表示为最新提交的commit id 前7位
+
+git describe --tags --always --dirty="-dev"
+    V0.2.0A0-1-gdcc0647-dev
+
+git describe --tags `git rev-list --tags --max-count=1` 获取最新tag信息
+
+git fetch origin --prune #从远程拉取所有信息
+git push origin --tags #推送所有本地tag到远程
+
+
+=====================================================================
+git lfs 用法
+
+apt install git-lfs 安装工程
+git lfs install 让仓库支持lfs，注意是全局安装，将会在.gitconfig中添加lfs相关配置
+
+git lfs track "*.txt" 包含以txt结尾的文件
+git lfs track "dir/**" 包含dir目录下的所有文件和目录
+git lfs track "dir/*" 包含dir目录下的所有文件
+git lfs ls-files 列出当前被追踪的文件

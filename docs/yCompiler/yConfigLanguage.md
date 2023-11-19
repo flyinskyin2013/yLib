@@ -8,7 +8,7 @@
 
 ### 2.2 Concepts / 概念
 #### 2.2.1 Scopes of identifiers / 标识符的作用域
-&nbsp;&nbsp;&nbsp;&nbsp;标识符表示一个变量名和对象。每个标识符在其作用域中可见。相同标识符表示的实例一定位于不同的作用域中。这里有两种作用域：文件和块。
+&nbsp;&nbsp;&nbsp;&nbsp;标识符表示一个变量名或者对象。每个标识符在其作用域中可见。相同标识符表示的实例一定位于不同的作用域中。这里有两种作用域：文件和块。
 
 #### 2.2.2 Name spaces of identifiers / 标识符的命名空间
 &nbsp;&nbsp;&nbsp;&nbsp;标识符在同一个翻译单元同层级可见。在同一个对象同层级中可见。标识符在同一个命名空间里面是唯一的。
@@ -53,6 +53,7 @@ obj:{
 ```
 
 2. Semantics / 语义
+
 &nbsp;&nbsp;&nbsp;&nbsp;一个token是最小的词法单元。其共有5种类别：keywords, identifier, constant, string literal, punctuator
 
 &nbsp;&nbsp;&nbsp;&nbsp;preprocessing-token当前未实现。
@@ -65,6 +66,7 @@ keyword: one of
 ```
 
 2. Semantics / 语义
+
 &nbsp;&nbsp;&nbsp;&nbsp;上面的所有token是保留的，不要用作其他含义。
 
 #### 2.3.2 Identifiers / 标识符
@@ -86,7 +88,8 @@ keyword: one of
 ```    
 
 2. Semantics / 语义
-&nbsp;&nbsp;&nbsp;&nbsp;一个identifier是非数字字符序列。
+
+&nbsp;&nbsp;&nbsp;&nbsp;一个identifier是非数字字符开始的序列。
 
 #### 2.3.3 Constants / 常量
 1. Syntax / 句法:
@@ -97,6 +100,7 @@ keyword: one of
 ``` 
 
 2. Semantics / 语义
+
 &nbsp;&nbsp;&nbsp;&nbsp;每一个constant都有一个语言默认的类型和它对应的类型的值。
 
 
@@ -141,6 +145,7 @@ keyword: one of
 ```
 
 2. Semantics / 语义
+
 &nbsp;&nbsp;&nbsp;&nbsp;参考IOS/IEC-9899:2011 6.4.4.1。
 
 ##### 2.3.3.2 Floating constants / 浮点常量
@@ -183,6 +188,7 @@ keyword: one of
 ```
 
 2. Semantics / 语义
+
 &nbsp;&nbsp;&nbsp;&nbsp;参考IOS/IEC-9899:2011 6.4.4.2。
 
 #### 2.3.4 Boolean,String literals / 布尔字面量,字符串字面量
@@ -211,6 +217,7 @@ keyword: one of
 ```
 
 2. Semantics / 语义
+
 &nbsp;&nbsp;&nbsp;&nbsp;参考IOS/IEC-9899:2011的6.4.5小节与ISO/IEC-14882:2011 第2.14.6小节。
 
 #### 2.3.5 Punctuators / 标点符号
@@ -220,6 +227,7 @@ keyword: one of
         : = [ ] { } ;
 ```
 2. Semantics / 语义
+
 &nbsp;&nbsp;&nbsp;&nbsp;参考IOS/IEC-9899:2011的6.4.6小节。
 
 
@@ -238,6 +246,7 @@ keyword: one of
 ```
 
 2. Semantics / 语义
+
 &nbsp;&nbsp;&nbsp;&nbsp;参考IOS/IEC-9899:2011的6.4.7小节。
 
 #### 2.3.7 Comments / 注释
@@ -250,6 +259,7 @@ exp:
     /**/
 ```
 2. Semantics / 语义
+
 &nbsp;&nbsp;&nbsp;&nbsp;上面单行注释表明了当前的注释只对当行有效。多行类似。
 
 ### 2.4 Expressions / 表达式
@@ -266,6 +276,7 @@ exp:
 ```
 
 2. Semantics / 语义
+
 &nbsp;&nbsp;&nbsp;&nbsp;一个identifier是一个主表达式，当它标识一个对象的时候。一个constant也是一个主表达式，它的类型由其形式和值决定。同理可知string-literal。
 
 
@@ -278,6 +289,7 @@ exp:
 ```
 
 2. Semantics / 语义
+
 &nbsp;&nbsp;&nbsp;&nbsp;未实现。
 
 
@@ -292,6 +304,7 @@ exp:
 ```
 
 2. Semantics / 语义
+
 &nbsp;&nbsp;&nbsp;&nbsp;赋值操作符将存储一个值到对象中。
 
 #### 2.4.4 Comma operator / 逗号操作符
@@ -303,6 +316,7 @@ exp:
 ```
 
 2. Semantics / 语义
+
 &nbsp;&nbsp;&nbsp;&nbsp;未实现。
 
 ### 2.5 Declarations / 声明
@@ -321,6 +335,7 @@ exp:
 ```
 
 2. Semantics / 语义
+
 &nbsp;&nbsp;&nbsp;&nbsp;一个声明指定一个identifier的属性和值。
 
 
@@ -334,6 +349,7 @@ exp:
 ```
 
 2. Semantics / 语义
+
 &nbsp;&nbsp;&nbsp;&nbsp;未实现。
 
 #### 2.5.2  Declarators / 说明符
@@ -346,7 +362,8 @@ exp:
 ```
 
 2. Semantics / 语义
-&nbsp;&nbsp;&nbsp;&nbsp;。
+
+&nbsp;&nbsp;&nbsp;&nbsp;无。
 
 
 #### 2.5.3  Initialization / 初始化
@@ -357,7 +374,8 @@ exp:
 ```
 
 2. Semantics / 语义
-&nbsp;&nbsp;&nbsp;&nbsp;。
+
+&nbsp;&nbsp;&nbsp;&nbsp;无。
 
 
 
@@ -370,6 +388,7 @@ exp:
 ```
 
 2. Semantics / 语义
+
 &nbsp;&nbsp;&nbsp;&nbsp;一个句子和块标识着一个将被执行的动作。
 
 
@@ -397,6 +416,7 @@ exp:
         expression[opt] ;
 ```
 2. Semantics / 语义
+
 &nbsp;&nbsp;&nbsp;&nbsp;标示一个被执行和计算的语句。
 
 
@@ -411,9 +431,11 @@ exp:
         object-definition
 ```
 2. Constraints / 约束
+
 &nbsp;&nbsp;&nbsp;&nbsp;在一个翻译单元中，所有的声明标识符必须是唯一的。若存在import的预处理标识，则应该先预处理，然后再进行翻译单元。
 
 3. Semantics / 语义
+
 &nbsp;&nbsp;&nbsp;&nbsp;在本文的定义中，一个经过预处理之后的程序文本作为一个翻译单元。
 
 ### 2.7.1 Object definitions / 对象定义
@@ -423,9 +445,11 @@ exp:
         declarator : compound-statement
 ```
 2. Constraints / 约束
+
 &nbsp;&nbsp;&nbsp;&nbsp;无。
 
 3. Semantics / 语义
+
 &nbsp;&nbsp;&nbsp;&nbsp;标识一个对象的定义，一个config文件中有0或者多个对象定义，这些对象也可以import（未实现）来自于其他文件。
 
 ### 2.8 Preprocessing directives / 预处理指令
@@ -447,7 +471,9 @@ exp:
         the new-line character    
 ```
 2. Constraints / 约束
+
 &nbsp;&nbsp;&nbsp;&nbsp;无。
 
 3. Semantics / 语义
+
 &nbsp;&nbsp;&nbsp;&nbsp;不支持。

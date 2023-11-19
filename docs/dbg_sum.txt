@@ -22,6 +22,11 @@ hexdump:
 	显示偏移0x1000的16字节
 	hexdump -n 16  -s 0x1000 xxx_file
 
+xxd:
+    显示偏移0x2和16字节
+    xxd -s +0x2 -l 16 xxx_file
+
+
 
 gdb:
     查看info proc的帮助信息
