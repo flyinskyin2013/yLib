@@ -32,7 +32,7 @@ jobs:
         zip -9 -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source.zip .
 
     - name: upload-zip
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source.zip
@@ -81,7 +81,7 @@ jobs:
         zip -9 -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_x64_gcc.zip .
 
     - name: upload-zip
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_x64_gcc
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_x64_gcc.zip    
@@ -139,7 +139,7 @@ jobs:
         zip -9 -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_x86_gcc.zip .
 
     - name: upload-zip
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_x86_gcc
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_x86_gcc.zip   
@@ -195,7 +195,7 @@ jobs:
         zip -9 -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_armeabi_gcc.zip .
 
     - name: upload-zip
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_armeabi_gcc
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_armeabi_gcc.zip    
@@ -249,7 +249,7 @@ jobs:
         zip -9 -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_armeabihf_gcc.zip .
 
     - name: upload-zip
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_armeabihf_gcc
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_armeabihf_gcc.zip     
@@ -303,7 +303,7 @@ jobs:
         zip -9 -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_aarch64_gcc.zip .
 
     - name: upload-zip
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_aarch64_gcc
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_aarch64_gcc.zip     
@@ -357,7 +357,7 @@ jobs:
         7z -tzip a -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x86.zip .
 
     - name: upload-zip
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x86
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x86.zip  
@@ -409,7 +409,7 @@ jobs:
         7z -tzip a -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x64.zip .
 
     - name: upload-zip
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x64
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x64.zip  
@@ -462,7 +462,7 @@ jobs:
         7z -tzip a -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x86.zip .
 
     - name: upload-zip
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x86
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x86.zip  
@@ -514,7 +514,7 @@ jobs:
         7z -tzip a -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x64.zip .
 
     - name: upload-zip
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x64
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x64.zip  
@@ -566,7 +566,7 @@ jobs:
         7z -tzip a -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x86.zip .
 
     - name: upload-zip
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x86
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x86.zip  
@@ -618,7 +618,7 @@ jobs:
         7z -tzip a -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x64.zip .
 
     - name: upload-zip
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x64
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x64.zip  
@@ -670,7 +670,7 @@ jobs:
         7z -tzip a -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2022_x86.zip .
 
     - name: upload-zip
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2022_x86
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2022_x86.zip  
@@ -722,7 +722,7 @@ jobs:
         7z -tzip a -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2022_x64.zip .
 
     - name: upload-zip
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2022_x64
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2022_x64.zip  
@@ -760,7 +760,7 @@ jobs:
         zip -9 -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_aarch64_v8a.zip .
 
     - name: upload-zip
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_aarch64_v8a
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_aarch64_v8a.zip    
@@ -797,7 +797,7 @@ jobs:
         zip -9 -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_armeabi_v7a.zip .
 
     - name: upload-zip
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_armeabi_v7a
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_armeabi_v7a.zip   
