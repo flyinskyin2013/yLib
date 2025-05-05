@@ -25,6 +25,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include <string>
 #include <functional>
 #include <memory>
+#include <atomic>
+#include <string>
 
 #include "ydefs.hpp"
 
@@ -144,10 +146,114 @@ namespace yLib
     class __YLIB_CLASS_DECLSPEC__ yObject
     {
     public:
+        using RefCounterType = std::atomic<int32_t>;
+
+        // for user deleter
+        typedef void(*TypeDeleter)(yObject* self);
+
+        static std::string TypeIndex2Key(int32_t tindex);
+        static int32_t TypeKey2Index(const std::string& key);
+
+        static bool classof(yObject * obj) {return true;}
+
+        static bool classof(int32_t parent_tindex, uint32_t child_tindex);
+
+        yObject(){}
+
+        // Override the copy and assign constructors to do nothing.
+        // We don't copy ref_counter_/type_index_/type_deleter_
+        yObject(const yObject& other){}
+        yObject(yObject&& other){}
+
+        yObject& operator=(const yObject& other) {
+            return *this;
+        }
+        yObject& operator=(yObject&& other) {
+            return *this;
+        }
 
         YLIB_DECLARE_CLASSINFO_CONTENT(yObject);
-    };
 
+    protected:
+        RefCounterType ref_counter_{0};
+        int32_t type_index_{0};
+
+        TypeDeleter type_deleter_ = nullptr;
+
+        inline void inc_ref();
+        inline void dec_ref();
+        inline int32_t ref_count() const;
+
+        template <typename>
+        friend class ObjectPtr;
+
+
+    YLIB_DEFINE_CLASS_TYPE_KEY(yLib::yObject);
+    };
+    
+
+    using Object = yObject;
+
+    template <typename T>
+    class ObjectPtr {
+    public:
+        ObjectPtr() {}
+        ObjectPtr(std::nullptr_t) {}
+        explicit ObjectPtr(Object* data) : data_(data) {
+            if (nullptr != data) {
+                data_->inc_ref();
+            }
+        }
+
+        ObjectPtr(const ObjectPtr<T>& other) 
+            : ObjectPtr(other.data_) {}
+
+        template <typename U>
+        ObjectPtr(const ObjectPtr<U>& other)
+            : ObjectPtr(other.data_) {
+            static_assert(std::is_base_of<T, U>::value,
+                        "only copy child class ObjectPtr");
+        }
+
+        ObjectPtr(ObjectPtr<T>&& other)
+            : data_(other.data_) {
+            other.data_ = nullptr;
+        }
+        template <typename Y>
+        ObjectPtr(ObjectPtr<Y>&& other)
+            : data_(other.data_) {
+            static_assert(std::is_base_of<T, Y>::value,
+                        "only move child class ObjectPtr");
+            other.data_ = nullptr;
+        }
+
+        ObjectPtr<T>& operator=(const ObjectPtr<T>& other) {
+            
+            ObjectPtr(other).swap(*this);
+            return *this;
+        }
+        ObjectPtr<T>& operator=(ObjectPtr<T>&& other) {
+
+            ObjectPtr(std::move(other)).swap(*this);
+            return *this;
+        }
+        ~ObjectPtr() { this->reset(); }
+        void reset() {
+            if (nullptr != data_) {
+                data_->dec_ref();
+                data_ = nullptr;
+            }
+        }
+
+        void swap(ObjectPtr<T>& other) { 
+            std::swap(data_, other.data_);
+        }
+
+        T* get() const { return static_cast<T*>(data_); }
+        T* get_ref() const { return *get(); }
+    private:
+        Object* data_{nullptr};
+    };
 } // yLib
 
 
@@ -177,6 +283,8 @@ namespace yLib
 #define MACRO_INIT_YOBJECT_PROPERTY(object_name) \
     :yObject()
 
+// rename yLib
+namespace ylib = yLib;
 
 
 

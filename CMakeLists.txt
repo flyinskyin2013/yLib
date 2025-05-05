@@ -98,7 +98,7 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -Wall")
 
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 
 
 
@@ -145,7 +145,7 @@ elseif(ANDROID)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -Wall")
 
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
     
     # #-s, --strip-all             Strip all symbols
     # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-s")

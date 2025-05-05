@@ -41,17 +41,19 @@ namespace yLib
         class yASTContext;
 
         /// The top declaration context.
-        class yTranslationUnitDecl : public yDecl, public yDeclContext
+        class __YLIB_CLASS_DECLSPEC__ TranslationUnitDecl : public yDecl, public yDeclContext
         {
             private:
 
-                explicit yTranslationUnitDecl(yASTContext &ctx);
+                explicit TranslationUnitDecl(yASTContext &ctx);
                 yASTContext &ctx;
 
 
             public:
-                static yTranslationUnitDecl *Create(yASTContext &ctx);  
+                static TranslationUnitDecl *Create(yASTContext &ctx);  
                 yASTContext &getASTContext() const { return ctx; }
+
+        YLIB_DEFINE_CLASS_TYPE_KEY(yLib::ycompiler::TranslationUnitDecl);
         };
 
 
@@ -70,6 +72,7 @@ namespace yLib
             public:
             std::string & getName() {return decl_name;}
         };
+        using NamedDecl = yNamedDecl;
 
 
         /// Represent the declaration of a variable (in which case it is
@@ -78,6 +81,7 @@ namespace yLib
         class yValueDecl : public yNamedDecl {
 
         };
+        using ValueDecl = yValueDecl;
 
         /// Represents a ValueDecl that came out of a declarator.
         /// Contains type source information through TypeSourceInfo.
@@ -85,6 +89,7 @@ namespace yLib
 
 
         };
+        using DeclaratorDecl = yDeclaratorDecl;
 
         /// Represents a variable declaration or definition.
         class yVarDecl : public yDeclaratorDecl{
@@ -109,9 +114,11 @@ namespace yLib
             void set_init(yExpr * expr){init.stmt = expr;}
             InitType get_init(){return init;}
         };
+        using VarDecl = yVarDecl;
 
         /// Represents a declaration of a type.
         class yTypeDecl : public yNamedDecl {};
+        using TypeDecl = yTypeDecl;
 
         /// Represents the declaration of a struct/union/class/enum.
         class yTagDecl : public yTypeDecl,
@@ -119,6 +126,7 @@ namespace yLib
         {
 
         };
+        using TagDecl = yTagDecl;
 
         /// Represents a struct/union/class.  For example:
         ///   struct X;                  // Forward declaration, no "body".
@@ -127,6 +135,7 @@ namespace yLib
         class yRecordDecl : public yTagDecl {
 
         };
+        using RecordDecl = yRecordDecl;
 
 
         /// Represents a function declaration or definition.
@@ -146,7 +155,7 @@ namespace yLib
             
             yObjectDecl(yUnqualifiedId * Name):UnqualifiedId(Name){
                 this->decl_name = Name->GetIdentifierInfo()->get_identifier_name();
-                set_decl_kind(yDecl::Object);
+                set_decl_kind(yDecl::ObjectDecl);
             }
             public:
             void set_body(yStmt * obj_body){
@@ -159,6 +168,13 @@ namespace yLib
 
                 return new yObjectDecl(Name);
             }                           
+        };
+        using ObjectDecl = yObjectDecl;
+
+        class FunctionDecl : public DeclaratorDecl,
+                                public DeclContext
+        {
+            
         };
 
     } // namespace ycompiler

@@ -38,6 +38,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include <memory>
 #include <string>
 
+#include "core/ycompiler/ast/recursive_ast_visitor.hpp"
+#include "core/ycompiler/ast/yast_context.hpp"
+
 namespace yLib
 {
     namespace ycompiler
@@ -67,7 +70,8 @@ namespace yLib
         };
 
 
-        class yConfigASTReader:public yASTConsumer{
+        class yConfigASTReader:public yASTConsumer,
+                                public RecursiveASTVisitor<yConfigASTReader>{
 
             yASTContext * ast_ctx;
             
@@ -89,6 +93,43 @@ namespace yLib
 
             yDecl * GetDecl(const std::string & path, yDecl * parent);   
         };
+
+        class yConfigASTWriter: public yASTConsumer,
+                                public RecursiveASTVisitor<yConfigASTWriter>{
+            
+            typedef RecursiveASTVisitor<yConfigASTWriter> base_visitor;
+        public:
+            yConfigASTWriter();
+
+            /// Initialize - This is called to initialize the consumer, providing the
+            /// ASTContext.
+            void Initialize(yASTContext &context) override;
+   
+            /// HandleTranslationUnit - This method is called when the ASTs for entire
+            /// translation unit have been parsed.  
+            void HandleTranslationUnit(yASTContext &context) override;
+
+            bool TraverseDecl(yDecl *decl);
+        };
+
+        class ConfigASTPrinter: public yASTConsumer,
+                                public RecursiveASTVisitor<ConfigASTPrinter>{
+            
+            typedef RecursiveASTVisitor<ConfigASTPrinter> base_visitor;
+        public:
+            ConfigASTPrinter();
+
+            /// Initialize - This is called to initialize the consumer, providing the
+            /// ASTContext.
+            void Initialize(yASTContext &context) override;
+   
+            /// HandleTranslationUnit - This method is called when the ASTs for entire
+            /// translation unit have been parsed.  
+            void HandleTranslationUnit(yASTContext &context) override;
+
+            bool TraverseDecl(yDecl *decl);
+        };
+        
     } // namespace ycompiler
 } // namespace yLib
 

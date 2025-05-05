@@ -16,6 +16,7 @@ set(SRC
     # ${CMAKE_CURRENT_SOURCE_DIR}/ylib_c.cpp
 
     ${CMAKE_CURRENT_BINARY_DIR}/ylib_extra_infos.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/../ylib_class_info.cpp
     )
 
 #----------------------------------------------------------------------------------------

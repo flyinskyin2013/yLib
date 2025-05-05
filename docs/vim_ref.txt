@@ -14,6 +14,10 @@ ctrl+v 进入visual mode
 	shift + g 全选所有
 	= 格式化
 
+删除到行尾行首
+d$
+d0
+
 显示不可见字符
 set invlist
 

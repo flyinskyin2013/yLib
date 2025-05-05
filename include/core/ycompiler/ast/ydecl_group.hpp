@@ -52,6 +52,7 @@ namespace yLib
             static yDeclGroup * Create(yASTContext & ast_ctx, yDecl ** decls, uint64_t num_decls);
             static yDeclGroup * Create(yASTContext & ast_ctx, std::vector<yDecl*> &&decl_vec);
         };
+        using DeclGroup = yDeclGroup;
         
     } // namespace ycompiler
 } // namespace yLib

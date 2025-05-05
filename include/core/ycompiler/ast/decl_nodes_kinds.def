@@ -1,26 +1,72 @@
+#ifndef ABSTRACT_DECL
+#  define ABSTRACT_DECL(Type) Type
+#endif
 
-DECL(TranslationUnitDecl, Decl)
-DECL(RecordDecl, Decl)
-DECL(VarDecl, Decl)
+#ifndef TRANSLATIONUNIT
+    #define TRANSLATIONUNIT(Type, Base) DECL(Type, Base)
+#endif
+TRANSLATIONUNIT(TranslationUnit, Decl)
+#undef TRANSLATIONUNIT
+
 
 #ifndef NAMED
-#  define NAMED(Type, Base) DECL(Type, Base)
+    #define NAMED(Type, Base) DECL(Type, Base)
 #endif
+ABSTRACT_DECL(NAMED(Named, Decl))
+
+#ifndef TYPE
+#  define TYPE(Type, Base) NAMED(Type, Base)
+#endif
+ABSTRACT_DECL(TYPE(Type, NamedDecl))
+
+#ifndef TAG
+#  define TAG(Type, Base) TYPE(Type, Base)
+#endif
+ABSTRACT_DECL(TAG(Tag, TypeDecl))
+
+#ifndef RECORD
+#  define RECORD(Type, Base) TAG(Type, Base)
+#endif
+RECORD(Record, TagDecl)
+#undef RECORD
+
 
 #ifndef VALUE
 #  define VALUE(Type, Base) NAMED(Type, Base)
 #endif
+ABSTRACT_DECL(VALUE(Value, NamedDecl))
 
 #ifndef DECLARATOR
 #  define DECLARATOR(Type, Base) VALUE(Type, Base)
 #endif
+ABSTRACT_DECL(DECLARATOR(Declarator, ValueDecl))
+
+#ifndef VAR
+#  define VAR(Type, Base) DECLARATOR(Type, Base)
+#endif
+VAR(Var, DeclaratorDecl)
+#undef VAR
 
 #ifndef OBJECT
 #define OBJECT(Type, Base) DECLARATOR(Type, Base)
 #endif
 OBJECT(Object, DeclaratorDecl)
+#undef OBJECT
 
 #ifndef FUNCTION
 #define FUNCTION(Type, Base) DECLARATOR(Type, Base)
 #endif
 FUNCTION(Function, DeclaratorDecl)
+#undef FUNCTION
+
+#undef DECLARATOR
+#undef VALUE
+#undef NAMED
+#undef DECL
+#undef ABSTRACT_DECL
+
+
+
+
+
+

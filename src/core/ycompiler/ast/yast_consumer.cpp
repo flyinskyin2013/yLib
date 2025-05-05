@@ -86,52 +86,52 @@ inline void PrintStmt(yStmt * stmt, int level)
         printf("%s\n", (_level_prefix + "No StmtClass").c_str());
         break;
     }
-    case yStmt::yCompoundStmtClass:{
+    case yStmt::CompoundStmtClass:{
         
         printf((_level_prefix + "yCompoundStmtClass, have %d stmts.\n").c_str(),  ((yCompoundStmt*)stmt)->get_stmt_vec().size());
         break;
     }
-    case yStmt::yDeclStmtClass:{
+    case yStmt::DeclStmtClass:{
         //-Wformat-security, format not a string literal and no format arguments 
         printf("%s\n", (_level_prefix + "yDeclStmtClass").c_str());
         PrintDecl(((yDeclStmt*)stmt)->get_decl(), level + 1);
         break;
     }
-    case yStmt::yValueStmtClass:{
+    case yStmt::ValueStmtClass:{
         //-Wformat-security, format not a string literal and no format arguments 
         printf("%s\n", (_level_prefix + "yValueStmtClass").c_str());
         break;
     }
-    case yStmt::yExprClass:{
+    case yStmt::ExprClass:{
         //-Wformat-security, format not a string literal and no format arguments 
         printf("%s\n", (_level_prefix + "yExprClass").c_str());
         break;
     }
-    case yStmt::yIntegerLiteralClass:{
+    case yStmt::IntegerLiteralClass:{
         
         yIntegerLiteral * _literal = (yIntegerLiteral *)stmt;
         printf((_level_prefix + "yIntegerLiteralClass, val = %lu\n").c_str(), _literal->get_val());
         break;
     }
-    case yStmt::yFloatingLiteralClass:{
+    case yStmt::FloatingLiteralClass:{
 
         yFloatingLiteral * _literal = (yFloatingLiteral *)stmt;
         printf((_level_prefix + "yFloatingLiteralClass, val = %E\n").c_str(), _literal->get_val());
         break;
     }
-    case yStmt::yStringLiteralClass:{
+    case yStmt::StringLiteralClass:{
         
         yStringLiteral * _literal = (yStringLiteral *)stmt;
         printf((_level_prefix + "yStringLiteralClass, val = %s\n").c_str(), _literal->get_val().c_str());
         break;
     }
-    case yStmt::yCXXBoolLiteralExprClass:{
+    case yStmt::CXXBoolLiteralExprClass:{
         
         yCXXBoolLiteralExpr * _literal = (yCXXBoolLiteralExpr *)stmt;
         printf((_level_prefix + "yCXXBoolLiteralExprClass, val = %s\n").c_str(), _literal->get_val()?"true":"false");
         break;
     }
-    case yStmt::yUnaryOperatorClass:{
+    case yStmt::UnaryOperatorClass:{
         
         yUnaryOperator * _literal = (yUnaryOperator *)stmt;
         printf((_level_prefix + "yUnaryOperatorClass, op = %s\n").c_str(), _literal->get_op_kind() == 0?"+":"-");
@@ -158,7 +158,7 @@ static void PrintDecl(yDecl* decl, int level)
 
     switch (decl->get_decl_kind())
     {
-    case yDecl::Kind::Object:{
+    case yDecl::Kind::ObjectDecl:{
 
         yObjectDecl * _obj_decl = (yObjectDecl *)decl;
         yCompoundStmt * _compound_stmt = (yCompoundStmt *)_obj_decl->get_body();
@@ -229,7 +229,7 @@ static yDecl* CheckDecl(const std::string & path, yDecl * decl)
     yDecl * _found = nullptr;
     switch (decl->get_decl_kind())
     {
-    case yDecl::Kind::Object:{
+    case yDecl::Kind::ObjectDecl:{
         /* code */
         yObjectDecl * _var_decl = (yObjectDecl *)decl;
         if (path == _var_decl->getName()){
@@ -287,4 +287,55 @@ yDecl* yConfigASTReader::GetDecl(const std::string & path, yDecl * parent)
     }
 
     return _found;
+}
+
+
+//
+yConfigASTWriter::yConfigASTWriter()
+{}
+
+/// Initialize - This is called to initialize the consumer, providing the
+/// ASTContext.
+void yConfigASTWriter::Initialize(yASTContext &context) 
+{
+
+}
+
+/// HandleTranslationUnit - This method is called when the ASTs for entire
+/// translation unit have been parsed.  
+void yConfigASTWriter::HandleTranslationUnit(yASTContext &context)
+{
+    TranslationUnitDecl* _tudecl = context.getTranslationUnitDecl();
+    TraverseDecl(_tudecl);
+}
+
+bool yConfigASTWriter::TraverseDecl(yDecl *decl)
+{
+    return base_visitor::TraverseDecl(decl);
+}
+
+
+
+//
+ConfigASTPrinter::ConfigASTPrinter()
+{}
+
+/// Initialize - This is called to initialize the consumer, providing the
+/// ASTContext.
+void ConfigASTPrinter::Initialize(yASTContext &context) 
+{
+
+}
+
+/// HandleTranslationUnit - This method is called when the ASTs for entire
+/// translation unit have been parsed.  
+void ConfigASTPrinter::HandleTranslationUnit(yASTContext &context)
+{
+    TranslationUnitDecl* _tudecl = context.getTranslationUnitDecl();
+    TraverseDecl(_tudecl);
+}
+
+bool ConfigASTPrinter::TraverseDecl(yDecl *decl)
+{
+    return base_visitor::TraverseDecl(decl);
 }

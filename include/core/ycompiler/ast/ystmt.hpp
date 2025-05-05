@@ -48,6 +48,8 @@ namespace yLib
                     first##BASE##Constant=FIRST##Class, last##BASE##Constant=LAST##Class
                 #define ABSTRACT_STMT(STMT) STMT
                 #include "stmt_nodes_kinds.def"
+
+                #undef STMT
             };
         protected:
             StmtClass stmt_kind = StmtClass::NoStmtClass;
@@ -55,6 +57,7 @@ namespace yLib
         public:
             StmtClass get_stmt_kind(){ return stmt_kind;}
         };
+        using Stmt = yStmt;
 
         /// CompoundStmt - This represents a group of statements like { stmt stmt }.
         class yCompoundStmt final : public yStmt{
@@ -62,7 +65,7 @@ namespace yLib
             std::vector<yStmt*> stmt_vec;
 
             yCompoundStmt(std::vector<yStmt*> && stmts):stmt_vec(stmts){
-                stmt_kind = yStmt::StmtClass::yCompoundStmtClass;
+                stmt_kind = yStmt::StmtClass::CompoundStmtClass;
             }
             //yCompoundStmt(std::vector<yStmt*> & stmts):stmt_vec(stmts){}
             public:
@@ -73,6 +76,7 @@ namespace yLib
 
             std::vector<yStmt*> & get_stmt_vec(void){return stmt_vec;}
         };
+        using CompoundStmt = yCompoundStmt;
 
 
         /// DeclStmt - Adaptor class for mixing declarations with statements and
@@ -85,11 +89,11 @@ namespace yLib
             ySourceLocation loc;
             public:
             yDeclStmt(yDecl*decl, ySourceLocation loc):decl(decl), loc(loc){
-                stmt_kind = yStmt::StmtClass::yDeclStmtClass;
+                stmt_kind = yStmt::StmtClass::DeclStmtClass;
             }
             yDecl * get_decl(){return decl;}
         };
-
+        using DeclStmt = yDeclStmt;
 
         /// Represents a statement that could possibly have a value and type. This
         /// covers expression-statements, as well as labels and attributed statements.
@@ -100,9 +104,11 @@ namespace yLib
         class yValueStmt : public yStmt {
             public:
             yValueStmt(){
-                stmt_kind = yStmt::StmtClass::yValueStmtClass;
+                stmt_kind = yStmt::StmtClass::ValueStmtClass;
             }
         };
+        using ValueStmt = yValueStmt;
+
     } // namespace ycompiler
     
 } // namespace yLib

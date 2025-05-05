@@ -33,7 +33,9 @@ git checkout -b branch-name
 git checkout branch-name
 
 创建tag
-git tag xxx
+git tag xxx 
+git tag xxx commit_id
+git tag -a xxx commit_id -m "msg"
 推送tag到远端
 git push --tags 
 删除本地tag
@@ -45,9 +47,14 @@ git push --delete origin V0.2.0A0
 查看git commit log
 git log
 
+查看git操作可恢复记录
+git reflog
+
 显示commit graph
 git log --graph
 
+整理、回收git仓库空间
+git gc --prune=now
 
 
 克隆指定分支代码
@@ -56,8 +63,28 @@ git clone -b dev url
 克隆指定分支代码，且只clone最近的一次提交
 git clone -b dev --depth 1 url
 
+git 统计commit次数
+git log | grep -e 'commit [a-zA-Z0-9]*' | wc -l
+git log --oneline 查看commit log列表
 
 
+git rebase操作
+git rebase -i HEAD~Number
+git rebase -i --root  (不建议执行此命令，此命令会修改最开始commit的hash值)
+git rebase -i --onto parent_start_commit before_start_commit end_commit  
+（将(before_start_commit, end_commit] 段 移到 parent_start_commit 之后去。注意移动commit段的开闭关系） 
+git rebase -i start_commit~1 end_commit 从start_commit的父提交到end_commit进行rebase
+git rebase --continue
+
+
+git 核心编辑器修改
+git config --global core.editor vim
+
+
+合并其他分支特性到此分支
+git cherry-pick hash
+git cherry-pick hash1 hash2
+git cherry-pick hash1..hash2
 
 git 子模块相关
 git clone <repository> --recursive 递归的方式克隆整个项目

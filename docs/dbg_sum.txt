@@ -33,6 +33,12 @@ gdb:
     help info proc
     查看所有so的映射信息
     info proc mappings
+    查看程序镜像所有区段信息
+    info file
+    查看指定位置的反编译信息
+    disassemble [Start],[End]
+    查看指定位置的反编译信息（此位置必须是函数）
+    disassemble [Start]
 
     设置反汇编指令格式，更喜欢intel格式哦
     set disassembly-flavor att

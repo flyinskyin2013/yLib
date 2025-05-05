@@ -28,8 +28,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 
 #include <memory>
-
+#include "core/yobject.hpp"
 #include "core/ycompiler/basic/ysource_location.hpp"
+#include "core/ycompiler/ast/ydecl_group.hpp"
 
 namespace yLib
 {
@@ -42,20 +43,18 @@ namespace yLib
         /// (and its subclasses) in its Decl::operator new(). Proper alignment
         /// of all subclasses (not requiring more than the alignment of Decl) is
         /// asserted in DeclBase.cpp.
-        class yDecl{
+        class yDecl: public Object{
             public:
                 /// Lists the kind of concrete classes of Decl.
                 enum Kind {
-                #define DECL(DERIVED, BASE) DERIVED,
-                #define ABSTRACT_DECL(DECL)
-                #define DECL_RANGE(BASE, START, END) \
-                        first##BASE = START, last##BASE = END,
-                #define LAST_DECL_RANGE(BASE, START, END) \
-                        first##BASE = START, last##BASE = END
-                #include "decl_nodes_kinds.def"
+                    #define DECL(DERIVED, BASE) DERIVED##Decl,
+                    #define ABSTRACT_DECL(DECL)
+                    #define DECL_RANGE(BASE, START, END) \
+                            first##BASE = START, last##BASE = END,
+                    #define LAST_DECL_RANGE(BASE, START, END) \
+                            first##BASE = START, last##BASE = END
+                    #include "decl_nodes_kinds.def"
                 };
-
-            private:
 
             protected:
             /// Loc - The location of this decl.
@@ -63,6 +62,7 @@ namespace yLib
             yDecl::Kind kind;
 
             public:
+            virtual ~yDecl(){}
             
             void set_decl_kind(yDecl::Kind kind){this->kind = kind;}
             yDecl::Kind get_decl_kind(void) {return kind;}
@@ -70,7 +70,9 @@ namespace yLib
             void set_decl_loc(ySourceLocation loc){this->loc = loc;}
             ySourceLocation get_decl_loc(void){return loc;}
             
+        YLIB_DEFINE_CLASS_TYPE_KEY(yLib::ycompiler::yDecl);
         };
+        using Decl = yDecl;
 
 
 
@@ -91,10 +93,15 @@ namespace yLib
         ///   ExportDecl
         ///   BlockDecl
         ///   CapturedDecl
-        class yDeclContext{
+        class yDeclContext: public Object{
+            DeclGroup decl_group;
             public:
-            
+            virtual ~yDeclContext(){}
+            DeclGroup& get_decl_group(){return decl_group;}
+
+        YLIB_DEFINE_CLASS_TYPE_KEY(yLib::ycompiler::yDeclContext);
         };
+        using DeclContext = yDeclContext;
 
     } // namespace ycompiler
 } // namespace yLib

@@ -40,9 +40,10 @@ namespace yLib
 
             public:
             yExpr(){
-                stmt_kind = yStmt::StmtClass::yExprClass;
+                stmt_kind = yStmt::StmtClass::ExprClass;
             }
         };
+        using Expr = yExpr;
 
 
 
@@ -53,13 +54,14 @@ namespace yLib
 
             yIntegerLiteral(int64_t val, ySourceLocation loc):val(val), loc(loc){
 
-                stmt_kind = yStmt::StmtClass::yIntegerLiteralClass;
+                stmt_kind = yStmt::StmtClass::IntegerLiteralClass;
             }
             
             public:
             static yIntegerLiteral * Create(int64_t val, ySourceLocation loc){ return new yIntegerLiteral(val, loc);}
             int64_t get_val(){return val;}
         };
+        using IntegerLiteral = yIntegerLiteral;
 
         class yFloatingLiteral : public yExpr{
 
@@ -67,13 +69,14 @@ namespace yLib
             ySourceLocation loc;
 
             yFloatingLiteral(double val, ySourceLocation loc):val(val), loc(loc){
-                stmt_kind = yStmt::StmtClass::yFloatingLiteralClass;
+                stmt_kind = yStmt::StmtClass::FloatingLiteralClass;
             }
             
             public:
             static yFloatingLiteral * Create(double val, ySourceLocation loc){ return new yFloatingLiteral(val, loc);}
             double get_val(){return val;}            
         };
+        using FloatingLiteral = yFloatingLiteral;
 
         /// StringLiteral - This represents a string literal expression, e.g. "foo"
         /// or L"bar" (wide strings). The actual string data can be obtained with
@@ -100,13 +103,14 @@ namespace yLib
 
             yStringLiteral(std::string &var, ySourceLocation loc):val(var), loc(loc){
 
-                stmt_kind = yStmt::StmtClass::yStringLiteralClass;
+                stmt_kind = yStmt::StmtClass::StringLiteralClass;
             }
             
             public:
             static yStringLiteral * Create(std::string &var, ySourceLocation loc){ return new yStringLiteral(var, loc);}
             std::string & get_val(){return val;}
         };
+        using StringLiteral = yStringLiteral;
 
         /// A boolean literal, per ([C++ lex.bool] Boolean literals).
         class yCXXBoolLiteralExpr : public yExpr {
@@ -116,14 +120,14 @@ namespace yLib
 
             yCXXBoolLiteralExpr(bool val, ySourceLocation loc):val(val), loc(loc){
 
-                stmt_kind = yStmt::StmtClass::yCXXBoolLiteralExprClass;
+                stmt_kind = yStmt::StmtClass::CXXBoolLiteralExprClass;
             }
             
             public:
             static yCXXBoolLiteralExpr * Create(bool val, ySourceLocation loc){ return new yCXXBoolLiteralExpr(val, loc);}
             bool get_val(){return val;}
         };
-
+        using CXXBoolLiteralExpr = yCXXBoolLiteralExpr;
 
 
         /// UnaryOperator - This represents the unary-expression's (except sizeof and
@@ -146,7 +150,7 @@ namespace yLib
             yUnaryOperator(ySourceLocation OpLoc, yUnaryOperatorKind opkind, yExpr * input)
             :opkind(opkind), val(input), loc(OpLoc){
 
-                stmt_kind = yStmt::StmtClass::yUnaryOperatorClass;
+                stmt_kind = yStmt::StmtClass::UnaryOperatorClass;
             }
 
             public:
@@ -157,6 +161,9 @@ namespace yLib
             yUnaryOperatorKind get_op_kind(){return opkind;}
             yStmt* get_val(){return val;}
         };
+        using UnaryOperator = yUnaryOperator;
+        
+        
     } // namespace ycompiler
     
 } // namespace yLib

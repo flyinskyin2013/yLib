@@ -132,6 +132,17 @@ namespace yLib{
     */
     #define YLIB_STR_CONVERT(__S) #__S
 
+    #define YLIB_DEFINE_CLASS_TYPE_KEY(var) \
+        public: \
+        virtual int32_t type_index()  {return yObject::TypeKey2Index(type_key());} \
+        virtual std::string type_key()  {return type_key_;} \
+        static std::string static_type_key()  {return type_key_;} \
+        private:\
+        static constexpr const char* type_key_ = "::"#var
+
+    #define YLIB_NAMESPACE_START namespace yLib{
+
+    #define YLIB_NAMESPACE_END }
 
     // #define YLIB_VERSION_MAJOR 0
     // #define YLIB_VERSION_MINOR 0
@@ -142,7 +153,7 @@ namespace yLib{
 
     // YLIB_ENABLE_UNIT_TEST control some specail unit-test
     // YLIB_CODECOVERAGE_SKIP_CODE control code-coverage skip some code
-    }
+}
 
 
 

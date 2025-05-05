@@ -2,9 +2,9 @@
 #  define ABSTRACT_STMT(Type) Type
 #endif
 
-STMT(yCompoundStmt, yStmt)
-STMT(yDeclStmt, yStmt)
-STMT(yValueStmt, yStmt)
+STMT(CompoundStmt, Stmt)
+STMT(DeclStmt, Stmt)
+STMT(ValueStmt, Stmt)
 
 #ifndef VALUESTMT
 #  define VALUESTMT(Type, Base) STMT(Type, Base)
@@ -14,39 +14,43 @@ STMT(yValueStmt, yStmt)
 #ifndef EXPR
 #  define EXPR(Type, Base) VALUESTMT(Type, Base)
 #endif
-ABSTRACT_STMT(EXPR(yExpr, yValueStmt))
+ABSTRACT_STMT(EXPR(Expr, ValueStmt))
 
 
 #ifndef FLOATINGLITERAL
 #  define FLOATINGLITERAL(Type, Base) EXPR(Type, Base)
 #endif
-FLOATINGLITERAL(yFloatingLiteral, yExpr)
+FLOATINGLITERAL(FloatingLiteral, Expr)
 #undef FLOATINGLITERAL
 
 
 #ifndef INTEGERLITERAL
 #  define INTEGERLITERAL(Type, Base) EXPR(Type, Base)
 #endif
-INTEGERLITERAL(yIntegerLiteral, yExpr)
+INTEGERLITERAL(IntegerLiteral, Expr)
 #undef INTEGERLITERAL
 
 
 #ifndef STRINGLITERAL
 #  define STRINGLITERAL(Type, Base) EXPR(Type, Base)
 #endif
-STRINGLITERAL(yStringLiteral, yExpr)
+STRINGLITERAL(StringLiteral, Expr)
 #undef STRINGLITERAL
 
 
 #ifndef CXXBOOLLITERALEXPR
 #  define CXXBOOLLITERALEXPR(Type, Base) EXPR(Type, Base)
 #endif
-CXXBOOLLITERALEXPR(yCXXBoolLiteralExpr, yExpr)
+CXXBOOLLITERALEXPR(CXXBoolLiteralExpr, Expr)
 #undef CXXBOOLLITERALEXPR
 
 
 #ifndef UNARYOPERATOR
 #  define UNARYOPERATOR(Type, Base) EXPR(Type, Base)
 #endif
-UNARYOPERATOR(yUnaryOperator, yExpr)
+UNARYOPERATOR(UnaryOperator, Expr)
 #undef UNARYOPERATOR
+
+
+
+#undef ABSTRACT_STMT

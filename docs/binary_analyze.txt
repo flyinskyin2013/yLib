@@ -1,0 +1,37 @@
+objdump
+反汇编整个object/elf文件
+objdump -D elf-file
+反汇编指定偏移的object/elf文件
+objdump -d --start-address=address --stop-address=address elf-file
+
+
+查看elf文件的elf header
+readelf -h elf-file
+
+查看elf文件的elf program header
+readelf -l elf-file
+
+查看elf文件的elf section header
+readelf -S elf-file
+
+查看elf文件的 以.rela.xxx开头的重定位section信息
+readelf -r elf-file
+
+查看elf文件的 以.dynsym开头的符号表section信息
+readelf -s elf-file
+查看elf文件的 以.dynamic开头的动态链接section信息中的的符号表信息
+readelf -D -s elf-file
+
+查看elf文件的 以.dynamic开头的动态链接section信息
+readelf -d elf-file
+
+查看elf文件的 以section-str-name开始的section字符串信息，一般用于查看STRTAB类型的section，一般是.shstrtab/.strtab/.dynstr等小节
+readelf -p section-str-name elf-file
+
+
+hexdump
+查看文件的16进制显示，并显示ASCII字符
+hexdump -C file
+
+指定范围查看文件的16进制显示，并显示ASCII字符, start-addr的格式可以是10进制，或者16进制， size-bytes 必须是10进制
+hexdump -C -s start-addr -n size-bytes file

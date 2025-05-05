@@ -94,7 +94,7 @@ static yConfigValue ConvertDeclToConfigValue(yDecl * decl)
 
     yConfigValue _tmp_val;
 
-    if (yDecl::Kind::Object == decl->get_decl_kind()){
+    if (yDecl::Kind::ObjectDecl == decl->get_decl_kind()){
 
         _tmp_val = (uintptr_t)decl;
     }
@@ -105,27 +105,27 @@ static yConfigValue ConvertDeclToConfigValue(yDecl * decl)
 
         switch (_stmt->get_stmt_kind())
         {
-        case yStmt::StmtClass::yIntegerLiteralClass:{
+        case yStmt::StmtClass::IntegerLiteralClass:{
             /* code */
             _tmp_val = (int64_t)((yIntegerLiteral*)_stmt)->get_val();
             break;
         }
-        case yStmt::StmtClass::yFloatingLiteralClass:{
+        case yStmt::StmtClass::FloatingLiteralClass:{
             /* code */
             _tmp_val = (double)((yFloatingLiteral*)_stmt)->get_val();
             break;
         }
-        case yStmt::StmtClass::yCXXBoolLiteralExprClass:{
+        case yStmt::StmtClass::CXXBoolLiteralExprClass:{
             /* code */
             _tmp_val = (bool)((yCXXBoolLiteralExpr*)_stmt)->get_val();
             break;
         }
-        case yStmt::StmtClass::yStringLiteralClass:{
+        case yStmt::StmtClass::StringLiteralClass:{
             /* code */
             _tmp_val = (std::string)((yStringLiteral*)_stmt)->get_val();
             break;
         }
-        case yStmt::StmtClass::yUnaryOperatorClass:{
+        case yStmt::StmtClass::UnaryOperatorClass:{
             /* code */
             //we only support yIntegerLiteral/yFloatingLiteral, we check it in parser
 
@@ -141,7 +141,7 @@ static yConfigValue ConvertDeclToConfigValue(yDecl * decl)
 
             int _sign = _unary_op->get_op_kind() == UO_Plus? 1 : -1;
 
-            if (_expr_stmt->get_stmt_kind() == yStmt::StmtClass::yIntegerLiteralClass){
+            if (_expr_stmt->get_stmt_kind() == yStmt::StmtClass::IntegerLiteralClass){
 
                 int64_t _val = ((yIntegerLiteral*)_expr_stmt)->get_val();
                 
@@ -185,7 +185,7 @@ static yDecl *  LookUp(yCompilerInstance & ci, const std::string &node_path, yDe
             _tmp_decl = _cfg_ast_reader.GetDecl(_cur_node_name, parent);
             if (nullptr != _tmp_decl){//found a decl
 
-                if (_tmp_decl->get_decl_kind() == yDecl::Kind::Object){//this is an obj type
+                if (_tmp_decl->get_decl_kind() == yDecl::Kind::ObjectDecl){//this is an obj type
 
                     std::string _new_node_path = _tmp_node_path.substr(_find_pos + 1);//skip '.'
                     
