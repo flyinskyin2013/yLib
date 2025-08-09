@@ -116,7 +116,7 @@ def print_tree(node, level=0):
     for child in node.children:
         print_tree(child, level + 1)
 
-def generate_ylib_enhance_cpp(ylib_root):
+def generate_ylib_enhance_cpp(ylib_root, output_dir):
     find_files = []
 
     # find all src files
@@ -237,7 +237,8 @@ def generate_ylib_enhance_cpp(ylib_root):
                 relation_node_list.append(cur_node)
 
 
-    with open('ylib_class_info.cpp', 'w', encoding='utf-8') as file:
+    output_file_path = os.path.join(output_dir, 'ylib_class_info.cpp')
+    with open(output_file_path, 'w', encoding='utf-8') as file:
 
         str_include_header = """
             #include <vector>
@@ -358,10 +359,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="这是一个简单的命令行参数解析示例")
 
     parser.add_argument("--ylib_root", required=True, type=str, help="ylib 根目录")
+    parser.add_argument("--output", default=".", type=str, help="输出目录")
  
     # 解析命令行参数
     args = parser.parse_args()
     ROOT = os.path.realpath(args.ylib_root)
+    OUTPUT_DIR = os.path.realpath(args.output)
     print(f'ROOT = {ROOT}')
+    print(f'OUTPUT_DIR = {OUTPUT_DIR}')
     
-    generate_ylib_enhance_cpp(ROOT)
+    generate_ylib_enhance_cpp(ROOT, OUTPUT_DIR)

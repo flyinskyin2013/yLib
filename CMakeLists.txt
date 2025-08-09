@@ -1,7 +1,7 @@
 # A minimum required CMake version must be specified.cmake_minimum_required(VERSION <major>.<minor>)
 # CMP0000: This policy was introduced in CMake version 2.6.0.
 cmake_policy(SET CMP0000 NEW)
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.15)
 
 
 # enable feature project(<PROJECT-NAME> [VERSION <major>[.<minor>[.<patch>[.<tweak>]]]][LANGUAGES <language-name>...])
@@ -10,6 +10,9 @@ cmake_policy(SET CMP0048 NEW)
 
 SET(PROJECT_NAME yLib)
 project(${PROJECT_NAME} VERSION 0.2.0.0)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
 
@@ -75,77 +78,11 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
     set(BUILD_PLATFORM "Linux")
     ylib_check_gcc_or_clang_version_for_cxx11()
-
-    if(CMAKE_BUILD_TYPE MATCHES "(Release|RELEASE|release)")
-
-        #release mode 
-
-    else()
-
-        #debug mode
-        # add_compile_options(-g)
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
-
-    endif()
-
-    # for hidden symbols
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -fvisibility=hidden")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -fvisibility=hidden")
-
-    # for strictly check
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -Wall")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -Wall")
-
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
-
-
-
-    # if gcc > 4.9 add sanitizers
-    # gcc 5.x has bug for "ld: unrecognized option '--push-state--no-as-needed'", we should use gcc 7.5
-    if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 7.3)
-
-        if (ENABLE_GNU_SANITIZER)
-
-            message(STATUS "Enable AddressSanitizer MemorySanitizer")
-            set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address -fsanitize=leak -fsanitize=undefined")
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize=leak -fsanitize=undefined")
-            
-        endif()
-
-    else()
-
-        set(ENABLE_GNU_SANITIZER OFF)
-
-    endif()
+    ylib_set_compile_options()
 
 elseif(ANDROID)
     ylib_check_gcc_or_clang_version_for_cxx11()
-
-    if(CMAKE_BUILD_TYPE MATCHES "(Release|RELEASE|release)")
-
-        #release mode 
-
-    else()
-
-        #debug mode
-        # add_compile_options(-g)
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
-
-    endif()
-
-    # for hidden symbols
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -fvisibility=hidden")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -fvisibility=hidden")
-
-    # for strictly check
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -Wall")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -Wall")
-
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+    ylib_set_compile_options()
     
     # #-s, --strip-all             Strip all symbols
     # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-s")
@@ -237,6 +174,8 @@ else()
 endif()
 
 #----------------------------------------------------------------------------------------
+
+
 
 
 #------------------------------set include dir-----------------------------------

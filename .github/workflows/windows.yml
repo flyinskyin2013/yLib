@@ -1,0 +1,90 @@
+name: Windows Build Matrix
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: "x64-vs2022"
+            vs_version: "2022"
+            generator: "Visual Studio 17 2022"
+            arch: "x64"
+            cmake_arch: "x64"
+            runner: "windows-2022"
+          - name: "x86-vs2022"
+            vs_version: "2022"
+            generator: "Visual Studio 17 2022"
+            arch: "x86"
+            cmake_arch: "Win32"
+            runner: "windows-2022"
+          - name: "x64-vs2019"
+            vs_version: "2019"
+            generator: "Visual Studio 16 2019"
+            arch: "x64"
+            cmake_arch: "x64"
+            runner: "windows-2019"
+          - name: "x86-vs2019"
+            vs_version: "2019"
+            generator: "Visual Studio 16 2019"
+            arch: "x86"
+            cmake_arch: "Win32"
+            runner: "windows-2019"
+          - name: "x64-vs2017"
+            vs_version: "2017"
+            generator: "Visual Studio 15 2017"
+            arch: "x64"
+            cmake_arch: "x64"
+            runner: "windows-2019"
+          - name: "x86-vs2017"
+            vs_version: "2017"
+            generator: "Visual Studio 15 2017"
+            arch: "x86"
+            cmake_arch: "Win32"
+            runner: "windows-2019"
+          - name: "x64-vs2015"
+            vs_version: "2015"
+            generator: "Visual Studio 14 2015"
+            arch: "x64"
+            cmake_arch: "x64"
+            runner: "windows-2019"
+          - name: "x86-vs2015"
+            vs_version: "2015"
+            generator: "Visual Studio 14 2015"
+            arch: "x86"
+            cmake_arch: "Win32"
+            runner: "windows-2019"
+
+    steps:
+    - name: Checkout yLib
+      uses: actions/checkout@v4
+
+    - name: Build Third-Party Dependencies (CMake)
+      shell: cmd
+      run: |
+        mkdir third_part\build
+        cd third_part\build
+        cmake .. -G "${{ matrix.generator }}" -A ${{ matrix.cmake_arch }} -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build\install"
+        cmake --build . --config Release
+
+    - name: Build yLib
+      shell: cmd
+      run: |
+        mkdir build_${{ matrix.arch }}_vs${{ matrix.vs_version }}
+        cd build_${{ matrix.arch }}_vs${{ matrix.vs_version }}
+        cmake .. -G "${{ matrix.generator }}" -A ${{ matrix.cmake_arch }} -DCMAKE_PREFIX_PATH="${{ github.workspace }}\third_part\build\install"
+        cmake --build . --config Release
+
+    - name: Execute Tests
+      shell: cmd
+      run: |
+        cd build_${{ matrix.arch }}_vs${{ matrix.vs_version }}\bin\Release
+        yLibTests.exe

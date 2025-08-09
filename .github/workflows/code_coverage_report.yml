@@ -28,7 +28,7 @@ jobs:
         chmod +x generate_code_coverage_infos.sh
         mkdir -p build_codecoverage
         
-      working-directory: /home/runner/work/yLib/yLib
+      working-directory: ${{ github.workspace }}
 
     - name: build third part
       env:
@@ -37,10 +37,10 @@ jobs:
         cd $GITHUB_WORKSPACE
         ./build_deps.sh All
 
-      working-directory: /home/runner/work/yLib/yLib
+      working-directory: ${{ github.workspace }}
 
     - name: generate_codecoverage_info
-      working-directory: /home/runner/work/yLib/yLib/
+      working-directory: ${{ github.workspace }}/
       run: |
         cd $GITHUB_WORKSPACE
         ./generate_code_coverage_infos.sh

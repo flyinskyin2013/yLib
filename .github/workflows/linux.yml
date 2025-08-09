@@ -1,0 +1,188 @@
+name: Linux Build Matrix
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: "x64-gcc"
+            arch: "x64"
+            compiler: "gcc"
+            runner: "ubuntu-latest"
+            apt_packages: ""
+            toolchain_file: ""
+            build_dir: "build_x64_gcc"
+            cmake_params: ""
+            build_deps_arch: "x64"
+
+          - name: "x64-clang"
+            arch: "x64"
+            compiler: "clang"
+            runner: "ubuntu-latest"
+            apt_packages: "clang"
+            toolchain_file: ""
+            build_dir: "build_x64_clang"
+            cmake_params: ""
+            build_deps_arch: "x64"
+
+          - name: "x86-gcc"
+            arch: "x86"
+            compiler: "gcc"
+            runner: "ubuntu-latest"
+            apt_packages: "gcc-multilib g++-multilib"
+            toolchain_file: "../toolchains/linux_x64_gcc_m32.cmake"
+            build_dir: "build"
+            cmake_params: "-DBUILD_YLIB_ARCH=x86"
+            build_deps_arch: "x86"
+
+          - name: "x86-clang"
+            arch: "x86"
+            compiler: "clang"
+            runner: "ubuntu-latest"
+            apt_packages: "clang gcc-multilib g++-multilib"
+            toolchain_file: "../toolchains/linux_x64_clang_m32.cmake"
+            build_dir: "build"
+            cmake_params: "-DBUILD_YLIB_ARCH=x86"
+            build_deps_arch: "x86"
+
+          - name: "aarch64-gcc"
+            arch: "aarch64"
+            compiler: "gcc"
+            runner: "ubuntu-latest"
+            apt_packages: "g++-aarch64-linux-gnu"
+            toolchain_file: "../toolchains/linux_aarch64_gcc.cmake"
+            build_dir: "build"
+            cmake_params: "-DBUILD_YLIB_ARCH=aarch64"
+            build_deps_arch: "aarch64"
+
+          - name: "arm-gnueabi-gcc"
+            arch: "armeabi"
+            compiler: "gcc"
+            runner: "ubuntu-latest"
+            apt_packages: "g++-arm-linux-gnueabi"
+            toolchain_file: "../toolchains/linux_armgnueabi_gcc.cmake"
+            build_dir: "build"
+            cmake_params: "-DBUILD_YLIB_ARCH=armeabi"
+            build_deps_arch: "armeabi"
+
+          - name: "arm-gnueabihf-gcc"
+            arch: "armeabihf"
+            compiler: "gcc"
+            runner: "ubuntu-latest"
+            apt_packages: "g++-arm-linux-gnueabihf"
+            toolchain_file: "../toolchains/linux_armgnueabihf_gcc.cmake"
+            build_dir: "build"
+            cmake_params: "-DBUILD_YLIB_ARCH=armeabihf"
+            build_deps_arch: "armeabihf"
+
+    steps:
+    - name: Checkout yLib
+      uses: actions/checkout@v4
+
+    - name: Setup Environment
+      run: |
+        if [ -n "${{ matrix.apt_packages }}" ]; then
+          sudo apt-get update
+          sudo apt-get install -y ${{ matrix.apt_packages }}
+        fi
+        if [ "${{ matrix.compiler }}" = "clang" ]; then
+          sudo update-alternatives --install /usr/bin/cc cc /usr/bin/clang 100
+          sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++ 100
+        fi
+        chmod +x build_deps.sh
+        mkdir -p ${{ matrix.build_dir }}
+
+    - name: Cache and Setup QEMU
+      if: startsWith(matrix.arch, 'arm') || matrix.arch == 'aarch64'
+      uses: actions/cache@v4
+      id: cache-qemu
+      with:
+        path: qemu-install
+        key: qemu-${{ matrix.arch }}-install-cache
+
+    - name: Build QEMU
+      if: (startsWith(matrix.arch, 'arm') || matrix.arch == 'aarch64') && steps.cache-qemu.outputs.cache-hit != 'true'
+      run: |
+        QEMU_TARGET="aarch64-linux-user"
+        if [ "${{ matrix.arch }}" != "aarch64" ]; then
+          QEMU_TARGET="arm-linux-user"
+        fi
+        sudo apt-get install -y ninja-build
+        git clone --depth 1 --branch v5.2.0 https://github.com/qemu/qemu.git
+        cd qemu
+        mkdir build && cd build
+        ../configure --prefix=$(pwd)/install --target-list=${QEMU_TARGET} --disable-system
+        make -j$(nproc)
+        make install
+        cp -r install/* $GITHUB_WORKSPACE/qemu-install/
+
+    - name: Build Third-Party Dependencies (CMake)
+      working-directory: third_part
+      run: |
+        mkdir build && cd build
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
+                 ${{ matrix.toolchain_file != '' && format('-DCMAKE_TOOLCHAIN_FILE={0}/{1}', github.workspace, matrix.toolchain_file) || '' }}
+        cmake --build .
+
+    - name: Build yLib
+      working-directory: ${{ matrix.build_dir }}
+      run: |
+        cmake .. -G "Unix Makefiles" \
+                 -DCMAKE_BUILD_TYPE=Release \
+                 -DCMAKE_INSTALL_PREFIX=$(pwd)/install \
+                 -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install \
+                 ${{ matrix.toolchain_file != '' && format('-DCMAKE_TOOLCHAIN_FILE={0}', matrix.toolchain_file) || '' }} \
+                 ${{ matrix.cmake_params }}
+        make -j$(nproc)
+        make install
+
+    - name: Run Tests
+      working-directory: ${{ matrix.build_dir }}
+      run: |
+        if [ "${{ matrix.arch }}" = "x64" ] || [ "${{ matrix.arch }}" = "x86" ]; then
+          ./bin/yLibTests
+        else
+          export PATH=$GITHUB_WORKSPACE/qemu-install/bin:$PATH
+          cd install/tests
+          QEMU_BIN="qemu-${{ matrix.arch }}"
+          if [ "${{ matrix.arch }}" = "aarch64" ]; then
+            QEMU_BIN="qemu-aarch64"
+          elif [ "${{ matrix.arch }}" = "armeabi" ]; then
+            QEMU_BIN="qemu-arm"
+          elif [ "${{ matrix.arch }}" = "armeabihf" ]; then
+            QEMU_BIN="qemu-arm"
+          fi
+          ./scripts_for_tests.sh ${QEMU_BIN}
+        fi
+
+  code-coverage:
+    name: Code Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout yLib
+        uses: actions/checkout@v4
+
+      - name: Setup Environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lcov
+
+      - name: Build for Code Coverage
+        run: |
+          chmod +x generate_code_coverage_infos.sh
+          ./generate_code_coverage_infos.sh rebuild
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-coverage-report
+          path: build_codecoverage/cover_report/

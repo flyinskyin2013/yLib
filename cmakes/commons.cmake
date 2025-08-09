@@ -95,3 +95,36 @@ macro(ylib_check_gcc_or_clang_version_for_cxx11)
 
 
 endmacro()
+
+macro(ylib_set_compile_options)
+    if(CMAKE_BUILD_TYPE MATCHES "(Release|RELEASE|release)")
+        #release mode 
+    else()
+        #debug mode
+        # add_compile_options(-g)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+    endif()
+
+    # for hidden symbols
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -fvisibility=hidden")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -fvisibility=hidden")
+
+    # for strictly check
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -Wall")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -Wall")
+
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
+
+    # if gcc > 4.9 add sanitizers
+    # gcc 5.x has bug for "ld: unrecognized option '--push-state--no-as-needed'", we should use gcc 7.5
+    if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 7.3)
+        if (ENABLE_GNU_SANITIZER)
+            message(STATUS "Enable AddressSanitizer MemorySanitizer")
+            set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address -fsanitize=leak -fsanitize=undefined")
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize=leak -fsanitize=undefined")
+        endif()
+    else()
+        set(ENABLE_GNU_SANITIZER OFF)
+    endif()
+endmacro()

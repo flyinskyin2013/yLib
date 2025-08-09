@@ -149,8 +149,9 @@ if(WIN32)
 
         #64bits ylib x86_64
         #32bits ylib x86
-        link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/windows/${BUILD_YLIB_ARCH})
-
+        link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../third_part/build_vs2022_x64/install/lib)
+        include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../third_part/build_vs2022_x64/install/include)
+        include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../third_part/build_vs2022_x64/install/include/libxml2)
     else()
 
         message(FATAL_ERROR "Don't support this arch ${BUILD_YLIB_ARCH} in windows.")
@@ -162,7 +163,7 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
     if("${BUILD_YLIB_ARCH}" MATCHES "^(x86_64|x86|armeabi|armeabihf|aarch64)$")
 
         #linux 64bits ylib
-        link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/linux/${BUILD_YLIB_ARCH})
+        link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../third_part/build_linux_${BUILD_YLIB_ARCH}/install/lib)
     
     else()
 
@@ -172,7 +173,7 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
 elseif(ANDROID)
 
-    link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/android)
+    link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../third_part/build_android_${BUILD_YLIB_ARCH}/install/lib)
 
 endif()
 
@@ -255,9 +256,9 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
         add_custom_command(TARGET ylib_s
                             POST_BUILD
-                            COMMAND ar -x ${PROJECT_SOURCE_DIR}/lib/linux/${BUILD_YLIB_ARCH}/libcurl.a
-                            COMMAND ar -x ${PROJECT_SOURCE_DIR}/lib/linux/${BUILD_YLIB_ARCH}/libxml2.a
-                            COMMAND ar -x ${PROJECT_SOURCE_DIR}/lib/linux/${BUILD_YLIB_ARCH}/libjsoncpp.a
+                            COMMAND ar -x ${PROJECT_SOURCE_DIR}/third_part/build_linux_${BUILD_YLIB_ARCH}/install/lib/libcurl.a
+                            COMMAND ar -x ${PROJECT_SOURCE_DIR}/third_part/build_linux_${BUILD_YLIB_ARCH}/install/lib//libxml2.a
+                            COMMAND ar -x ${PROJECT_SOURCE_DIR}/third_part/build_linux_${BUILD_YLIB_ARCH}/install/lib//libjsoncpp.a
                             COMMAND ar -x ${CMAKE_CURRENT_BINARY_DIR}/libylib_s.a
                             COMMAND rm -rf ${CMAKE_CURRENT_BINARY_DIR}/libylib_s.a
                             COMMAND ar -cr ../libylib_s.a ./*.o
