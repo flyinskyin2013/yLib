@@ -149,9 +149,9 @@ if(WIN32)
 
         #64bits ylib x86_64
         #32bits ylib x86
-        link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../third_part/build_vs2022_x64/install/lib)
-        include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../third_part/build_vs2022_x64/install/include)
-        include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../third_part/build_vs2022_x64/install/include/libxml2)
+        link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../third_part/build_${COMPILE_TOOL_SET}_${COMPILE_TOOL_ARCH}/install/lib)
+        include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../third_part/build_${COMPILE_TOOL_SET}_${COMPILE_TOOL_ARCH}/install/include)
+        include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../third_part/build_${COMPILE_TOOL_SET}_${COMPILE_TOOL_ARCH}/install/include/libxml2)
     else()
 
         message(FATAL_ERROR "Don't support this arch ${BUILD_YLIB_ARCH} in windows.")
@@ -191,7 +191,7 @@ if(WIN32)
 
             target_link_libraries( ylib_s PRIVATE jsoncppD.lib libcurlD.lib libxml2D_a.lib  ws2_32 Shlwapi)
             add_custom_command(TARGET ylib_s POST_BUILD
-                COMMAND lib.exe /out:ylib_s_new.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/jsoncppD.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libcurlD.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libxml2D_a.lib ${CMAKE_CURRENT_BINARY_DIR}/Debug/ylib_s.lib
+                COMMAND lib.exe /out:ylib_s_new.lib ${PROJECT_SOURCE_DIR}/third_part/build_${COMPILE_TOOL_SET}_${COMPILE_TOOL_ARCH}/install/lib/jsoncppD.lib ${PROJECT_SOURCE_DIR}/third_part/build_${COMPILE_TOOL_SET}_${COMPILE_TOOL_ARCH}/install/lib/libcurlD.lib ${PROJECT_SOURCE_DIR}/third_part/build_${COMPILE_TOOL_SET}_${COMPILE_TOOL_ARCH}/install/lib/libxml2D_a.lib ${CMAKE_CURRENT_BINARY_DIR}/Debug/ylib_s.lib
                 COMMAND ${CMAKE_COMMAND} -E rename ylib_s_new.lib ${CMAKE_CURRENT_BINARY_DIR}/Debug/ylib_s.lib
                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/
             )
@@ -199,7 +199,7 @@ if(WIN32)
 
             target_link_libraries( ylib_s PRIVATE jsoncpp.lib libcurl.lib libxml2_a.lib ws2_32 Shlwapi)
             add_custom_command(TARGET ylib_s POST_BUILD
-                COMMAND lib.exe /out:ylib_s_new.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/jsoncpp.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libcurl.lib ${PROJECT_SOURCE_DIR}/lib/windows/${BUILD_YLIB_ARCH}/libxml2_a.lib ${CMAKE_CURRENT_BINARY_DIR}/Release/ylib_s.lib
+                COMMAND lib.exe /out:ylib_s_new.lib ${PROJECT_SOURCE_DIR}/third_part/build_${COMPILE_TOOL_SET}_${COMPILE_TOOL_ARCH}/install/lib/jsoncpp.lib ${PROJECT_SOURCE_DIR}/third_part/build_${COMPILE_TOOL_SET}_${COMPILE_TOOL_ARCH}/install/lib/libcurl.lib ${PROJECT_SOURCE_DIR}/third_part/build_${COMPILE_TOOL_SET}_${COMPILE_TOOL_ARCH}/install/lib/libxml2_a.lib ${CMAKE_CURRENT_BINARY_DIR}/Release/ylib_s.lib
                 COMMAND ${CMAKE_COMMAND} -E rename ylib_s_new.lib ${CMAKE_CURRENT_BINARY_DIR}/Release/ylib_s.lib
                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/
             )

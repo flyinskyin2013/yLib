@@ -49,8 +49,20 @@ cmake .. -DCMAKE_INSTALL_PREFIX=`pwd`/install -DCMAKE_TOOLCHAIN_FILE=${PRJ_ROOT}
 
 ### windows
 ```bash
-mkdir build_win_x64
 
+# v140/v141/v142/v143
+$env:compile_tool_set = "v143"
+#set compile_tool_set="v143"
+
+# x64, Win32
+$env:compile_tool_arch = "x64"
+#set compile_tool_arch="x64"
+
+mkdir build_${env:compile_tool_set}_${env:compile_tool_arch}
+
+cmake -T $env:compile_tool_set,host=x64 -A $env:compile_tool_arch  -DBUILD_YLIB_ARCH=x86_64 -DCMAKE_INSTALL_PREFIX="$env:build_dir\\install" -DCOMPILE_TOOL_SET="$env:compile_tool_set" -DCOMPILE_TOOL_ARCH="$env:compile_tool_arch" ..
+
+cmake --build . --config Release --target install
 
 mkdir build_win_x86
 ```
