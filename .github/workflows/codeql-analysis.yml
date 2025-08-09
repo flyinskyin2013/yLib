@@ -67,9 +67,8 @@ jobs:
     - name: Autobuild
       run: |
         cd $GITHUB_WORKSPACE
-        chmod +x build_deps.sh
         mkdir -p build
-        ./build_deps.sh All
+
       
         cd $GITHUB_WORKSPACE
         cd build

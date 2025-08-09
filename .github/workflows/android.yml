@@ -36,7 +36,6 @@ jobs:
 
     - name: Setup Build Environment
       run: |
-        chmod +x build_deps.sh
         mkdir -p build_android_${{ matrix.build_dir_suffix }}
 
     - name: Build Third-Party Dependencies (CMake)

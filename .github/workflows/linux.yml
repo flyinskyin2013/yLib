@@ -98,7 +98,6 @@ jobs:
           sudo update-alternatives --install /usr/bin/cc cc /usr/bin/clang 100
           sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++ 100
         fi
-        chmod +x build_deps.sh
         mkdir -p ${{ matrix.build_dir }}
 
     - name: Cache and Setup QEMU

@@ -45,25 +45,16 @@ jobs:
       uses: actions/checkout@v4
 
     - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
       run: |
-        echo $GITHUB_WORKSPACE
-        ls $GITHUB_WORKSPACE
-        cd $GITHUB_WORKSPACE
-        chmod +x build_deps.sh
         mkdir -p build
-        
-      working-directory: /home/runner/work/yLib/yLib
 
     - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+      working-directory: third_part
       run: |
-        cd $GITHUB_WORKSPACE
-        ./build_deps.sh All
-
-      working-directory: /home/runner/work/yLib/yLib
+        mkdir build && cd build
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install
+        cmake --build .
+        cmake --build . --target install
 
     - name: build ylib
       working-directory: /home/runner/work/yLib/yLib/build
@@ -93,35 +84,20 @@ jobs:
     - name: checkout my rep
       uses: actions/checkout@v4
 
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+    - name: Setup Environment
       run: |
-        echo $GITHUB_WORKSPACE
-        ls $GITHUB_WORKSPACE
-        cd $GITHUB_WORKSPACE
-        chmod +x build_deps.sh
+        sudo apt-get update
+        sudo apt-get install gcc-multilib g++-multilib
         mkdir -p build
-        
-      working-directory: /home/runner/work/yLib/yLib
 
-
-    - name: update
-      run: sudo apt-get update
-
-    - name: install gcc multilib
-      run: sudo apt-get install gcc-multilib g++-multilib
-
-      working-directory: /home/runner/work/yLib/yLib
-
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+    - name: Build Third-Party Dependencies (CMake)
+      working-directory: third_part
       run: |
-        cd $GITHUB_WORKSPACE
-        ./build_deps.sh All x86 linux
-
-      working-directory: /home/runner/work/yLib/yLib
+        mkdir build && cd build
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
+                 -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_x64_gcc_m32.cmake
+        cmake --build .
+        cmake --build . --target install
 
     - name: build ylib
       working-directory: /home/runner/work/yLib/yLib/build
@@ -153,31 +129,20 @@ jobs:
     - name: checkout my rep
       uses: actions/checkout@v4
 
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
-      run: |
-        echo $GITHUB_WORKSPACE
-        ls $GITHUB_WORKSPACE
-        cd $GITHUB_WORKSPACE
-        chmod +x build_deps.sh
-        mkdir -p build
-        
-      working-directory: /home/runner/work/yLib/yLib
-
-    - name: arm-gnu-toolchain
+    - name: Setup Environment
       run: |
         sudo apt-get update
-        sudo apt-get install g++-arm-linux-gnueabi     
+        sudo apt-get install g++-arm-linux-gnueabi
+        mkdir -p build
 
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+    - name: Build Third-Party Dependencies (CMake)
+      working-directory: third_part
       run: |
-        cd $GITHUB_WORKSPACE
-        ./build_deps.sh All armeabi linux
-
-      working-directory: /home/runner/work/yLib/yLib           
+        mkdir build && cd build
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
+                 -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_armgnueabi_gcc.cmake
+        cmake --build .
+        cmake --build . --target install           
 
     - name: build ylib
       working-directory: /home/runner/work/yLib/yLib/build
@@ -207,31 +172,20 @@ jobs:
     - name: checkout my rep
       uses: actions/checkout@v4
 
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
-      run: |
-        echo $GITHUB_WORKSPACE
-        ls $GITHUB_WORKSPACE
-        cd $GITHUB_WORKSPACE
-        chmod +x build_deps.sh
-        mkdir -p build
-        
-      working-directory: /home/runner/work/yLib/yLib
-
-    - name: arm-gnu-toolchain
+    - name: Setup Environment
       run: |
         sudo apt-get update
-        sudo apt-get install g++-arm-linux-gnueabihf   
+        sudo apt-get install g++-arm-linux-gnueabihf
+        mkdir -p build
 
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+    - name: Build Third-Party Dependencies (CMake)
+      working-directory: third_part
       run: |
-        cd $GITHUB_WORKSPACE
-        ./build_deps.sh All armeabihf linux
-
-      working-directory: /home/runner/work/yLib/yLib           
+        mkdir build && cd build
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
+                 -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_armgnueabihf_gcc.cmake
+        cmake --build .
+        cmake --build . --target install           
 
     - name: build ylib
       working-directory: /home/runner/work/yLib/yLib/build
@@ -261,31 +215,20 @@ jobs:
     - name: checkout my rep
       uses: actions/checkout@v4
 
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
-      run: |
-        echo $GITHUB_WORKSPACE
-        ls $GITHUB_WORKSPACE
-        cd $GITHUB_WORKSPACE
-        chmod +x build_deps.sh
-        mkdir -p build
-        
-      working-directory: /home/runner/work/yLib/yLib
-
-    - name: arm-gnu-toolchain
+    - name: Setup Environment
       run: |
         sudo apt-get update
-        sudo apt-get install g++-aarch64-linux-gnu  
+        sudo apt-get install g++-aarch64-linux-gnu
+        mkdir -p build
 
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+    - name: Build Third-Party Dependencies (CMake)
+      working-directory: third_part
       run: |
-        cd $GITHUB_WORKSPACE
-        ./build_deps.sh All aarch64 linux
-
-      working-directory: /home/runner/work/yLib/yLib           
+        mkdir build && cd build
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
+                 -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_aarch64_gcc.cmake
+        cmake --build .
+        cmake --build . --target install           
 
     - name: build ylib
       working-directory: /home/runner/work/yLib/yLib/build
@@ -322,24 +265,19 @@ jobs:
       with:
         arch: amd64_x86      
 
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
+    - name: Setup Environment
       run: |
-        $download_ps_file = "${{github.workspace}}/download_third_part.ps1"
-        cd third_part
-        powershell $download_ps_file
-        cd ..
         mkdir build_vs2015_x86
         ls 
 
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
+    - name: Build Third-Party Dependencies (CMake)
+      shell: cmd
       run: |
-        .\build_deps.bat vs2015 x86
-
-      working-directory: D:\a\yLib\yLib\
+        mkdir third_part\build
+        cd third_part\build
+        cmake .. -G "Visual Studio 14 2015" -A Win32 -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build\install"
+        cmake --build . --config Release
+        cmake --build . --config Release --target install
 
     - name: build ylib
       working-directory: D:\a\yLib\yLib\
@@ -374,24 +312,19 @@ jobs:
       with:
         arch: amd64
         
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
+    - name: Setup Environment
       run: |
-        $download_ps_file = "${{github.workspace}}/download_third_part.ps1"
-        cd third_part
-        powershell $download_ps_file
-        cd ..
         mkdir build_vs2015_x64
         ls 
 
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
+    - name: Build Third-Party Dependencies (CMake)
+      shell: cmd
       run: |
-        .\build_deps.bat vs2015 x86_64 
-
-      working-directory: D:\a\yLib\yLib\
+        mkdir third_part\build
+        cd third_part\build
+        cmake .. -G "Visual Studio 14 2015" -A x64 -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build\install"
+        cmake --build . --config Release
+        cmake --build . --config Release --target install
 
     - name: build ylib
       working-directory: D:\a\yLib\yLib\
@@ -427,24 +360,19 @@ jobs:
         arch: amd64_x86
 
 
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
+    - name: Setup Environment
       run: |
-        $download_ps_file = "${{github.workspace}}/download_third_part.ps1"
-        cd third_part
-        powershell $download_ps_file
-        cd ..
         mkdir build_vs2017_x86
         ls 
 
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
+    - name: Build Third-Party Dependencies (CMake)
+      shell: cmd
       run: |
-        .\build_deps.bat vs2017 x86
-
-      working-directory: D:\a\yLib\yLib\
+        mkdir third_part\build
+        cd third_part\build
+        cmake .. -G "Visual Studio 15 2017" -A Win32 -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build\install"
+        cmake --build . --config Release
+        cmake --build . --config Release --target install
 
     - name: build ylib
       working-directory: D:\a\yLib\yLib\
@@ -479,24 +407,19 @@ jobs:
       with:
         arch: amd64
 
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
+    - name: Setup Environment
       run: |
-        $download_ps_file = "${{github.workspace}}/download_third_part.ps1"
-        cd third_part
-        powershell $download_ps_file
-        cd ..
         mkdir build_vs2017_x64
         ls 
 
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
+    - name: Build Third-Party Dependencies (CMake)
+      shell: cmd
       run: |
-        .\build_deps.bat vs2017 x86_64 
-
-      working-directory: D:\a\yLib\yLib\
+        mkdir third_part\build
+        cd third_part\build
+        cmake .. -G "Visual Studio 15 2017" -A x64 -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build\install"
+        cmake --build . --config Release
+        cmake --build . --config Release --target install
 
     - name: build ylib
       working-directory: D:\a\yLib\yLib\
@@ -531,24 +454,19 @@ jobs:
       with:
         arch: amd64_x86      
 
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
+    - name: Setup Environment
       run: |
-        $download_ps_file = "${{github.workspace}}/download_third_part.ps1"
-        cd third_part
-        powershell $download_ps_file
-        cd ..
         mkdir build_vs2019_x86
         ls 
 
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
+    - name: Build Third-Party Dependencies (CMake)
+      shell: cmd
       run: |
-        .\build_deps.bat vs2019 x86
-
-      working-directory: D:\a\yLib\yLib\
+        mkdir third_part\build
+        cd third_part\build
+        cmake .. -G "Visual Studio 16 2019" -A Win32 -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build\install"
+        cmake --build . --config Release
+        cmake --build . --config Release --target install
 
     - name: build ylib
       working-directory: D:\a\yLib\yLib\
@@ -583,24 +501,19 @@ jobs:
       with:
         arch: amd64
 
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
+    - name: Setup Environment
       run: |
-        $download_ps_file = "${{github.workspace}}/download_third_part.ps1"
-        cd third_part
-        powershell $download_ps_file
-        cd ..
         mkdir build_vs2019_x64
         ls 
 
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
+    - name: Build Third-Party Dependencies (CMake)
+      shell: cmd
       run: |
-        .\build_deps.bat vs2019 x86_64 
-
-      working-directory: D:\a\yLib\yLib\
+        mkdir third_part\build
+        cd third_part\build
+        cmake .. -G "Visual Studio 16 2019" -A x64 -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build\install"
+        cmake --build . --config Release
+        cmake --build . --config Release --target install
 
     - name: build ylib
       working-directory: D:\a\yLib\yLib\
@@ -635,24 +548,19 @@ jobs:
       with:
         arch: amd64_x86      
 
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
+    - name: Setup Environment
       run: |
-        $download_ps_file = "${{github.workspace}}/download_third_part.ps1"
-        cd third_part
-        powershell $download_ps_file
-        cd ..
         mkdir build_vs2022_x86
         ls 
 
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
+    - name: Build Third-Party Dependencies (CMake)
+      shell: cmd
       run: |
-        .\build_deps.bat vs2022 x86
-
-      working-directory: D:\a\yLib\yLib\
+        mkdir third_part\build
+        cd third_part\build
+        cmake .. -G "Visual Studio 17 2022" -A Win32 -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build\install"
+        cmake --build . --config Release
+        cmake --build . --config Release --target install
 
     - name: build ylib
       working-directory: D:\a\yLib\yLib\
@@ -687,24 +595,19 @@ jobs:
       with:
         arch: amd64
 
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
+    - name: Setup Environment
       run: |
-        $download_ps_file = "${{github.workspace}}/download_third_part.ps1"
-        cd third_part
-        powershell $download_ps_file
-        cd ..
         mkdir build_vs2022_x64
         ls 
 
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
+    - name: Build Third-Party Dependencies (CMake)
+      shell: cmd
       run: |
-        .\build_deps.bat vs2022 x86_64 
-
-      working-directory: D:\a\yLib\yLib\
+        mkdir third_part\build
+        cd third_part\build
+        cmake .. -G "Visual Studio 17 2022" -A x64 -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build\install"
+        cmake --build . --config Release
+        cmake --build . --config Release --target install
 
     - name: build ylib
       working-directory: D:\a\yLib\yLib\

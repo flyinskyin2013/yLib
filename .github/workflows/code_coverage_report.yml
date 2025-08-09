@@ -24,18 +24,18 @@ jobs:
         echo $GITHUB_WORKSPACE
         ls $GITHUB_WORKSPACE
         cd $GITHUB_WORKSPACE
-        chmod +x build_deps.sh
         chmod +x generate_code_coverage_infos.sh
         mkdir -p build_codecoverage
         
       working-directory: ${{ github.workspace }}
 
     - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+      working-directory: third_part
       run: |
-        cd $GITHUB_WORKSPACE
-        ./build_deps.sh All
+        mkdir build && cd build
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install
+        cmake --build .
+        cmake --build . --target install
 
       working-directory: ${{ github.workspace }}
 
