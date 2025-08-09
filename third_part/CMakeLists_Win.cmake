@@ -25,7 +25,7 @@ ExternalProject_Add(
     URL https://github.com/curl/curl/releases/download/curl-7_55_1/curl-7.55.1.tar.gz
     URL_HASH MD5=3b832160a8c9c40075fd71191960307c
     PATCH_COMMAND sed -i "s/find_package(Perl REQUIRED)/#find_package(Perl REQUIRED)/g" <SOURCE_DIR>/CMakeLists.txt
-    CONFIGURE_COMMAND cmake -T ${compile_tool_set},host=x64 -A ${compile_tool_arch} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} -DHTTP_ONLY=ON -DBUILD_TESTING=OFF -DCURL_STATICLIB=ON -DBUILDING_LIBCURL=1 <SOURCE_DIR>
+    CONFIGURE_COMMAND cmake -T ${compile_tool_set},host=x64 -A ${compile_tool_arch} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} -DHTTP_ONLY=ON -DBUILD_TESTING=OFF -DCURL_STATICLIB=ON -DBUILDING_LIBCURL=1 -DCURL_ZLIB=OFF -DCMAKE_USE_LIBSSH2=OFF <SOURCE_DIR>
     BUILD_COMMAND cmake --build . --config Release --target install
     INSTALL_COMMAND echo "install step: donothing ... ..."
     DOWNLOAD_EXTRACT_TIMESTAMP TRUE

@@ -48,13 +48,37 @@ def parser_class_ana(stdout_str):
     # print(jj_root[0])
     return jj
 
+def find_matching_strings(search_list, search_string):
+    """
+    在一个列表中查找并打印包含特定子字符串的元素。
+    
+    Args:
+        search_list (list): 要搜索的列表。
+        search_string (str): 要匹配的子字符串。
+    """
+    for item in search_list:
+        if search_string in item:
+            print(f"找到匹配项：item = {item}, search_string = {search_string}")
+            return True
+
+    return False
+
 def run_class_ana(input_file, ylib_root):
+    third_part_build_dir = "build_linux_x64_class_ana"
+    if os.name == "nt":
+        search_list = ["socket", "tcp", "udp", "YMAIN"]
+        if find_matching_strings(search_list, input_file) == True:
+            print("we skip this file")
+            return
+        
+        third_part_build_dir = "build_v143_x64"
+
     # 执行 ls 命令并捕获输出
     result = subprocess.run(["./class_ana", input_file, "--", \
                             "-I" + ylib_root + "/include/", \
-                            "-I" + ylib_root + "/third_part/libxml2-2.9.9/include", \
-                            "-I" + ylib_root + "/third_part/jsoncpp-1.8.4/include", \
-                            "-I" + ylib_root + "/third_part/curl-7.55.1/include"], cwd='.', capture_output=True, text=True)
+                            "-I" + ylib_root + f"/third_part/{third_part_build_dir}/install/include", \
+                            "-I" + ylib_root + f"/third_part/{third_part_build_dir}/install/include/libxml2", \
+                            "-DBUILD_YLIB_WITH_EXPORT=1"], cwd='.', capture_output=True, text=True)
 
     # 获取标准输出和错误输出
     if result.returncode == 0:  # 判断命令是否成功执行
@@ -132,6 +156,8 @@ def generate_ylib_enhance_cpp(ylib_root, output_dir):
     for src_file in find_files:
 
         jj = run_class_ana(src_file, ylib_root)
+        if jj is None:
+            continue
         jj_root = jj["ROOT"]
         for obj in jj_root:
             if not obj["class_name"] in found_class_dict:

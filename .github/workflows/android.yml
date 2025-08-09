@@ -1,28 +1,38 @@
 name: Android Build Matrix
 
-on:  push:
+on:
+  push:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
 
 jobs:
+  generate-info:
+    name: Generate Class Info
+    uses: ./.github/workflows/class_info.yml
+
   build:
+    needs: generate-info
     name: ${{ matrix.name }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
-          - name: "Android 32-bit"
-            arch: "armeabi-v7a"
-            build_dir_suffix: "arm32"
-            cmake_arch: "armeabi-v7a"
-            build_deps_arch: "arm"
+          # - name: "Android 32-bit"
+          #   arch: "armeabi-v7a"
+          #   build_dir_suffix: "arm32"
+          #   cmake_arch: "armeabi-v7a"
+          #   build_deps_arch: "arm"
+          #   build_ylib_arch: "aarch64"
+
+
           - name: "Android 64-bit"
             arch: "arm64-v8a"
             build_dir_suffix: "arm64"
             cmake_arch: "arm64-v8a"
             build_deps_arch: "arm64"
+            build_ylib_arch: "aarch64"
 
     steps:
     - name: Checkout yLib
@@ -32,31 +42,45 @@ jobs:
       uses: nttld/setup-ndk@v1
       id: setup-ndk
       with:
-        ndk-version: r21e
+        ndk-version: r26d
 
     - name: Setup Build Environment
       run: |
-        chmod +x build_deps.sh
-        mkdir -p build_android_${{ matrix.build_dir_suffix }}
+        mkdir -p build_android_${{ matrix.build_ylib_arch }}
 
     - name: Build Third-Party Dependencies (CMake)
       working-directory: third_part
       run: |
-        mkdir build && cd build
-        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
+        mkdir build_android_${{ matrix.build_ylib_arch }} && cd build_android_${{ matrix.build_ylib_arch }}
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build_android_${{ matrix.build_ylib_arch }}/install \
                  -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake \
                  -DANDROID_ABI=${{ matrix.cmake_arch }} \
+                 -DBUILD_YLIB_ARCH=${{ matrix.build_ylib_arch }} \
                  -DANDROID_PLATFORM=android-21
         cmake --build .
 
+    - name: Cache Class Info
+      id: cache-class-info
+      uses: actions/cache@v4
+      with:
+        path: docs/llvm/ylib_class_info.cpp
+        key: ylib-class-info-${{ github.sha }}
+        restore-keys: |
+          ylib-class-info-
+
     - name: Build yLib
-      working-directory: build_android_${{ matrix.build_dir_suffix }}
+      working-directory: build_android_${{ matrix.build_ylib_arch }}
       run: |
+        if [ "${{ steps.cache-class-info.outputs.cache-hit }}" != "true" ]; then
+          echo "Error: Class info cache not found."
+          exit 1
+        fi
+        cp ${{ github.workspace }}/docs/llvm/ylib_class_info.cpp .
         cmake .. -G "Unix Makefiles" \
                  -DCMAKE_BUILD_TYPE=Release \
                  -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake \
                  -DANDROID_ABI=${{ matrix.cmake_arch }} \
                  -DANDROID_PLATFORM=android-21 \
-                 -DBUILD_YLIB_ARCH=${{ matrix.cmake_arch }} \
-                 -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install
+                 -DBUILD_YLIB_ARCH=${{ matrix.build_ylib_arch }} \
+                 -DCMAKE_PREFIX_PATH=${{ github.workspace }}/build_android_${{ matrix.build_ylib_arch }}/install
         make -j$(nproc)

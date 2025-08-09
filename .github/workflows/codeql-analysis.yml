@@ -22,6 +22,10 @@ on:
     - cron: '0 0 * * 5'
 
 jobs:
+  generate-info:
+    name: Generate Class Info
+    uses: ./.github/workflows/class_info.yml
+
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
@@ -30,6 +34,7 @@ jobs:
       contents: read
       security-events: write
 
+    needs: generate-info
     strategy:
       fail-fast: false
       matrix:
@@ -64,16 +69,28 @@ jobs:
     #    and modify them (or add more) to build your code if your project
     #    uses a compiled language
 
+    - name: Restore Class Info Cache
+      uses: actions/cache@v4
+      id: restore-cache
+      with:
+        path: docs/llvm/ylib_class_info.cpp
+        key: ylib-class-info-${{ github.sha }}
+
     - name: Autobuild
       run: |
         cd $GITHUB_WORKSPACE
-        chmod +x build_deps.sh
         mkdir -p build
-        ./build_deps.sh All
-      
+
+        # Build third_part dependencies
+        (cd third_part && mkdir build_linux_x64 && cd build_linux_x64 && cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build_linux_x64/install -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_x64_gcc.cmake -DBUILD_YLIB_ARCH=x86_64 && cmake --build .)
+
+        # Copy the generated class info file
+        cp ${{ github.workspace }}/docs/llvm/ylib_class_info.cpp ${{ github.workspace }}/build
+
+        # Build ylib
         cd $GITHUB_WORKSPACE
         cd build
-        cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_x64_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 ..
+        cmake -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_x64_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x64 -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build_linux_x64/install ..
         make
         make install
 

@@ -1,0 +1,52 @@
+name: Class Info Generation
+
+on:
+  workflow_call:
+
+jobs:
+  generate-class-info:
+    name: Generate Class Info (Linux x64)
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout yLib
+      uses: actions/checkout@v4
+
+    - name: Build Third-Party Dependencies (for class_ana)
+      working-directory: third_part
+      run: |
+        # The python script expects this specific directory name on Linux
+        mkdir build_linux_x64 && cd build_linux_x64
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build_linux_x64_class_ana/install -DBUILD_YLIB_ARCH=x86_64 \
+                 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_x64_gcc.cmake
+        cmake --build .
+
+    - name: Install LLVM/Clang
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y clang-18 libclang-18-dev llvm-18-dev
+
+    - name: Build class_ana Tool
+      run: |
+        cd $GITHUB_WORKSPACE/docs/llvm
+        ls -l /usr/lib/llvm-18/lib/
+        cp /usr/lib/llvm-18/lib/libclang-cpp.so.* ./libclang-cpp.so
+        ls -l 
+        clang++-18 class_ana.cpp -o class_ana \
+            -std=c++17 \
+            -I /usr/lib/llvm-18/include/ \
+            -L /usr/lib/llvm-18/lib/ \
+            -L . \
+            -lclang-cpp -lLLVM-18
+
+    - name: Generate Class Info
+      run: |
+        cd docs/llvm
+        python3 ./class_ana.py --ylib_root=$GITHUB_WORKSPACE --output=$GITHUB_WORKSPACE/docs/llvm
+
+    - name: Cache Class Info
+      uses: actions/cache@v4
+      with:
+        path: docs/llvm/ylib_class_info.cpp
+        key: ylib-class-info-${{ github.sha }}
+        restore-keys: |
+          ylib-class-info-

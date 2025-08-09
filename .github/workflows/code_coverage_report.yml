@@ -6,8 +6,13 @@ on:
     branches: [master]
 
 jobs:
+  generate-info:
+    name: Generate Class Info
+    uses: ./.github/workflows/class_info.yml
+
   generate_code_coverage:
     name: generate_code_coverage on x86_64(last_ubuntu) platefrom using gcc
+    needs: generate-info
     runs-on: ubuntu-latest
 
     steps:
@@ -24,25 +29,31 @@ jobs:
         echo $GITHUB_WORKSPACE
         ls $GITHUB_WORKSPACE
         cd $GITHUB_WORKSPACE
-        chmod +x build_deps.sh
         chmod +x generate_code_coverage_infos.sh
         mkdir -p build_codecoverage
         
       working-directory: ${{ github.workspace }}
 
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+    - name: Build Third-Party Dependencies (CMake)
+      working-directory: third_part
       run: |
-        cd $GITHUB_WORKSPACE
-        ./build_deps.sh All
+        mkdir build_linux_x64 && cd build_linux_x64
+        # This build is for the main project, not for class_ana, so it can be different.
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build_linux_x64/install -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_x64_gcc.cmake -DBUILD_YLIB_ARCH=x64
+        cmake --build .
 
-      working-directory: ${{ github.workspace }}
+    - name: Restore Class Info Cache
+      uses: actions/cache@v4
+      id: restore-cache
+      with:
+        path: docs/llvm/ylib_class_info.cpp
+        key: ylib-class-info-${{ github.sha }}
 
     - name: generate_codecoverage_info
       working-directory: ${{ github.workspace }}/
       run: |
-        cd $GITHUB_WORKSPACE
+        cp ${{ github.workspace }}/docs/llvm/ylib_class_info.cpp ${{ github.workspace }}/build_codecoverage
+        cd ${{ github.workspace }}
         ./generate_code_coverage_infos.sh
 
     - name: upload_codecoverage

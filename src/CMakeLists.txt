@@ -145,7 +145,7 @@ endif()
 
 if(WIN32)
 
-    if(${BUILD_YLIB_ARCH} MATCHES "(x86_64|x86)")
+    if(${BUILD_YLIB_ARCH} MATCHES "(x64|x86_64|x86)")
 
         #64bits ylib x86_64
         #32bits ylib x86
@@ -160,9 +160,11 @@ if(WIN32)
 
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
-    if("${BUILD_YLIB_ARCH}" MATCHES "^(x86_64|x86|armeabi|armeabihf|aarch64)$")
+    if("${BUILD_YLIB_ARCH}" MATCHES "^(x86_64|x64|x86|armeabi|armeabihf|aarch64)$")
 
         #linux 64bits ylib
+        include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../third_part/build_linux_${BUILD_YLIB_ARCH}/install/include)
+        include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../third_part/build_linux_${BUILD_YLIB_ARCH}/install/include/libxml2)
         link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../third_part/build_linux_${BUILD_YLIB_ARCH}/install/lib)
     
     else()
@@ -173,6 +175,8 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
 elseif(ANDROID)
 
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../third_part/build_android_${BUILD_YLIB_ARCH}/install/include)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../third_part/build_android_${BUILD_YLIB_ARCH}/install/include/libxml2)
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../third_part/build_android_${BUILD_YLIB_ARCH}/install/lib)
 
 endif()

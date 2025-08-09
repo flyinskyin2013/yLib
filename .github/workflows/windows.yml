@@ -7,7 +7,12 @@ on:
     branches: [ "master" ]
 
 jobs:
+  generate-info:
+    name: Generate Class Info
+    uses: ./.github/workflows/class_info.yml
+
   build:
+    needs: generate-info
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.runner }}
     strategy:
@@ -15,76 +20,136 @@ jobs:
       matrix:
         include:
           - name: "x64-vs2022"
-            vs_version: "2022"
             generator: "Visual Studio 17 2022"
             arch: "x64"
-            cmake_arch: "x64"
-            runner: "windows-2022"
+            compile_tool_arch: "x64"
+            runner: "windows-latest"
+            build_dir: "build_v143_x64"
+            compile_tool_set: "v143"
+
           - name: "x86-vs2022"
-            vs_version: "2022"
             generator: "Visual Studio 17 2022"
             arch: "x86"
-            cmake_arch: "Win32"
-            runner: "windows-2022"
-          - name: "x64-vs2019"
-            vs_version: "2019"
-            generator: "Visual Studio 16 2019"
+            compile_tool_arch: "Win32"
+            runner: "windows-latest"
+            build_dir: "build_v143_Win32"
+            compile_tool_set: "v143"
+
+
+          - name: "x64-vs2022"
+            generator: "Visual Studio 17 2022"
             arch: "x64"
-            cmake_arch: "x64"
-            runner: "windows-2019"
-          - name: "x86-vs2019"
-            vs_version: "2019"
-            generator: "Visual Studio 16 2019"
+            compile_tool_arch: "x64"
+            runner: "windows-latest"
+            build_dir: "build_v142_x64"
+            compile_tool_set: "v142"
+
+          - name: "x86-vs2022"
+            generator: "Visual Studio 17 2022"
             arch: "x86"
-            cmake_arch: "Win32"
-            runner: "windows-2019"
-          - name: "x64-vs2017"
-            vs_version: "2017"
-            generator: "Visual Studio 15 2017"
-            arch: "x64"
-            cmake_arch: "x64"
-            runner: "windows-2019"
-          - name: "x86-vs2017"
-            vs_version: "2017"
-            generator: "Visual Studio 15 2017"
-            arch: "x86"
-            cmake_arch: "Win32"
-            runner: "windows-2019"
-          - name: "x64-vs2015"
-            vs_version: "2015"
-            generator: "Visual Studio 14 2015"
-            arch: "x64"
-            cmake_arch: "x64"
-            runner: "windows-2019"
-          - name: "x86-vs2015"
-            vs_version: "2015"
-            generator: "Visual Studio 14 2015"
-            arch: "x86"
-            cmake_arch: "Win32"
-            runner: "windows-2019"
+            compile_tool_arch: "Win32"
+            runner: "windows-latest"
+            build_dir: "build_v142_Win32"
+            compile_tool_set: "v142"
+
+          # - name: "x64-vs2019"
+          #   generator: "Visual Studio 16 2019"
+          #   arch: "x64"
+          #   compile_tool_arch: "x64"
+          #   runner: "windows-2019"
+          #   build_dir: "build_v142_x64"
+          #   compile_tool_set: "v142"
+
+          # - name: "x86-vs2019"
+          #   generator: "Visual Studio 16 2019"
+          #   arch: "x86"
+          #   compile_tool_arch: "Win32"
+          #   runner: "windows-2019"
+          #   build_dir: "build_v142_x86"
+          #   compile_tool_set: "v142"
 
     steps:
     - name: Checkout yLib
       uses: actions/checkout@v4
 
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+
     - name: Build Third-Party Dependencies (CMake)
-      shell: cmd
+      shell: powershell
       run: |
-        mkdir third_part\build
-        cd third_part\build
-        cmake .. -G "${{ matrix.generator }}" -A ${{ matrix.cmake_arch }} -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build\install"
+        cd third_part
+        mkdir ${{ matrix.build_dir }} 
+        cd ${{ matrix.build_dir }}
+        cmake .. -G "${{ matrix.generator }}" -T ${{ matrix.compile_tool_set }},host=x64 -A ${{ matrix.compile_tool_arch }} -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\${{ matrix.build_dir }}\install" -Dcompile_tool_set="${{matrix.compile_tool_set}}" -Dcompile_tool_arch="${{matrix.compile_tool_arch}}"
         cmake --build . --config Release
+
+    - name: Cache Class Info
+      id: restore-cache
+      uses: actions/cache@v4
+      with:
+        path: docs/llvm/ylib_class_info.cpp
+        # `enableCrossOsArchive`: 设置为 true 以允许在不同操作系统间共享缓存。
+        # 这是解决 Linux 缓存无法在 Windows 中命中的关键。
+        enableCrossOsArchive: true
+        key: ylib-class-info-${{ github.sha }}
+        restore-keys: |
+          ylib-class-info-
+
+    # - name: Install LLVM and Build class_ana
+    #   if: steps.cache-ylib-class_ana.outputs.cache-hit != 'true'
+    #   shell: pwsh
+    #   run: |
+    #     $LLVM_VERSION = "18.1.8"
+    #     $LLVM_URL = "https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VERSION/clang+llvm-$LLVM_VERSION-x86_64-pc-windows-msvc.tar.xz"
+    #     $LLVM_ARCHIVE = "llvm.tar.xz"
+    #     $LLVM_DIR = "clang+llvm-$LLVM_VERSION-x86_64-pc-windows-msvc"
+
+    #     echo "Downloading LLVM from $LLVM_URL"
+    #     Invoke-WebRequest -Uri $LLVM_URL -OutFile $LLVM_ARCHIVE
+
+    #     echo "Extracting LLVM..."
+    #     tar -xf $LLVM_ARCHIVE
+
+    #     $env:LLVM_PATH = Join-Path $env:GITHUB_WORKSPACE $LLVM_DIR
+    #     $env:LLVM_INCLUDE_PATH = Join-Path $env:LLVM_PATH "include"
+    #     $env:LLVM_LIB_PATH = Join-Path $env:LLVM_PATH "lib"
+
+    #     echo "Merging LLVM and Clang static libraries..."
+    #     python docs/llvm/mege_llvm_lib.py $env:LLVM_LIB_PATH
+
+    #     cd docs/llvm
+
+    #     echo "Compiling class_ana.cpp..."
+    #     cl.exe class_ana.cpp /I "$env:LLVM_INCLUDE_PATH" /std:c++17 /MD /EHsc /Fe:class_ana.exe /link /LIBPATH:"$env:LLVM_LIB_PATH" clang.lib LLVM.lib
+
+    # - name: Generate Class Info
+    #   shell: pwsh
+    #   run: |
+    #     mkdir ${{ github.workspace }}\${{ matrix.build_dir }}
+    #     cd docs/llvm
+    #     python class_ana.py --ylib_root=$env:GITHUB_WORKSPACE --output=${{ github.workspace }}\${{ matrix.build_dir }}
 
     - name: Build yLib
-      shell: cmd
+      shell: powershell
       run: |
-        mkdir build_${{ matrix.arch }}_vs${{ matrix.vs_version }}
-        cd build_${{ matrix.arch }}_vs${{ matrix.vs_version }}
-        cmake .. -G "${{ matrix.generator }}" -A ${{ matrix.cmake_arch }} -DCMAKE_PREFIX_PATH="${{ github.workspace }}\third_part\build\install"
-        cmake --build . --config Release
+        if ("${{ steps.restore-cache.outputs.cache-hit }}" -ne "true") {
+          Write-Error "Class info cache not found. The 'generate-info' job might have failed."
+          exit 1
+        }
+        mkdir ${{ github.workspace }}\${{ matrix.build_dir }}
+        cp ${{ github.workspace }}\docs\llvm\ylib_class_info.cpp ${{ github.workspace }}\${{ matrix.build_dir }}
+        cd ${{ matrix.build_dir }}
+        cmake .. -G "${{ matrix.generator }}" -T ${{ matrix.compile_tool_set }},host=x64 -A ${{ matrix.compile_tool_arch }} `
+                 -DCMAKE_INSTALL_PREFIX=install -DBUILD_YLIB_ARCH=${{matrix.arch}} -DCMAKE_BUILD_TYPE=Release `
+                 -DCMAKE_PREFIX_PATH="${{ github.workspace }}\${{ matrix.build_dir }}\install" `
+                 -DCOMPILE_TOOL_SET=${{ matrix.compile_tool_set }} -DCOMPILE_TOOL_ARCH=${{ matrix.compile_tool_arch }} 
+        cmake --build . --config Release --target install
 
-    - name: Execute Tests
-      shell: cmd
-      run: |
-        cd build_${{ matrix.arch }}_vs${{ matrix.vs_version }}\bin\Release
-        yLibTests.exe
+    # - name: Execute Tests
+    #   shell: powershell
+    #   run: |
+    #     cd ${{ matrix.build_dir }}\install\tests
+    #     scripts_for_tests.bat

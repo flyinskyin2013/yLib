@@ -22,12 +22,11 @@ then
     fi
 fi
 
-
 cd build_codecoverage
 
 WORK_DIR=`pwd`
 
-cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_x64_gcc.cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 -DENABLE_YLIB_COVERAGE=ON -DBUILD_STATIC_YLIB=OFF ..
+cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_x64_gcc.cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x64 -DENABLE_YLIB_COVERAGE=ON -DBUILD_STATIC_YLIB=OFF ..
 
 make -j2
 

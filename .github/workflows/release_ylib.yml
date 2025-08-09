@@ -37,38 +37,42 @@ jobs:
         name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source.zip
 
+  generate-info:
+    name: Generate Class Info
+    uses: ./.github/workflows/class_info.yml
+
   linux_x64_gcc:
-    needs: [prepare_release]
+    needs: [prepare_release, generate-info]
     runs-on: ubuntu-latest
     steps:
     - name: checkout my rep
       uses: actions/checkout@v4
 
     - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
       run: |
-        echo $GITHUB_WORKSPACE
-        ls $GITHUB_WORKSPACE
-        cd $GITHUB_WORKSPACE
-        chmod +x build_deps.sh
         mkdir -p build
-        
-      working-directory: /home/runner/work/yLib/yLib
 
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+    - name: Build Third-Party Dependencies (CMake)
+      working-directory: third_part
       run: |
-        cd $GITHUB_WORKSPACE
-        ./build_deps.sh All
+        mkdir build_linux_x64 && cd build_linux_x64
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
+                 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_x64_gcc.cmake \
+                 -DBUILD_YLIB_ARCH=x86_64
+        cmake --build .
 
-      working-directory: /home/runner/work/yLib/yLib
+    - name: Restore Class Info Cache
+      uses: actions/cache@v4
+      id: restore-cache
+      with:
+        path: docs/llvm/ylib_class_info.cpp
+        key: ylib-class-info-${{ github.sha }}
 
     - name: build ylib
-      working-directory: /home/runner/work/yLib/yLib/build
+      working-directory: build
       run: |
-        cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_x64_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 -DENABLE_GNU_SANITIZER=OFF ..
+        cp ${{ github.workspace }}/docs/llvm/ylib_class_info.cpp .
+        cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_x64_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 -DENABLE_GNU_SANITIZER=OFF -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install
         make -j`nproc`
         make install
 
@@ -87,46 +91,38 @@ jobs:
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_x64_gcc.zip    
 
   linux_x86_gcc:
-    needs: [prepare_release]
+    needs: [prepare_release, generate-info]
     runs-on: ubuntu-latest
     steps:
     - name: checkout my rep
       uses: actions/checkout@v4
 
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+    - name: Setup Environment
       run: |
-        echo $GITHUB_WORKSPACE
-        ls $GITHUB_WORKSPACE
-        cd $GITHUB_WORKSPACE
-        chmod +x build_deps.sh
+        sudo apt-get update
+        sudo apt-get install gcc-multilib g++-multilib
         mkdir -p build
-        
-      working-directory: /home/runner/work/yLib/yLib
 
-
-    - name: update
-      run: sudo apt-get update
-
-    - name: install gcc multilib
-      run: sudo apt-get install gcc-multilib g++-multilib
-
-      working-directory: /home/runner/work/yLib/yLib
-
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+    - name: Build Third-Party Dependencies (CMake)
+      working-directory: third_part
       run: |
-        cd $GITHUB_WORKSPACE
-        ./build_deps.sh All x86 linux
+        mkdir build_linux_x64 && cd build_linux_x64
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
+                 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_x64_gcc_m32.cmake
+        cmake --build .
 
-      working-directory: /home/runner/work/yLib/yLib
+    - name: Restore Class Info Cache
+      uses: actions/cache@v4
+      id: restore-cache
+      with:
+        path: docs/llvm/ylib_class_info.cpp
+        key: ylib-class-info-${{ github.sha }}
 
     - name: build ylib
-      working-directory: /home/runner/work/yLib/yLib/build
+      working-directory: build
       run: |
-        cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_x64_gcc_m32.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86 ..
+        cp ${{ github.workspace }}/docs/llvm/ylib_class_info.cpp .
+        cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_x64_gcc_m32.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86 -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install
         make -j`nproc`
         make install
 
@@ -147,42 +143,38 @@ jobs:
 
 
   linux_armeabi_gcc:
-    needs: [prepare_release]
+    needs: [prepare_release, generate-info]
     runs-on: ubuntu-latest
     steps:
     - name: checkout my rep
       uses: actions/checkout@v4
 
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
-      run: |
-        echo $GITHUB_WORKSPACE
-        ls $GITHUB_WORKSPACE
-        cd $GITHUB_WORKSPACE
-        chmod +x build_deps.sh
-        mkdir -p build
-        
-      working-directory: /home/runner/work/yLib/yLib
-
-    - name: arm-gnu-toolchain
+    - name: Setup Environment
       run: |
         sudo apt-get update
-        sudo apt-get install g++-arm-linux-gnueabi     
+        sudo apt-get install g++-arm-linux-gnueabi
+        mkdir -p build
 
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+    - name: Build Third-Party Dependencies (CMake)
+      working-directory: third_part
       run: |
-        cd $GITHUB_WORKSPACE
-        ./build_deps.sh All armeabi linux
+        mkdir build_linux_x64 && cd build_linux_x64
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
+                 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_armgnueabi_gcc.cmake
+        cmake --build .
 
-      working-directory: /home/runner/work/yLib/yLib           
+    - name: Restore Class Info Cache
+      uses: actions/cache@v4
+      id: restore-cache
+      with:
+        path: docs/llvm/ylib_class_info.cpp
+        key: ylib-class-info-${{ github.sha }}
 
     - name: build ylib
-      working-directory: /home/runner/work/yLib/yLib/build
+      working-directory: build
       run: |
-        cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_armgnueabi_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=armeabi -DENABLE_GNU_SANITIZER=OFF ..
+        cp ${{ github.workspace }}/docs/llvm/ylib_class_info.cpp .
+        cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_armgnueabi_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=armeabi -DENABLE_GNU_SANITIZER=OFF -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install
         make -j`nproc`
         make install
 
@@ -201,42 +193,38 @@ jobs:
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_armeabi_gcc.zip    
 
   linux_armeabihf_gcc:
-    needs: [prepare_release]
+    needs: [prepare_release, generate-info]
     runs-on: ubuntu-latest
     steps:
     - name: checkout my rep
       uses: actions/checkout@v4
 
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
-      run: |
-        echo $GITHUB_WORKSPACE
-        ls $GITHUB_WORKSPACE
-        cd $GITHUB_WORKSPACE
-        chmod +x build_deps.sh
-        mkdir -p build
-        
-      working-directory: /home/runner/work/yLib/yLib
-
-    - name: arm-gnu-toolchain
+    - name: Setup Environment
       run: |
         sudo apt-get update
-        sudo apt-get install g++-arm-linux-gnueabihf   
+        sudo apt-get install g++-arm-linux-gnueabihf
+        mkdir -p build
 
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+    - name: Build Third-Party Dependencies (CMake)
+      working-directory: third_part
       run: |
-        cd $GITHUB_WORKSPACE
-        ./build_deps.sh All armeabihf linux
+        mkdir build_linux_x64 && cd build_linux_x64
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
+                 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_armgnueabihf_gcc.cmake
+        cmake --build .
 
-      working-directory: /home/runner/work/yLib/yLib           
+    - name: Restore Class Info Cache
+      uses: actions/cache@v4
+      id: restore-cache
+      with:
+        path: docs/llvm/ylib_class_info.cpp
+        key: ylib-class-info-${{ github.sha }}
 
     - name: build ylib
-      working-directory: /home/runner/work/yLib/yLib/build
+      working-directory: build
       run: |
-        cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_armgnueabihf_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=armeabihf -DENABLE_GNU_SANITIZER=OFF ..
+        cp ${{ github.workspace }}/docs/llvm/ylib_class_info.cpp .
+        cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_armgnueabihf_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=armeabihf -DENABLE_GNU_SANITIZER=OFF -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install
         make -j`nproc`
         make install
 
@@ -255,42 +243,38 @@ jobs:
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_armeabihf_gcc.zip     
 
   linux_aarch64_gcc:
-    needs: [prepare_release]
+    needs: [prepare_release, generate-info]
     runs-on: ubuntu-latest
     steps:
     - name: checkout my rep
       uses: actions/checkout@v4
 
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
-      run: |
-        echo $GITHUB_WORKSPACE
-        ls $GITHUB_WORKSPACE
-        cd $GITHUB_WORKSPACE
-        chmod +x build_deps.sh
-        mkdir -p build
-        
-      working-directory: /home/runner/work/yLib/yLib
-
-    - name: arm-gnu-toolchain
+    - name: Setup Environment
       run: |
         sudo apt-get update
-        sudo apt-get install g++-aarch64-linux-gnu  
+        sudo apt-get install g++-aarch64-linux-gnu
+        mkdir -p build
 
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+    - name: Build Third-Party Dependencies (CMake)
+      working-directory: third_part
       run: |
-        cd $GITHUB_WORKSPACE
-        ./build_deps.sh All aarch64 linux
+        mkdir build_linux_x64 && cd build_linux_x64
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
+                 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_aarch64_gcc.cmake
+        cmake --build .
 
-      working-directory: /home/runner/work/yLib/yLib           
+    - name: Restore Class Info Cache
+      uses: actions/cache@v4
+      id: restore-cache
+      with:
+        path: docs/llvm/ylib_class_info.cpp
+        key: ylib-class-info-${{ github.sha }}
 
     - name: build ylib
-      working-directory: /home/runner/work/yLib/yLib/build
+      working-directory: build
       run: |
-        cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_aarch64_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=aarch64 -DENABLE_GNU_SANITIZER=OFF ..
+        cp ${{ github.workspace }}/docs/llvm/ylib_class_info.cpp .
+        cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_aarch64_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=aarch64 -DENABLE_GNU_SANITIZER=OFF -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install
         make -j`nproc`
         make install
 
@@ -310,356 +294,46 @@ jobs:
 
 
 
-  windows_vs2015_x86:
-    needs: [prepare_release]
-    runs-on: windows-2019
-    steps:
-    - name: checkout my rep
-      uses: actions/checkout@v4
-
-    - name: Configure build for x86
-      uses: ilammy/msvc-dev-cmd@v1
-      with:
-        arch: amd64_x86      
-
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
-      run: |
-        $download_ps_file = "${{github.workspace}}/download_third_part.ps1"
-        cd third_part
-        powershell $download_ps_file
-        cd ..
-        mkdir build_vs2015_x86
-        ls 
-
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
-      run: |
-        .\build_deps.bat vs2015 x86
-
-      working-directory: D:\a\yLib\yLib\
-
-    - name: build ylib
-      working-directory: D:\a\yLib\yLib\
-      run: |
-        cd build_vs2015_x86
-        cmake -T v140,host=x64 -A Win32 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install -DBUILD_YLIB_ARCH=x86 ..
-        cmake --build . --config Release --target install      
-
-    - name: package
-      run: |
-        cd build_vs2015_x86/install
-        rm examples/ -r -force
-        rm tests/ -r -force
-        rm -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x86.zip -force -ErrorAction SilentlyContinue
-        7z -tzip a -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x86.zip .
-
-    - name: upload-zip
-      uses: actions/upload-artifact@v4
-      with:
-        name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x86
-        path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x86.zip  
-
-  windows_vs2015_x64:
-    needs: [prepare_release]
-    runs-on: windows-2019
-    steps:
-    - name: checkout my rep
-      uses: actions/checkout@v4
-
-    - name: Configure build for amd64
-      uses: ilammy/msvc-dev-cmd@v1
-      with:
-        arch: amd64
-        
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
-      run: |
-        $download_ps_file = "${{github.workspace}}/download_third_part.ps1"
-        cd third_part
-        powershell $download_ps_file
-        cd ..
-        mkdir build_vs2015_x64
-        ls 
-
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
-      run: |
-        .\build_deps.bat vs2015 x86_64 
-
-      working-directory: D:\a\yLib\yLib\
-
-    - name: build ylib
-      working-directory: D:\a\yLib\yLib\
-      run: |
-        cd build_vs2015_x64
-        cmake -T v140,host=x64 -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install -DBUILD_YLIB_ARCH=x86_64 ..
-        cmake --build . --config Release --target install  
-
-    - name: package
-      run: |
-        cd build_vs2015_x64/install
-        rm examples/ -r -force
-        rm tests/ -r -force
-        rm -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x64.zip -force -ErrorAction SilentlyContinue
-        7z -tzip a -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x64.zip .
-
-    - name: upload-zip
-      uses: actions/upload-artifact@v4
-      with:
-        name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x64
-        path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x64.zip  
-
-  windows_vs2017_x86:
-    needs: [prepare_release]
-    runs-on: windows-latest
-    steps:
-    - name: checkout my rep
-      uses: actions/checkout@v4
-
-    - name: Configure build for x86
-      uses: ilammy/msvc-dev-cmd@v1
-      with:
-        arch: amd64_x86
-
-
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
-      run: |
-        $download_ps_file = "${{github.workspace}}/download_third_part.ps1"
-        cd third_part
-        powershell $download_ps_file
-        cd ..
-        mkdir build_vs2017_x86
-        ls 
-
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
-      run: |
-        .\build_deps.bat vs2017 x86
-
-      working-directory: D:\a\yLib\yLib\
-
-    - name: build ylib
-      working-directory: D:\a\yLib\yLib\
-      run: |
-        cd build_vs2017_x86
-        cmake -T v141,host=x64 -A Win32 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install -DBUILD_YLIB_ARCH=x86 ..
-        cmake --build . --config Release --target install      
-
-    - name: package
-      run: |
-        cd build_vs2017_x86/install
-        rm examples/ -r -force
-        rm tests/ -r -force
-        rm -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x86.zip -force -ErrorAction SilentlyContinue
-        7z -tzip a -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x86.zip .
-
-    - name: upload-zip
-      uses: actions/upload-artifact@v4
-      with:
-        name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x86
-        path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x86.zip  
-
-  windows_vs2017_x64:
-    needs: [prepare_release]
-    runs-on: windows-latest
-    steps:
-    - name: checkout my rep
-      uses: actions/checkout@v4
-
-    - name: Configure build for amd64
-      uses: ilammy/msvc-dev-cmd@v1
-      with:
-        arch: amd64
-
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
-      run: |
-        $download_ps_file = "${{github.workspace}}/download_third_part.ps1"
-        cd third_part
-        powershell $download_ps_file
-        cd ..
-        mkdir build_vs2017_x64
-        ls 
-
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
-      run: |
-        .\build_deps.bat vs2017 x86_64 
-
-      working-directory: D:\a\yLib\yLib\
-
-    - name: build ylib
-      working-directory: D:\a\yLib\yLib\
-      run: |
-        cd build_vs2017_x64
-        cmake -T v141,host=x64 -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install -DBUILD_YLIB_ARCH=x86_64 ..
-        cmake --build . --config Release --target install  
-
-    - name: package
-      run: |
-        cd build_vs2017_x64/install
-        rm examples/ -r -force
-        rm tests/ -r -force
-        rm -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x64.zip -force -ErrorAction SilentlyContinue
-        7z -tzip a -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x64.zip .
-
-    - name: upload-zip
-      uses: actions/upload-artifact@v4
-      with:
-        name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x64
-        path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x64.zip  
-
-  windows_vs2019_x86:
-    needs: [prepare_release]
-    runs-on: windows-latest
-    steps:
-    - name: checkout my rep
-      uses: actions/checkout@v4
-
-    - name: Configure build for x86
-      uses: ilammy/msvc-dev-cmd@v1
-      with:
-        arch: amd64_x86      
-
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
-      run: |
-        $download_ps_file = "${{github.workspace}}/download_third_part.ps1"
-        cd third_part
-        powershell $download_ps_file
-        cd ..
-        mkdir build_vs2019_x86
-        ls 
-
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
-      run: |
-        .\build_deps.bat vs2019 x86
-
-      working-directory: D:\a\yLib\yLib\
-
-    - name: build ylib
-      working-directory: D:\a\yLib\yLib\
-      run: |
-        cd build_vs2019_x86
-        cmake -T v142,host=x64 -A Win32 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install -DBUILD_YLIB_ARCH=x86 ..
-        cmake --build . --config Release --target install      
-
-    - name: package
-      run: |
-        cd build_vs2019_x86/install
-        rm examples/ -r -force
-        rm tests/ -r -force
-        rm -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x86.zip -force -ErrorAction SilentlyContinue
-        7z -tzip a -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x86.zip .
-
-    - name: upload-zip
-      uses: actions/upload-artifact@v4
-      with:
-        name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x86
-        path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x86.zip  
-
-  windows_vs2019_x64:
-    needs: [prepare_release]
-    runs-on: windows-latest
-    steps:
-    - name: checkout my rep
-      uses: actions/checkout@v4
-
-    - name: Configure build for amd64
-      uses: ilammy/msvc-dev-cmd@v1
-      with:
-        arch: amd64
-
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
-      run: |
-        $download_ps_file = "${{github.workspace}}/download_third_part.ps1"
-        cd third_part
-        powershell $download_ps_file
-        cd ..
-        mkdir build_vs2019_x64
-        ls 
-
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
-      run: |
-        .\build_deps.bat vs2019 x86_64 
-
-      working-directory: D:\a\yLib\yLib\
-
-    - name: build ylib
-      working-directory: D:\a\yLib\yLib\
-      run: |
-        cd build_vs2019_x64
-        cmake -T v142,host=x64 -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install -DBUILD_YLIB_ARCH=x86_64 ..
-        cmake --build . --config Release --target install  
-
-    - name: package
-      run: |
-        cd build_vs2019_x64/install
-        rm examples/ -r -force
-        rm tests/ -r -force
-        rm -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x64.zip -force -ErrorAction SilentlyContinue
-        7z -tzip a -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x64.zip .
-
-    - name: upload-zip
-      uses: actions/upload-artifact@v4
-      with:
-        name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x64
-        path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x64.zip  
-
   windows_vs2022_x86:
-    needs: [prepare_release]
+    needs: [prepare_release, generate-info]
     runs-on: windows-latest
     steps:
-    - name: checkout my rep
+    - name: Checkout yLib
       uses: actions/checkout@v4
 
-    - name: Configure build for x86
-      uses: ilammy/msvc-dev-cmd@v1
+    - name: Setup Python
+      uses: actions/setup-python@v5
       with:
-        arch: amd64_x86      
+        python-version: '3.x'
 
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
+    - name: Setup MSVC
+      uses: microsoft/setup-msvc-dev@v1
+      with:
+        architecture: x86
+
+    - name: Build Third-Party Dependencies (CMake)
+      shell: cmd
       run: |
-        $download_ps_file = "${{github.workspace}}/download_third_part.ps1"
         cd third_part
-        powershell $download_ps_file
-        cd ..
-        mkdir build_vs2022_x86
-        ls 
+        mkdir build_v143_x64 && cd build_v143_x64
+        cmake .. -G "Visual Studio 17 2022" -A Win32 -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build\install"
+        cmake --build . --config Release
 
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
-      run: |
-        .\build_deps.bat vs2022 x86
-
-      working-directory: D:\a\yLib\yLib\
+    - name: Restore Class Info Cache
+      uses: actions/cache@v4
+      id: restore-cache
+      with:
+        path: docs/llvm/ylib_class_info.cpp
+        key: ylib-class-info-${{ github.sha }}
 
     - name: build ylib
-      working-directory: D:\a\yLib\yLib\
+      shell: cmd
       run: |
+        mkdir build_vs2022_x86
+        cp ${{ github.workspace }}\docs\llvm\ylib_class_info.cpp ${{ github.workspace }}\build_vs2022_x86
         cd build_vs2022_x86
-        cmake -T v143,host=x64 -A Win32 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install -DBUILD_YLIB_ARCH=x86 ..
-        cmake --build . --config Release --target install      
+        cmake .. -G "Visual Studio 17 2022" -A Win32 -DCMAKE_INSTALL_PREFIX=install -DCMAKE_PREFIX_PATH="${{ github.workspace }}\third_part\build\install"
+        cmake --build . --config Release --target install
 
     - name: package
       run: |
@@ -676,42 +350,45 @@ jobs:
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2022_x86.zip  
 
   windows_vs2022_x64:
-    needs: [prepare_release]
+    needs: [prepare_release, generate-info]
     runs-on: windows-latest
     steps:
-    - name: checkout my rep
+    - name: Checkout yLib
       uses: actions/checkout@v4
 
-    - name: Configure build for amd64
-      uses: ilammy/msvc-dev-cmd@v1
+    - name: Setup Python
+      uses: actions/setup-python@v5
       with:
-        arch: amd64
+        python-version: '3.x'
 
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
+    - name: Setup MSVC
+      uses: microsoft/setup-msvc-dev@v1
+      with:
+        architecture: x64
+
+    - name: Build Third-Party Dependencies (CMake)
+      shell: cmd
       run: |
-        $download_ps_file = "${{github.workspace}}/download_third_part.ps1"
         cd third_part
-        powershell $download_ps_file
-        cd ..
-        mkdir build_vs2022_x64
-        ls 
+        mkdir build_v143_x64 && cd build_v143_x64
+        cmake .. -G "Visual Studio 17 2022" -A x64 -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build\install"
+        cmake --build . --config Release
 
-    - name: build third part
-      env:
-        THIRD_PART_PATH_ROOT: D:\a\yLib\yLib\third_part
-      run: |
-        .\build_deps.bat vs2022 x86_64 
-
-      working-directory: D:\a\yLib\yLib\
+    - name: Restore Class Info Cache
+      uses: actions/cache@v4
+      id: restore-cache
+      with:
+        path: docs/llvm/ylib_class_info.cpp
+        key: ylib-class-info-${{ github.sha }}
 
     - name: build ylib
-      working-directory: D:\a\yLib\yLib\
+      shell: cmd
       run: |
+        mkdir build_vs2022_x64
+        cp ${{ github.workspace }}\docs\llvm\ylib_class_info.cpp ${{ github.workspace }}\build_vs2022_x64
         cd build_vs2022_x64
-        cmake -T v143,host=x64 -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install -DBUILD_YLIB_ARCH=x86_64 ..
-        cmake --build . --config Release --target install  
+        cmake .. -G "Visual Studio 17 2022" -A x64 -DCMAKE_INSTALL_PREFIX=install -DCMAKE_PREFIX_PATH="${{ github.workspace }}\third_part\build\install"
+        cmake --build . --config Release --target install
 
     - name: package
       run: |
@@ -727,27 +404,45 @@ jobs:
         name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2022_x64
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2022_x64.zip  
 
-
   android_aarch64_v8a:
-    needs: [prepare_release]
+    needs: [prepare_release, generate-info]
     runs-on: ubuntu-latest
     steps:
-    - name: checkout my rep
+    - name: Checkout yLib
       uses: actions/checkout@v4
 
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+    - name: Setup Android NDK
+      uses: nttld/setup-ndk@v1
+      id: setup-ndk
+      with:
+        ndk-version: r21e
+
+    - name: Setup Build Environment
       run: |
-        echo $GITHUB_WORKSPACE
-        ls $GITHUB_WORKSPACE
-        cd $GITHUB_WORKSPACE
         mkdir -p build
 
-    - name: build ylib
-      working-directory: /home/runner/work/yLib/yLib/build
+    - name: Build Third-Party Dependencies (CMake)
+      working-directory: third_part
       run: |
-        cmake -DCMAKE_TOOLCHAIN_FILE="${ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake" -DANDROID_ABI="arm64-v8a" -DANDROID_PLATFORM=android-21 -DCMAKE_BUILD_TYPE=Release -DBUILD_YLIB_ARCH=android ..
+        mkdir build_linux_x64 && cd build_linux_x64
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
+                 -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake \
+                 -DANDROID_ABI=arm64-v8a \
+                 -DANDROID_PLATFORM=android-21
+        cmake --build .
+
+    - name: Restore Class Info Cache
+      uses: actions/cache@v4
+      id: restore-cache
+      with:
+        path: docs/llvm/ylib_class_info.cpp
+        key: ylib-class-info-${{ github.sha }}
+
+    - name: build ylib
+      working-directory: build
+      run: |
+        cp ${{ github.workspace }}/docs/llvm/ylib_class_info.cpp .
+        cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake -DANDROID_ABI="arm64-v8a" -DANDROID_PLATFORM=android-21 -DBUILD_YLIB_ARCH=aarch64 -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install
         make -j`nproc`
         make install
 
@@ -766,25 +461,44 @@ jobs:
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_aarch64_v8a.zip    
 
   android_armeabi_v7a:
-    needs: [prepare_release]
+    needs: [prepare_release, generate-info]
     runs-on: ubuntu-latest
     steps:
-    - name: checkout my rep
+    - name: Checkout yLib
       uses: actions/checkout@v4
 
-    - name: set env and init
-      env:
-        THIRD_PART_PATH_ROOT: /home/runner/work/yLib/yLib/third_part
+    - name: Setup Android NDK
+      uses: nttld/setup-ndk@v1
+      id: setup-ndk
+      with:
+        ndk-version: r21e
+
+    - name: Setup Build Environment
       run: |
-        echo $GITHUB_WORKSPACE
-        ls $GITHUB_WORKSPACE
-        cd $GITHUB_WORKSPACE
         mkdir -p build
 
-    - name: build ylib
-      working-directory: /home/runner/work/yLib/yLib/build
+    - name: Build Third-Party Dependencies (CMake)
+      working-directory: third_part
       run: |
-        cmake -DCMAKE_TOOLCHAIN_FILE="${ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake" -DANDROID_ABI="armeabi-v7a" -DANDROID_PLATFORM=android-21 -DCMAKE_BUILD_TYPE=Release -DBUILD_YLIB_ARCH=android ..
+        mkdir build_linux_x64 && cd build_linux_x64
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
+                 -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake \
+                 -DANDROID_ABI=armeabi-v7a \
+                 -DANDROID_PLATFORM=android-21
+        cmake --build .
+
+    - name: Restore Class Info Cache
+      uses: actions/cache@v4
+      id: restore-cache
+      with:
+        path: docs/llvm/ylib_class_info.cpp
+        key: ylib-class-info-${{ github.sha }}
+
+    - name: build ylib
+      working-directory: build
+      run: |
+        cp ${{ github.workspace }}/docs/llvm/ylib_class_info.cpp .
+        cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake -DANDROID_ABI="armeabi-v7a" -DANDROID_PLATFORM=android-21 -DBUILD_YLIB_ARCH=armeabi -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install
         make -j`nproc`
         make install
 
@@ -802,10 +516,8 @@ jobs:
         name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_armeabi_v7a
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_armeabi_v7a.zip   
 
-
-
   release_ylib:
-    needs: [prepare_release, full_source, linux_x64_gcc, linux_x86_gcc, linux_armeabi_gcc, linux_armeabihf_gcc, linux_aarch64_gcc, windows_vs2015_x64, windows_vs2015_x86, windows_vs2017_x64, windows_vs2017_x86, windows_vs2019_x64, windows_vs2019_x86, windows_vs2022_x64, windows_vs2022_x86, android_aarch64_v8a, android_armeabi_v7a]
+    needs: [prepare_release, full_source, linux_x64_gcc, linux_x86_gcc, linux_armeabi_gcc, linux_armeabihf_gcc, linux_aarch64_gcc, windows_vs2022_x64, windows_vs2022_x86, android_aarch64_v8a, android_armeabi_v7a]
     runs-on: ubuntu-latest
     steps:
     - name: download
@@ -883,67 +595,6 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_aarch64_gcc/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_aarch64_gcc.zip
         asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_aarch64_gcc.zip
-        asset_content_type: application/zip
-
-
-    - name: upload-vs2015_x86
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x86/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x86.zip
-        asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x86.zip
-        asset_content_type: application/zip
-
-    - name: upload-vs2015_x64
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x64/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x64.zip
-        asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2015_x64.zip
-        asset_content_type: application/zip
-
-    - name: upload-vs2017_x86
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x86/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x86.zip
-        asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x86.zip
-        asset_content_type: application/zip
-
-    - name: upload-vs2017_x64
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x64/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x64.zip
-        asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2017_x64.zip
-        asset_content_type: application/zip
-
-    - name: upload-vs2019_x86
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x86/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x86.zip
-        asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x86.zip
-        asset_content_type: application/zip
-
-    - name: upload-vs2019_x64
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x64/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x64.zip
-        asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2019_x64.zip
         asset_content_type: application/zip
 
     - name: upload-vs2022_x86
