@@ -1,0 +1,62 @@
+name: Android Build Matrix
+
+on:  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: "Android 32-bit"
+            arch: "armeabi-v7a"
+            build_dir_suffix: "arm32"
+            cmake_arch: "armeabi-v7a"
+            build_deps_arch: "arm"
+          - name: "Android 64-bit"
+            arch: "arm64-v8a"
+            build_dir_suffix: "arm64"
+            cmake_arch: "arm64-v8a"
+            build_deps_arch: "arm64"
+
+    steps:
+    - name: Checkout yLib
+      uses: actions/checkout@v4
+
+    - name: Setup Android NDK
+      uses: nttld/setup-ndk@v1
+      id: setup-ndk
+      with:
+        ndk-version: r21e
+
+    - name: Setup Build Environment
+      run: |
+        chmod +x build_deps.sh
+        mkdir -p build_android_${{ matrix.build_dir_suffix }}
+
+    - name: Build Third-Party Dependencies (CMake)
+      working-directory: third_part
+      run: |
+        mkdir build && cd build
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
+                 -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake \
+                 -DANDROID_ABI=${{ matrix.cmake_arch }} \
+                 -DANDROID_PLATFORM=android-21
+        cmake --build .
+
+    - name: Build yLib
+      working-directory: build_android_${{ matrix.build_dir_suffix }}
+      run: |
+        cmake .. -G "Unix Makefiles" \
+                 -DCMAKE_BUILD_TYPE=Release \
+                 -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake \
+                 -DANDROID_ABI=${{ matrix.cmake_arch }} \
+                 -DANDROID_PLATFORM=android-21 \
+                 -DBUILD_YLIB_ARCH=${{ matrix.cmake_arch }} \
+                 -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install
+        make -j$(nproc)

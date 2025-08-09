@@ -7,6 +7,8 @@
 #ignore vscode dir
 .vscode/
 
+.claude/
+
 #ignore build dir
 build/
 #ignore build* dir

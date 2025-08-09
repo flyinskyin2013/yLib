@@ -1,225 +1,223 @@
-#include <clang/AST/RecursiveASTVisitor.h>
-#include <clang/AST/AST.h>
 #include <clang/AST/ASTConsumer.h>
 #include <clang/AST/DeclCXX.h>
-#include <clang/Basic/SourceManager.h>
-#include <iostream>
-#include <llvm/Support/Casting.h>
-#include <string>
-
-using namespace clang;
-
-bool findFieldInHierarchy(clang::CXXRecordDecl *currentDecl,
-                          const std::string &name) {
-    // 正确：遍历所有成员并筛选静态变量
-    for (auto *Member : currentDecl->decls()) {
-        if (auto *Field = dyn_cast<clang::VarDecl>(Member)) {
-
-            if (Field->isStaticDataMember()) {
-
-                if (Field->getNameAsString() == name) {
-                    // std::cout << "Found in " << currentDecl->getNameAsString() << ": "
-                    //             << Field->getNameAsString() << std::endl;
-                    return true;
-                }
-
-            }
-        }
-    }
-    for (clang::FieldDecl *field : currentDecl->fields()) {
-        
-        if (field->getNameAsString() == name) {
-            // std::cout << "Found in " << currentDecl->getNameAsString() << ": "
-            //             << field->getNameAsString() << std::endl;
-            return true;
-        }
-    }
-    return false;
-    // 递归遍历基类
-    // for (auto &base : currentDecl->bases()) {
-    //     clang::CXXRecordDecl *baseDecl = base.getType()->getAsCXXRecordDecl();
-    //     if (baseDecl) {
-    //     findFieldInHierarchy(baseDecl, name);
-    //     }
-    // }
-    return true;
-}
-
-void processNamespaceDecl(clang::NamespaceDecl *recordDecl, std::string & namespace_str) {
-  // 获取声明上下文
-  clang::DeclContext *context = recordDecl->getDeclContext();
-
-  // 遍历直到找到命名空间或翻译单元
-  while (context && !llvm::isa<clang::TranslationUnitDecl>(context)) {
-        clang::NamespaceDecl *namespaceDecl = dyn_cast<clang::NamespaceDecl>(context);
-
-        if (nullptr != namespaceDecl) {
-
-            namespace_str = "::" + namespaceDecl->getNameAsString() + namespace_str;
-            processNamespaceDecl(namespaceDecl, namespace_str);
-            return;
-        }
-      
-    
-        context = context->getParent();
-    }
-    return ;
-}
-
-void processCXXRecordDecl(clang::CXXRecordDecl *recordDecl, std::string & namespace_str) {
-  // 获取声明上下文
-  clang::DeclContext *context = recordDecl->getDeclContext();
-
-  // 遍历直到找到命名空间或翻译单元
-  while (context && !llvm::isa<clang::TranslationUnitDecl>(context)) {
-
-    clang::NamespaceDecl *namespaceDecl = dyn_cast<clang::NamespaceDecl>(context);
-
-    if (nullptr != namespaceDecl) {
-    //   std::cout << "Class " << recordDecl->getNameAsString()
-    //             << " is in namespace " << namespaceDecl->getNameAsString()
-    //             << "\n";
-
-        namespace_str = "::" + namespaceDecl->getNameAsString();
-        processNamespaceDecl(namespaceDecl, namespace_str);
-        return ;
-    }
-    context = context->getParent();
-  }
-
-  return;
-}
-
-std::string basename(const std::string& path) {
-    // 找到最后一个 '/' 的位置
-    size_t pos = path.find_last_of("/\\");  // 兼容 Unix 和 Windows 路径分隔符
-    if (pos != std::string::npos) {
-        return path.substr(pos + 1);  // 返回最后一个 '/' 后的部分
-    }
-    return path;  // 如果没有 '/'，返回整个路径
-}
-
-class ClassASTVisitor : public clang::RecursiveASTVisitor<ClassASTVisitor> {
-public:
-  bool VisitCXXRecordDecl(clang::CXXRecordDecl *Decl) {
-    clang::SourceLocation loc = Decl->getLocation();
-    clang::SourceManager &SM = Decl->getASTContext().getSourceManager();
-    std::string file_name = SM.getFilename(loc).str();
-
-    if (!Decl->isCompleteDefinition())
-        return true;
-
-    if (std::string::npos != file_name.find("yLib/include") || std::string::npos != file_name.find("yLib/src")){
-        
-        std::string  type_key = "";
-
-        processCXXRecordDecl(Decl, type_key);
-        
-        type_key = type_key + "::" + Decl->getName().str();
-        
-
-        std::cout << "{"<<std::endl;
-        printf("\"file_name\": \"%s\",\n", file_name.c_str());
-        printf("\"class_name\": \"%s\",\n", Decl->getName().str().c_str());
-        printf("\"class_type_key_found\": %s,\n", findFieldInHierarchy(Decl, "type_key_")?"true":"false");
-        printf("\"class_type_key\": \"%s\",\n", type_key.c_str());
-        printf("\"class_base_class_num\": %d,\n", Decl->getNumBases());
-
-        // std::cout << "File=" << file_name.c_str() << std::endl;
-        // std::cout << "class name=" << Decl->getName().str() << std::endl;
-        // std::cout << "class type-key is found=" << (findFieldInHierarchy(Decl, "type_key_")?1:0) <<std::endl;
-        // std::cout << "class type-key=" << type_key <<std::endl;
-        // std::cout << "class base class num=" << Decl->getNumBases() <<std::endl;
-
-        
-        std::string _base_class_name_list;
-        for (auto _iter : Decl->bases()) {
-            clang::QualType BaseType = _iter.getType(); // 获取基类的类型
-            clang::CXXRecordDecl *BaseDecl = BaseType->getAsCXXRecordDecl(); // 获取基类的声明
-            // std::cout << "  class base class name=" << BaseDecl->getName().str() <<std::endl;
-            _base_class_name_list += "\"" + BaseDecl->getName().str() + "\", ";
-        }
-        printf("\"class_base_class_name\": [ %s ]\n", _base_class_name_list.substr(0, _base_class_name_list.length() - 2).c_str());
-        std::cout << "},"<<std::endl;
-        
-
-    }
-
-    
-
-    return true;
-  }
-};
-
-
-class ClassASTConsumer : public ASTConsumer {
-private:
-    ClassASTVisitor Visitor;
-public:
-    ClassASTConsumer() {}
-
-    // 处理顶层声明（如函数、类等）
-    bool HandleTopLevelDecl(DeclGroupRef DG) override {
-        for (Decl *D : DG) {
-            Visitor.TraverseDecl(D);  // 触发 Visitor 遍历
-        }
-        return true;
-    }
-};
-
+#include <clang/AST/RecursiveASTVisitor.h>
+#include <clang/Frontend/CompilerInstance.h>
 #include <clang/Frontend/FrontendAction.h>
-
-class ClassFrontendAction : public ASTFrontendAction {
-protected:
-    std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI,
-                                                  StringRef file) override {
-        return std::make_unique<ClassASTConsumer>();
-    }
-};
-
 #include <clang/Tooling/CommonOptionsParser.h>
 #include <clang/Tooling/Tooling.h>
 #include <filesystem>
-#include <fstream>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <memory>
 
 namespace fs = std::filesystem;
 
-std::vector<std::string> get_all_file_path(const std::string& filepath)
-{
-    std::vector<std::string> file_list;
+/**
+ * @brief Searches for a field (member variable) within a class hierarchy.
+ *
+ * This function checks for both static and non-static member variables
+ * with the given name within the specified C++ class declaration.
+ * It does not currently recurse into base classes, as the primary analysis
+ * is done on a per-class basis.
+ *
+ * @param currentDecl The Clang declaration of the class to inspect.
+ * @param name The name of the field to search for.
+ * @return True if the field is found, false otherwise.
+ */
+bool findFieldInHierarchy(const clang::CXXRecordDecl *currentDecl,
+                          const std::string &name) {
+  // Check for null pointer
+  if (!currentDecl) {
+    return false;
+  }
 
-    std::ifstream file(filepath);
-    if (!file.is_open())
-        return {};
-    
-    std::string line;
-    while (!file.eof())
-    {
-        std::getline(file, line);
-        if (line.empty())
-            continue;
-
-        file_list.push_back(line);
-        /* code */
+  // Check for static member variables
+  for (const auto *Member : currentDecl->decls()) {
+    if (!Member) continue;
+    if (const auto *Field = llvm::dyn_cast<clang::VarDecl>(Member)) {
+      if (Field->isStaticDataMember() && Field->getNameAsString() == name) {
+        return true;
+      }
     }
-
-    return file_list;
-    
+  }
+  
+  // Check for non-static member variables (fields)
+  for (const auto *field : currentDecl->fields()) {
+    if (!field) continue;
+    if (field->getNameAsString() == name) {
+      return true;
+    }
+  }
+  
+  return false;
 }
 
-int main(int argc, const char **argv) {
-    // for (int _i = 0; _i < argc; _i++)
-    //     printf("arg[%d] = %s\n", _i, argv[_i]);
-    // 解析命令行参数
-    llvm::cl::OptionCategory MyToolCategory("MyTool");
-    llvm::Expected<clang::tooling::CommonOptionsParser> Op = clang::tooling::CommonOptionsParser::create(argc, argv, MyToolCategory);
-    clang::tooling::ClangTool Tool(Op->getCompilations(), Op->getSourcePathList());
-    for (auto & path:Op->getSourcePathList()){        
-        fs::path _p = path;
-        std::string _base_file_name = _p.filename().string();
-        
-        // std::cout << "input-file-base-name: " << basename(_base_file_name)  << std::endl;
+/**
+ * @brief Escapes JSON string values to prevent malformed JSON output.
+ *
+ * @param str The string to escape.
+ * @return The escaped string.
+ */
+std::string escapeJsonString(const std::string& str) {
+  std::string escaped;
+  for (char c : str) {
+    switch (c) {
+      case '"':  escaped += "\\\""; break;
+      case '\\': escaped += "\\\\"; break;
+      case '\b': escaped += "\\b";  break;
+      case '\f': escaped += "\\f";  break;
+      case '\n': escaped += "\\n";  break;
+      case '\r': escaped += "\\r";  break;
+      case '\t': escaped += "\\t";  break;
+      default:
+        if (c >= 0 && c < 0x20) {
+          // Format character as \u00xx
+          char buf[7];
+          snprintf(buf, sizeof(buf), "\\u00%02x", c);
+          escaped += buf;
+        } else {
+          escaped += c;
+        }
     }
-    // 运行自定义的 FrontendAction
-    return Tool.run(clang::tooling::newFrontendActionFactory<ClassFrontendAction>().get());
+  }
+  return escaped;
+}
+
+/**
+ * @brief An AST visitor that collects information about C++ classes.
+ *
+ * This visitor traverses the Abstract Syntax Tree (AST) of a C++ source file
+ * and extracts metadata for each class definition found within the yLib
+ * project directories ("yLib/include" or "yLib/src").
+ * The collected data is printed to stdout in a JSON-like format.
+ */
+class ClassASTVisitor : public clang::RecursiveASTVisitor<ClassASTVisitor> {
+public:
+  explicit ClassASTVisitor(clang::ASTContext &Context) : Context(Context) {}
+
+  bool VisitCXXRecordDecl(clang::CXXRecordDecl *Decl) {
+    // Only process class definitions, not forward declarations.
+    if (!Decl || !Decl->isCompleteDefinition()) {
+      return true;
+    }
+
+    clang::SourceManager &SM = Context.getSourceManager();
+    clang::SourceLocation loc = Decl->getLocation();
+    
+    // Check for valid source location
+    if (loc.isInvalid()) {
+      return true;
+    }
+    
+    std::string file_name = SM.getFilename(loc).str();
+
+    // Filter to process only files within the yLib project.
+    if (file_name.find("yLib/include") != std::string::npos ||
+        file_name.find("yLib/src") != std::string::npos) {
+
+      // Use getQualifiedNameAsString to get the full namespace-qualified name.
+      std::string qualified_name = Decl->getQualifiedNameAsString();
+      std::string class_name = Decl->getNameAsString();
+
+      // Escape strings for JSON output
+      std::string escaped_file_name = escapeJsonString(file_name);
+      std::string escaped_class_name = escapeJsonString(class_name);
+      std::string escaped_qualified_name = escapeJsonString(qualified_name);
+
+      // Output the class information in a structured format.
+      std::cout << "{" << std::endl;
+      std::cout << "  \"file_name\": \"" << escaped_file_name << "\"," << std::endl;
+      std::cout << "  \"class_name\": \"" << escaped_class_name << "\"," << std::endl;
+      std::cout << "  \"class_type_key_found\": "
+                << (findFieldInHierarchy(Decl, "type_key_") ? "true" : "false")
+                << "," << std::endl;
+      std::cout << "  \"class_type_key\": \"::" << escaped_qualified_name << "\"," << std::endl;
+      std::cout << "  \"class_base_class_num\": " << Decl->getNumBases() << "," << std::endl;
+
+      std::cout << "  \"class_base_class_name\": [";
+      bool first = true;
+      for (const auto &base : Decl->bases()) {
+        if (!first) {
+          std::cout << ", ";
+        }
+        clang::CXXRecordDecl *BaseDecl = nullptr;
+        // Add null pointer check
+        if (!base.getType().isNull()) {
+          BaseDecl = base.getType()->getAsCXXRecordDecl();
+        }
+        if (BaseDecl) {
+          std::string base_name = BaseDecl->getNameAsString();
+          std::cout << "\"" << escapeJsonString(base_name) << "\"";
+        } else {
+          std::cout << "\"\"";
+        }
+        first = false;
+      }
+      std::cout << "]" << std::endl;
+      std::cout << "}," << std::endl;
+    }
+
+    return true;
+  }
+
+private:
+  clang::ASTContext &Context;
+};
+
+/**
+ * @brief An AST consumer that uses the ClassASTVisitor.
+ *
+ * This consumer is responsible for creating the visitor and passing
+ * the top-level declarations of the source file to it for traversal.
+ */
+class ClassASTConsumer : public clang::ASTConsumer {
+public:
+  explicit ClassASTConsumer(clang::ASTContext &Context) : Visitor(Context) {}
+
+  void HandleTranslationUnit(clang::ASTContext &Context) override {
+    Visitor.TraverseDecl(Context.getTranslationUnitDecl());
+  }
+
+private:
+  ClassASTVisitor Visitor;
+};
+
+/**
+ * @brief A frontend action for creating the AST consumer.
+ *
+ * This class provides the entry point for the Clang tool to create
+ * our custom AST consumer.
+ */
+class ClassFrontendAction : public clang::ASTFrontendAction {
+public:
+  std::unique_ptr<clang::ASTConsumer>
+  CreateASTConsumer(clang::CompilerInstance &CI,
+                    llvm::StringRef file) override {
+    return std::make_unique<ClassASTConsumer>(CI.getASTContext());
+  }
+};
+
+int main(int argc, const char **argv) {
+  // Create an OptionCategory as a named variable to avoid temporary object issue
+  static llvm::cl::OptionCategory MyToolCategory("class-ana-tool");
+
+  // Use llvm::Expected for modern error handling with CommonOptionsParser.
+  auto ExpectedParser = clang::tooling::CommonOptionsParser::create(
+      argc, argv, MyToolCategory);
+  
+  if (!ExpectedParser) {
+    llvm::errs() << "Error creating OptionsParser: " << ExpectedParser.takeError();
+    return 1;
+  }
+
+  clang::tooling::CommonOptionsParser &OptionsParser = *ExpectedParser;
+  clang::tooling::ClangTool Tool(OptionsParser.getCompilations(),
+                                 OptionsParser.getSourcePathList());
+
+  // Run the tool with our custom frontend action.
+  int result = Tool.run(
+      clang::tooling::newFrontendActionFactory<ClassFrontendAction>().get());
+  
+  return result;
 }
