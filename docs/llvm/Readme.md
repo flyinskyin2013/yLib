@@ -26,11 +26,25 @@ You can compile `class_ana.cpp` with the following command. Please adjust the pa
 ```bash
 # 确保 LLVM/Clang 的版本号 (例如 -18) 与您的环境匹配
 # Make sure the LLVM/Clang version number (e.g., -18) matches your environment
+# sudo apt install libclang-dev clang
 clang++-18 class_ana.cpp -o class_ana \
     -std=c++17 \
     -I /usr/lib/llvm-18/include/ \
     -L /usr/lib/llvm-18/lib/ \
     -lclang-cpp -lLLVM-18
+```
+
+```bash
+# for window
+wget https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-18.1.8.zip
+
+unzip llvm-project-llvmorg-18.1.8.zip
+cd llvm-project-llvmorg-18.1.8
+mkdir build
+cd build
+cmake -G "Visual Studio 17 2022" ..\llvm\ -DLLVM_ENABLE_PROJECTS="clang;lld;clang-tools-extra" -DCMAKE_CXX_CLAGS="/utf-8"  -DLLVM_TARGETS_TO_BUILD="X86"
+
+
 ```
 
 ## 使用方法 (Usage)

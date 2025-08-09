@@ -49,7 +49,6 @@ cmake .. -DCMAKE_INSTALL_PREFIX=`pwd`/install -DCMAKE_TOOLCHAIN_FILE=${PRJ_ROOT}
 
 ### windows
 ```bash
-mkdir build_vs2022_x64
 $env:PRJ_ROOT = $PWD
 #set PRJ_ROOT=%cd%
 
@@ -61,18 +60,21 @@ $env:compile_tool_set = "v143"
 $env:compile_tool_arch = "x64"
 #set compile_tool_arch="x64"
 
-$env:build_dir = $PWD
+
 
 # for bat
 #"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" x64 
 # for powershell
 & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\Launch-VsDevShell.ps1" -Arch amd64 -HostArch amd64
+
+# build_v143_x64
+mkdir build_${env:compile_tool_set}_${env:compile_tool_arch}
+$env:build_dir = $PWD
+
 cmake -T $env:compile_tool_set,host=x64 -A $env:compile_tool_arch  -DBUILD_YLIB_ARCH=x86_64 -DCMAKE_INSTALL_PREFIX="$env:build_dir\\install" -Dcompile_tool_set="$env:compile_tool_set" -Dcompile_tool_arch="$env:compile_tool_arch" ..
 
 #cmake -T %compile_tool_set%,host=x64 -A %compile_tool_arch%  -DBUILD_YLIB_ARCH=x86_64 -DCMAKE_INSTALL_PREFIX=%cd%\\install -Dcompile_tool_set=%compile_tool_set% -Dcompile_tool_arch=%compile_tool_arch% ..
 
 cmake --build . --config Release
 
-
-mkdir build_vs2022_x86
 ```
