@@ -21,7 +21,7 @@ jobs:
             apt_packages: ""
             toolchain_file: ""
             build_dir: "build_x64_gcc"
-            cmake_params: ""
+            cmake_params: "/toolchains/linux_x64_gcc.cmake"
             build_deps_arch: "x64"
 
           - name: "x64-clang"
@@ -29,7 +29,7 @@ jobs:
             compiler: "clang"
             runner: "ubuntu-latest"
             apt_packages: "clang"
-            toolchain_file: ""
+            toolchain_file: "/toolchains/linux_x64_clang.cmake"
             build_dir: "build_x64_clang"
             cmake_params: ""
             build_deps_arch: "x64"
