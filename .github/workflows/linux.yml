@@ -39,7 +39,7 @@ jobs:
             compiler: "gcc"
             runner: "ubuntu-latest"
             apt_packages: "gcc-multilib g++-multilib"
-            toolchain_file: "../toolchains/linux_x64_gcc_m32.cmake"
+            toolchain_file: "/toolchains/linux_x64_gcc_m32.cmake"
             build_dir: "build"
             cmake_params: "-DBUILD_YLIB_ARCH=x86"
             build_deps_arch: "x86"
@@ -49,7 +49,7 @@ jobs:
             compiler: "clang"
             runner: "ubuntu-latest"
             apt_packages: "clang gcc-multilib g++-multilib"
-            toolchain_file: "../toolchains/linux_x64_clang_m32.cmake"
+            toolchain_file: "/toolchains/linux_x64_clang_m32.cmake"
             build_dir: "build"
             cmake_params: "-DBUILD_YLIB_ARCH=x86"
             build_deps_arch: "x86"
@@ -59,7 +59,7 @@ jobs:
             compiler: "gcc"
             runner: "ubuntu-latest"
             apt_packages: "g++-aarch64-linux-gnu"
-            toolchain_file: "../toolchains/linux_aarch64_gcc.cmake"
+            toolchain_file: "/toolchains/linux_aarch64_gcc.cmake"
             build_dir: "build"
             cmake_params: "-DBUILD_YLIB_ARCH=aarch64"
             build_deps_arch: "aarch64"
@@ -69,7 +69,7 @@ jobs:
             compiler: "gcc"
             runner: "ubuntu-latest"
             apt_packages: "g++-arm-linux-gnueabi"
-            toolchain_file: "../toolchains/linux_armgnueabi_gcc.cmake"
+            toolchain_file: "/toolchains/linux_armgnueabi_gcc.cmake"
             build_dir: "build"
             cmake_params: "-DBUILD_YLIB_ARCH=armeabi"
             build_deps_arch: "armeabi"
@@ -79,7 +79,7 @@ jobs:
             compiler: "gcc"
             runner: "ubuntu-latest"
             apt_packages: "g++-arm-linux-gnueabihf"
-            toolchain_file: "../toolchains/linux_armgnueabihf_gcc.cmake"
+            toolchain_file: "/toolchains/linux_armgnueabihf_gcc.cmake"
             build_dir: "build"
             cmake_params: "-DBUILD_YLIB_ARCH=armeabihf"
             build_deps_arch: "armeabihf"
@@ -129,7 +129,7 @@ jobs:
       run: |
         mkdir build && cd build
         cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
-                 ${{ matrix.toolchain_file != '' && '-DCMAKE_TOOLCHAIN_FILE=' + github.workspace + '/' + matrix.toolchain_file || '' }} \
+                 -DCMAKE_TOOLCHAIN_FILE= ${{github.workspace}}/${{matrix.toolchain_file}} \
                  ${{ matrix.cmake_params }}
         cmake --build .
 
@@ -140,7 +140,7 @@ jobs:
                  -DCMAKE_BUILD_TYPE=Release \
                  -DCMAKE_INSTALL_PREFIX=$(pwd)/install \
                  -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install \
-                 ${{ matrix.toolchain_file != '' && format('-DCMAKE_TOOLCHAIN_FILE={0}', matrix.toolchain_file) || '' }} \
+                 -DCMAKE_TOOLCHAIN_FILE= ${{github.workspace}}/${{matrix.toolchain_file}} \
                  ${{ matrix.cmake_params }}
         make -j$(nproc)
         make install
