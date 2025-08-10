@@ -69,10 +69,18 @@ jobs:
         cd $GITHUB_WORKSPACE
         mkdir -p build
 
-      
+        # Build third_part dependencies
+        cd third_part
+        mkdir build && cd build
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
+                 -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_x64_gcc.cmake \
+                 -DBUILD_YLIB_ARCH=x86_64
+        cmake --build .
+        
+        # Build ylib
         cd $GITHUB_WORKSPACE
         cd build
-        cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_x64_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 ..
+        cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/linux_x64_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install ..
         make
         make install
 

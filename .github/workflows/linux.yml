@@ -129,7 +129,8 @@ jobs:
       run: |
         mkdir build && cd build
         cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
-                 ${{ matrix.toolchain_file != '' && format('-DCMAKE_TOOLCHAIN_FILE={0}/{1}', github.workspace, matrix.toolchain_file) || '' }}
+                 ${{ matrix.toolchain_file != '' && format('-DCMAKE_TOOLCHAIN_FILE={0}/{1}', github.workspace, matrix.toolchain_file) || '' }} \
+                 ${{ matrix.cmake_params }}
         cmake --build .
 
     - name: Build yLib

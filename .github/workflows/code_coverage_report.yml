@@ -29,15 +29,14 @@ jobs:
         
       working-directory: ${{ github.workspace }}
 
-    - name: build third part
+    - name: Build Third-Party Dependencies (CMake)
       working-directory: third_part
       run: |
         mkdir build && cd build
-        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
+                 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_x64_gcc.cmake \
+                 -DBUILD_YLIB_ARCH=x86_64
         cmake --build .
-        cmake --build . --target install
-
-      working-directory: ${{ github.workspace }}
 
     - name: generate_codecoverage_info
       working-directory: ${{ github.workspace }}/
