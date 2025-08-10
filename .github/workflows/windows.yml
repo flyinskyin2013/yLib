@@ -72,7 +72,7 @@ jobs:
       run: |
         mkdir third_part\build
         cd third_part\build
-        cmake .. -G "${{ matrix.generator }}" -A ${{ matrix.cmake_arch }} -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build\install"
+        cmake .. -G "${{ matrix.generator }}" -A ${{ matrix.cmake_arch }} -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build\install" -Dcompile_tool_set=v${{ matrix.vs_version }} -Dcompile_tool_arch=${{ matrix.cmake_arch }}
         cmake --build . --config Release
 
     - name: Build yLib

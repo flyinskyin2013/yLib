@@ -276,7 +276,7 @@ jobs:
       run: |
         mkdir third_part\build
         cd third_part\build
-        cmake .. -G "Visual Studio 14 2015" -A Win32 -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build\install"
+        cmake .. -G "Visual Studio 14 2015" -A Win32 -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build\install" -Dcompile_tool_set=v140 -Dcompile_tool_arch=Win32
         cmake --build . --config Release
         cmake --build . --config Release --target install
 
@@ -323,7 +323,7 @@ jobs:
       run: |
         mkdir third_part\build
         cd third_part\build
-        cmake .. -G "Visual Studio 14 2015" -A x64 -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build\install"
+        cmake .. -G "Visual Studio 14 2015" -A x64 -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build\install" -Dcompile_tool_set=v140 -Dcompile_tool_arch=x64
         cmake --build . --config Release
         cmake --build . --config Release --target install
 
@@ -371,7 +371,7 @@ jobs:
       run: |
         mkdir third_part\build
         cd third_part\build
-        cmake .. -G "Visual Studio 15 2017" -A Win32 -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build\install"
+        cmake .. -G "Visual Studio 15 2017" -A Win32 -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build\install" -Dcompile_tool_set=v141 -Dcompile_tool_arch=Win32
         cmake --build . --config Release
         cmake --build . --config Release --target install
 
@@ -418,7 +418,7 @@ jobs:
       run: |
         mkdir third_part\build
         cd third_part\build
-        cmake .. -G "Visual Studio 15 2017" -A x64 -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build\install"
+        cmake .. -G "Visual Studio 15 2017" -A x64 -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build\install" -Dcompile_tool_set=v141 -Dcompile_tool_arch=x64
         cmake --build . --config Release
         cmake --build . --config Release --target install
 
