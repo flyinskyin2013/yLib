@@ -129,7 +129,7 @@ jobs:
       run: |
         mkdir build && cd build
         cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
-                 -DCMAKE_TOOLCHAIN_FILE= ${{github.workspace}}/${{matrix.toolchain_file}} \
+                 -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/${{matrix.toolchain_file}} \
                  ${{ matrix.cmake_params }}
         cmake --build .
 
@@ -140,7 +140,7 @@ jobs:
                  -DCMAKE_BUILD_TYPE=Release \
                  -DCMAKE_INSTALL_PREFIX=$(pwd)/install \
                  -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install \
-                 -DCMAKE_TOOLCHAIN_FILE= ${{github.workspace}}/${{matrix.toolchain_file}} \
+                 -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/${{matrix.toolchain_file}} \
                  ${{ matrix.cmake_params }}
         make -j$(nproc)
         make install
