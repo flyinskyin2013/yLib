@@ -69,7 +69,7 @@ jobs:
           ylib-class-info-
 
     - name: Build yLib
-      working-directory: build_android_${{ matrix.build_dir_suffix }}
+      working-directory: build_android_${{ matrix.build_ylib_arch }}
       run: |
         if [ "${{ steps.cache-class-info.outputs.cache-hit }}" != "true" ]; then
           echo "Error: Class info cache not found."
@@ -82,5 +82,5 @@ jobs:
                  -DANDROID_ABI=${{ matrix.cmake_arch }} \
                  -DANDROID_PLATFORM=android-21 \
                  -DBUILD_YLIB_ARCH=${{ matrix.build_ylib_arch }} \
-                 -DCMAKE_PREFIX_PATH=${{ github.workspace }}/build_android_${{ matrix.build_dir_suffix }}/install
+                 -DCMAKE_PREFIX_PATH=${{ github.workspace }}/build_android_${{ matrix.build_ylib_arch }}/install
         make -j$(nproc)
