@@ -32,15 +32,31 @@ set(MY_CMAKE_ARGS -DCMAKE_C_FLAGS=${MY_C_FLAGS} -DCMAKE_CXX_FLAGS=${MY_CXX_FLAGS
 
 
 if(${BUILD_YLIB_ARCH} MATCHES "(aarch64)")
+
 set(MY_CONFIGURE_HOST "aarch64-linux-gnu")
+set(MY_AS "aarch64-linux-gnu-as")
+set(MY_LD "aarch64-linux-gnu-ld")
+set(MY_AR "aarch64-linux-gnu-ar")
+set(MY_RANLIB "aarch64-linux-gnu-ranlib")
+set(MY_STRIP "aarch64-linux-gnu-strip")
 endif()
 
 if(${BUILD_YLIB_ARCH} MATCHES "(armgnueabi)")
 set(MY_CONFIGURE_HOST "armgnueabi-linux-gnu")
+set(MY_AS "armgnueabi-linux-gnu-as")
+set(MY_LD "armgnueabi-linux-gnu-ld")
+set(MY_AR "armgnueabi-linux-gnu-ar")
+set(MY_RANLIB "armgnueabi-linux-gnu-ranlib")
+set(MY_STRIP "armgnueabi-linux-gnu-strip")
 endif()
 
 if(${BUILD_YLIB_ARCH} MATCHES "(armgnueabihf)")
 set(MY_CONFIGURE_HOST "armgnueabihf-linux-gnu")
+set(MY_AS "armgnueabihf-linux-gnu-as")
+set(MY_LD "armgnueabihf-linux-gnu-ld")
+set(MY_AR "armgnueabihf-linux-gnu-ar")
+set(MY_RANLIB "armgnueabihf-linux-gnu-ranlib")
+set(MY_STRIP "armgnueabihf-linux-gnu-strip")
 endif()
 
 if(ANDROID)
