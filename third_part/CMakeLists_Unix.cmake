@@ -43,7 +43,7 @@ if(${BUILD_YLIB_ARCH} MATCHES "(armgnueabihf)")
 set(MY_CONFIGURE_HOST "armgnueabihf-linux-gnu")
 endif()
 
-if(${BUILD_YLIB_ARCH} MATCHES "(android|Android|ANDROID)")
+if(ANDROID)
 
     if (NOT DEFINED ANDROID_ABI)
     message(FATAL_ERROR  "must set -DANDROID_ABI")
