@@ -132,8 +132,8 @@ jobs:
     - name: Build Third-Party Dependencies (CMake)
       working-directory: third_part
       run: |
-        mkdir build_linux_${{ build_deps_arch }} && cd build_linux_${{ build_deps_arch }}
-        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build_linux_${{ build_deps_arch }}/install \
+        mkdir build_linux_${{ matrix.build_deps_arch }} && cd build_linux_${{ matrix.build_deps_arch }}
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build_linux_${{ matrix.build_deps_arch }}/install \
                  -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/${{matrix.toolchain_file}} \
                  ${{ matrix.cmake_params }}
         cmake --build .
