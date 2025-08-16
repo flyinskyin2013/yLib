@@ -28,10 +28,12 @@ jobs:
     - name: Build class_ana Tool
       run: |
         cd $GITHUB_WORKSPACE/docs/llvm
+        cp /usr/lib/llvm-18/lib/libclang-cpp.so.18 ./libclang-cpp.so
         clang++-18 class_ana.cpp -o class_ana \
             -std=c++17 \
             -I /usr/lib/llvm-18/include/ \
             -L /usr/lib/llvm-18/lib/ \
+            -L .
             -lclang-cpp -lLLVM-18
 
     - name: Generate Class Info
