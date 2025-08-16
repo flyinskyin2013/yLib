@@ -117,7 +117,7 @@ jobs:
         git clone --depth 1 --branch v5.2.0 https://github.com/qemu/qemu.git
         cd qemu
         mkdir build && cd build
-        ../configure --prefix=$(pwd)/install --target-list=${QEMU_TARGET} --disable-system
+        ../configure --prefix=$(pwd)/install --target-list=${QEMU_TARGET} --disable-system --disable-werror
         make -j$(nproc)
         make install
         cp -r install/* $GITHUB_WORKSPACE/qemu-install/

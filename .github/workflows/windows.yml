@@ -61,7 +61,7 @@ jobs:
         python-version: '3.x'
 
     - name: Build Third-Party Dependencies (CMake)
-      shell: cmd
+      shell: powershell
       run: |
         cd third_part
         mkdir ${{ matrix.build_dir }} && cd ${{ matrix.build_dir }}
@@ -115,7 +115,7 @@ jobs:
     #     python class_ana.py --ylib_root=$env:GITHUB_WORKSPACE --output=${{ github.workspace }}\${{ matrix.build_dir }}
 
     - name: Build yLib
-      shell: cmd
+      shell: powershell
       run: |
         if ("${{ steps.restore-cache.outputs.cache-hit }}" -ne "true") {
           Write-Error "Class info cache not found. The 'generate-info' job might have failed."
@@ -129,14 +129,7 @@ jobs:
         cmake --build . --config Release --target install
 
     - name: Execute Tests
-      shell: cmd
+      shell: powershell
       run: |
         cd ${{ matrix.build_dir }}\install\tests
         scripts_for_tests.bat
-
-    - name: Package Artifacts
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: ylib-windows-${{ matrix.name }}
-        path: ${{ matrix.build_dir }}/install/
