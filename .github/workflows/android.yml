@@ -38,7 +38,7 @@ jobs:
       uses: nttld/setup-ndk@v1
       id: setup-ndk
       with:
-        ndk-version: r21e
+        ndk-version: r26d
 
     - name: Setup Build Environment
       run: |
@@ -48,7 +48,7 @@ jobs:
       working-directory: third_part
       run: |
         mkdir build_android_${{ matrix.build_dir_suffix }} && cd build_android_${{ matrix.build_dir_suffix }}
-        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build_android_${{ matrix.build_dir_suffix }}/install \
                  -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake \
                  -DANDROID_ABI=${{ matrix.cmake_arch }} \
                  -DBUILD_YLIB_ARCH=android \
@@ -78,5 +78,5 @@ jobs:
                  -DANDROID_ABI=${{ matrix.cmake_arch }} \
                  -DANDROID_PLATFORM=android-21 \
                  -DBUILD_YLIB_ARCH=${{ matrix.cmake_arch }} \
-                 -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install
+                 -DCMAKE_PREFIX_PATH=${{ github.workspace }}/build_android_${{ matrix.build_dir_suffix }}/install
         make -j$(nproc)

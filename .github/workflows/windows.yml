@@ -24,27 +24,32 @@ jobs:
             arch: "x64"
             compile_tool_arch: "x64"
             runner: "windows-latest"
-            build_dir: "build_vs2022_x64"
-            compile_tool_set: ""
+            build_dir: "build_v143_x64"
+            compile_tool_set: "v143"
 
           - name: "x86-vs2022"
             generator: "Visual Studio 17 2022"
             arch: "x86"
             compile_tool_arch: "Win32"
             runner: "windows-latest"
-            build_dir: "build_vs2022_x86"
+            build_dir: "build_v143_x86"
+            compile_tool_set: "v143"
+
           - name: "x64-vs2019"
             generator: "Visual Studio 16 2019"
             arch: "x64"
             compile_tool_arch: "x64"
             runner: "windows-2019"
-            build_dir: "build_vs2019_x64"
+            build_dir: "build_v142_x64"
+            compile_tool_set: "v142"
+
           - name: "x86-vs2019"
             generator: "Visual Studio 16 2019"
             arch: "x86"
             compile_tool_arch: "Win32"
             runner: "windows-2019"
-            build_dir: "build_vs2019_x86"
+            build_dir: "build_v142_x86"
+            compile_tool_set: "v142"
 
     steps:
     - name: Checkout yLib

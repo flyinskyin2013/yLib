@@ -160,9 +160,11 @@ if(WIN32)
 
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
-    if("${BUILD_YLIB_ARCH}" MATCHES "^(x86_64|x86|armeabi|armeabihf|aarch64)$")
+    if("${BUILD_YLIB_ARCH}" MATCHES "^(x86_64|x64|x86|armeabi|armeabihf|aarch64)$")
 
         #linux 64bits ylib
+        include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../third_part/build_linux_${BUILD_YLIB_ARCH}/install/include)
+        include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../third_part/build_linux_${BUILD_YLIB_ARCH}/install/include/libxml2)
         link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../third_part/build_linux_${BUILD_YLIB_ARCH}/install/lib)
     
     else()
