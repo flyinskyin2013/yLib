@@ -113,7 +113,7 @@ ExternalProject_Add(
     curl
     URL https://github.com/curl/curl/releases/download/curl-7_55_1/curl-7.55.1.tar.gz
     URL_HASH MD5=3b832160a8c9c40075fd71191960307c
-    CONFIGURE_COMMAND  <SOURCE_DIR>/configure --prefix=${THIRD_PARTY_INSTALL_DIR} --without-libidn2 --without-ssl --without-zlib --without-librtmp --disable-rtsp --disable-ldap --disable-ldaps --host=${MY_CONFIGURE_HOST}  CC=${MY_CC} CFLAGS=${MY_C_FLAGS} LD=${LD_COMPILER} AR=${AR_COMPILER}
+    CONFIGURE_COMMAND  <SOURCE_DIR>/configure --prefix=${THIRD_PARTY_INSTALL_DIR} --without-libidn2 --without-ssl --without-zlib --without-librtmp --disable-rtsp --disable-ldap --disable-ldaps --host=${MY_CONFIGURE_HOST}  CC=${MY_CC} CFLAGS=${MY_C_FLAGS} LD=${MY_LD} AR=${MY_AR}
     BUILD_COMMAND make -j8
     INSTALL_COMMAND make install
     DOWNLOAD_EXTRACT_TIMESTAMP TRUE
@@ -124,7 +124,7 @@ ExternalProject_Add(
     libxml2
     URL https://github.com/GNOME/libxml2/archive/v2.9.9.tar.gz
     URL_HASH MD5=435110d1f26268f1952350b344a3a934
-    CONFIGURE_COMMAND <SOURCE_DIR>/autogen.sh --prefix=${THIRD_PARTY_INSTALL_DIR} --with-python=no  --with-lzma=no --with-zlib=no  --host=${MY_CONFIGURE_HOST}  CC=${MY_CC} CFLAGS=${MY_C_FLAGS} LD=${LD_COMPILER} AR=${AR_COMPILER}
+    CONFIGURE_COMMAND <SOURCE_DIR>/autogen.sh --prefix=${THIRD_PARTY_INSTALL_DIR} --with-python=no  --with-lzma=no --with-zlib=no  --host=${MY_CONFIGURE_HOST}  CC=${MY_CC} CFLAGS=${MY_C_FLAGS} LD=${MY_LD} AR=${MY_AR}
     BUILD_COMMAND make -j8
     INSTALL_COMMAND make install
     DOWNLOAD_EXTRACT_TIMESTAMP TRUE
