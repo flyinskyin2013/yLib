@@ -177,5 +177,5 @@ jobs:
           fi
           ./scripts_for_tests.sh ${QEMU_BIN}
         else
-          echo This arch(${{ matrix.arch }}) don't support test.
+          echo "This arch(${{ matrix.arch }}) don't support test."
         fi
