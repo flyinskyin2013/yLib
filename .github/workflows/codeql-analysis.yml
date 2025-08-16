@@ -27,7 +27,6 @@ jobs:
     uses: ./.github/workflows/class_info.yml
 
   analyze:
-    needs: generate-info
     name: Analyze
     runs-on: ubuntu-latest
     permissions:
