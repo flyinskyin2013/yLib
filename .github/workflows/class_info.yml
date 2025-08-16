@@ -16,7 +16,7 @@ jobs:
       run: |
         # The python script expects this specific directory name on Linux
         mkdir build_linux_x64 && cd build_linux_x64
-        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install -DBUILD_YLIB_ARCH=x86_64 \
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/${build_linux_x64}/install -DBUILD_YLIB_ARCH=x86_64 \
                  -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_x64_gcc.cmake
         cmake --build .
 
