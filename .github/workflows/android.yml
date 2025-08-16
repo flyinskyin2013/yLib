@@ -51,6 +51,7 @@ jobs:
         cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
                  -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake \
                  -DANDROID_ABI=${{ matrix.cmake_arch }} \
+                 -DBUILD_YLIB_ARCH=android \
                  -DANDROID_PLATFORM=android-21
         cmake --build .
 
