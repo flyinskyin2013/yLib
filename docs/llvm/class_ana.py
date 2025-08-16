@@ -64,7 +64,7 @@ def find_matching_strings(search_list, search_string):
     return False
 
 def run_class_ana(input_file, ylib_root):
-    third_part_build_dir = "build_linux_x64"
+    third_part_build_dir = "build_linux_x64_class_ana"
     if os.name == "nt":
         search_list = ["socket", "tcp", "udp", "YMAIN"]
         if find_matching_strings(search_list, input_file) == True:
