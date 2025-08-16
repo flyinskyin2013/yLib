@@ -62,7 +62,7 @@ endif()
 
 if(${MY_CC} MATCHES "(clang)")
 if(NOT ANDROID)
-set(MY_C_FLAGS "${MY_C_FLAGS} -std=c89 -Wall")
+set(MY_C_FLAGS "${MY_C_FLAGS} -std=c89 -Wno-error")
 endif()
 endif()
 
