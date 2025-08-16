@@ -73,6 +73,9 @@ jobs:
       uses: actions/cache@v4
       with:
         path: docs/llvm/ylib_class_info.cpp
+        # `enableCrossOsArchive`: 设置为 true 以允许在不同操作系统间共享缓存。
+        # 这是解决 Linux 缓存无法在 Windows 中命中的关键。
+        enableCrossOsArchive: true
         key: ylib-class-info-${{ github.sha }}
         restore-keys: |
           ylib-class-info-

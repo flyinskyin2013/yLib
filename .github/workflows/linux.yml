@@ -164,6 +164,7 @@ jobs:
           cd install/tests
           ./scripts_for_tests.sh
         elif [ "${{ matrix.arch }}" = "aarch64" ]
+        then
           export PATH=$GITHUB_WORKSPACE/qemu-install/bin:$PATH
           cd install/tests
           QEMU_BIN="qemu-${{ matrix.arch }}"
