@@ -22,7 +22,6 @@ then
     fi
 fi
 
-
 cd build_codecoverage
 
 WORK_DIR=`pwd`

@@ -1,4 +1,17 @@
-### build res
+
+# build
+
+### build class_ana
+- reference docs/llvm/readme.md锛寃e should build class_ana.cpp and get class_ana.
+- run 'python3 ./class_ana.py --ylib_root=`pwd`/../..' to get ylib_class_info.cpp
+- copy 'ylib_class_info.cpp' to ylib's build dir
+- for ylib, we configure by cmake
+- build it.
+
+### build third-part res
+see third_part/ReadMe.md to build it.
+
+third-part res install's dir
 - build_android_aarch64/install
 - build_linux_aarch64/install
 - build_linux_armgnueabi/install
@@ -60,7 +73,7 @@ $env:compile_tool_arch = "x64"
 
 mkdir build_${env:compile_tool_set}_${env:compile_tool_arch}
 
-cmake -T $env:compile_tool_set,host=x64 -A $env:compile_tool_arch  -DBUILD_YLIB_ARCH=x86_64 -DCMAKE_INSTALL_PREFIX="$env:build_dir\\install" -DCOMPILE_TOOL_SET="$env:compile_tool_set" -DCOMPILE_TOOL_ARCH="$env:compile_tool_arch" ..
+cmake -T $env:compile_tool_set,host=x64 -A $env:compile_tool_arch  -DBUILD_YLIB_ARCH=x86_64 -DCMAKE_INSTALL_PREFIX="$env:build_dir\\install" -DCOMPILE_TOOL_SET="$env:compile_tool_set" -DCOMPILE_TOOL_ARCH="$env:compile_tool_arch" -DCMAKE_BUILD_TYPE=Release .. 
 
 cmake --build . --config Release --target install
 

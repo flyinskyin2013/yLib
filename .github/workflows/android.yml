@@ -1,12 +1,18 @@
 name: Android Build Matrix
 
-on:  push:
+on:
+  push:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
 
 jobs:
+  generate-info:
+    name: Generate Class Info
+    uses: ./.github/workflows/class_info.yml
+
   build:
+    needs: generate-info
     name: ${{ matrix.name }}
     runs-on: ubuntu-latest
     strategy:
@@ -41,16 +47,30 @@ jobs:
     - name: Build Third-Party Dependencies (CMake)
       working-directory: third_part
       run: |
-        mkdir build && cd build
+        mkdir build_android_${{ matrix.build_dir_suffix }} && cd build_android_${{ matrix.build_dir_suffix }}
         cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
                  -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake \
                  -DANDROID_ABI=${{ matrix.cmake_arch }} \
                  -DANDROID_PLATFORM=android-21
         cmake --build .
 
+    - name: Cache Class Info
+      id: cache-class-info
+      uses: actions/cache@v4
+      with:
+        path: docs/llvm/ylib_class_info.cpp
+        key: ylib-class-info-${{ github.sha }}
+        restore-keys: |
+          ylib-class-info-
+
     - name: Build yLib
       working-directory: build_android_${{ matrix.build_dir_suffix }}
       run: |
+        if [ "${{ steps.cache-class-info.outputs.cache-hit }}" != "true" ]; then
+          echo "Error: Class info cache not found."
+          exit 1
+        fi
+        cp ${{ github.workspace }}/docs/llvm/ylib_class_info.cpp .
         cmake .. -G "Unix Makefiles" \
                  -DCMAKE_BUILD_TYPE=Release \
                  -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake \

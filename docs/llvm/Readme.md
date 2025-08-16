@@ -44,6 +44,18 @@ mkdir build
 cd build
 cmake -G "Visual Studio 17 2022" ..\llvm\ -DLLVM_ENABLE_PROJECTS="clang;lld;clang-tools-extra" -DCMAKE_CXX_CLAGS="/utf-8"  -DLLVM_TARGETS_TO_BUILD="X86"
 
+# download prebuilt-llvm from github
+wget https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/clang+llvm-18.1.8-x86_64-pc-windows-msvc.tar.xz
+tar -xf clang+llvm-18.1.8-x86_64-pc-windows-msvc.tar.xz
+
+# merge llvm.lib clang.lib
+python docs/llvm/simple_llvm_lib.py install_path_clang+llvm-18.1.8-x86_64-pc-windows-msvc 
+# now in 'install_path_clang+llvm-18.1.8-x86_64-pc-windows-msvc ', we have LLVM.lib clang.lib
+
+# build class_ana
+cl.exe ..\docs\llvm\class_ana.cpp /I "G:\SourceCodes\clang+llvm-18.1.8-x86_64-pc-windows-msvc\include" /std:c++17 /MD /link /libpath:"G:\SourceCodes\clang+llvm-18.1.8-x86_64-pc-windows-msvc\lib\" clang.lib LLVM.lib msvcrt.lib ws2_32.lib version.lib
+
+# generate ylib_class_info.cpp
 
 ```
 

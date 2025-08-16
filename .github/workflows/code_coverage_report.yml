@@ -6,8 +6,13 @@ on:
     branches: [master]
 
 jobs:
+  generate-info:
+    name: Generate Class Info
+    uses: ./.github/workflows/class_info.yml
+
   generate_code_coverage:
     name: generate_code_coverage on x86_64(last_ubuntu) platefrom using gcc
+    needs: generate-info
     runs-on: ubuntu-latest
 
     steps:
@@ -33,14 +38,21 @@ jobs:
       working-directory: third_part
       run: |
         mkdir build && cd build
-        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
-                 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_x64_gcc.cmake \
-                 -DBUILD_YLIB_ARCH=x86_64
+        # This build is for the main project, not for class_ana, so it can be different.
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_x64_gcc.cmake -DBUILD_YLIB_ARCH=x86_64
         cmake --build .
+
+    - name: Restore Class Info Cache
+      uses: actions/cache@v4
+      id: restore-cache
+      with:
+        path: docs/llvm/ylib_class_info.cpp
+        key: ylib-class-info-${{ github.sha }}
 
     - name: generate_codecoverage_info
       working-directory: ${{ github.workspace }}/
       run: |
+        cp ${{ github.workspace }}/docs/llvm/ylib_class_info.cpp ${{ github.workspace }}/build_codecoverage
         cd $GITHUB_WORKSPACE
         ./generate_code_coverage_infos.sh
 
