@@ -62,7 +62,7 @@ endif()
 
 if(${MY_CC} MATCHES "(clang)")
 if(NOT ANDROID)
-set(MY_C_FLAGS "${MY_C_FLAGS}")
+set(MY_C_FLAGS "${MY_C_FLAGS} -Wno-implicit-int")
 endif()
 endif()
 
