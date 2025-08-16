@@ -1,18 +1,20 @@
 name: Linux Build Matrix
 
 on:
+  workflow_run:
+    # 监听 "Build and Test" 这个工作流
+    workflows: ["Class Info Generation"]
+    # 仅在它“完成”时触发
+    types:
+      - completed
+
   push:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
 
 jobs:
-  generate-info:
-    name: Generate Class Info
-    uses: ./.github/workflows/class_info.yml
-
   build:
-    needs: generate-info
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.runner }}
     strategy:
@@ -128,7 +130,7 @@ jobs:
         mkdir build_linux_${{ matrix.build_deps_arch }} && cd build_linux_${{ matrix.build_deps_arch }}
         cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build_linux_${{ matrix.build_deps_arch }}/install \
                  -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/${{matrix.toolchain_file}} \
-                 ${{ matrix.cmake_params }}
+                 -DBUILD_YLIB_ARCH=${{matrix.build_deps_arch}}
         cmake --build .
 
     - name: Cache Class Info

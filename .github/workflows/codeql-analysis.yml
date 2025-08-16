@@ -12,6 +12,13 @@
 name: "CodeQL"
 
 on:
+  workflow_run:
+    # 监听 "Build and Test" 这个工作流
+    workflows: ["Class Info Generation"]
+    # 仅在它“完成”时触发
+    types:
+      - completed
+
   push:
     branches: [ master ]
   pull_request:
@@ -22,10 +29,6 @@ on:
     - cron: '0 0 * * 5'
 
 jobs:
-  generate-info:
-    name: Generate Class Info
-    uses: ./.github/workflows/class_info.yml
-
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
