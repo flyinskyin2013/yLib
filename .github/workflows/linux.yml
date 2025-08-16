@@ -113,7 +113,7 @@ jobs:
         if [ "${{ matrix.arch }}" != "aarch64" ]; then
           QEMU_TARGET="arm-linux-user"
         fi
-        sudo apt-get install -y ninja-build
+        sudo apt-get install -y ninja-build libglib2.0-dev
         git clone --depth 1 --branch v5.2.0 https://github.com/qemu/qemu.git
         cd qemu
         mkdir build && cd build
