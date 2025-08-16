@@ -22,25 +22,27 @@ jobs:
           - name: "x64-vs2022"
             generator: "Visual Studio 17 2022"
             arch: "x64"
-            cmake_arch: "x64"
+            compile_tool_arch: "x64"
             runner: "windows-latest"
             build_dir: "build_vs2022_x64"
+            compile_tool_set: ""
+
           - name: "x86-vs2022"
             generator: "Visual Studio 17 2022"
             arch: "x86"
-            cmake_arch: "Win32"
+            compile_tool_arch: "Win32"
             runner: "windows-latest"
             build_dir: "build_vs2022_x86"
           - name: "x64-vs2019"
             generator: "Visual Studio 16 2019"
             arch: "x64"
-            cmake_arch: "x64"
+            compile_tool_arch: "x64"
             runner: "windows-2019"
             build_dir: "build_vs2019_x64"
           - name: "x86-vs2019"
             generator: "Visual Studio 16 2019"
             arch: "x86"
-            cmake_arch: "Win32"
+            compile_tool_arch: "Win32"
             runner: "windows-2019"
             build_dir: "build_vs2019_x86"
 
@@ -57,8 +59,8 @@ jobs:
       shell: cmd
       run: |
         cd third_part
-        mkdir build_${{ matrix.build_dir }} && cd build_${{ matrix.build_dir }}
-        cmake .. -G "${{ matrix.generator }}" -A ${{ matrix.cmake_arch }} -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build\install"
+        mkdir ${{ matrix.build_dir }} && cd ${{ matrix.build_dir }}
+        cmake .. -G "${{ matrix.generator }}" -A ${{ matrix.compile_tool_arch }} -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\${{ matrix.build_dir }}\install" -Dcompile_tool_set="${{compile_tool_set}}" -Dcompile_tool_arch="${{compile_tool_arch}}"
         cmake --build . --config Release
 
     - name: Cache Class Info
@@ -115,7 +117,7 @@ jobs:
         cd ${{ matrix.build_dir }}
         cmake .. -G "${{ matrix.generator }}" -A ${{ matrix.cmake_arch }} `
                  -DCMAKE_INSTALL_PREFIX=install `
-                 -DCMAKE_PREFIX_PATH="${{ github.workspace }}\third_part\build\install"
+                 -DCMAKE_PREFIX_PATH="${{ github.workspace }}\${{ matrix.build_dir }}\install"
         cmake --build . --config Release --target install
 
     - name: Execute Tests
