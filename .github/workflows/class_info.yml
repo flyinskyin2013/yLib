@@ -28,6 +28,7 @@ jobs:
     - name: Build class_ana Tool
       run: |
         cd $GITHUB_WORKSPACE/docs/llvm
+        ls -l /usr/lib/llvm-18/lib/
         cp /usr/lib/llvm-18/lib/libclang-cpp.so.* ./libclang-cpp.so
         clang++-18 class_ana.cpp -o class_ana \
             -std=c++17 \
