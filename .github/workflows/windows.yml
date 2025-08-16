@@ -65,7 +65,7 @@ jobs:
       run: |
         cd third_part
         mkdir ${{ matrix.build_dir }} && cd ${{ matrix.build_dir }}
-        cmake .. -G "${{ matrix.generator }}" -A ${{ matrix.compile_tool_arch }} -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\${{ matrix.build_dir }}\install" -Dcompile_tool_set="${{compile_tool_set}}" -Dcompile_tool_arch="${{compile_tool_arch}}"
+        cmake .. -G "${{ matrix.generator }}" -A ${{ matrix.compile_tool_arch }} -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\${{ matrix.build_dir }}\install" -Dcompile_tool_set="${{matrix.compile_tool_set}}" -Dcompile_tool_arch="${{matrix.compile_tool_arch}}"
         cmake --build . --config Release
 
     - name: Cache Class Info

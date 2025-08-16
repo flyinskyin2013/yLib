@@ -26,7 +26,6 @@ jobs:
             apt_packages: ""
             toolchain_file: "toolchains/linux_x64_gcc.cmake"
             build_dir: "build_linux_x64"
-            cmake_params: "-DBUILD_YLIB_ARCH=x86_64"
             build_deps_arch: "x64"
 
           - name: "x64-clang"
@@ -36,7 +35,6 @@ jobs:
             apt_packages: "clang"
             toolchain_file: "toolchains/linux_x64_clang.cmake"
             build_dir: "build_linux_x64_clang"
-            cmake_params: "-DBUILD_YLIB_ARCH=x86_64"
             build_deps_arch: "x64"
 
           - name: "x86-gcc"
@@ -46,7 +44,6 @@ jobs:
             apt_packages: "gcc-multilib g++-multilib"
             toolchain_file: "toolchains/linux_x64_gcc_m32.cmake"
             build_dir: "build_linux_x86"
-            cmake_params: "-DBUILD_YLIB_ARCH=x86"
             build_deps_arch: "x86"
 
           - name: "x86-clang"
@@ -56,7 +53,6 @@ jobs:
             apt_packages: "clang gcc-multilib g++-multilib"
             toolchain_file: "toolchains/linux_x64_clang_m32.cmake"
             build_dir: "build_linux_x86_clang"
-            cmake_params: "-DBUILD_YLIB_ARCH=x86"
             build_deps_arch: "x86"
 
           - name: "aarch64-gcc"
@@ -66,7 +62,6 @@ jobs:
             apt_packages: "g++-aarch64-linux-gnu"
             toolchain_file: "toolchains/linux_aarch64_gcc.cmake"
             build_dir: "build_linux_aarch64"
-            cmake_params: "-DBUILD_YLIB_ARCH=aarch64"
             build_deps_arch: "aarch64"
 
           - name: "arm-gnueabi-gcc"
@@ -76,7 +71,6 @@ jobs:
             apt_packages: "g++-arm-linux-gnueabi"
             toolchain_file: "toolchains/linux_armgnueabi_gcc.cmake"
             build_dir: "build_linux_armeabi"
-            cmake_params: "-DBUILD_YLIB_ARCH=armeabi"
             build_deps_arch: "armeabi"
 
           - name: "arm-gnueabihf-gcc"
@@ -86,7 +80,6 @@ jobs:
             apt_packages: "g++-arm-linux-gnueabihf"
             toolchain_file: "toolchains/linux_armgnueabihf_gcc.cmake"
             build_dir: "build_linux_armeabihf"
-            cmake_params: "-DBUILD_YLIB_ARCH=armeabihf"
             build_deps_arch: "armeabihf"
 
     steps:
@@ -160,7 +153,7 @@ jobs:
                  -DCMAKE_INSTALL_PREFIX=$(pwd)/install \
                  -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install \
                  -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/${{matrix.toolchain_file}} \
-                 ${{ matrix.cmake_params }}
+                 -DBUILD_YLIB_ARCH=${{matrix.build_deps_arch}}
         make -j$(nproc)
         make install
 

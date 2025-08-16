@@ -175,6 +175,8 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
 elseif(ANDROID)
 
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../third_part/build_android_${BUILD_YLIB_ARCH}/install/include)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../third_part/build_android_${BUILD_YLIB_ARCH}/install/include/libxml2)
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../third_part/build_android_${BUILD_YLIB_ARCH}/install/lib)
 
 endif()
