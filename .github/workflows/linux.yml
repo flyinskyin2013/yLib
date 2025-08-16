@@ -92,11 +92,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ${{ matrix.apt_packages }}
         fi
-        if [ "${{ matrix.compiler }}" = "clang" ]; then
-          sudo update-alternatives --install /usr/bin/cc cc /usr/bin/clang 100
-          sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++ 100
-        fi
+        # if [ "${{ matrix.compiler }}" = "clang" ]; then
+        #   sudo update-alternatives --install /usr/bin/cc cc /usr/bin/clang 100
+        #   sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++ 100
+        # fi
         mkdir -p ${{ matrix.build_dir }}
+        mkdir -p $GITHUB_WORKSPACE/qemu-install/
 
     - name: Cache and Setup QEMU
       if: startsWith(matrix.arch, 'arm') || matrix.arch == 'aarch64'
