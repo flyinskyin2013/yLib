@@ -161,8 +161,9 @@ jobs:
       working-directory: ${{ matrix.build_dir }}
       run: |
         if [ "${{ matrix.arch }}" = "x64" ] || [ "${{ matrix.arch }}" = "x86" ]; then
-          ./bin/yLibTests
-        else
+          cd install/tests
+          ./scripts_for_tests.sh
+        elif [ "${{ matrix.arch }}" = "aarch64" ]
           export PATH=$GITHUB_WORKSPACE/qemu-install/bin:$PATH
           cd install/tests
           QEMU_BIN="qemu-${{ matrix.arch }}"
@@ -174,4 +175,6 @@ jobs:
             QEMU_BIN="qemu-arm"
           fi
           ./scripts_for_tests.sh ${QEMU_BIN}
+        else
+          echo This arch(${{ matrix.arch }}) don't support test.
         fi
