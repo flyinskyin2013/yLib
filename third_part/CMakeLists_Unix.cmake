@@ -59,6 +59,14 @@ set(MY_RANLIB "armgnueabihf-linux-gnu-ranlib")
 set(MY_STRIP "armgnueabihf-linux-gnu-strip")
 endif()
 
+
+if(${MY_CC} MATCHES "(clang)")
+if(NOT ANDROID)
+set(MY_C_FLAGS "${MY_C_FLAGS} -std=c89")
+endif()
+endif()
+
+
 if(ANDROID)
 
     if (NOT DEFINED ANDROID_ABI)
@@ -129,7 +137,7 @@ ExternalProject_Add(
     curl
     URL https://github.com/curl/curl/releases/download/curl-7_55_1/curl-7.55.1.tar.gz
     URL_HASH MD5=3b832160a8c9c40075fd71191960307c
-    CONFIGURE_COMMAND  <SOURCE_DIR>/configure --prefix=${THIRD_PARTY_INSTALL_DIR} --without-libidn2 --without-ssl --without-zlib --without-librtmp --disable-rtsp --disable-ldap --disable-ldaps --host=${MY_CONFIGURE_HOST}  CC=${MY_CC} CFLAGS="${MY_C_FLAGS} -std=c89" LD=${MY_LD} AR=${MY_AR}
+    CONFIGURE_COMMAND  <SOURCE_DIR>/configure --prefix=${THIRD_PARTY_INSTALL_DIR} --without-libidn2 --without-ssl --without-zlib --without-librtmp --disable-rtsp --disable-ldap --disable-ldaps --host=${MY_CONFIGURE_HOST}  CC=${MY_CC} CFLAGS=${MY_C_FLAGS} LD=${MY_LD} AR=${MY_AR}
     BUILD_COMMAND make -j8
     INSTALL_COMMAND make install
     DOWNLOAD_EXTRACT_TIMESTAMP TRUE
