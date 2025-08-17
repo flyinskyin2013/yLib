@@ -5,6 +5,10 @@ on:
     tags:
       - 'V*'
 
+permissions:
+  contents: write
+  issues: write
+
 jobs:
   prepare_release:
     name: prepare_release
@@ -50,15 +54,15 @@ jobs:
 
     - name: set env and init
       run: |
-        mkdir -p build
+        mkdir -p build_linux_x64
 
     - name: Build Third-Party Dependencies (CMake)
       working-directory: third_part
       run: |
         mkdir build_linux_x64 && cd build_linux_x64
-        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build_linux_x64/install \
                  -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_x64_gcc.cmake \
-                 -DBUILD_YLIB_ARCH=x86_64
+                 -DBUILD_YLIB_ARCH=x64
         cmake --build .
 
     - name: Restore Class Info Cache
@@ -69,16 +73,20 @@ jobs:
         key: ylib-class-info-${{ github.sha }}
 
     - name: build ylib
-      working-directory: build
+      working-directory: build_linux_x64
       run: |
         cp ${{ github.workspace }}/docs/llvm/ylib_class_info.cpp .
-        cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_x64_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86_64 -DENABLE_GNU_SANITIZER=OFF -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install
+        cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_x64_gcc.cmake \
+                 -DCMAKE_BUILD_TYPE=Release \
+                 -DCMAKE_INSTALL_PREFIX=`pwd`/install \
+                 -DBUILD_YLIB_ARCH=x64 -DENABLE_GNU_SANITIZER=OFF \
+                 -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install
         make -j`nproc`
         make install
 
     - name: package
       run: |
-        cd build/install
+        cd build_linux_x64/install
         rm examples/ -rf
         rm tests/ -rf
         rm -f /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_x64_gcc.zip
@@ -101,13 +109,14 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install gcc-multilib g++-multilib
-        mkdir -p build
+        mkdir -p build_linux_x86
 
     - name: Build Third-Party Dependencies (CMake)
       working-directory: third_part
       run: |
-        mkdir build_linux_x64 && cd build_linux_x64
-        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
+        mkdir build_linux_x86 && cd build_linux_x86
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build_linux_x86/install \
+                 -DBUILD_YLIB_ARCH=x86 \
                  -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_x64_gcc_m32.cmake
         cmake --build .
 
@@ -119,16 +128,20 @@ jobs:
         key: ylib-class-info-${{ github.sha }}
 
     - name: build ylib
-      working-directory: build
+      working-directory: build_linux_x86
       run: |
         cp ${{ github.workspace }}/docs/llvm/ylib_class_info.cpp .
-        cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_x64_gcc_m32.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=x86 -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install
+        cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_x64_gcc_m32.cmake \
+                 -DCMAKE_BUILD_TYPE=Release \
+                 -DCMAKE_INSTALL_PREFIX=`pwd`/install\
+                 -DBUILD_YLIB_ARCH=x86 \
+                 -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install
         make -j`nproc`
         make install
 
     - name: package
       run: |
-        cd build/install
+        cd build_linux_x86/install
         rm examples/ -rf
         rm tests/ -rf
         rm -f /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_x86_gcc.zip
@@ -153,14 +166,15 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install g++-arm-linux-gnueabi
-        mkdir -p build
+        mkdir -p build_linux_armeabi
 
     - name: Build Third-Party Dependencies (CMake)
       working-directory: third_part
       run: |
-        mkdir build_linux_x64 && cd build_linux_x64
-        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
-                 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_armgnueabi_gcc.cmake
+        mkdir build_linux_armeabi && cd build_linux_armeabi
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build_linux_armeabi/install \
+                 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_armgnueabi_gcc.cmake \
+                 -DBUILD_YLIB_ARCH=armeabi
         cmake --build .
 
     - name: Restore Class Info Cache
@@ -171,16 +185,20 @@ jobs:
         key: ylib-class-info-${{ github.sha }}
 
     - name: build ylib
-      working-directory: build
+      working-directory: build_linux_armeabi
       run: |
         cp ${{ github.workspace }}/docs/llvm/ylib_class_info.cpp .
-        cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_armgnueabi_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=armeabi -DENABLE_GNU_SANITIZER=OFF -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install
+        cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_armgnueabi_gcc.cmake \
+                  -DCMAKE_BUILD_TYPE=Release \
+                  -DCMAKE_INSTALL_PREFIX=`pwd`/install \
+                  -DBUILD_YLIB_ARCH=armeabi -DENABLE_GNU_SANITIZER=OFF \
+                  -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install
         make -j`nproc`
         make install
 
     - name: package
       run: |
-        cd build/install
+        cd build_linux_armeabi/install
         rm examples/ -rf
         rm tests/ -rf        
         rm -f /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_armeabi_gcc.zip
@@ -203,14 +221,15 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install g++-arm-linux-gnueabihf
-        mkdir -p build
+        mkdir -p build_linux_armeabihf
 
     - name: Build Third-Party Dependencies (CMake)
       working-directory: third_part
       run: |
-        mkdir build_linux_x64 && cd build_linux_x64
-        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
-                 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_armgnueabihf_gcc.cmake
+        mkdir build_linux_armeabihf && cd build_linux_armeabihf
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build_linux_armeabihf/install \
+                 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_armgnueabihf_gcc.cmake \
+                 -DBUILD_YLIB_ARCH=armeabihf
         cmake --build .
 
     - name: Restore Class Info Cache
@@ -221,16 +240,21 @@ jobs:
         key: ylib-class-info-${{ github.sha }}
 
     - name: build ylib
-      working-directory: build
+      working-directory: build_linux_armeabihf
       run: |
         cp ${{ github.workspace }}/docs/llvm/ylib_class_info.cpp .
-        cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_armgnueabihf_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=armeabihf -DENABLE_GNU_SANITIZER=OFF -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install
+        cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_armgnueabihf_gcc.cmake \
+                -DCMAKE_BUILD_TYPE=Release \
+                -DCMAKE_INSTALL_PREFIX=`pwd`/install \
+                -DBUILD_YLIB_ARCH=armeabihf \
+                -DENABLE_GNU_SANITIZER=OFF \
+                -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install
         make -j`nproc`
         make install
 
     - name: package
       run: |
-        cd build/install
+        cd build_linux_armeabihf/install
         rm examples/ -rf
         rm tests/ -rf
         rm -f /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_armeabihf_gcc.zip
@@ -253,14 +277,15 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install g++-aarch64-linux-gnu
-        mkdir -p build
+        mkdir -p build_linux_aarch64
 
     - name: Build Third-Party Dependencies (CMake)
       working-directory: third_part
       run: |
-        mkdir build_linux_x64 && cd build_linux_x64
-        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
-                 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_aarch64_gcc.cmake
+        mkdir build_linux_aarch64 && cd build_linux_aarch64
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build_linux_aarch64/install \
+                 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_aarch64_gcc.cmake \
+                 -DBUILD_YLIB_ARCH=aarch64
         cmake --build .
 
     - name: Restore Class Info Cache
@@ -271,16 +296,20 @@ jobs:
         key: ylib-class-info-${{ github.sha }}
 
     - name: build ylib
-      working-directory: build
+      working-directory: build_linux_aarch64
       run: |
         cp ${{ github.workspace }}/docs/llvm/ylib_class_info.cpp .
-        cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_aarch64_gcc.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DBUILD_YLIB_ARCH=aarch64 -DENABLE_GNU_SANITIZER=OFF -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install
+        cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/toolchains/linux_aarch64_gcc.cmake \
+              -DCMAKE_BUILD_TYPE=Release \
+              -DCMAKE_INSTALL_PREFIX=`pwd`/install \
+              -DBUILD_YLIB_ARCH=aarch64 -DENABLE_GNU_SANITIZER=OFF \
+              -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install
         make -j`nproc`
         make install
 
     - name: package
       run: |
-        cd build/install
+        cd build_linux_aarch64/install
         rm examples/ -rf
         rm tests/ -rf
         rm -f /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_aarch64_gcc.zip
@@ -306,17 +335,16 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Setup MSVC
-      uses: microsoft/setup-msvc-dev@v1
-      with:
-        architecture: x86
-
     - name: Build Third-Party Dependencies (CMake)
-      shell: cmd
+      shell: powershell
       run: |
         cd third_part
-        mkdir build_v143_x64 && cd build_v143_x64
-        cmake .. -G "Visual Studio 17 2022" -A Win32 -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build\install"
+        mkdir build_v143_Win32
+        cd build_v143_Win32
+        cmake .. -G "Visual Studio 17 2022" -A Win32 `
+                -Dcompile_tool_set="v143" `
+                -Dcompile_tool_arch="Win32" `
+                -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build_v143_Win32\install"
         cmake --build . --config Release
 
     - name: Restore Class Info Cache
@@ -324,15 +352,21 @@ jobs:
       id: restore-cache
       with:
         path: docs/llvm/ylib_class_info.cpp
+        enableCrossOsArchive: true
         key: ylib-class-info-${{ github.sha }}
 
     - name: build ylib
-      shell: cmd
+      shell: powershell
       run: |
         mkdir build_vs2022_x86
         cp ${{ github.workspace }}\docs\llvm\ylib_class_info.cpp ${{ github.workspace }}\build_vs2022_x86
         cd build_vs2022_x86
-        cmake .. -G "Visual Studio 17 2022" -A Win32 -DCMAKE_INSTALL_PREFIX=install -DCMAKE_PREFIX_PATH="${{ github.workspace }}\third_part\build\install"
+        cmake .. -G "Visual Studio 17 2022" -A Win32 `
+                -DCMAKE_INSTALL_PREFIX=install `
+                -DCMAKE_BUILD_TYPE=Release `
+                -DBUILD_YLIB_ARCH=x86  `
+                -DCMAKE_PREFIX_PATH="${{ github.workspace }}\third_part\build\install" `
+                -DCOMPILE_TOOL_SET="v143" -DCOMPILE_TOOL_ARCH="Win32" 
         cmake --build . --config Release --target install
 
     - name: package
@@ -361,17 +395,16 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Setup MSVC
-      uses: microsoft/setup-msvc-dev@v1
-      with:
-        architecture: x64
-
     - name: Build Third-Party Dependencies (CMake)
-      shell: cmd
+      shell: powershell
       run: |
         cd third_part
-        mkdir build_v143_x64 && cd build_v143_x64
-        cmake .. -G "Visual Studio 17 2022" -A x64 -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build\install"
+        mkdir build_v143_x64 
+        cd build_v143_x64
+        cmake .. -G "Visual Studio 17 2022" -A x64 `
+                -Dcompile_tool_set="v143" `
+                -Dcompile_tool_arch="x64" `
+                -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\third_part\build_v143_x64\install"
         cmake --build . --config Release
 
     - name: Restore Class Info Cache
@@ -379,20 +412,26 @@ jobs:
       id: restore-cache
       with:
         path: docs/llvm/ylib_class_info.cpp
+        enableCrossOsArchive: true
         key: ylib-class-info-${{ github.sha }}
 
     - name: build ylib
-      shell: cmd
+      shell: powershell
       run: |
-        mkdir build_vs2022_x64
-        cp ${{ github.workspace }}\docs\llvm\ylib_class_info.cpp ${{ github.workspace }}\build_vs2022_x64
-        cd build_vs2022_x64
-        cmake .. -G "Visual Studio 17 2022" -A x64 -DCMAKE_INSTALL_PREFIX=install -DCMAKE_PREFIX_PATH="${{ github.workspace }}\third_part\build\install"
+        mkdir build_v143_x64
+        cp ${{ github.workspace }}\docs\llvm\ylib_class_info.cpp ${{ github.workspace }}\build_v143_x64
+        cd build_v143_x64
+        cmake .. -G "Visual Studio 17 2022" -A x64 `
+                -DCMAKE_INSTALL_PREFIX=install `
+                -DCMAKE_BUILD_TYPE=Release `
+                -DBUILD_YLIB_ARCH=x64  `
+                -DCMAKE_PREFIX_PATH="${{ github.workspace }}\third_part\build\install" `
+                -DCOMPILE_TOOL_SET="v143" -DCOMPILE_TOOL_ARCH="x64" 
         cmake --build . --config Release --target install
 
     - name: package
       run: |
-        cd build_vs2022_x64/install
+        cd build_v143_x64/install
         rm examples/ -r -force
         rm tests/ -r -force
         rm -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2022_x64.zip -force -ErrorAction SilentlyContinue
@@ -415,20 +454,21 @@ jobs:
       uses: nttld/setup-ndk@v1
       id: setup-ndk
       with:
-        ndk-version: r21e
+        ndk-version: r26d
 
     - name: Setup Build Environment
       run: |
-        mkdir -p build
+        mkdir -p build_android_aarch64
 
     - name: Build Third-Party Dependencies (CMake)
       working-directory: third_part
       run: |
-        mkdir build_linux_x64 && cd build_linux_x64
-        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
+        mkdir build_android_aarch64 && cd build_android_aarch64
+        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build_android_aarch64/install \
                  -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake \
                  -DANDROID_ABI=arm64-v8a \
-                 -DANDROID_PLATFORM=android-21
+                 -DANDROID_PLATFORM=android-21 \
+                 -DBUILD_YLIB_ARCH=aarch64
         cmake --build .
 
     - name: Restore Class Info Cache
@@ -439,16 +479,23 @@ jobs:
         key: ylib-class-info-${{ github.sha }}
 
     - name: build ylib
-      working-directory: build
+      working-directory: build_android_aarch64
       run: |
         cp ${{ github.workspace }}/docs/llvm/ylib_class_info.cpp .
-        cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake -DANDROID_ABI="arm64-v8a" -DANDROID_PLATFORM=android-21 -DBUILD_YLIB_ARCH=aarch64 -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install
+        cmake .. -G "Unix Makefiles" \
+                  -DCMAKE_BUILD_TYPE=Release \
+                  -DCMAKE_INSTALL_PREFIX=`pwd`/install \
+                  -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake \
+                  -DANDROID_ABI="arm64-v8a" \
+                  -DANDROID_PLATFORM=android-21 \
+                  -DBUILD_YLIB_ARCH=aarch64 \
+                  -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install
         make -j`nproc`
         make install
 
     - name: package
       run: |
-        cd build/install
+        cd build_android_aarch64/install
         rm examples/ -rf
         rm tests/ -rf
         rm -f /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_aarch64_v8a.zip
@@ -460,64 +507,67 @@ jobs:
         name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_aarch64_v8a
         path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_aarch64_v8a.zip    
 
-  android_armeabi_v7a:
-    needs: [prepare_release, generate-info]
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout yLib
-      uses: actions/checkout@v4
+  # android_armeabi_v7a:
+  #   needs: [prepare_release, generate-info]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: Checkout yLib
+  #     uses: actions/checkout@v4
 
-    - name: Setup Android NDK
-      uses: nttld/setup-ndk@v1
-      id: setup-ndk
-      with:
-        ndk-version: r21e
+  #   - name: Setup Android NDK
+  #     uses: nttld/setup-ndk@v1
+  #     id: setup-ndk
+  #     with:
+  #       ndk-version: r21e
 
-    - name: Setup Build Environment
-      run: |
-        mkdir -p build
+  #   - name: Setup Build Environment
+  #     run: |
+  #       mkdir -p build
 
-    - name: Build Third-Party Dependencies (CMake)
-      working-directory: third_part
-      run: |
-        mkdir build_linux_x64 && cd build_linux_x64
-        cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
-                 -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake \
-                 -DANDROID_ABI=armeabi-v7a \
-                 -DANDROID_PLATFORM=android-21
-        cmake --build .
+  #   - name: Build Third-Party Dependencies (CMake)
+  #     working-directory: third_part
+  #     run: |
+  #       mkdir build_linux_x64 && cd build_linux_x64
+  #       cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/third_part/build/install \
+  #                -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake \
+  #                -DANDROID_ABI=armeabi-v7a \
+  #                -DANDROID_PLATFORM=android-21
+  #       cmake --build .
 
-    - name: Restore Class Info Cache
-      uses: actions/cache@v4
-      id: restore-cache
-      with:
-        path: docs/llvm/ylib_class_info.cpp
-        key: ylib-class-info-${{ github.sha }}
+  #   - name: Restore Class Info Cache
+  #     uses: actions/cache@v4
+  #     id: restore-cache
+  #     with:
+  #       path: docs/llvm/ylib_class_info.cpp
+  #       key: ylib-class-info-${{ github.sha }}
 
-    - name: build ylib
-      working-directory: build
-      run: |
-        cp ${{ github.workspace }}/docs/llvm/ylib_class_info.cpp .
-        cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake -DANDROID_ABI="armeabi-v7a" -DANDROID_PLATFORM=android-21 -DBUILD_YLIB_ARCH=armeabi -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install
-        make -j`nproc`
-        make install
+  #   - name: build ylib
+  #     working-directory: build
+  #     run: |
+  #       cp ${{ github.workspace }}/docs/llvm/ylib_class_info.cpp .
+  #       cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake -DANDROID_ABI="armeabi-v7a" -DANDROID_PLATFORM=android-21 -DBUILD_YLIB_ARCH=armeabi -DCMAKE_PREFIX_PATH=${{ github.workspace }}/third_part/build/install
+  #       make -j`nproc`
+  #       make install
 
-    - name: package
-      run: |
-        cd build/install
-        rm examples/ -rf
-        rm tests/ -rf
-        rm -f /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_armeabi_v7a.zip
-        zip -9 -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_armeabi_v7a.zip .
+  #   - name: package
+  #     run: |
+  #       cd build/install
+  #       rm examples/ -rf
+  #       rm tests/ -rf
+  #       rm -f /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_armeabi_v7a.zip
+  #       zip -9 -r /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_armeabi_v7a.zip .
 
-    - name: upload-zip
-      uses: actions/upload-artifact@v4
-      with:
-        name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_armeabi_v7a
-        path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_armeabi_v7a.zip   
+  #   - name: upload-zip
+  #     uses: actions/upload-artifact@v4
+  #     with:
+  #       name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_armeabi_v7a
+  #       path: /tmp/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_armeabi_v7a.zip   
 
   release_ylib:
-    needs: [prepare_release, full_source, linux_x64_gcc, linux_x86_gcc, linux_armeabi_gcc, linux_armeabihf_gcc, linux_aarch64_gcc, windows_vs2022_x64, windows_vs2022_x86, android_aarch64_v8a, android_armeabi_v7a]
+    permissions:
+      contents: write 
+
+    needs: [prepare_release, full_source, linux_x64_gcc, linux_x86_gcc, linux_armeabi_gcc, linux_armeabihf_gcc, linux_aarch64_gcc, windows_vs2022_x64, windows_vs2022_x86, android_aarch64_v8a]
     runs-on: ubuntu-latest
     steps:
     - name: download
@@ -527,112 +577,9 @@ jobs:
 
     - name: create-release
       id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v2
       with:
+        token: ${{ secrets.GITHUB_TOKEN }}
         tag_name: ${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}
-        release_name: Release ${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}
-        draft: false
-        prerelease: false
-
-    - name: upload-full-source
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source.zip
-        asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-full-source.zip
-        asset_content_type: application/zip
-
-    - name: upload-linux_x64_gcc
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_x64_gcc/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_x64_gcc.zip
-        asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_x64_gcc.zip
-        asset_content_type: application/zip
-
-    - name: upload-linux_x86_gcc
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_x86_gcc/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_x86_gcc.zip
-        asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_x86_gcc.zip
-        asset_content_type: application/zip
-
-
-    - name: upload-linux_armeabi_gcc
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_armeabi_gcc/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_armeabi_gcc.zip
-        asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_armeabi_gcc.zip
-        asset_content_type: application/zip
-
-    - name: upload-linux_armeabihf_gcc
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_armeabihf_gcc/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_armeabihf_gcc.zip
-        asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_armeabihf_gcc.zip
-        asset_content_type: application/zip
-
-    - name: upload-linux_aarch64_gcc
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_aarch64_gcc/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_aarch64_gcc.zip
-        asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-linux_aarch64_gcc.zip
-        asset_content_type: application/zip
-
-    - name: upload-vs2022_x86
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2022_x86/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2022_x86.zip
-        asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2022_x86.zip
-        asset_content_type: application/zip
-
-    - name: upload-vs2022_x64
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2022_x64/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2022_x64.zip
-        asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-vs2022_x64.zip
-        asset_content_type: application/zip
-
-    - name: upload-android_aarch64_v8a
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_aarch64_v8a/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_aarch64_v8a.zip
-        asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_aarch64_v8a.zip
-        asset_content_type: application/zip
-
-    - name: upload-android_armeabi_v7a
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifacts/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_armeabi_v7a/ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_armeabi_v7a.zip
-        asset_name: ylib-${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}-android_armeabi_v7a.zip
-        asset_content_type: application/zip
+        name: Release ${{ needs.prepare_release.outputs.YLIB_RELEASE_VERSION }}
+        files: artifacts/*/*.zip

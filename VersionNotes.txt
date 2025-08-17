@@ -7,7 +7,17 @@
  -->
 Version Notes:
 ==========
-v0.2.0
+v0.3.0A
+----------
+    1 improve ycompiler.
+    2 import class_ana(llvm) for dynamic-cast.
+    3 re-struct build-system. 
+    4 re-struct ci-system.
+    5 add some docs.
+    6 import AI(eg: claude-code, google-cli, qwen-code and so on).
+
+
+v0.2.0A0
 ----------
     1 New yConfig implemented by new ycompiler.
     2 Disable libidn2 for libcurl.

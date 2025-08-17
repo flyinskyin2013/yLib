@@ -9,7 +9,7 @@
 
 ****
 [![codecov](https://codecov.io/gh/flyinskyin2013/yLib/branch/master/graph/badge.svg?token=CIOCB761NA)](https://codecov.io/gh/flyinskyin2013/yLib)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/linux_x86_gcc.yml?branch=master)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x64_gcc)
+[![Build Status](https://github.com/flyinskyin2013/yLib/actions/workflows/linux.yml/badge.svg?branch=master)](https://github.com/flyinskyin2013/yLib/actions?query=workflow%linux)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/flyinskyin2013/yLib)](https://github.com/flyinskyin2013/yLib/releases)
 [![License](https://img.shields.io/badge/license-BSD--3--Clause-green.svg)](License.txt) 
 
@@ -26,58 +26,37 @@ In addition, in my daily-work, I usually use some third-libraries to implement s
 
 yLib BuildMatrix(GithubAction) <br> 
 
-| Platefrom | Compiler | CPU(32bits)  | CPU (64bits) |
+| Platefrom | Compiler |  Arch | BuildStatus |
 | :---: | :---: | :---: | :---: |
-| Linux | GCC    | [![Build Status][build_linux_x86_gcc]][ci_linux_x86_gcc] |  [![Build Status][build_linux_x64_gcc]][ci_linux_x64_gcc] |  
-| Linux | Clang  | [![Build Status][build_linux_x86_clang]][ci_linux_x86_clang] |  [![Build Status][build_linux_x64_clang]][ci_linux_x64_clang] |  
-| Linux | ARM GCC  | [![Build Status][build_linux_arm_gcc]][ci_linux_arm_gcc] |  [![Build Status][build_linux_aarch64_gcc]][ci_linux_aarch64_gcc] |  
-| Windows | VS2015(v140) | [![Build Status][build_windows_x86_vs2015]][ci_windows_x86_vs2015] |  [![Build Status][build_windows_x64_vs2015]][ci_windows_x64_vs2015] |  
-| Windows | VS2017(v141) | [![Build Status][build_windows_x86_vs2017]][ci_windows_x86_vs2017] |  [![Build Status][build_windows_x64_vs2017]][ci_windows_x64_vs2017] |
-| Windows | VS2019(v142) | [![Build Status][build_windows_x86_vs2019]][ci_windows_x86_vs2019] |  [![Build Status][build_windows_x64_vs2019]][ci_windows_x64_vs2019] |
-| Windows | VS2022(v143) | [![Build Status][build_windows_x86_vs2022]][ci_windows_x86_vs2022] |  [![Build Status][build_windows_x64_vs2022]][ci_windows_x64_vs2022] |
-| Android | NDK-Default | [![Build Status][build_android_32bit]][ci_android_32bit] |  [![Build Status][build_android_64bit]][ci_android_64bit] |  
-
-[build_linux_x86_gcc]: https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/linux_x86_gcc.yml?branch=master
-[ci_linux_x86_gcc]:https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x86_gcc
-[build_linux_x64_gcc]: https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/linux_x64_gcc.yml?branch=master
-[ci_linux_x64_gcc]: https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x64_gcc
-
-[build_linux_x86_clang]:https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/linux_x86_clang.yml?branch=master
-[ci_linux_x86_clang]:https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x86_clang
-[build_linux_x64_clang]:https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/linux_x64_clang.yml?branch=master
-[ci_linux_x64_clang]:https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Alinux_x64_clang
-
-[build_linux_arm_gcc]:https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/linux_arm_gcc.yml?branch=master
-[ci_linux_arm_gcc]:https://github.com/flyinskyin2013/yLib/actions?query=workflow%linux_arm_gcc
-[build_linux_aarch64_gcc]:https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/linux_aarch64_gcc.yml?branch=master
-[ci_linux_aarch64_gcc]:https://github.com/flyinskyin2013/yLib/actions?query=workflow%linux_aarch64_gcc
-
-[build_windows_x86_vs2015]:https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/windows_x86_vs2015.yml?branch=master
-[ci_windows_x86_vs2015]:https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x86_vs2015
-[build_windows_x64_vs2015]:https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/windows_x64_vs2015.yml?branch=master
-[ci_windows_x64_vs2015]:https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x64_vs2015
-
-[build_windows_x86_vs2017]:https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/windows_x86_vs2017.yml?branch=master
-[ci_windows_x86_vs2017]:https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x86_vs2017
-[build_windows_x64_vs2017]:https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/windows_x64_vs2017.yml?branch=master
-[ci_windows_x64_vs2017]:https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x64_vs2017
-
-[build_windows_x86_vs2019]:https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/windows_x86_vs2019.yml?branch=master
-[ci_windows_x86_vs2019]:https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x86_vs2019
-[build_windows_x64_vs2019]:https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/windows_x64_vs2019.yml?branch=master
-[ci_windows_x64_vs2019]:https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x64_vs2019
+| Linux | GCC    |  x64/x86  | [![Build Status][build_linux_gcc]][ci_linux_gcc] |
+| Linux | Clang  |  x64/x86  | [![Build Status][build_linux_clang]][ci_linux_clang] |
+| Linux | GCC  |  aarch64/armeabihf/armeabi  | [![Build Status][build_linux_arm_gcc]][ci_linux_arm_gcc] |
+| Windows | VS2019(v142) |  x64/Win32  | [![Build Status][build_windows_v142]][ci_windows_v142] | 
+| Windows | VS2022(v143) |  x64/Win32  | [![Build Status][build_windows_v143]][ci_windows_v143] |
+| Android | NDK-26d |  armv8-a  | [![Build Status][build_android]][ci_android] | 
 
 
-[build_windows_x86_vs2022]:https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/windows_x86_vs2022.yml?branch=master
-[ci_windows_x86_vs2022]:https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x86_vs2022
-[build_windows_x64_vs2022]:https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/windows_x64_vs2022.yml?branch=master
-[ci_windows_x64_vs2022]:https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Awindows_x64_vs2022
+[build_linux_gcc]: https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/linux.yml?branch=master
+[ci_linux_gcc]: https://github.com/flyinskyin2013/yLib/actions/workflows/linux.yml
 
 
-[build_android_32bit]:https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/android_32bit.yml?branch=master
-[ci_android_32bit]:https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Aandroid_32bit
-[build_android_64bit]:https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/android_64bit.yml?branch=master
-[ci_android_64bit]:https://github.com/flyinskyin2013/yLib/actions?query=workflow%3Aandroid_64bit
+[build_linux_clang]:https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/linux.yml?branch=master
+[ci_linux_clang]: https://github.com/flyinskyin2013/yLib/actions/workflows/linux.yml
+
+
+[build_linux_arm_gcc]:https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/linux.yml?branch=master
+[ci_linux_arm_gcc]:https://github.com/flyinskyin2013/yLib/actions/workflows/linux.yml
+
+
+[build_windows_v142]:https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/windows.yml?branch=master
+[ci_windows_v142]:https://github.com/flyinskyin2013/yLib/actions/workflows/windows.yml
+
+[build_windows_v143]:https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/windows.yml?branch=master
+[ci_windows_v143]:https://github.com/flyinskyin2013/yLib/actions/workflows/windows.yml
+
+
+[build_android]:https://img.shields.io/github/actions/workflow/status/flyinskyin2013/yLib/android.yml?branch=master
+[ci_android]:https://github.com/flyinskyin2013/yLib/actions/workflows/android.yml
 
 
 
