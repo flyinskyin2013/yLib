@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: check out my rep
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: package
       run: |
@@ -50,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: set env and init
       run: |
@@ -103,7 +103,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Setup Environment
       run: |
@@ -160,7 +160,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Setup Environment
       run: |
@@ -215,7 +215,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Setup Environment
       run: |
@@ -271,7 +271,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: checkout my rep
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Setup Environment
       run: |
@@ -328,7 +328,7 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: Checkout yLib
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Setup Python
       uses: actions/setup-python@v5
@@ -388,7 +388,7 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: Checkout yLib
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Setup Python
       uses: actions/setup-python@v5
@@ -448,7 +448,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout yLib
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Setup Android NDK
       uses: nttld/setup-ndk@v1
@@ -512,7 +512,7 @@ jobs:
   #   runs-on: ubuntu-latest
   #   steps:
   #   - name: Checkout yLib
-  #     uses: actions/checkout@v4
+  #     uses: actions/checkout@v5
 
   #   - name: Setup Android NDK
   #     uses: nttld/setup-ndk@v1
